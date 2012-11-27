@@ -19,18 +19,32 @@
 					<span class="icon-bar"></span>
 				</a>
 				<a class="brand" href="./index.html">Harmony</a>
-          
 				<div class="btn-group pull-right">
-					<a id="login-btn" class="btn dropdown-toggle" href="/login">
-						<i class="icon-user"></i> Login
+
+					{% if user.is_authenticated %}
+					<a id="logout-btn" class="btn dropdown-toggle" href="/logout">
+						<i class="icon-user"></i> Logout
 						<span class="caret"></span>
 					</a>
+					{% else %}
+					<a id="login-btn" class="btn dropdown-toggle" href="/login">
+						<i class="icon-user"></i> Login
+					</a>
+					{% endif %}
+
 				</div>
 			</div>
 		</div>
 	</div>
 	
 	<div class="container">
+
+		{% if user.is_authenticated %}
+		    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+		{% else %}
+		    <p>Welcome, new user. Please log in.</p>
+		{% endif %}
+		
 		{% block content %}
 		Empty content.
 		{% endblock %}
