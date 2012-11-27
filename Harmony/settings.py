@@ -155,6 +155,7 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
 	'Harmony.auth.GoogleBackend',
+    'django_openid_auth.auth.OpenIDBackend',
 	'django.contrib.auth.backends.ModelBackend',
 )
 OPENID_CREATE_USERS = True
