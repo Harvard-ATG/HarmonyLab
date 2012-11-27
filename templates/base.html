@@ -3,12 +3,38 @@
 <head>
 	<link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
 	<link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
 </head>
 <body>
-	<h1>asdf?</h1><br/>
-	{% block content %}
-	Empty content.
-	{% endblock %}
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="./index.html">Harmony</a>
+          
+				<div class="btn-group pull-right">
+					<a id="login-btn" class="btn dropdown-toggle" href="/login">
+						<i class="icon-user"></i> Login
+						<span class="caret"></span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="container">
+		{% block content %}
+		Empty content.
+		{% endblock %}
+	</div>
 </body>
 
 <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
