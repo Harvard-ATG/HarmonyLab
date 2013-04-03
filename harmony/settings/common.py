@@ -1,4 +1,7 @@
-# Django settings for Harmony project.
+# Common settings for all environments
+from os import path
+
+# Django settings for harmony project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -43,6 +46,13 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+### SET PATH INFORMATION ###############################################
+# Example: "/home/ubuntu/harmony"
+ROOT_DIR = reduce(lambda l,r: path.dirname(l), range(3), path.realpath(__file__))
+
+# Example: "/home/ubuntu/harmony/harmony"
+PROJECT_ROOT = path.join(ROOT_DIR, 'harmony')
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
@@ -56,7 +66,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/Applications/MAMP/htdocs/Harmony/static'
+STATIC_ROOT = path.join(ROOT_DIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -67,7 +77,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	'/Applications/MAMP/htdocs/Harmony/Harmony/static',
+	path.join(PROJECT_ROOT, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -98,16 +108,16 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'Harmony.urls'
+ROOT_URLCONF = 'harmony.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'Harmony.wsgi.application'
+WSGI_APPLICATION = 'harmony.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Applications/MAMP/htdocs/Harmony/templates'
+	path.join(PROJECT_ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
@@ -122,6 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+	'harmony.apps.lab',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -154,7 +165,7 @@ LOGGING = {
 }
 
 AUTHENTICATION_BACKENDS = (
-	'Harmony.auth.GoogleBackend',
+	'harmony.libs.auth.GoogleBackend',
     'django_openid_auth.auth.OpenIDBackend',
 	'django.contrib.auth.backends.ModelBackend',
 )
