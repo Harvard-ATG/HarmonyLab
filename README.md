@@ -8,4 +8,11 @@ harmony by providing instant feedback.
 
 # Developer Quickstart
 
-pip install -r requirements.txt
+- Clone the repository.
+- Install dependencies.
+- Run the server.
+
+$ git clone {harmony repo}
+$ cd harmony
+$ pip install -r requirements.txt
+$ django-admin.py runserver
