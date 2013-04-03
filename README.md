@@ -16,5 +16,6 @@ harmony by providing instant feedback.
 $ git clone {harmony repo}
 $ cd harmony
 $ pip install -r requirements.txt
+$ django-admin.py syncdb
 $ django-admin.py runserver
 ```
