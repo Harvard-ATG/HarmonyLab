@@ -1,3 +1,4 @@
+# Common settings for all environments
 from os import path
 
 # Django settings for harmony project.
