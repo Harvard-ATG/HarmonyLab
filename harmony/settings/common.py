@@ -1,5 +1,6 @@
 # Common settings for all environments
 from os import path
+import glob
 
 # Django settings for harmony project.
 
@@ -73,12 +74,22 @@ STATIC_ROOT = path.join(ROOT_DIR, 'static')
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	path.join(PROJECT_ROOT, 'static'),
-)
+]
+
+# Add static locationss for each app, namespaced by app name:
+# 	[(<app>, <app>/static), ...]
+STATICFILES_DIRS.extend([ 
+	(path.split(f)[1], path.join(f, 'static')) 
+	for f in glob.glob(path.join(PROJECT_ROOT, 'apps') + '/*')
+	if path.isdir(f) and path.exists(path.join(f, 'static'))
+])
+	
+print STATICFILES_DIRS
 
 # List of finder classes that know how to find static files in
 # various locations.

@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+	{% if user.is_authenticated %}
+		<p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+	{% else %}
+		<p>Welcome, new user. Please log in.</p>
+	{% endif %}
 
-index
+	<div id="piano"></div>
+{% endblock %}
 
+{% block js_extra %}
+<script src="{{STATIC_URL}}lab/js/src/main.js"></script>
 {% endblock %}
