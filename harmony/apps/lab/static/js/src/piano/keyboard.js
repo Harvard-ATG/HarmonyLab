@@ -50,11 +50,11 @@ define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
 
 		// Returns the next white key note in the musical alphabet. 
 		nextWhiteKey: function(whiteKey) {
-			var nextIndex = this.whiteKeys.indexOf(whiteKey) + 1;
-			if(nextIndex === -1) {
+			var index = this.whiteKeys.indexOf(whiteKey);
+			if(index === -1) {
 				throw new Error("Invalid whiteKey. No such white key.");
 			}
-			return this.whiteKeys.charAt(nextIndex % this.whiteKeys.length);
+			return this.whiteKeys.charAt((index + 1) % this.whiteKeys.length);
 		},
 
 		// Returns a sequence of white and black keys for a given size.
