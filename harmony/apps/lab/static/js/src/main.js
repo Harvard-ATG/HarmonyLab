@@ -1,5 +1,5 @@
-require(['jquery', 'lab/piano'], function($, Piano) {
-	console.log("lab.js loaded", $, Piano, 'this context', this);
-
-	$('#piano').append(Piano.content);
+require(['jquery', 'raphael', 'lab/piano/keyboard'], function($, Raphael, Keyboard) {
+	var keyboard = new Keyboard();
+	keyboard.render();
+	$('#piano').append(keyboard.el);
 });

@@ -49,12 +49,6 @@ requirejs.config({
 	baseUrl: "{{ STATIC_URL }}js",
 	paths: {
 		lab: "{{ STATIC_URL }}lab/js/src"
-	},
-	// shim for libraries that don't support AMD
-	shim: {
-		underscore: {
-			exports: '_'
-		}
 	}
 });
 </script>
