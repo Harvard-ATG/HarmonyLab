@@ -49,8 +49,8 @@ define(function() {
 
 	// Factory to create white or black key renderers.
 	var KeyRenderer = function() {};
-	KeyRenderer.create = function(isWhite, config) { 
-		if(isWhite) {
+	KeyRenderer.create = function(config) { 
+		if(config.isWhite) {
 			return new WhiteKeyRenderer(config);
 		}
 		return new BlackKeyRenderer(config);

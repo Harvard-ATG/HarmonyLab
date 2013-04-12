@@ -128,14 +128,8 @@ define(['jquery', 'lodash', 'lab/piano/keyrenderer'], function($, _, KeyRenderer
 		},
 
 		// Returns an object that knows how to render a white or black key.
-		_keyRenderer: function(key, numWhiteKeys, keyboardWidth, keyboardHeight) {
-			var config = { 
-				key: key,
-				numWhiteKeys: numWhiteKeys,
-				keyboardWidth: keyboardWidth,
-				keyboardHeight: keyboardHeight
-			};
-			return KeyRenderer.create(this.isWhiteKey(key), config);
+		_keyRenderer: function(config) {
+			return KeyRenderer.create(config);
 		},
 
 		// Helper function for rendering.
@@ -154,7 +148,13 @@ define(['jquery', 'lodash', 'lab/piano/keyrenderer'], function($, _, KeyRenderer
 			var whiteKeyIndex = 0;
 			var keySet = paper.set();
 			var keyRenderers = _.map(keys, function(key) {
-				return this._keyRenderer(key, numWhiteKeys, keyboardWidth, keyboardHeight);
+				return this._keyRenderer({
+					key: key,
+					isWhite: this.isWhiteKey(key),
+					numWhiteKeys: numWhiteKeys,
+					keyboardWidth: keyboardWidth,
+					keyboardHeight: keyboardHeight
+				});
 			}, this); 
 
 			_.each(keyRenderers, function(keyRenderer, index) {
