@@ -1,5 +1,5 @@
 // Note: also requires "raphael" (issue with requirejs, so loaded manually, not with requirejs)
-define(['jquery', 'lodash', 'lab/piano/keyrenderer'], function($, _, KeyRenderer) {
+define(['jquery', 'lodash', 'lab/piano/keyrenderer', 'lab/piano/keygenerator'], function($, _, KeyRenderer, KeyGenerator) {
 
 	// Keyboard constructor function.
 	// 
@@ -25,74 +25,21 @@ define(['jquery', 'lodash', 'lab/piano/keyrenderer'], function($, _, KeyRenderer
 			return 150
 		},
 
-		// White keys may represent one of 7 possible notes in the musical alphabet. 
-		whiteKeys: 'ABCDEFG',
-
-		// Black keys represent half steps between the main notes (sharp or flat).
-		blackKey: '-',
-
-		// Black keys are arranged in groups of 2's and 3's and appear after some white keys.
-		blackKeysAfter: 'ACDFG',
-
 		// Number of keys on the keyboard
 		numKeys: 49,
 
-		// Maps valid keyboard sizes to configuration parameters. 
-		keyboardSizes: {
-			25: { 'firstNote': 'C' }, 
-			37: { 'firstNote': 'C' }, 
-			49: { 'firstNote': 'C' }, 
-			61: { 'firstNote': 'C' }, 
-			76: { 'firstNote': 'E' }, 
-			88: { 'firstNote': 'A' }
-		},
+		// Represents a black key note.
+		blackKey: '-',
 
 		// Initialize the keyboard object.
 		init: function(numKeys) {
-			if(typeof numKeys !== 'undefined') {
-				if(!this.keyboardSizes.hasOwnProperty(this.numKeys)) {
-					throw new Error("Invalid keyboard size");
-				}
-				this.numKeys = numKeys;
-			}
-
 			this.el = $('<div class="keyboard"></div>');
-
-			if(this.debug) {
-				console.log(Raphael);
-			}
-
 			this.paper = Raphael(this.el.get(0), this.width(), this.height());
-		},
-
-		// Returns the next white key note in the musical alphabet. 
-		nextWhiteKey: function(whiteKey) {
-			var index = this.whiteKeys.indexOf(whiteKey);
-			if(index === -1) {
-				throw new Error("Invalid key.");
-			}
-			return this.whiteKeys.charAt((index + 1) % this.whiteKeys.length);
-		},
-
-		// Returns a sequence of white and black keys for a given size.
-		generateKeys: function(whiteKey, size) {
-			var nextWhiteKey = this.nextWhiteKey(whiteKey);
-			if(size == 0) {
-				return [];
-			} else if(size > 1 && this.blackKeysAfter.indexOf(whiteKey) !== -1) {
-				return [whiteKey, this.blackKey].concat(this.generateKeys(nextWhiteKey, size - 2));
-			} 
-			return [whiteKey].concat(this.generateKeys(nextWhiteKey, size - 1));
-		},
-
-		// Returns the first note for the current keyboard size.
-		getFirstNote: function() {
-			return this.keyboardSizes[this.numKeys]['firstNote'];
 		},
 
 		// Returns a key sequence for the keyboard.
 		getKeys: function() {
-			return this.generateKeys(this.getFirstNote(), this.numKeys);
+			return KeyGenerator.generate(this.numKeys);
 		},
 
 		// Returns true if the key is white, otherwise false.
