@@ -1,4 +1,5 @@
-define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
+// Note: also requires "raphael" (issue with requirejs, so loaded manually, not with requirejs)
+define(['jquery', 'lodash', 'lab/piano/keyrenderer'], function($, _, KeyRenderer) {
 
 	// Keyboard constructor function.
 	// 
@@ -9,22 +10,20 @@ define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
 	//	$('#piano').append(keyboard.el);
 	//
 	var Keyboard = function(numKeys) {
-		if(typeof numKeys !== 'undefined') {
-			if(!this.keyboardSizes.hasOwnProperty(this.numKeys)) {
-				throw new Error("Invalid keyboard size");
-			}
-			this.numKeys = numKeys;
-		}
-
-		this.el = $('<div class="keyboard"></div>');
-
-		this.paper = Raphael(this.el.get(0), this.width, this.height);
+		this.init(numKeys);
 	};
 
 	_.extend(Keyboard.prototype, {
+		// For debugging.
+		debug: true,
+
 		// Dimensions of the keyboard.
-		width: 800,
-		height: 150,
+		width: function() {
+			return 800;
+		},
+		height: function() {
+			return 150
+		},
 
 		// White keys may represent one of 7 possible notes in the musical alphabet. 
 		whiteKeys: 'ABCDEFG',
@@ -48,11 +47,29 @@ define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
 			88: { 'firstNote': 'A' }
 		},
 
+		// Initialize the keyboard object.
+		init: function(numKeys) {
+			if(typeof numKeys !== 'undefined') {
+				if(!this.keyboardSizes.hasOwnProperty(this.numKeys)) {
+					throw new Error("Invalid keyboard size");
+				}
+				this.numKeys = numKeys;
+			}
+
+			this.el = $('<div class="keyboard"></div>');
+
+			if(this.debug) {
+				console.log(Raphael);
+			}
+
+			this.paper = Raphael(this.el.get(0), this.width(), this.height());
+		},
+
 		// Returns the next white key note in the musical alphabet. 
 		nextWhiteKey: function(whiteKey) {
 			var index = this.whiteKeys.indexOf(whiteKey);
 			if(index === -1) {
-				throw new Error("Invalid whiteKey. No such white key.");
+				throw new Error("Invalid key.");
 			}
 			return this.whiteKeys.charAt((index + 1) % this.whiteKeys.length);
 		},
@@ -78,19 +95,20 @@ define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
 			return this.generateKeys(this.getFirstNote(), this.numKeys);
 		},
 
+		// Returns true if the key is white, otherwise false.
+		isWhiteKey: function(key) { 
+			return key !== this.blackKey; 
+		},
+		
+		// Returns true if the key is black, otherwise false.
+		isBlackKey: function(key) {
+			return key === this.blackKey;
+		},
+
 		// Filters a list of keys by white/black.
 		filterKeys: function(keys, type) {
-			var blackKey = this.blackKey;
-			var filterBy;
-			if(type === 'white') {
-				filterBy = function(key) { return key !== blackKey; };
-			} else if(type === 'black') {
-				filterBy = function(key) { return key === blackkey; };
-			} else {
-				throw new Error("Invalid key type");
-			}
-
-			return _.filter(keys, filterBy);
+			var filterBy = (type === 'white' ? this.isWhiteKey : this.isBlackKey);
+			return _.filter(keys, _.bind(filterBy, this));
 		},
 
 		// Returns the total number of white keys.
@@ -109,47 +127,47 @@ define(['jquery', 'lodash', 'raphael'], function($, _, Raphael) {
 			return this;
 		},
 
+		// Returns an object that knows how to render a white or black key.
+		_keyRenderer: function(key, numWhiteKeys, keyboardWidth, keyboardHeight) {
+			var config = { 
+				key: key,
+				numWhiteKeys: numWhiteKeys,
+				keyboardWidth: keyboardWidth,
+				keyboardHeight: keyboardHeight
+			};
+			return KeyRenderer.create(this.isWhiteKey(key), config);
+		},
+
 		// Helper function for rendering.
 		_render: function() {
 			var paper = this.paper;
-			var width = this.width;
-			var height = this.height;
 			var keys = this.getKeys();
 			var numWhiteKeys = this.getNumWhiteKeys(keys);
-			var keyboardEl = paper.rect(0, 0, width, height);
+			var keyboardWidth = this.width();
+			var keyboardHeight = this.height();
 
-			var eachKeys = function(keys, callback) {
-				var key, whiteKeyIndex = 0;
-				for(var i = 0, len = keys.length; i < len; i++) {
-					key = keys[i];
-					callback(key, i, whiteKeyIndex); 
-					if(key !== '-') {
-						whiteKeyIndex++;
-					}
+			// render keyboard
+			var keyboardEl = paper.rect(0, 0, keyboardWidth, keyboardHeight);
+			keyboardEl.attr('stroke-width', 2);
+
+			// render individual white and black keys
+			var whiteKeyIndex = 0;
+			var keySet = paper.set();
+			var keyRenderers = _.map(keys, function(key) {
+				return this._keyRenderer(key, numWhiteKeys, keyboardWidth, keyboardHeight);
+			}, this); 
+
+			_.each(keyRenderers, function(keyRenderer, index) {
+				keyRenderer.render(paper, whiteKeyIndex);
+				keySet.push(keyRenderer.el);
+				if(keyRenderer.isWhite) {
+					whiteKeyIndex++;
 				}
-			};
-
-			var renderKey = function(key, keyIndex, whiteKeyIndex) {
-				var keyWidth = (width / numWhiteKeys);
-				var keyOffset = (keyWidth * whiteKeyIndex);
-				var keyHeight = height; 
-				if(key === '-') {
-					keyWidth = (keyWidth / 2);
-					keyOffset -= (keyWidth * .5);
-					keyHeight *= .75;
-				} 
-
-				var el = paper.rect(keyOffset, 0, keyWidth, keyHeight);
-
-				if(key === '-') {
-					el.attr('fill', '#000');
-				} else {
-					paper.text((keyOffset + (keyWidth/2)), keyHeight - 25, key);
-					el.attr('stroke', '#000');
-				}
-			};
-
-			eachKeys(keys, renderKey);
+			});
+			
+			keySet.mousedown(function() {
+				this.attr('fill', '#739D00');
+			});
 		}
 	});
 

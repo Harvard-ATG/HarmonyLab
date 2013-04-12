@@ -43,6 +43,12 @@
 	</div>
 </body>
 
+<!-- Note: raphael is throwing intermittent errors with requirejs. There's
+clearly a timing issue somewhere, but I haven't been able to track it down, so
+for now I'm just going to load it manually and pollute the global namespace.
+-->
+<script src="{{ STATIC_URL }}js/raphael.js"></script>
+
 <script src="{{ STATIC_URL }}js/require.js"></script>
 <script>
 requirejs.config({
