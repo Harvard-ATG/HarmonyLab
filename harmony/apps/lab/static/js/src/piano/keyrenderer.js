@@ -1,4 +1,4 @@
-define(function() {
+define(['lodash'], function(_) {
 
 	// Renderer for white keys.
 	var WhiteKeyRenderer = function(config) {
