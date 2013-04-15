@@ -1,122 +1,95 @@
-// Note: also requires "raphael" (issue with requirejs, so loaded manually, not with requirejs)
-define(['jquery', 'lodash', 'lab/piano/keyrenderer', 'lab/piano/keygenerator'], function($, _, KeyRenderer, KeyGenerator) {
+// NOTE: this module also requires "raphael.js" 
+// There's an issue loading it with RequireJS so it is not listed as a dependency below,
+// so it should be loaded on the page. 
+define(['jquery', 'lodash', 'lab/piano/keygenerator', 'lab/piano/key'], function($, _, PianoKeyGenerator, PianoKey) {
 
-	// Keyboard constructor function.
-	// 
-	// Usage: 
-	//
-	//	var keyboard = new Keyboard(88);
-	//	keyboard.render();
-	//	$('#piano').append(keyboard.el);
-	//
-	var Keyboard = function(numKeys) {
-		this.init(numKeys);
+	/**
+	 * Piano Keyboard class.
+	 *
+	 * @constructor
+	 * @this {PianoKeyboard}
+	 * @param {integer} totalNumKeys The total number of keys on the keyboard.
+	 * 
+	 * Example:
+	 * 	  var keyboard = new PianoKeyboard(88);
+	 * 	  keyboard.render();
+	 *    $('#piano').append(keyboard.el);
+	 */
+	var PianoKeyboard = function(totalNumKeys) {
+		this.init(totalNumKeys);
 	};
 
-	_.extend(Keyboard.prototype, {
-		// For debugging.
+	_.extend(PianoKeyboard.prototype, {
 		debug: true,
+		width: 800,
+		height: 150,
+		totalNumKeys: 49,
 
-		// Dimensions of the keyboard.
-		width: function() {
-			return 800;
-		},
-		height: function() {
-			return 150
-		},
-
-		// Number of keys on the keyboard
-		numKeys: 49,
-
-		// Represents a black key note.
-		blackKey: '-',
-
-		// Initialize the keyboard object.
-		init: function(numKeys) {
+		/**
+		 * Initializes the keyboard.
+		 *
+		 * @param {integer} totalNumKeys The total number of keys on the keyboard.
+		 */
+		init: function(totalNumKeys) {
+			if(_.isNumber(totalNumKeys)) {
+				this.totalNumKeys = totalNumKeys;
+			}
 			this.el = $('<div class="keyboard"></div>');
-			this.paper = Raphael(this.el.get(0), this.width(), this.height());
+			this.paper = Raphael(this.el.get(0), this.width, this.height);
+			this.keys = this.getKeys();
 		},
 
-		// Returns a key sequence for the keyboard.
+		/**
+		 * Returns a sequence of piano keys for the current keyboard size.
+		 *
+		 * @return {array} of PianoKey objects.
+		 */
 		getKeys: function() {
-			return KeyGenerator.generate(this.numKeys);
+			var generatedKeys = PianoKeyGenerator.generateAsBooleans(this.totalNumKeys)
+			return _.map(generatedKeys, PianoKey.create);
 		},
 
-		// Returns true if the key is white, otherwise false.
-		isWhiteKey: function(key) { 
-			return key !== this.blackKey; 
-		},
-		
-		// Returns true if the key is black, otherwise false.
-		isBlackKey: function(key) {
-			return key === this.blackKey;
-		},
-
-		// Filters a list of keys by white/black.
-		filterKeys: function(keys, type) {
-			var filterBy = (type === 'white' ? this.isWhiteKey : this.isBlackKey);
-			return _.filter(keys, _.bind(filterBy, this));
+		/**
+		 * Returns the total number of white keys on the keyboard.
+		 *
+		 * @return {integer}
+		 */
+		getNumWhiteKeys: function() {
+			return _.filter(this.keys, function(pianoKey) {
+				return pianoKey.isWhite;
+			}).length;
 		},
 
-		// Returns the total number of white keys.
-		getNumWhiteKeys: function(keys) {
-			return this.filterKeys(keys, 'white').length;
-		},
-
-		// Returns the total number of black keys.
-		getNumBlackKeys: function(keys) {
-			return this.filterKeys(keys, 'black').length;
-		},
-
-		// Renders the keyboard.
+		/**
+		 * Renders the keyboard.
+		 */
 		render: function() { 
 			this._render();
 			return this;
 		},
 
-		// Returns an object that knows how to render a white or black key.
-		_keyRenderer: function(config) {
-			return KeyRenderer.create(config);
-		},
-
 		// Helper function for rendering.
 		_render: function() {
 			var paper = this.paper;
-			var keys = this.getKeys();
-			var numWhiteKeys = this.getNumWhiteKeys(keys);
-			var keyboardWidth = this.width();
-			var keyboardHeight = this.height();
+			var width = this.width;
+			var height = this.height;
+			var keys = this.keys;
+			var numWhiteKeys = this.getNumWhiteKeys();
 
 			// render keyboard
-			var keyboardEl = paper.rect(0, 0, keyboardWidth, keyboardHeight);
+			var keyboardEl = paper.rect(0, 0, width, height);
 			keyboardEl.attr('stroke-width', 2);
 
-			// render individual white and black keys
+			// render piano keys 
 			var whiteKeyIndex = 0;
-			var keySet = paper.set();
-			var keyRenderers = _.map(keys, function(key) {
-				return this._keyRenderer({
-					key: key,
-					isWhite: this.isWhiteKey(key),
-					numWhiteKeys: numWhiteKeys,
-					keyboardWidth: keyboardWidth,
-					keyboardHeight: keyboardHeight
-				});
-			}, this); 
-
-			_.each(keyRenderers, function(keyRenderer, index) {
-				keyRenderer.render(paper, whiteKeyIndex);
-				keySet.push(keyRenderer.el);
-				if(keyRenderer.isWhite) {
+			_.each(this.keys, function(pianoKey, index) {
+				pianoKey.render(paper, whiteKeyIndex, numWhiteKeys, width, height);
+				if(pianoKey.isWhite) {
 					whiteKeyIndex++;
 				}
-			});
-			
-			keySet.mousedown(function() {
-				this.attr('fill', '#739D00');
 			});
 		}
 	});
 
-	return Keyboard;
+	return PianoKeyboard;
 });

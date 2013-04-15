@@ -1,12 +1,11 @@
 define(['lodash'], function(_) {
 
 	/**
-	 * The KeyGenerator object is responsible for knowing how to generate a
+	 * The PianoKeyGenerator object is responsible for knowing how to generate a
 	 * sequence of keys for different piano keyboard sizes. It does not store
-	 * any state on its own and is intended to be used by other objects as a
-	 * factory.
+	 * any state on its own.
 	 */
-	var KeyGenerator = {
+	var PianoKeyGenerator = {
 
 		/**
 		 * White keys are represented by one of the 7 main notes in the western musical alphabet. 
@@ -64,6 +63,17 @@ define(['lodash'], function(_) {
 		},
 
 		/**
+		 * Returns true if the note value represents a white key, or false if
+		 * it's a black key.
+		 *
+		 * @param {string} noteValue The note.  
+		 * @return {boolean}
+		 */
+		isWhiteNote: function(noteValue) { 
+			return this.noteValues.indexOf(noteValue) !== -1;
+		},
+
+		/**
 		 * Returns an array of strings representing white and black notes. 
 		 *
 		 * @param {string} noteValue The current note value.
@@ -81,14 +91,26 @@ define(['lodash'], function(_) {
 		},
 
 		/**
-		 * Returns an array of piano key objects.
+		 * Returns an array of piano key values.
+		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {array}
 		 */
 		generate: function(size) {
 			return this.noteSequence(this.firstNote(size), size);
+		},
+
+		/**
+		 * Returns an array of booleans where TRUE represents white keys and
+		 * FALSE black keys.
+		 *
+		 * @param {integer} size The keyboard size.
+		 * @return {array}
+		 */
+		generateAsBooleans: function(size) {
+			return _.map(this.generate(size), _.bind(this.isWhiteNote, this));
 		}
 	};
 
-	return KeyGenerator;
+	return PianoKeyGenerator;
 });
