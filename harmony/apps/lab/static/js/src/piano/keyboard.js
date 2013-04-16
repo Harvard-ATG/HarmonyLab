@@ -11,8 +11,8 @@ define(['jquery', 'lodash', 'lab/piano/keygenerator', 'lab/piano/key'], function
 	 * @param {integer} totalNumKeys The total number of keys on the keyboard.
 	 * 
 	 * Example:
-	 * 	  var keyboard = new PianoKeyboard(88);
-	 * 	  keyboard.render();
+	 *   var keyboard = new PianoKeyboard(88);
+	 *   keyboard.render();
 	 *    $('#piano').append(keyboard.el);
 	 */
 	var PianoKeyboard = function(totalNumKeys) {
@@ -45,7 +45,7 @@ define(['jquery', 'lodash', 'lab/piano/keygenerator', 'lab/piano/key'], function
 		 * @return {array} of PianoKey objects.
 		 */
 		getKeys: function() {
-			var generatedKeys = PianoKeyGenerator.generateAsBooleans(this.totalNumKeys)
+			var generatedKeys = PianoKeyGenerator.generateAsBooleans(this.totalNumKeys);
 			return _.map(generatedKeys, PianoKey.create);
 		},
 

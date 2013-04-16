@@ -45,10 +45,10 @@ define(['lodash'], function(_) {
 			if(!this.keyboardSizes.hasOwnProperty(size)) {
 				throw new Error("Unknown first note for keyboard size.");
 			}
-			return this.keyboardSizes[size]['firstNote'];
+			return this.keyboardSizes[size].firstNote;
 		},
 
-	 	/**
+		/**
 		 * Returns the next white key note in the musical alphabet. 
 		 *
 		 * @param {string} noteValue The current note value.
@@ -82,7 +82,7 @@ define(['lodash'], function(_) {
 		 */
 		noteSequence: function(noteValue, size) {
 			var nextNote = this.nextNote(noteValue);
-			if(size == 0) {
+			if(size === 0) {
 				return [];
 			} else if(size > 1 && this.blackNotesAfter.indexOf(noteValue) !== -1) {
 				return [noteValue, this.blackNote].concat(this.noteSequence(nextNote, size - 2));
