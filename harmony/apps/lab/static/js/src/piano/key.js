@@ -76,7 +76,7 @@ define(['lodash'], function(_) {
 				this.calculateHeight(keyboardHeight)
 			);
 			this.el.mousedown(function() {
-				this.attr('fill', '#739D00');
+				this.attr('fill', '#aaa');
 			});
 			return this;
 		}
@@ -158,10 +158,10 @@ define(['lodash'], function(_) {
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			PianoKey.prototype.render.apply(this, arguments);
 			var el = this.el;
-			el.attr({'stroke': '#000', 'fill': '#fff'});
+			el.attr({'stroke': '#000', 'fill': '#fffff0'});
 			el.toBack();
 			el.mouseup(function() {
-				this.attr('fill', '#fff');
+				this.attr('fill', '#fffff0');
 			});
 			return this;
 		}
