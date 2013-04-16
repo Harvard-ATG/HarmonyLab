@@ -1,22 +1,18 @@
 define(['lodash'], function(_) {
 
-	// constants for pano key states
+	// constants for piano key states
 	var STATE_KEYUP = 'keyup', STATE_KEYDN = 'keydown';
 
 	/**
-	 * PianoKey Class.
+	 * Piano Key Mixin.
 	 *
-	 * Encapsulates functionality for displaying and interacting with piano
-	 * keys on the onscreen keyboard.
+	 * Encapsulates common functionality for displaying and interacting with piano
+	 * keys on the onscreen keyboard. 
 	 *
-	 * @constructor
-	 * @this {PianoKey}
-	 * @param {object} config
+	 * These properties and methods should be copied into the white/black piano key
+	 * classes.
 	 */
-	var PianoKey = function() {
-	};
-
-	_.extend(PianoKey.prototype, {
+	var PianoKeyMixin = {
 		/**
 		 * Current state of the piano key (up or down).
 		 */
@@ -60,6 +56,17 @@ define(['lodash'], function(_) {
 		},
 
 		/**
+		 * Initializes the piano key.
+		 *
+		 * @return {this}
+		 */
+		init: function() {
+			this.onPress = _.bind(this.onPress, this);
+			this.onRelease = _.bind(this.onRelease, this);
+			return this;
+		},
+
+		/**
 		 * Renders the piano key on the screen.
 		 * 
 		 * @param {Raphael} paper Paper object from Raphael SVG library.
@@ -75,26 +82,24 @@ define(['lodash'], function(_) {
 				this.calculateWidth(numWhiteKeys, keyboardWidth), 
 				this.calculateHeight(keyboardHeight)
 			);
-			this.el.mousedown(function() {
-				this.attr('fill', '#aaa');
-			});
+			this.el.mousedown(this.onPress);
 			return this;
-		}
-	});
+		},
 
-	/**
-	 * Factory function that returns an instance of a white
-	 * or black piano key.
-	 *
-	 * @param {boolean} isWhite True to create a white key, false for a black key.
-	 * @param {string} key The string name of the key (optional).
-	 * @return {PianoKey}
-	 */
-	PianoKey.create = function(isWhite, key) {
-		if(isWhite) {
-			return new WhitePianoKey(key);
-		} 
-		return new BlackPianoKey(key);
+		/**
+		 * Event handler for key press.
+		 */
+		onPress: function() {
+			this.el.attr('fill', '#aaa');
+		},
+
+		/**
+		 * Event handler for key press.
+		 */
+		onRelease: function() {
+			// stub
+		},
+
 	};
 
 	/**
@@ -104,11 +109,11 @@ define(['lodash'], function(_) {
 	 * @this {WhitePianoKey}
 	 * @param {Object} config
 	 */
-	var WhitePianoKey = function(key) {
-		this.label = key; 
+	var WhitePianoKey = function() {
+		this.init.apply(this, arguments);
 	};
 
-	_.extend(WhitePianoKey.prototype, new PianoKey(), {
+	_.extend(WhitePianoKey.prototype, PianoKeyMixin, {
 		/**
 		 * Property to indicate if it's a white or black key.
 		 */
@@ -156,14 +161,19 @@ define(['lodash'], function(_) {
 		 * @return {this}
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
-			PianoKey.prototype.render.apply(this, arguments);
+			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
 			el.attr({'stroke': '#000', 'fill': '#fffff0'});
 			el.toBack();
-			el.mouseup(function() {
-				this.attr('fill', '#fffff0');
-			});
+			el.mouseup(this.onRelease);
+			el.mouseout(this.onRelease);
 			return this;
+		},
+		/**
+		 * Event handler for releasing the key.
+		 */
+		onRelease: function() {
+			this.el.attr('fill', '#fffff0');
 		}
 	});
 
@@ -174,11 +184,11 @@ define(['lodash'], function(_) {
 	 * @this {BlackPianoKey}
 	 * @param {Object} config
 	 */
-	var BlackPianoKey = function(key) {
-		this.label = key;
+	var BlackPianoKey = function() {
+		this.init.apply(this, arguments);
 	};
 
-	_.extend(BlackPianoKey.prototype, new PianoKey(), {
+	_.extend(BlackPianoKey.prototype, PianoKeyMixin, {
 		/**
 		 * Property to indicate if it's a white or black key.
 		 */
@@ -228,16 +238,35 @@ define(['lodash'], function(_) {
 		 * @return {this}
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
-			PianoKey.prototype.render.apply(this, arguments);
+			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
 			el.attr('fill', '90-#333-#000');
 			el.toFront();
-			el.mouseup(function() {
-				this.attr('fill', '90-#333-#000');
-			});
+			el.mouseup(this.onRelease);
 			return this;
+		},
+		/**
+		 * Event handler for releasing the key.
+		 */
+		onRelease: function() {
+			this.el.attr('fill', '90-#333-#000');
 		}
 	});
+
+	var PianoKey = {
+		/**
+		 * Factory function that returns an instance of a white
+		 * or black piano key.
+		 *
+		 * @param {boolean} isWhite True to create a white key, false for a black key.
+		 * @param {string} key The string name of the key (optional).
+		 * @return {PianoKey}
+		 */
+		create: function(isWhite, key) {
+			var constructor = isWhite ? WhitePianoKey : BlackPianoKey;
+			return new constructor(key);
+		}
+	};
 
 	return PianoKey;
 });
