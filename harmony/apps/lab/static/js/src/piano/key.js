@@ -98,8 +98,7 @@ define(['lodash'], function(_) {
 		 */
 		onRelease: function() {
 			// stub
-		},
-
+		}
 	};
 
 	/**
