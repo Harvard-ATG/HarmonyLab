@@ -1,3 +1,15 @@
+define(['jasmine/src/Song', 'jasmine/src/Player'], function(Song, Player) {
+
+beforeEach(function() {
+  this.addMatchers({
+	toBePlaying: function(expectedSong) {
+	  var player = this.actual;
+	  return player.currentlyPlayingSong === expectedSong && 
+			 player.isPlaying;
+	}
+  });
+});
+
 describe("Player", function() {
   var player;
   var song;
@@ -55,4 +67,6 @@ describe("Player", function() {
       }).toThrow("song is already playing");
     });
   });
+});
+
 });
