@@ -1,7 +1,10 @@
-// NOTE: this module also requires "raphael.js" 
-// There's an issue loading it with RequireJS so it is not listed as a dependency below,
-// so it should be loaded on the page. 
-define(['jquery', 'lodash', 'lab/piano/keygenerator', 'lab/piano/key'], function($, _, PianoKeyGenerator, PianoKey) {
+// NOTE: this module also requires "raphael.js" (loaded synchronously - AMD issues)
+define([
+	'jquery', 
+	'lodash', 
+	'./keygenerator', 
+	'./key'
+], function($, _, PianoKeyGenerator, PianoKey) {
 
 	/**
 	 * Piano Keyboard class.

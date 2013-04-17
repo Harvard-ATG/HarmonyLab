@@ -1,4 +1,8 @@
-require(['jquery', 'lodash', 'lab/piano/keyboard'], function($, _, PianoKeyboard) {
+require([
+	'jquery', 
+	'app/piano/keyboard'
+], 
+function($, PianoKeyboard) {
 	$(document).ready(function() {
 		var keyboard = new PianoKeyboard();
 		keyboard.render();

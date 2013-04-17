@@ -11,5 +11,7 @@
 {% endblock %}
 
 {% block js_extra %}
-<script src="{{STATIC_URL}}lab/js/src/main.js"></script>
+{# TODO: get raphaeljs to work with requirejs #}
+<script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
+<script src="{{ STATIC_URL }}js/src/piano.js"></script>
 {% endblock %}
