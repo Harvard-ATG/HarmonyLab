@@ -1,6 +1,6 @@
 # Common settings for all environments
 from os import path
-import glob
+from glob import glob
 
 # Django settings for harmony project.
 
@@ -54,6 +54,9 @@ ROOT_DIR = reduce(lambda l,r: path.dirname(l), range(3), path.realpath(__file__)
 # Example: "/home/ubuntu/harmony/harmony"
 PROJECT_ROOT = path.join(ROOT_DIR, 'harmony')
 
+# Example: "/home/ubuntu/harmony/harmony/apps"
+APPS_ROOT = path.join(PROJECT_ROOT, 'apps')
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
@@ -81,15 +84,9 @@ STATICFILES_DIRS = [
 	path.join(PROJECT_ROOT, 'static'),
 ]
 
-# Add static locationss for each app, namespaced by app name:
-# 	[(<app>, <app>/static), ...]
 STATICFILES_DIRS.extend([ 
-	(path.split(f)[1], path.join(f, 'static')) 
-	for f in glob.glob(path.join(PROJECT_ROOT, 'apps') + '/*')
-	if path.isdir(f) and path.exists(path.join(f, 'static'))
+	f for f in glob(path.join(APPS_ROOT, '*', 'static')) if path.isdir(f)
 ])
-	
-print STATICFILES_DIRS
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -124,12 +121,16 @@ ROOT_URLCONF = 'harmony.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'harmony.wsgi.application'
 
-TEMPLATE_DIRS = (
+TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	path.join(PROJECT_ROOT, 'templates')
-)
+	path.join(PROJECT_ROOT, 'templates'),
+]
+
+TEMPLATE_DIRS.extend([
+	f for f in glob(path.join(APPS_ROOT, '*', 'templates')) if path.isdir(f)
+])
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -144,6 +145,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 	'harmony.apps.lab',
+	'harmony.apps.jasmine',
 )
 
 # A sample logging configuration. The only tangible logging
