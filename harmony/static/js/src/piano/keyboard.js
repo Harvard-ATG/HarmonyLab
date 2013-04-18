@@ -34,8 +34,8 @@ define([
 		 * @param {integer} totalNumKeys The total number of keys on the keyboard.
 		 */
 		init: function(totalNumKeys) {
-			if(_.isNumber(totalNumKeys)) {
-				this.totalNumKeys = totalNumKeys;
+			if(!_.isUndefined(totalNumKeys) && _.isNumber(parseInt(totalNumKeys,10))) {
+				this.totalNumKeys = parseInt(totalNumKeys, 10);
 			}
 			this.el = $('<div class="keyboard"></div>');
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
