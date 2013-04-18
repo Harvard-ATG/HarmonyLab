@@ -242,6 +242,7 @@ define(['lodash'], function(_) {
 			el.attr('fill', '90-#333-#000');
 			el.toFront();
 			el.mouseup(this.onRelease);
+			el.mouseout(this.onRelease);
 			return this;
 		},
 		/**
