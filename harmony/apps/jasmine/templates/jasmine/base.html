@@ -27,8 +27,11 @@
 <body>
 <script>
 require([
-	'jquery',
-    'jasmine/spec/PlayerSpec'
+	'jquery'
+	,'jasmine/spec/PlayerSpec'
+	{% for spec_file in all_specs %}
+	,'{{ spec_file }}'
+	{% endfor %}
 ], function($) {
 	var jasmineEnv = jasmine.getEnv();
 	var htmlReporter = new jasmine.HtmlReporter();
