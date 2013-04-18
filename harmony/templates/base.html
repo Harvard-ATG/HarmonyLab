@@ -19,7 +19,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="./index.html">Harmony</a>
+				<a class="brand" href="{% url 'harmony.apps.lab.views.index' %}">Harmony</a>
 				<div class="btn-group pull-right">
 
 					{% if user.is_authenticated %}
