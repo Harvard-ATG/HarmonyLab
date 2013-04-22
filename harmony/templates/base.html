@@ -50,6 +50,8 @@ requirejs.config({
 	paths: {
 		"app": "{{ STATIC_URL }}js/src"
 	}
+	{# FOR DEBUG ONLY #}
+	,urlArgs: 'timestamp='+(new Date().getTime())
 });
 </script>
 {% endblock %}

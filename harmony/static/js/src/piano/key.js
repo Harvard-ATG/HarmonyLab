@@ -28,6 +28,8 @@ define(['lodash'], function(_) {
 		 */
 		press: function() {
 			this.state = STATE_KEYDN;
+			this.updateColor();
+			this.keyboard.trigger('key:press', this);
 		},
 
 		/**
@@ -35,8 +37,10 @@ define(['lodash'], function(_) {
 		 */
 		release: function() {
 			this.state = STATE_KEYUP;
+			this.updateColor();
+			this.keyboard.trigger('key:release', this);
 		},
-
+		
 		/**
 		 * Returns true if the key is in the down state.
 		 *
@@ -60,7 +64,9 @@ define(['lodash'], function(_) {
 		 *
 		 * @return {this}
 		 */
-		init: function() {
+		init: function(keyboard, config) {
+			this.keyboard = keyboard;
+			this.config = config;
 			this.onPress = _.bind(this.onPress, this);
 			this.onRelease = _.bind(this.onRelease, this);
 			return this;
@@ -90,14 +96,30 @@ define(['lodash'], function(_) {
 		 * Event handler for key press.
 		 */
 		onPress: function() {
-			this.el.attr('fill', '#aaa');
+			this.press();
 		},
 
 		/**
 		 * Event handler for key press.
 		 */
 		onRelease: function() {
-			// stub
+			this.release();
+		},
+
+		/**
+		 * Changes the color of the key depending on the state.
+		 */
+		updateColor: function() {
+			this.el.attr('fill', this.keyColorMap[this.state]);
+		},
+
+		/**
+		 * Returns the note number of the key.
+		 *
+		 * @return {integer}
+		 */
+		noteNumber: function() {
+			return this.config.noteNumber;
 		}
 	};
 
@@ -117,6 +139,11 @@ define(['lodash'], function(_) {
 		 * Property to indicate if it's a white or black key.
 		 */
 		isWhite: true,
+
+		/**
+		 * Property for changing the key color when it's pressed or released.
+		 */
+		keyColorMap: {},
 
 		/**
 		 * Returns the width of the key.
@@ -168,13 +195,10 @@ define(['lodash'], function(_) {
 			el.mouseout(this.onRelease);
 			return this;
 		},
-		/**
-		 * Event handler for releasing the key.
-		 */
-		onRelease: function() {
-			this.el.attr('fill', '#fffff0');
-		}
 	});
+
+	WhitePianoKey.prototype.keyColorMap[STATE_KEYUP] = '#fffff0';
+	WhitePianoKey.prototype.keyColorMap[STATE_KEYDN] = '#aaa';
 
 	/**
 	 * Black piano key class.
@@ -192,6 +216,11 @@ define(['lodash'], function(_) {
 		 * Property to indicate if it's a white or black key.
 		 */
 		isWhite: false,
+
+		/**
+		 * Property for changing the key color when it's pressed or released.
+		 */
+		keyColorMap: {},
 
 		/**
 		 * Returns the width of the key.
@@ -244,14 +273,11 @@ define(['lodash'], function(_) {
 			el.mouseup(this.onRelease);
 			el.mouseout(this.onRelease);
 			return this;
-		},
-		/**
-		 * Event handler for releasing the key.
-		 */
-		onRelease: function() {
-			this.el.attr('fill', '90-#333-#000');
 		}
 	});
+
+	BlackPianoKey.prototype.keyColorMap[STATE_KEYUP] = '90-#333-#000',
+	BlackPianoKey.prototype.keyColorMap[STATE_KEYDN] = '#aaa';
 
 	var PianoKey = {
 		/**
@@ -262,9 +288,9 @@ define(['lodash'], function(_) {
 		 * @param {string} key The string name of the key (optional).
 		 * @return {PianoKey}
 		 */
-		create: function(isWhite, key) {
-			var constructor = isWhite ? WhitePianoKey : BlackPianoKey;
-			return new constructor(key);
+		create: function(keyboard, config) {
+			var constructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
+			return new constructor(keyboard, config);
 		}
 	};
 

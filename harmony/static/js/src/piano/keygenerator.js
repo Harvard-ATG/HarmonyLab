@@ -26,17 +26,15 @@ define(['lodash'], function(_) {
 		 * Maps valid keyboard sizes to configuration parameters. 
 		 */
 		keyboardSizes: {
-			25: { 'firstNote': 'C' }, 
-			37: { 'firstNote': 'C' }, 
-			49: { 'firstNote': 'C' }, 
-			61: { 'firstNote': 'C' }, 
-			76: { 'firstNote': 'E' }, 
-			88: { 'firstNote': 'A' }
+			25: { 'firstNote': 'C', 'firstNoteNumber': 48 }, 
+			37: { 'firstNote': 'C', 'firstNoteNumber': 48 }, 
+			49: { 'firstNote': 'C', 'firstNoteNumber': 36 }, 
+			61: { 'firstNote': 'C', 'firstNoteNumber': 36 }, 
+			88: { 'firstNote': 'A', 'firstNoteNumber': 12 }
 		},
 
 		/**
 		 * Returns a string representing the first note on the keyboard. 
-		 * Note that this depends on the keyboard size.
 		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {string} 
@@ -46,6 +44,19 @@ define(['lodash'], function(_) {
 				throw new Error("Unknown first note for keyboard size.");
 			}
 			return this.keyboardSizes[size].firstNote;
+		},
+
+		/**
+		 * Returns the first note number.
+		 *
+		 * @param {integer} size The keyboard size.
+		 * @return {integer}
+		 */
+		firstNoteNumber: function(size) {
+			if(!this.keyboardSizes.hasOwnProperty(size)) {
+				throw new Error("Unknown first note for keyboard size.");
+			}
+			return this.keyboardSizes[size].firstNoteNumber;
 		},
 
 		/**
@@ -74,6 +85,16 @@ define(['lodash'], function(_) {
 		},
 
 		/**
+		 * Returns the octave for a note number.
+		 *
+		 * @param {integer} noteNumber The midi note number.
+		 * @return {integer}
+		 */
+		octaveOf: function(noteNumber) {
+			return Math.floor(noteNumber / 12) - 1;
+		},
+
+		/**
 		 * Returns an array of strings representing white and black notes. 
 		 *
 		 * @param {string} noteValue The current note value.
@@ -91,7 +112,7 @@ define(['lodash'], function(_) {
 		},
 
 		/**
-		 * Returns an array of piano key values.
+		 * Returns an array of piano key string values.
 		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {array}
@@ -101,14 +122,37 @@ define(['lodash'], function(_) {
 		},
 
 		/**
-		 * Returns an array of booleans where TRUE represents white keys and
-		 * FALSE black keys.
+		 * Returns an array of note objects with note names and numbers.
 		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {array}
 		 */
-		generateAsBooleans: function(size) {
-			return _.map(this.generate(size), _.bind(this.isWhiteNote, this));
+		generateNotes: function(size) {
+			var noteAsObject = _.bind(this.noteAsObject(size), this);
+			return _.map(this.generate(size), noteAsObject);
+		},
+
+		/**
+		 * Returns a function for converting a note value to an object.
+		 *
+		 * @param {integer} size The keyboard size.
+		 * @return {function}
+		 */
+		noteAsObject: function(size) {
+			var firstNoteNumber = this.firstNoteNumber(size);	
+
+			return function(noteValue, index) {
+				var noteNumber = firstNoteNumber + index;
+				var octave = this.octaveOf(noteNumber);
+				var isWhite = this.isWhiteNote(noteValue);
+				var noteName = (isWhite ? noteValue + octave : '');
+
+				return { 
+					'noteName': noteName,
+					'noteNumber': noteNumber,
+				    'isWhite': isWhite
+				};
+			};
 		}
 	};
 

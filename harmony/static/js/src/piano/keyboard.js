@@ -2,44 +2,77 @@
 define([
 	'jquery', 
 	'lodash', 
+	'microevent',
+	'jazzmidibridge',
 	'./keygenerator', 
 	'./key'
-], function($, _, PianoKeyGenerator, PianoKey) {
+], function($, _, MicroEvent, JMB, PianoKeyGenerator, PianoKey) {
 
 	/**
 	 * Piano Keyboard class.
 	 *
 	 * @constructor
 	 * @this {PianoKeyboard}
-	 * @param {integer} totalNumKeys The total number of keys on the keyboard.
+	 * @param {integer} numberOfKeys The total number of keys on the keyboard.
 	 * 
 	 * Example:
 	 *   var keyboard = new PianoKeyboard(88);
 	 *   keyboard.render();
 	 *    $('#piano').append(keyboard.el);
 	 */
-	var PianoKeyboard = function(totalNumKeys) {
-		this.init(totalNumKeys);
+	var PianoKeyboard = function(numberOfKeys) {
+		this.init(numberOfKeys);
 	};
 
 	_.extend(PianoKeyboard.prototype, {
-		debug: true,
+		/**
+		 * Size of the keyboard on screen.
+		 *
+		 * @property {integer} width
+		 * @property {integer} height
+		 */
 		width: 800,
 		height: 150,
-		totalNumKeys: 49,
+
+		/**
+		 * Defines the number of keys on the keyboard.
+		 *
+		 * @property {integer} numberOfKeys
+		 */
+		numberOfKeys: 49,
 
 		/**
 		 * Initializes the keyboard.
 		 *
-		 * @param {integer} totalNumKeys The total number of keys on the keyboard.
+		 * @param {integer} numberOfKeys The total number of keys on the keyboard.
 		 */
-		init: function(totalNumKeys) {
-			if(!_.isUndefined(totalNumKeys) && _.isNumber(parseInt(totalNumKeys,10))) {
-				this.totalNumKeys = parseInt(totalNumKeys, 10);
+		init: function(numberOfKeys) {
+			if(!_.isUndefined(numberOfKeys) && _.isNumber(parseInt(numberOfKeys,10))) {
+				this.numberOfKeys = parseInt(numberOfKeys, 10);
 			}
+
 			this.el = $('<div class="keyboard"></div>');
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 			this.keys = this.getKeys();
+
+			this.initEvents();
+		},
+
+		/**
+		 * Initializes keyboard events.
+		 */
+		initEvents: function() {
+			var that = this;
+			JMB.init(function(MIDIAccess) {
+				var output = MIDIAccess.getOutput(0);
+				var onKeyPress = function(MIDIDevice, MIDICommand) {
+					return function(key) {
+						MIDIDevice.sendMIDIMessage(MIDIAccess.createMIDIMessage(MIDICommand, key.noteNumber(), 100));
+					}
+				};
+				that.bind('key:press', onKeyPress(output, JMB.NOTE_ON)); 
+				that.bind('key:release', onKeyPress(output, JMB.NOTE_OFF));
+			});
 		},
 
 		/**
@@ -48,8 +81,11 @@ define([
 		 * @return {array} of PianoKey objects.
 		 */
 		getKeys: function() {
-			var generatedKeys = PianoKeyGenerator.generateAsBooleans(this.totalNumKeys);
-			return _.map(generatedKeys, PianoKey.create);
+			var notes = PianoKeyGenerator.generateNotes(this.numberOfKeys);
+			var keyboard = this;
+			return _.map(notes, function(noteConfig) {
+				return PianoKey.create(keyboard, noteConfig);
+			});
 		},
 
 		/**
@@ -93,6 +129,11 @@ define([
 			});
 		}
 	});
+
+	/**
+	 * This adds "observable" behavior to the keyboard (i.e. bind/trigger events).
+	 */
+	MicroEvent.mixin(PianoKeyboard);
 
 	return PianoKeyboard;
 });
