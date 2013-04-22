@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+	{% if user.is_authenticated %}
+		<p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+	{% else %}
+		<p>Welcome, new user. Please log in.</p>
+	{% endif %}
 
-index
+	<div id="piano"></div>
+{% endblock %}
 
+{% block js_extra %}
+{# TODO: get raphaeljs to work with requirejs #}
+<script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
+<script src="{{ STATIC_URL }}js/src/piano.js"></script>
 {% endblock %}
