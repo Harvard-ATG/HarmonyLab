@@ -8,7 +8,7 @@ harmony by providing instant feedback.
 
 # Quickstart
 
-Requires [http://python.org/download/releases/](Python 2.7.x) and [Pip](http://www.pip-installer.org/).
+Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://www.pip-installer.org/).
 
 ```sh
 $ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
