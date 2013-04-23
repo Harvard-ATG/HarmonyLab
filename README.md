@@ -6,14 +6,12 @@ The Harmony Lab suite is Open Source educational software that notates, teaches,
 your harmony; unlike Sibelius and Finale this application enhances a learner's understanding of
 harmony by providing instant feedback.
 
-# Developer Quickstart
+# Quickstart
 
-- Clone the repository.
-- Install dependencies.
-- Run the server.
+Requires [http://python.org/download/releases/](Python 2.7.x) and [Pip](http://www.pip-installer.org/).
 
 ```sh
-$ git clone {harmony repo}
+$ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
 $ cd harmony
 $ pip install -r requirements.txt
 $ django-admin.py syncdb
