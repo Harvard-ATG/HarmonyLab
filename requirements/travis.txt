@@ -1,0 +1,3 @@
+# Install all dependencies for travis-ci.org (continuous integration testing)
+-r common.txt
+nose==1.3.0
