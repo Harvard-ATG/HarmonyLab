@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Harvard-ATG/HarmonyLab.png?branch=master)](https://travis-ci.org/Harvard-ATG/HarmonyLab)
+
 # Overview
 
 Harmony Lab is an application for music theory students, faculty, and staff in higher ed or K-12 
