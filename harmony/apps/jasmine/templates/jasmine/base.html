@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <title>Jasmine Spec Runner</title>
+
+  <link rel="shortcut icon" type="image/png" href="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine_favicon.png">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine.css">
+
+
+  <script src="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine.js"></script>
+  <script src="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine-html.js"></script>
+
+  <script src="{{ STATIC_URL }}js/lib/require.js"></script>
+  <script>
+    requirejs.config({
+        baseUrl: "{{ STATIC_URL }}js/lib",
+        paths: {
+            "app": "{{ STATIC_URL }}js/src",
+            "spec": "{{ STATIC_URL }}js/spec",
+            "jasmine": "{{ STATIC_URL }}jasmine"
+        }
+    });
+  </script>
+
+</head>
+
+<body>
+<script>
+require([
+	'jquery'
+	,'jasmine/spec/PlayerSpec'
+	{% for spec_file in all_specs %}
+	,'{{ spec_file }}'
+	{% endfor %}
+], function($) {
+	var jasmineEnv = jasmine.getEnv();
+	var htmlReporter = new jasmine.HtmlReporter();
+
+	jasmineEnv.updateInterval = 1000;
+	jasmineEnv.addReporter(htmlReporter);
+	jasmineEnv.specFilter = function(spec) {
+		return htmlReporter.specFilter(spec);
+	};
+
+	$(document).ready(function() {
+		jasmineEnv.execute();
+	});
+});
+</script>
+</body>
+</html>

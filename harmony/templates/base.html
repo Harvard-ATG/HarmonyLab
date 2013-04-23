@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 	<link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-	<link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="{{ STATIC_URL }}css/application.css" rel="stylesheet">
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
+	{% block css_extra %}{% endblock %}
 </head>
 <body>
 	<div class="navbar navbar-fixed-top">
@@ -18,7 +19,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="./index.html">Harmony</a>
+				<a class="brand" href="{% url 'harmony.apps.lab.views.index' %}">Harmony</a>
 				<div class="btn-group pull-right">
 
 					{% if user.is_authenticated %}
@@ -38,20 +39,23 @@
 	</div>
 	
 	<div class="container">
-
-		{% if user.is_authenticated %}
-		    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
-		{% else %}
-		    <p>Welcome, new user. Please log in.</p>
-		{% endif %}
-		
-		{% block content %}
-		Empty content.
-		{% endblock %}
+		{% block content %}{% endblock %}
 	</div>
+
+{% block js_require %}
+<script src="{{ STATIC_URL }}js/lib/require.js"></script>
+<script>
+requirejs.config({
+	baseUrl: "{{ STATIC_URL }}js/lib",
+	paths: {
+		"app": "{{ STATIC_URL }}js/src"
+	}
+	{# FOR DEBUG ONLY #}
+	,urlArgs: 'timestamp='+(new Date().getTime())
+});
+</script>
+{% endblock %}
+{% block js_extra %}{% endblock %}
+
 </body>
-
-<script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
-<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-
 </html>
