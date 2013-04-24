@@ -16,6 +16,6 @@ Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://w
 $ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
 $ cd harmony
 $ pip install -r requirements.txt
-$ django-admin.py syncdb
-$ django-admin.py runserver
+$ ./manage.py syncdb
+$ ./manage.py runserver
 ```
