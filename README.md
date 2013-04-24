@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Harvard-ATG/HarmonyLab.png?branch=master)](https://travis-ci.org/Harvard-ATG/HarmonyLab)
+
 # Overview
 
 Harmony Lab is an application for music theory students, faculty, and staff in higher ed or K-12 
@@ -6,14 +8,12 @@ The Harmony Lab suite is Open Source educational software that notates, teaches,
 your harmony; unlike Sibelius and Finale this application enhances a learner's understanding of
 harmony by providing instant feedback.
 
-# Developer Quickstart
+# Quickstart
 
-- Clone the repository.
-- Install dependencies.
-- Run the server.
+Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://www.pip-installer.org/).
 
 ```sh
-$ git clone {harmony repo}
+$ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
 $ cd harmony
 $ pip install -r requirements.txt
 $ django-admin.py syncdb
