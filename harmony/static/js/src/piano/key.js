@@ -13,7 +13,6 @@ define(['lodash', 'radio'], function(_, radio) {
 	 * classes.
 	 */
 	var PianoKeyMixin = {
-
 		/**
 		 * Reference to the radio event bus.
 		 */
@@ -92,9 +91,9 @@ define(['lodash', 'radio'], function(_, radio) {
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			this.el = paper.rect(
-				this.calculateOffsetX(whiteKeyIndex, numWhiteKeys, keyboardWidth), 
+				this.calculateOffsetX(whiteKeyIndex), 
 				0, // offsetY 
-				this.calculateWidth(numWhiteKeys, keyboardWidth), 
+				this.calculateWidth(), 
 				this.calculateHeight(keyboardHeight)
 			);
 			this.el.mousedown(this.onPress);
@@ -152,8 +151,8 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
-		calculateWidth: function(numWhiteKeys, keyboardWidth) {
-			return keyboardWidth / numWhiteKeys;
+		calculateWidth: function() {
+			return PianoKey.width; 
 		},
 
 		/**
@@ -170,11 +169,10 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
 		 * @param {integer} whiteKeyIndex The index of the preceding white key
-		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
-		calculateOffsetX: function(whiteKeyIndex, numWhiteKeys, keyboardWidth) {
-			return whiteKeyIndex * this.calculateWidth(numWhiteKeys, keyboardWidth);
+		calculateOffsetX: function(whiteKeyIndex) {
+			return whiteKeyIndex * this.calculateWidth();
 		},
 
 		/**
@@ -229,8 +227,8 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
-		calculateWidth: function(numWhiteKeys, keyboardWidth) {
-			return 0.5 * (keyboardWidth / numWhiteKeys);
+		calculateWidth: function() {
+			return PianoKey.width / 2;
 		},
 
 		/**
@@ -247,13 +245,12 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
 		 * @param {integer} whiteKeyIndex The index of the preceding white key
-		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
-		calculateOffsetX: function(whiteKeyIndex, numWhiteKeys, keyboardWidth) {
-			var offset = (whiteKeyIndex * (keyboardWidth / numWhiteKeys)); 
-			var width = this.calculateWidth(numWhiteKeys, keyboardWidth);
-			return offset - (0.5 * width);
+		calculateOffsetX: function(whiteKeyIndex) {
+			var offset = (whiteKeyIndex * PianoKey.width); 
+			var width = this.calculateWidth();
+			return offset - (width / 2);
 		},
 
 		/**
@@ -291,7 +288,12 @@ define(['lodash', 'radio'], function(_, radio) {
 		create: function(config) {
 			var constructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
 			return new constructor(config);
-		}
+		},
+
+		/**
+		 * The width a white piano key.
+		 */
+		width: 30
 	};
 
 	return PianoKey;

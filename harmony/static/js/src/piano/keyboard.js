@@ -4,6 +4,7 @@ define([
 	'lodash', 
 	'radio',
 	'./keygenerator', 
+	'./key'
 ], function($, _, radio, PianoKeyGenerator, PianoKey) {
 
 	/**
@@ -50,8 +51,9 @@ define([
 			}
 
 			this.el = $('<div class="keyboard"></div>');
+			this.keys = this.getKeys() || [];
+			this.width = (this.getNumWhiteKeys() * PianoKey.width);
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
-			this.keys = this.getKeys();
 		},
 
 		/**
