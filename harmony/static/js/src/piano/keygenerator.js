@@ -91,7 +91,7 @@ define(['lodash', './key',], function(_, PianoKey) {
 		 * @return {integer}
 		 */
 		octaveOf: function(noteNumber) {
-			return Math.floor(noteNumber / 12) - 1;
+			return Math.floor(noteNumber / 12);
 		},
 
 		/**
@@ -129,6 +129,8 @@ define(['lodash', './key',], function(_, PianoKey) {
 		 */
 		generateKeys: function(size) {
 			var noteSequence = this.generateSequence(size);
+			console.log(noteSequence.join(''));
+			console.log(noteSequence.join(''));
 			var noteKeyConverter = _.bind(this.noteKeyConverter(size), this);
 			return _.map(noteSequence, noteKeyConverter);
 		},

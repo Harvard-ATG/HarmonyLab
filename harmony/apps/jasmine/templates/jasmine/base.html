@@ -19,7 +19,8 @@
             "app": "{{ STATIC_URL }}js/src",
             "spec": "{{ STATIC_URL }}js/spec",
             "jasmine": "{{ STATIC_URL }}jasmine"
-        }
+        }	
+		,urlArgs: 'timestamp='+(new Date().getTime())
     });
   </script>
 
@@ -29,7 +30,6 @@
 <script>
 require([
 	'jquery'
-	,'jasmine/spec/PlayerSpec'
 	{% for spec_file in all_specs %}
 	,'{{ spec_file }}'
 	{% endfor %}
