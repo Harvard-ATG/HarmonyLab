@@ -10,7 +10,8 @@ harmony by providing instant feedback.
 
 # Quickstart
 
-Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://www.pip-installer.org/) to install.
+- Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://www.pip-installer.org/) to install.
+- Requires [Jazz Browser Plugin](http://jazz-soft.net/) to run.
 
 ```sh
 $ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
@@ -19,7 +20,4 @@ $ pip install -r requirements.txt
 $ ./manage.py syncdb
 $ ./manage.py runserver
 ```
-
-You should now be able to access the application at ```http://127.0.0.1:8000```. Chrome is preferred, but it should work in Firefox too.
-
-Note: you also need to install the [Jazz Browser Plugin](http://jazz-soft.net/). This adds MIDI support to the browser and is required by the application.
+You should now be able to run the application on your localhost at ```http://127.0.0.1:8000```. 
