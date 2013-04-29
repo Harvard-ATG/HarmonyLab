@@ -39,7 +39,19 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 		onJMBInit: function(MIDIAccess) {
 			this.midiAccess = MIDIAccess;
 			this.midiOutput = MIDIAccess.getOutput(0);
-	
+
+			if(this.midiOutput === false) {
+				console.log("No midi output device available.");
+			} else {
+				this.initRadioListeners();
+			}
+		},
+		/**
+		 * Initializes radio listeners.
+		 *
+		 * Note: this should only be done if a MIDI output device has been selected.
+		 */
+		initRadioListeners: function() {
 			this.radio('note').subscribe([this.onNoteEvent, this])
 		},
 		/**
