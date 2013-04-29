@@ -22,7 +22,7 @@ def run_tests(request):
                 spec_require_name = spec_file[strip_prefix_len:-len('.js')]
                 all_specs.append(spec_require_name)
             else:
-                logger.log("Spec file missing required suffix {0}: {1} ".format(required_suffix, os.path.join(curpath, name)))
+                logger.warning("Spec file missing required suffix {0}: {1} ".format(required_suffix, os.path.join(curpath, name)))
 
     data = { 'all_specs': all_specs }
 
