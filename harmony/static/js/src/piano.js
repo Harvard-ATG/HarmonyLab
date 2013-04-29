@@ -5,7 +5,7 @@ require([
 ], 
 function($, PianoKeyboard, MIDIRouter) {
 	$(document).ready(function() {
-		var keyboard = new PianoKeyboard(25);
+		var keyboard = new PianoKeyboard();
 
 		$('#piano')
 			.append("Piano size: <select class=\"span1\"><option>25</option><option>37</option><option selected>49</option><option>88</option></select>")
