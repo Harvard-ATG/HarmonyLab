@@ -1,4 +1,4 @@
-define(['lodash'], function(_) {
+define(['lodash', 'radio'], function(_, radio) {
 
 	// constants for piano key states
 	var STATE_KEYUP = 'keyup', STATE_KEYDN = 'keydown';
@@ -13,6 +13,12 @@ define(['lodash'], function(_) {
 	 * classes.
 	 */
 	var PianoKeyMixin = {
+
+		/**
+		 * Reference to the radio event bus.
+		 */
+		radio: radio,
+
 		/**
 		 * Current state of the piano key (up or down).
 		 */
@@ -29,7 +35,7 @@ define(['lodash'], function(_) {
 		press: function() {
 			this.state = STATE_KEYDN;
 			this.updateColor();
-			this.keyboard.trigger('key:press', this);
+			this.radio('note').broadcast('on', this.noteNumber);
 		},
 
 		/**
@@ -38,7 +44,7 @@ define(['lodash'], function(_) {
 		release: function() {
 			this.state = STATE_KEYUP;
 			this.updateColor();
-			this.keyboard.trigger('key:release', this);
+			this.radio('note').broadcast('off', this.noteNumber);
 		},
 		
 		/**
@@ -64,9 +70,12 @@ define(['lodash'], function(_) {
 		 *
 		 * @return {this}
 		 */
-		init: function(keyboard, config) {
-			this.keyboard = keyboard;
-			this.config = config;
+		init: function(config) {
+			if(!config.hasOwnProperty('noteNumber')) {
+				throw new Error("Key must have a MIDI note number");
+			}
+			this.noteNumber = config.noteNumber;
+			this.noteName = config.noteName || '';
 			this.onPress = _.bind(this.onPress, this);
 			this.onRelease = _.bind(this.onRelease, this);
 			return this;
@@ -112,15 +121,6 @@ define(['lodash'], function(_) {
 		updateColor: function() {
 			this.el.attr('fill', this.keyColorMap[this.state]);
 		},
-
-		/**
-		 * Returns the note number of the key.
-		 *
-		 * @return {integer}
-		 */
-		noteNumber: function() {
-			return this.config.noteNumber;
-		}
 	};
 
 	/**
@@ -288,9 +288,9 @@ define(['lodash'], function(_) {
 		 * @param {string} key The string name of the key (optional).
 		 * @return {PianoKey}
 		 */
-		create: function(keyboard, config) {
+		create: function(config) {
 			var constructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
-			return new constructor(keyboard, config);
+			return new constructor(config);
 		}
 	};
 

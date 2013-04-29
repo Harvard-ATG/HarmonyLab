@@ -9,6 +9,7 @@
 
   <script src="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine.js"></script>
   <script src="{{ STATIC_URL }}jasmine/lib/jasmine-latest/jasmine-html.js"></script>
+  <script src="{{ STATIC_URL }}jasmine-reporters/src/jasmine.console_reporter.js"></script>
 
   <script src="{{ STATIC_URL }}js/lib/require.js"></script>
   <script>
@@ -35,9 +36,10 @@ require([
 ], function($) {
 	var jasmineEnv = jasmine.getEnv();
 	var htmlReporter = new jasmine.HtmlReporter();
+	var consoleReporter = new jasmine.ConsoleReporter();
 
-	jasmineEnv.updateInterval = 1000;
-	jasmineEnv.addReporter(htmlReporter);
+	jasmineEnv.addReporter(htmlReporter)
+	jasmineEnv.addReporter(consoleReporter);
 	jasmineEnv.specFilter = function(spec) {
 		return htmlReporter.specFilter(spec);
 	};

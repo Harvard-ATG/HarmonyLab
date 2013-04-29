@@ -2,11 +2,9 @@
 define([
 	'jquery', 
 	'lodash', 
-	'microevent',
-	'jazzmidibridge',
+	'radio',
 	'./keygenerator', 
-	'./key'
-], function($, _, MicroEvent, JMB, PianoKeyGenerator, PianoKey) {
+], function($, _, radio, PianoKeyGenerator, PianoKey) {
 
 	/**
 	 * Piano Keyboard class.
@@ -54,25 +52,6 @@ define([
 			this.el = $('<div class="keyboard"></div>');
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 			this.keys = this.getKeys();
-
-			this.initEvents();
-		},
-
-		/**
-		 * Initializes keyboard events.
-		 */
-		initEvents: function() {
-			var that = this;
-			JMB.init(function(MIDIAccess) {
-				var output = MIDIAccess.getOutput(0);
-				var onKeyPress = function(MIDIDevice, MIDICommand) {
-					return function(key) {
-						MIDIDevice.sendMIDIMessage(MIDIAccess.createMIDIMessage(MIDICommand, key.noteNumber(), 100));
-					}
-				};
-				that.bind('key:press', onKeyPress(output, JMB.NOTE_ON)); 
-				that.bind('key:release', onKeyPress(output, JMB.NOTE_OFF));
-			});
 		},
 
 		/**
@@ -81,11 +60,7 @@ define([
 		 * @return {array} of PianoKey objects.
 		 */
 		getKeys: function() {
-			var notes = PianoKeyGenerator.generateNotes(this.numberOfKeys);
-			var keyboard = this;
-			return _.map(notes, function(noteConfig) {
-				return PianoKey.create(keyboard, noteConfig);
-			});
+			return PianoKeyGenerator.generateKeys(this.numberOfKeys);
 		},
 
 		/**
@@ -129,11 +104,6 @@ define([
 			});
 		}
 	});
-
-	/**
-	 * This adds "observable" behavior to the keyboard (i.e. bind/trigger events).
-	 */
-	MicroEvent.mixin(PianoKeyboard);
 
 	return PianoKeyboard;
 });

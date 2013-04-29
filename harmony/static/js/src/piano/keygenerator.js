@@ -1,4 +1,4 @@
-define(['lodash'], function(_) {
+define(['lodash', './key',], function(_, PianoKey) {
 
 	/**
 	 * The PianoKeyGenerator object is responsible for knowing how to generate a
@@ -117,41 +117,44 @@ define(['lodash'], function(_) {
 		 * @param {integer} size The keyboard size.
 		 * @return {array}
 		 */
-		generate: function(size) {
+		generateSequence: function(size) {
 			return this.noteSequence(this.firstNote(size), size);
 		},
 
 		/**
-		 * Returns an array of note objects with note names and numbers.
+		 * Returns an array of key objects. 
 		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {array}
 		 */
-		generateNotes: function(size) {
-			var noteAsObject = _.bind(this.noteAsObject(size), this);
-			return _.map(this.generate(size), noteAsObject);
+		generateKeys: function(size) {
+			var noteSequence = this.generateSequence(size);
+			var noteKeyConverter = _.bind(this.noteKeyConverter(size), this);
+			return _.map(noteSequence, noteKeyConverter);
 		},
 
 		/**
-		 * Returns a function for converting a note value to an object.
+		 * Returns a function for converting a note value to a key object.
 		 *
 		 * @param {integer} size The keyboard size.
 		 * @return {function}
 		 */
-		noteAsObject: function(size) {
-			var firstNoteNumber = this.firstNoteNumber(size);	
+		noteKeyConverter: function(size) {
+			var firstNoteNumber = this.firstNoteNumber(size);
 
 			return function(noteValue, index) {
 				var noteNumber = firstNoteNumber + index;
-				var octave = this.octaveOf(noteNumber);
 				var isWhite = this.isWhiteNote(noteValue);
-				var noteName = (isWhite ? noteValue + octave : '');
+				var noteName = '';
+				if(isWhite) {
+					noteName = noteValue + this.octaveOf(noteNumber);
+				}
 
-				return { 
+				return PianoKey.create({ 
 					'noteName': noteName,
 					'noteNumber': noteNumber,
 				    'isWhite': isWhite
-				};
+				});
 			};
 		}
 	};
