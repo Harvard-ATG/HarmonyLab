@@ -91,7 +91,7 @@ define(['lodash', './key',], function(_, PianoKey) {
 		 * @return {integer}
 		 */
 		octaveOf: function(noteNumber) {
-			return Math.floor(noteNumber / 12);
+			return Math.floor(noteNumber / 12) - 1;
 		},
 
 		/**

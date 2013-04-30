@@ -21,7 +21,7 @@ define(['lodash', 'app/piano/keygenerator'], function(_, PianoKeyGenerator) {
 
 		it('should know how to calculate the octave of middle C given a note number', function() {
 			var noteNum = 60;
-			var expectedOctave = 5;
+			var expectedOctave = 4;
 			expect(PKG.octaveOf(noteNum)).toBe(expectedOctave); 
 		});
 

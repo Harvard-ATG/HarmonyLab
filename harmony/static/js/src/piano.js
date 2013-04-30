@@ -7,6 +7,7 @@ require([
 function($, PianoKeyboard, MIDIRouter, Notation) {
 	$(document).ready(function() {
 		var keyboard = new PianoKeyboard();
+		var notation = new Notation();
 
 		$('#piano')
 			.append("Piano size: <select class=\"span1\"><option>25</option><option>37</option><option selected>49</option><option>88</option></select>")
@@ -18,10 +19,8 @@ function($, PianoKeyboard, MIDIRouter, Notation) {
 				$('#piano .keyboard').replaceWith(keyboard.render().el);
 			});
 
+		$('#notation').append(notation.render().el);
+
 		MIDIRouter.init();
-
-		var notation = new Notation();
-
-		$('#piano').before(notation.render().el);
 	});
 });

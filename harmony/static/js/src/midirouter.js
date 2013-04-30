@@ -58,7 +58,7 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 		 * Handles note on/off events by creating and transmitting the
 		 * appropriate MIDI message.
 		 *
-		 * @param {string} eventName 'on'|'off'
+		 * @param {string} eventName on|off
 		 * @param {integer} noteNumber the midi note number
 		 * @param {integer} noteVelocity defaults to 100
 		 */
