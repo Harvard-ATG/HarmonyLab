@@ -35,6 +35,7 @@
 // Mohit Muthanna Cheppudira <mohit@muthanna.com>
 //
 // Copyright Mohit Muthanna Cheppudira 2010
+define(function() {
 
 /** @constructor */
 function Vex() {}
@@ -9708,3 +9709,6 @@ Vex.Flow.Stroke.prototype.draw = function() {
   }
 
 }
+
+return Vex;
+});

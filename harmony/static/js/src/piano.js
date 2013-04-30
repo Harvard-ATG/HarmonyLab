@@ -1,9 +1,10 @@
 require([
 	'jquery', 
 	'app/piano/keyboard',
-	'app/midirouter'
+	'app/midirouter',
+	'app/notation'
 ], 
-function($, PianoKeyboard, MIDIRouter) {
+function($, PianoKeyboard, MIDIRouter, Notation) {
 	$(document).ready(function() {
 		var keyboard = new PianoKeyboard();
 
@@ -18,5 +19,9 @@ function($, PianoKeyboard, MIDIRouter) {
 			});
 
 		MIDIRouter.init();
+
+		var notation = new Notation();
+
+		$('#piano').before(notation.render().el);
 	});
 });
