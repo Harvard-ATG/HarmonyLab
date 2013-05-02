@@ -138,7 +138,6 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 				var stave_note;
 				vex_notes[clef] = [];
 				if(notes.length > 0) {
-					console.log(_.pluck(notes, 'name'), _.pluck(notes, 'accidental'));
 					stave_note = new Vex.Flow.StaveNote({ 
 						keys: _.pluck(notes, 'name'),
 						duration: "w", 
