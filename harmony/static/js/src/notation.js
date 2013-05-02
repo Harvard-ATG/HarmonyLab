@@ -70,7 +70,7 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 			var ctx = this.renderer.getContext();
 			var x = 25;
 			var width = this.staveSize.width;
-			var keySignatureSpec = 'F';
+			var keySignatureSpec = 'C';
 			var vexNotes = this.getVexNotes();
 			var clefs = {}, voices = [];
 			var staveConnector, formatter;
@@ -120,21 +120,36 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 			var ctx = this.renderer.getContext();
 			var midiNotesPlaying = _.keys(this.midiNotesPlaying);
 			var notes = {'treble': [], 'bass': []};
+			var accidentals = ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"]; // for C Major
 			var vex_notes = {};
 
 			_.each(this.midiNotesPlaying, function(on, noteNumber) {
 				var octave = Math.floor(noteNumber / 12) - 1;
-				var note = Vex.Flow.integerToNote(noteNumber % 12);
+				var relativeNoteNumber = noteNumber % 12;
+				var note = accidentals[relativeNoteNumber];
 				var note_name = note + '/' + octave;
 				var clef = (noteNumber > 59 ? 'treble' : 'bass');
+				var accidental = note.substr(1);
 	
-				notes[clef].push(note_name);
+				notes[clef].push({ name: note_name, accidental: accidental});
 			});
 
 			_.each(notes, function(notes, clef) {
+				var stave_note;
 				vex_notes[clef] = [];
 				if(notes.length > 0) {
-					vex_notes[clef].push(new Vex.Flow.StaveNote({ keys: notes, duration: "w", clef: clef }));
+					console.log(_.pluck(notes, 'name'), _.pluck(notes, 'accidental'));
+					stave_note = new Vex.Flow.StaveNote({ 
+						keys: _.pluck(notes, 'name'),
+						duration: "w", 
+						clef: clef 
+					});
+					_.each(_.pluck(notes, 'accidental'), function(acc, index) {
+						if(acc !== '') {
+							stave_note.addAccidental(index, new Vex.Flow.Accidental(acc));
+						}
+					});
+					vex_notes[clef].push(stave_note);
 				}
 			});
 
