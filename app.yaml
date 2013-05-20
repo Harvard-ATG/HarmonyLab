@@ -1,0 +1,19 @@
+application: harmony-lab
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+env_variables:
+    DJANGO_SETTINGS_MODULE: 'harmony.settings.googleappengine'
+
+handlers:
+- url: /static
+  static_dir: harmony/static
+
+libraries:
+- name: django
+  version: "1.5"
+
+builtins:
+- django_wsgi: on
