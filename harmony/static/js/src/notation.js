@@ -13,8 +13,8 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 		 * Size of the canvas and staves.
 		 */
 		canvasSize: { 
-			width: 225, 
-			height: 250 // note: height is padded a bit for low notes on the 88-key piano
+			width: 520, 
+			height: 380 // note: height is padded a bit for low notes on the 88-key piano
 		},
 
 		/**

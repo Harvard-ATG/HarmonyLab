@@ -35,14 +35,14 @@ body {
 	xpadding-top: 5px;
 }
 
-#staff-area {
-	background: #ffE url(../img/staff.png) center no-repeat;
+#notation {
+	background: rgb(238, 238, 221) center no-repeat;
 	width:540px;
 	height:400px;
 	margin-left:205px;
 	position:relative;
 	z-index:10;
-	padding:0 5px;
+	padding:0 0;
 	
 	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
@@ -128,7 +128,7 @@ body {
 .right-panel-bed {
 	width: 200px;
 	position: absolute;
-	right: 207px;
+	right: 217px;
 	top: 75px;
 	padding:15px 0;
 }
@@ -211,7 +211,7 @@ body {
 
 
 #kb-wrapper {
-	width: 828px;
+	width: 888px;
 	margin: 30px auto 0;
 	border: 1px solid #222;
 	-webkit-border-top-left-radius: 9px;
@@ -249,7 +249,7 @@ body {
 }
 
 #keyboard-area {
-width:807px;
+width:100%;
 margin:0 10px;
 padding-bottom: 6px;
 overflow:hidden;

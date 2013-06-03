@@ -9,16 +9,7 @@ function($, PianoKeyboard, MIDIRouter, Notation) {
 		var keyboard = new PianoKeyboard();
 		var notation = new Notation();
 
-		$('#piano')
-			.append("Piano size: <select class=\"span1\"><option>25</option><option>37</option><option selected>49</option><option>88</option></select>")
-			.append(keyboard.render().el)
-			.find('select')
-			.on('change', function(e) {
-				var size = $(this).val();
-				var keyboard = new PianoKeyboard(size);
-				$('#piano .keyboard').replaceWith(keyboard.render().el);
-			});
-
+		$('#piano').append(keyboard.render().el)
 		$('#notation').append(notation.render().el);
 
 		MIDIRouter.init();

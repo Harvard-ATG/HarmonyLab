@@ -146,7 +146,7 @@
 
         </div><!-- end .right-panel-bed -->
 
-        <div id="staff-area">
+        <div id="notation">
 
             <!--This is where the staffs go --> 
 
@@ -192,12 +192,15 @@
 
 
             <div id="keyboard-area">
+			<!--
             <div id="kb-scroller">
 				<input id="slide" type="range" min="0" max="97" step="1" value="48" onchange="updateSlider(this.value)" />
-                <!--img src="{{ STATIC_URL }}img/kb-scroller.png" -->
+                <img src="{{ STATIC_URL }}img/kb-scroller.png">
             </div>
+			-->
 
-                <img id="pic" class="full88" src="{{ STATIC_URL }}img/88keys.png" alt="keyboard"/>
+                <!--img id="pic" class="full88" src="{{ STATIC_URL }}img/88keys.png" alt="keyboard"/-->
+				<div id="piano"></div>
             </div>
 
     </div><!-- end #kb-wrapper -->
@@ -222,7 +225,7 @@
 {% block js_extra %}
 {# TODO: get raphaeljs to work with requirejs #}
 <script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
-<!--script src="{{ STATIC_URL }}js/src/piano.js"></script-->
+<script src="{{ STATIC_URL }}js/src/piano.js"></script>
 
 <script>
 require(['jquery'], function($) {
@@ -277,7 +280,7 @@ $(document).ready(function() {
 	}
 	function updateSlider(slideAmount) {
 		document.getElementById("chosen").innerHTML = slideAmount;
-		document.getElementById("pic").style.marginLeft = (slideAmount * -1) + "%";
+		document.getElementById("piano").style.marginLeft = (slideAmount * -1) + "%";
 	}
 </script>
 
