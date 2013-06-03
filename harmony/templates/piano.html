@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="container" style="background:#748da5 url('{{ STATIC_URL }}img/bluelights.jpg') center 50px no-repeat;">
+
+   <!-- Dev LINKS -->
+    <div style="font-size: 10px; color:white;float:right; margin-right: 20px;">
+        <a href="#index.html" style="color:#ccc;">49 keyboard</a><br />
+        <a href="#index2.html" style="color:#ccc;">37 keyboard</a><br />
+        <a href="#index3.html" style="color:#ccc;">88 keyboard w/slider</a>
+    </div>
+
+    <div id="staff-wrapper">
+
+        <div id="header">
+            <h1>Harmony Lab</h1>
+        </div>
+
+        <div class="left-panel-bed">
+
+            <div id="tab-nav-1" class="tab-nav">
+
+              <ul class="inst-tab">
+                <li><a href="#">INSTRUMENT</a>
+                  <div class="tab-content-wrapper">
+                      <div class="tab-content-inner">
+
+                        Instrument:<br /> 
+                            <select name="instrument">
+                            <option value="piano">Piano</option>
+                            <option value="harpsichord">Harpsichord</option>
+                            <option value="organ">Organ</option>
+                            </select>
+                        <br /><br />
+                            Keyboard size: 
+                            <select name="keyboard">
+                            <option value="25">25</option>
+                            <option value="37">37</option>
+                            <option value="49">49</option>
+                            <option value="88">88</option>
+                            </select>
+                            <br /><br />
+                            Style: 
+                            <select name="player-style">
+                            <option value="singlefinger">Single Finger</option>
+                            <option value="Manual">Manual</option>
+                            </select>
+
+                      </div>
+                  </div>
+                 </li>
+              </ul>
+
+              <ul class="note-tab">
+                <li><a href="#">NOTATION</a>
+                  <div class="tab-content-wrapper">
+                    <div class="tab-content-inner">
+
+                            <select name="">
+                            <option value="piano">Analysis</option>
+                            <option value="harpsichord">ThoroughBass</option>
+                            </select>
+                        <br /><br />
+
+                            <select name="notation">
+                            <option value="25">Roman Numeral</option>
+                            <option value="37">Type 2</option>
+                            <option value="49">Type 3</option>
+                            </select>
+
+                            <p><input name="root" type="checkbox" value="Root" /> Root
+                            <br /><input name="doublings" type="checkbox" value="Doublings" /> Doublings
+                            <br /><input name="tritones" type="checkbox" value="Tritones" /> Tritones
+                            <br /><input name="Chords" type="checkbox" value="8ths & 5ths" /> 8ths &amp; 5ths
+                            </p>
+
+                    </div>
+                  </div>
+                 </li>
+              </ul>
+
+
+            </div><!-- end tab-nav-1 -->
+
+        </div><!-- end left-panel-bed -->
+
+
+        <div class="right-panel-bed">
+
+            <div id="tab-nav-2" class="tab-nav">
+
+              <ul class="midi-tab">
+                <li><a href="#">MIDI SOURCE</a>
+                  <div class="tab-content-wrapper">
+                    <div class="tab-content-inner">
+
+                            <select name="">
+                            <option value="src1">Source #1</option>
+                            <option value="src2">Source #2</option>
+                            </select>
+
+                        <br /><br />
+
+                            <select name="">
+                            <option value="25">Type 1</option>
+                            <option value="37">Type 2</option>
+                            <option value="49">Type 3</option>
+                            </select>
+
+                    </div>
+                   </div>
+                 </li>
+              </ul>
+
+              <ul class="key-tab">
+                <li><a href="#">KEY &amp; SIGNATURES</a>
+                  <div class="tab-content-wrapper">
+                    <div class="tab-content-inner">
+
+
+                            <select name="">
+                            <option value="F">F major</option>
+                            <option value="C">C major</option>
+                            <option value="G">G major</option>
+                            <option value="D">D major</option>
+                           </select>
+
+                        <br />&nbsp; |<br />
+
+                            <input name="key-lock" type="checkbox" value="lock" /> Lock
+
+                        <br />&nbsp; |<br />
+
+                            <select name="signature">
+                            <option value="#">#</option>
+                            <option value="##">##</option>
+                            <option value="###">###</option>
+                            </select>
+
+                    </div>
+                   </div>
+                 </li>
+              </ul>
+
+            </div><!-- end #tab-nav-2 -->
+
+        </div><!-- end .right-panel-bed -->
+
+        <div id="staff-area">
+
+            <!--This is where the staffs go --> 
+
+        </div>
+
+        <br class="clr" style="clear:both;" />
+
+
+    </div><!-- end #staff-wrapper -->
+
+    <div id="kb-wrapper">
+
+            <div id="controller-wrapper">
+
+                <div id="music-controls">
+
+                    <select name="demos">
+                    <option value="bach">Bach Demo</option>
+                    <option value="mozart">Mozart</option>
+                    <option value="nugent">Ted Nugent</option>
+                    <option value="nelson">Willie Nelson</option>
+                   </select>
+
+                   <input name="play" type="button" value="P" />
+                   <input name="stop" type="button" value="S"/>
+                   <input name="record" type="button" value="R" />
+               </div>
+               <div id="metronome-controls">Metronome:&nbsp;
+                    <input name="bpm" type="text" size="3" maxlength="3" />
+                    <select name="tempo">
+                    <option value="1">+1</option>
+                    <option value="2">+2</option>
+                    <option value="3">+3</option>
+                    <option value="-1">-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                    </select>
+                    <input name="play" type="button" value="P" />                   
+                </div>
+                <div id="chosen">100</div>
+
+            </div><!-- end #controller-wrapper -->
+
+
+            <div id="keyboard-area">
+            <div id="kb-scroller">
+				<input id="slide" type="range" min="0" max="97" step="1" value="48" onchange="updateSlider(this.value)" />
+                <!--img src="{{ STATIC_URL }}img/kb-scroller.png" -->
+            </div>
+
+                <img id="pic" class="full88" src="{{ STATIC_URL }}img/88keys.png" alt="keyboard"/>
+            </div>
+
+    </div><!-- end #kb-wrapper -->
+
+    <div id="kb-pedals">
+        <img src="{{ STATIC_URL }}img/pedal1.png" />
+        <img src="{{ STATIC_URL }}img/pedal2.png" />
+        <img src="{{ STATIC_URL }}img/pedal3.png" />
+    </div>
+
+    <br class="clr" style="clear:both;" /><br />
+
+    <div id="bg-select">
+    <img src="{{ STATIC_URL }}img/Harmony1-bkg.jpg" onclick="concert();" />
+    <img src="{{ STATIC_URL }}img/Harmony-bkg.jpg" onclick="downlights();" />
+    <img src="{{ STATIC_URL }}img/bluelights.jpg" onclick="smoothblue();" />
+
+    </div>
+
+{% endblock %} {# end contianer #}
+
+{% block js_extra %}
+{# TODO: get raphaeljs to work with requirejs #}
+<script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
+<!--script src="{{ STATIC_URL }}js/src/piano.js"></script-->
+
+<script>
+require(['jquery'], function($) {
+$(document).ready(function() {
+  $('#tab-nav-1 > ul > li > a').click(function() {
+    var $parentItem = $(this).parent(),
+        slideAmt = $(this).next().width(),
+        direction;
+
+    if (parseInt($parentItem.css('marginLeft'), 10) < 0) {
+      direction = '+=';
+      $(this).removeClass('expanded');
+    } else {
+      $(this).addClass('expanded');
+      direction = '-=';
+    }
+    $parentItem
+      .animate({marginLeft: direction + slideAmt}, 00);
+    return false;
+  });
+ 
+  $('#tab-nav-2 > ul > li > a').click(function() {
+    var $parentItem = $(this).parent(),
+        slideAmt = $(this).next().width(),
+        direction;
+
+    if (parseInt($parentItem.css('marginLeft'), 10) > 0) {
+      direction = '-=';
+      $(this).removeClass('expanded');
+    } else {
+      $(this).addClass('expanded');
+      direction = '+=';
+    }
+    $parentItem
+      .animate({marginLeft: direction + slideAmt}, 00);
+    return false;
+  });
+});
+
+});
+</script>
+<script> 
+	// UI utility functions
+	function downlights() {
+		document.getElementById('container').style.cssText = 'background: url("{{ STATIC_URL }}img/Harmony-bkg.jpg") center 15px no-repeat;';
+	}
+	function concert() {
+		document.getElementById('container').style.cssText = 'background: url("{{ STATIC_URL }}img/Harmony1-bkg.jpg") center -20px no-repeat;';
+	}
+	function smoothblue() {
+		document.getElementById('container').style.cssText = 'background: url("{{ STATIC_URL }}img/bluelights.jpg") center 50px no-repeat;';
+	}
+	function updateSlider(slideAmount) {
+		document.getElementById("chosen").innerHTML = slideAmount;
+		document.getElementById("pic").style.marginLeft = (slideAmount * -1) + "%";
+	}
+</script>
+
+{% endblock %}
+
+{% block css_extra %}
+<link href="{{ STATIC_URL }}css/piano.css" type="text/css" rel="stylesheet" />
+{% endblock %}

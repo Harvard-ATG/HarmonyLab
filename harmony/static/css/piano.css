@@ -1,0 +1,317 @@
+@charset "UTF-8";
+/* CSS Document */
+
+html, body, h1, h2, h3, h4, div, p  {
+	margin: 0; 
+	padding: 0; 
+	border-width: 0;
+}
+p {padding: .4em 0;}
+
+body {
+  font: 90% Helvetica, Verdana, Arial, sans-serif;
+  text-align: center;
+  background:#000;
+}
+#container {
+	background:#000 url('../img/Harmony1-bkg.jpg') center -20px no-repeat;	
+	width: 960px;
+	margin: 0 auto;
+	margin-bottom: 30px;
+	position:relative;
+	text-align:left;
+}
+
+#header {
+	margin-bottom: 20px;
+	padding: 10px 70px;
+	background:#000 url(../img/harmony-logo.jpg) no-repeat;
+	color:white;
+}
+
+#header h1, h2 {
+	font-family: Helvetica, "Trebuchet MS", Arial,sans-serif; 
+	font-weight:normal; 
+	xpadding-top: 5px;
+}
+
+#staff-area {
+	background: #ffE url(../img/staff.png) center no-repeat;
+	width:540px;
+	height:400px;
+	margin-left:205px;
+	position:relative;
+	z-index:10;
+	padding:0 5px;
+	
+	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+	box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+}
+
+.tab-nav {
+  margin-top: 0px;
+}
+.tab-nav li { 
+  margin-bottom: 1px;
+}
+
+
+
+
+/* --- LEFT SIDE TABS  --- */
+.left-panel-bed {
+	width: 200px;
+	margin: 0 auto;
+	padding: 15px 0;  
+	text-align: left;
+	float:left;
+}
+
+#tab-nav-1.tab-nav ul {
+	position: relative;
+	float: left; 
+	width: 200px;
+	margin-left: 145px;
+	margin-top: 0;
+	margin-bottom:0;
+	padding-left: 0;
+	list-style-type: none;
+}
+
+#tab-nav-1.tab-nav a {
+	display: block;
+	margin:78px -60px 0 -41px;
+	width: 180px;
+	float: left;
+	line-height: 24px;
+	text-align: center;
+	text-decoration: none;
+	color: #000;
+	
+	-webkit-transform: rotate(-90deg); 
+	-moz-transform: rotate(-90deg);
+	
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	border-top-left-radius: 5px;
+	
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-right-radius: 5px;
+
+}
+#tab-nav-1.tab-nav a.expanded {
+	background-position: 2px -204px;
+	width: 180px;
+}
+
+#tab-nav-1 .tab-content-wrapper {
+	width: 172px; 
+	height:172px; 
+	margin-left: 61px; 
+	padding: 4px;
+}
+
+#tab-nav-1 .tab-content-inner {
+	margin: 4px;
+	xmargin-left: -10px;
+	xdisplay:block;
+	font-size: .8em;
+	line-height: 1.3em;
+}
+
+
+
+
+/* --- RIGHT SIDE TABS  --- */
+.right-panel-bed {
+	width: 200px;
+	position: absolute;
+	right: 207px;
+	top: 75px;
+	padding:15px 0;
+}
+
+#tab-nav-2.tab-nav ul {
+  position: relative;
+  float: left; 
+  width: 200px;
+  margin-left: 0px;
+  margin-top: 0;
+  margin-bottom:0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+#tab-nav-2.tab-nav a {
+	display: block;
+	margin:78px -104px 0 -40px;
+	width: 180px;
+	float: right;
+	line-height: 24px;
+	text-align: center;
+	text-decoration: none;
+	color: #000;
+	
+	-webkit-transform: rotate(90deg); 
+	-moz-transform: rotate(90deg);
+	
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	border-top-left-radius: 5px;
+	
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-right-radius: 5px;
+
+}
+#tab-nav-1.tab-nav a:hover,
+#tab-nav-2.tab-nav a:hover {
+	background: url(../img/trans-bkg-hover.png) repeat;
+}
+
+#tab-nav-2.tab-nav a.expanded {
+	left: 334px;
+	position: absolute;
+}
+
+#tab-nav-2 .tab-content-wrapper {
+	width: 180px; 
+	height:180px; 
+	padding: 0px;
+	margin-left: 12px; 
+}
+#tab-nav-2 .tab-content-inner {
+	margin: 10px 4px 4px 24px;
+	display:inline-block;
+	font-size: .8em;
+
+}
+
+
+.tab-nav a, 
+.tab-content-wrapper {
+	background: url(../img/trans-bkg.png) repeat;
+	xopacity: 0.85;
+}
+
+.clr {	
+	clear: both;
+    content: ".";
+    display: block;
+    font-size: 0;
+    height: 0;
+    line-height: 0;
+    overflow: auto;
+    visibility: hidden;
+}
+
+
+
+
+#kb-wrapper {
+	width: 828px;
+	margin: 30px auto 0;
+	border: 1px solid #222;
+	-webkit-border-top-left-radius: 9px;
+	-webkit-border-top-right-radius: 9px;
+	-moz-border-radius-topleft: 9px;
+	-moz-border-radius-topright: 9px;
+	border-top-left-radius: 9px;
+	border-top-right-radius: 9px;
+	background:#222 url(../img/kb-controller-bkg2.png) repeat-x;
+}
+#controller-wrapper {
+	height: 25px;
+	margin: 0px;
+	padding:5px 0;
+	border-bottom: 1px solid #222;
+	
+}
+
+#music-controls {
+	padding:0 10px;
+	float:left;
+	}
+
+#color-controls {
+	width: 120px;
+	margin:2px auto;
+	}
+
+#metronome-controls {
+	width:230px;
+	float:right;
+	padding:0 10px;
+	text-align:right;
+	color:#fff;
+}
+
+#keyboard-area {
+width:807px;
+margin:0 10px;
+padding-bottom: 6px;
+overflow:hidden;
+}
+
+#keyboard-area img.keys37 {margin-left: 10px;}
+#keyboard-area img#pic.full88 {margin-left:-400px;}
+
+#kb-scroller {
+	border-bottom: 1px solid #000;
+	visibility:visible; /* Toggle off/on as needed for full size (88 keys) keyboard */
+}
+
+#kb-scroller img {
+	display:block; 
+	height: 10px;
+}
+
+#kb-pedals {
+	margin:0 auto;
+	text-align:center;
+}
+#kb-pedals input {
+	background:#ccc;
+	border: 2px outset #666;
+	-webkit-border-radius: 5px;  
+}
+#kb-pedals input:active, #kb-pedals input.active-pedal {
+	background:#cca;
+	border: 2px inset #666;
+	-webkit-border-radius: 5px;  
+}
+#kb-pedals input:hover {
+	background:#eee;
+}
+
+
+#bg-select { margin-left: 10px;}
+#bg-select img {
+	border:1px solid #666;
+	padding:0;
+	height: 20px;
+	width:20px;
+	cursor:pointer;
+}
+
+
+#chosen {
+padding-right: 10px;
+margin: 0 auto;
+width: 40px;
+xtext-align:center;
+color:#999;
+font-size:large;
+}
+
+/*this is only for webkit, not opera*/
+input[type='range'] {  
+-webkit-appearance: none;
+-webkit-border-radius: 0px;  
+background-image: -webkit-linear-gradient(top, #000000, #333333, #555555);
+width:805px;
+height:15px;
+}  
+
