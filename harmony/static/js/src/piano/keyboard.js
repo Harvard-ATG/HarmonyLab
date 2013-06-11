@@ -3,9 +3,10 @@ define([
 	'jquery', 
 	'lodash', 
 	'radio',
+	'microevent',
 	'./keygenerator', 
 	'./key'
-], function($, _, radio, PianoKeyGenerator, PianoKey) {
+], function($, _, radio, MicroEvent, PianoKeyGenerator, PianoKey) {
 
 	/**
 	 * Piano Keyboard class.
@@ -24,6 +25,11 @@ define([
 	};
 
 	_.extend(PianoKeyboard.prototype, {
+		/**
+		 * Global event bus.
+		 */
+		radio: radio,
+
 		/**
 		 * Size of the keyboard on screen.
 		 *
@@ -52,8 +58,32 @@ define([
 
 			this.el = $('<div class="keyboard"></div>');
 			this.keys = this.getKeys() || [];
+			this.keysByNumber = this.mapKeysByNumber(this.keys);
 			this.width = (this.getNumWhiteKeys() * PianoKey.width);
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
+
+			this.initListeners();
+		},
+
+		/**
+		 * Initialize listeners.
+		 */
+		initListeners: function() {
+			// fire midi output events when a key is pressed
+			this.bind('key', function(noteState, noteNumber, noteVelocity) {
+				this.radio('noteMidiOutput').broadcast(noteState, noteNumber, noteVelocity);
+			});
+
+			// react to midi input events
+			this.radio('noteMidiInput').subscribe([this.onNoteInput, this]);
+		},
+
+		/**
+		 * Listen for midi input events and update the corresponding piano keys.
+		 */
+		onNoteInput: function(noteState, noteNumber, noteVelocity) {
+			var key = this.getKeyByNumber(noteNumber);
+			key.changeState(noteState);
 		},
 
 		/**
@@ -62,7 +92,24 @@ define([
 		 * @return {array} of PianoKey objects.
 		 */
 		getKeys: function() {
-			return PianoKeyGenerator.generateKeys(this.numberOfKeys);
+			return PianoKeyGenerator.generateKeys(this.numberOfKeys, this);
+		},
+
+		/**
+		 * Returns a key object given a note number.
+		 */
+		getKeyByNumber: function(noteNumber) {
+			return this.keysByNumber[noteNumber];
+		},
+
+		/**
+		 * Maps note numbers to keys.
+		 */
+		mapKeysByNumber: function(keys) {
+			var noteNumbers = _.map(keys, function(key) {
+				return key.noteNumber;
+			});
+			return _.zipObject(noteNumbers, keys);
 		},
 
 		/**
@@ -79,13 +126,7 @@ define([
 		/**
 		 * Renders the keyboard.
 		 */
-		render: function() { 
-			this._render();
-			return this;
-		},
-
-		// Helper function for rendering.
-		_render: function() {
+		render: function() {
 			var paper = this.paper;
 			var width = this.width;
 			var height = this.height;
@@ -104,8 +145,12 @@ define([
 					whiteKeyIndex++;
 				}
 			});
+
+			return this;
 		}
 	});
+
+	MicroEvent.mixin(PianoKeyboard);
 
 	return PianoKeyboard;
 });

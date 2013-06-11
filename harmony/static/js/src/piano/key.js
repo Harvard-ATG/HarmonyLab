@@ -1,7 +1,7 @@
-define(['lodash', 'radio'], function(_, radio) {
+define(['lodash'], function(_) {
 
 	// constants for piano key states
-	var STATE_KEYUP = 'keyup', STATE_KEYDN = 'keydown';
+	var STATE_KEYUP = 'off', STATE_KEYDN = 'on';
 
 	/**
 	 * Piano Key Mixin.
@@ -14,12 +14,9 @@ define(['lodash', 'radio'], function(_, radio) {
 	 */
 	var PianoKeyMixin = {
 		/**
-		 * Reference to the radio event bus.
-		 */
-		radio: radio,
-
-		/**
-		 * Current state of the piano key (up or down).
+		 * Current state of the piano key:
+		 *		up   ---> off
+		 *		down ---> on
 		 */
 		state: STATE_KEYUP,
 
@@ -34,7 +31,6 @@ define(['lodash', 'radio'], function(_, radio) {
 		press: function() {
 			this.state = STATE_KEYDN;
 			this.updateColor();
-			this.radio('note').broadcast('on', this.noteNumber);
 		},
 
 		/**
@@ -43,7 +39,19 @@ define(['lodash', 'radio'], function(_, radio) {
 		release: function() {
 			this.state = STATE_KEYUP;
 			this.updateColor();
-			this.radio('note').broadcast('off', this.noteNumber);
+		},
+
+		/**
+		 * Changes the state to on/off. Delegates to press/release methods.
+		 */
+		changeState: function(state) {
+			var stateMap = {};
+			stateMap[STATE_KEYUP] = this.release;
+			stateMap[STATE_KEYDN] = this.press;
+
+			if(stateMap[state]) {
+				stateMap[state].call(this);
+			}
 		},
 		
 		/**
@@ -75,6 +83,7 @@ define(['lodash', 'radio'], function(_, radio) {
 			}
 			this.noteNumber = config.noteNumber;
 			this.noteName = config.noteName || '';
+			this.keyboard = config.keyboard;
 			this.onPress = _.bind(this.onPress, this);
 			this.onRelease = _.bind(this.onRelease, this);
 			return this;
@@ -104,14 +113,20 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * Event handler for key press.
 		 */
 		onPress: function() {
-			this.press();
+			if(this.isReleased()) {
+				this.press();
+				this.keyboard.trigger('key', this.state, this.noteNumber)
+			}
 		},
 
 		/**
-		 * Event handler for key press.
+		 * Event handler for key release.
 		 */
 		onRelease: function() {
-			this.release();
+			if(this.isPressed()) { 
+				this.release();
+				this.keyboard.trigger('key', this.state, this.noteNumber)
+			}
 		},
 
 		/**
@@ -119,7 +134,7 @@ define(['lodash', 'radio'], function(_, radio) {
 		 */
 		updateColor: function() {
 			this.el.attr('fill', this.keyColorMap[this.state]);
-		},
+		}
 	};
 
 	/**
@@ -286,8 +301,8 @@ define(['lodash', 'radio'], function(_, radio) {
 		 * @return {PianoKey}
 		 */
 		create: function(config) {
-			var constructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
-			return new constructor(config);
+			var keyConstructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
+			return new keyConstructor(config);
 		},
 
 		/**

@@ -125,11 +125,12 @@ define(['lodash', './key',], function(_, PianoKey) {
 		 * Returns an array of key objects. 
 		 *
 		 * @param {integer} size The keyboard size.
+		 * @param {object} keyboard The keyboard.
 		 * @return {array}
 		 */
-		generateKeys: function(size) {
+		generateKeys: function(size, keyboard) {
 			var noteSequence = this.generateSequence(size);
-			var noteKeyConverter = _.bind(this.noteKeyConverter(size), this);
+			var noteKeyConverter = _.bind(this.noteKeyConverter(size, keyboard), this);
 			return _.map(noteSequence, noteKeyConverter);
 		},
 
@@ -139,7 +140,7 @@ define(['lodash', './key',], function(_, PianoKey) {
 		 * @param {integer} size The keyboard size.
 		 * @return {function}
 		 */
-		noteKeyConverter: function(size) {
+		noteKeyConverter: function(size, keyboard) {
 			var firstNoteNumber = this.firstNoteNumber(size);
 
 			return function(noteValue, index) {
@@ -153,7 +154,8 @@ define(['lodash', './key',], function(_, PianoKey) {
 				return PianoKey.create({ 
 					'noteName': noteName,
 					'noteNumber': noteNumber,
-				    'isWhite': isWhite
+				    'isWhite': isWhite,
+					'keyboard': keyboard
 				});
 			};
 		}
