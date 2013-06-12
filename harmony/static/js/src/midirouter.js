@@ -43,32 +43,33 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 			if(this.midiOutput === false) {
 				console.log("No midi output device available.");
 			} else {
-				this.initRadioListeners();
+				this.initListeners();
 			}
 		},
 		/**
-		 * Initializes radio listeners.
+		 * Initializes listeners.
 		 *
 		 * Note: this should only be done if a MIDI output device has been selected.
 		 */
-		initRadioListeners: function() {
-			this.radio('note').subscribe([this.onNoteEvent, this])
+		initListeners: function() {
+			this.radio('noteMidiOutput').subscribe([this.onNoteOutput, this])
 		},
 		/**
 		 * Handles note on/off events by creating and transmitting the
 		 * appropriate MIDI message.
 		 *
-		 * @param {string} eventName on|off
+		 * @param {string} noteState on|off
 		 * @param {integer} noteNumber the midi note number
 		 * @param {integer} noteVelocity defaults to 100
 		 */
-		onNoteEvent: function(eventName, noteNumber, noteVelocity) {
+		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
 			var midiMessage, midiCommand;
-			midiCommand = (eventName === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+			midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
 			noteVelocity = noteVelocity || 100;
 			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
 			this.midiOutput.sendMIDIMessage(midiMessage);
+			this.radio('noteDraw').broadcast(noteState, noteNumber, noteVelocity);
 		}
 	};
 

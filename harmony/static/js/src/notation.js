@@ -51,7 +51,7 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 
 			this.renderer = new Vex.Flow.Renderer(this.el[0], Vex.Flow.Renderer.Backends.CANVAS);
 
-			this.radio('note').subscribe([this.onNoteEvent, this]);
+			this.radio('noteDraw').subscribe([this.onNoteEvent, this]);
 		},
 		/**
 		 * Renders the notation.
