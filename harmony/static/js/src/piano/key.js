@@ -42,19 +42,6 @@ define(['lodash'], function(_) {
 		},
 
 		/**
-		 * Changes the state to on/off. Delegates to press/release methods.
-		 */
-		changeState: function(state) {
-			var stateMap = {};
-			stateMap[STATE_KEYUP] = this.release;
-			stateMap[STATE_KEYDN] = this.press;
-
-			if(stateMap[state]) {
-				stateMap[state].call(this);
-			}
-		},
-		
-		/**
 		 * Returns true if the key is in the down state.
 		 *
 		 * @return {boolean}

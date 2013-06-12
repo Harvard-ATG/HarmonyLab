@@ -1,4 +1,4 @@
-define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
+define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEvent, radio, JMB) {
 
 	/**
 	 * The MIDI Router is responsible for translating and routing MIDI 
@@ -8,19 +8,22 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 	 * (JMB) and depends on the radio event bus to interface with other system 
 	 * components. 
 	 */
-	var MIDIRouter = {
-		/**
-		 * Reference to the radio event bus.
-		 */
+	var MIDIRouter = function() {};
+
+	_.extend(MIDIRouter.prototype, {
 		radio: radio,
 
-		/**
-		 * References to the midi output device and access interface
-		 * provided by the Jazz Midi Bridge. These are initialized 
-		 * through JMB.init(function() { ... }).
-		 */
-		midiOutput: null,
-		midiAccess: null,
+		channel: 0,
+		program: 0,
+		outputDevices: [],
+		inputDevices: [],
+		output: null,
+		input: null,
+		midiAccess: null, // api via jazzmidibridge
+		defaults: { 
+			outputIndex: 0, 
+			inputIndex: 0 
+		},
 
 		/**
 		 * Initializes the MIDI router to send and receive MIDI messages.
@@ -29,8 +32,8 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 		 */
 		init: function() {
 			JMB.init(_.bind(this.onJMBInit, this));
-			return this;
 		},
+
 		/**
 		 * Initializes the Jazz Midi Bridge (JMB) and related event handlers.
 		 *
@@ -38,22 +41,65 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 		 */
 		onJMBInit: function(MIDIAccess) {
 			this.midiAccess = MIDIAccess;
-			this.midiOutput = MIDIAccess.getOutput(0);
+			this.detectDevices();
+			this.selectDefaultDevices();
+			this.initListeners();
+		},
 
-			if(this.midiOutput === false) {
-				console.log("No midi output device available.");
-			} else {
-				this.initListeners();
+		/**
+		 * Detects midi devices.
+		 */
+		detectDevices: function() {
+			this.outputDevices = this.midiAccess.enumerateOutputs() || [];
+			this.inputDevices = this.midiAccess.enumerateInputs() || [];
+			this.trigger('devices', this.inputDevices, this.outputDevices, this.defaults);
+		},
+
+		/**
+		 * Selects a default midi input and output device (if any). 
+		 */
+		selectDefaultDevices: function() {
+			var outputs = this.outputDevices;
+			var inputs = this.inputDevices;
+			if(outputs && outputs.length > 0) {
+				this.output = outputs[this.defaults.outputIndex];
+			}
+			if(inputs && inputs.length > 0) {
+				this.input = inputs[this.defaults.inputIndex];
 			}
 		},
+
 		/**
 		 * Initializes listeners.
-		 *
-		 * Note: this should only be done if a MIDI output device has been selected.
 		 */
 		initListeners: function() {
-			this.radio('noteMidiOutput').subscribe([this.onNoteOutput, this])
+			var MIDIAccess = this.midiAccess;
+			var output = this.output;
+
+			this.radio('noteMidiOutput').subscribe([this.onNoteOutput, this]);
+			this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
 		},
+
+		/**
+		 * Initializes listeners.
+		 */
+		onNoteInput: function(msg) {
+			var output = this.output;
+			var channel = this.channel;
+			var m = this.midiAccess.createMIDIMessage(msg.command,msg.data1,msg.data2,channel);
+			if(output) {
+				output.sendMIDIMessage(m);
+			}
+
+			if(msg.command === JMB.NOTE_ON || msg.command === JMB.NOTE_OFF) {
+				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
+				var noteNumber = msg.data1;
+				var noteVelocity = msg.data2;
+				this.radio('noteDraw').broadcast(noteState, noteNumber, noteVelocity);
+				this.radio('noteMidiInput').broadcast(noteState, noteNumber, noteVelocity);
+			}
+		},
+
 		/**
 		 * Handles note on/off events by creating and transmitting the
 		 * appropriate MIDI message.
@@ -68,10 +114,12 @@ define(['lodash', 'radio', 'jazzmidibridge'], function(_, radio, JMB) {
 			noteVelocity = noteVelocity || 100;
 			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
-			this.midiOutput.sendMIDIMessage(midiMessage);
+			this.output.sendMIDIMessage(midiMessage);
 			this.radio('noteDraw').broadcast(noteState, noteNumber, noteVelocity);
 		}
-	};
+	});
+
+	MicroEvent.mixin(MIDIRouter);
 
 	return MIDIRouter;
 });

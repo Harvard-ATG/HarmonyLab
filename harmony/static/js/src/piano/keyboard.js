@@ -83,7 +83,7 @@ define([
 		 */
 		onNoteInput: function(noteState, noteNumber, noteVelocity) {
 			var key = this.getKeyByNumber(noteNumber);
-			key.changeState(noteState);
+			key[noteState==='on'?'press':'release']();
 		},
 
 		/**
