@@ -51,15 +51,25 @@
         },
 
         addEventListener = function(eventId,device,callback){
-            var channel,
-                command;
+            var BYTES_PER_MSG = 3;
             if(eventId === "midimessage"){
-                Jazz.MidiInOpen(device.index,function(timestamp, status, data1, data2){ 
-                    //the higher 4 bits of the status byte is the command
-                    command = (status >> 4) * 16;
-                    //the lower 4 bits of the status byte is the channel number
-                    channel = status & 0xF;
-                    callback(createMIDIMessage(command, data1, data2, channel, timestamp));
+                Jazz.MidiInOpen(device.index,function(timestamp, midi_bytes){
+                    var num_msgs = midi_bytes.length / BYTES_PER_MSG,
+                        msg_num,
+                        byte_idx,
+                        status_byte, 
+                        command, 
+                        channel, 
+                        data = [];
+
+                    for(msg_num=0, byte_idx=0; msg_num < num_msgs; msg_num++, byte_idx+=3) {
+                        status_byte = midi_bytes[byte_idx];
+                        command = status_byte & 0xF0; // higher 4 bits is command
+                        channel = status_byte & 0xF; // lower 4 bits is channel
+                        data = [ midi_bytes[byte_idx+1], midi_bytes[byte_idx+2] ]; // data after status byte
+
+                        callback(createMIDIMessage(command, data[0], data[1], channel, timestamp));
+                    }
                 });                
             }
         },

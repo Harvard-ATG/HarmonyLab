@@ -1,10 +1,11 @@
 require([
+	'lodash',
 	'jquery', 
 	'app/piano/keyboard',
 	'app/midirouter',
 	'app/notation'
 ], 
-function($, PianoKeyboard, MIDIRouter, Notation) {
+function(_, $, PianoKeyboard, MIDIRouter, Notation) {
 	$(document).ready(function() {
 		var keyboard = new PianoKeyboard();
 		var notation = new Notation();
@@ -13,6 +14,19 @@ function($, PianoKeyboard, MIDIRouter, Notation) {
 		$('#notation').append(notation.render().el);
 
 		var router = new MIDIRouter();
+
+		router.bind('devices', function(inputs, outputs, defaults) {
+			options = _.map(inputs, function(input, idx) {
+				return '<option value="'+idx+'">'+input.deviceName+'</option>';
+			});
+
+			if(options.length > 0) {
+				$('#midi_input').html(options.join(''))
+			} else {
+				$('#midi_input').html('<option>---</option>');
+			}
+		});
+
 		router.init();
 	});
 });

@@ -74,10 +74,12 @@ define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEve
 		 */
 		initListeners: function() {
 			var MIDIAccess = this.midiAccess;
-			var output = this.output;
 
 			this.radio('noteMidiOutput').subscribe([this.onNoteOutput, this]);
-			this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
+
+			if(this.input) {
+				this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
+			}
 		},
 
 		/**
