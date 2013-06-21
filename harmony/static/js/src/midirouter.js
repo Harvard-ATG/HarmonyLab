@@ -1,17 +1,17 @@
-define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEvent, radio, JMB) {
+define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, MicroEvent, JMB, eventBus) {
 
 	/**
 	 * The MIDI Router is responsible for translating and routing MIDI 
 	 * messages from both external keyboard devices and onscreen devices.
 	 *
 	 * It directly interfaces with external devices using the Jazz Midi Bridge
-	 * (JMB) and depends on the radio event bus to interface with other system 
+	 * (JMB) and depends on the event bus to interface with other system 
 	 * components. 
 	 */
 	var MIDIRouter = function() {};
 
 	_.extend(MIDIRouter.prototype, {
-		radio: radio,
+		eventBus: eventBus,
 
 		channel: 0,
 		program: 0,
@@ -75,7 +75,7 @@ define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEve
 		initListeners: function() {
 			var MIDIAccess = this.midiAccess;
 
-			this.radio('noteMidiOutput').subscribe([this.onNoteOutput, this]);
+			this.eventBus.bind('noteMidiOutput', _.bind(this.onNoteOutput, this));
 
 			if(this.input) {
 				this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
@@ -97,8 +97,8 @@ define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEve
 				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
 				var noteNumber = msg.data1;
 				var noteVelocity = msg.data2;
-				this.radio('noteDraw').broadcast(noteState, noteNumber, noteVelocity);
-				this.radio('noteMidiInput').broadcast(noteState, noteNumber, noteVelocity);
+				this.eventBus.trigger('noteDraw', noteState, noteNumber, noteVelocity);
+				this.eventBus.trigger('noteMidiInput', noteState, noteNumber, noteVelocity);
 			}
 		},
 
@@ -117,7 +117,7 @@ define(['lodash', 'microevent', 'radio', 'jazzmidibridge'], function(_, MicroEve
 			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
 			this.output.sendMIDIMessage(midiMessage);
-			this.radio('noteDraw').broadcast(noteState, noteNumber, noteVelocity);
+			this.eventBus.trigger('noteDraw', noteState, noteNumber, noteVelocity);
 		}
 	});
 

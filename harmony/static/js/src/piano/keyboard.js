@@ -2,11 +2,11 @@
 define([
 	'jquery', 
 	'lodash', 
-	'radio',
 	'microevent',
+	'app/eventbus',
 	'./keygenerator', 
 	'./key'
-], function($, _, radio, MicroEvent, PianoKeyGenerator, PianoKey) {
+], function($, _, MicroEvent, eventBus, PianoKeyGenerator, PianoKey) {
 
 	/**
 	 * Piano Keyboard class.
@@ -28,7 +28,7 @@ define([
 		/**
 		 * Global event bus.
 		 */
-		radio: radio,
+		eventBus: eventBus,
 
 		/**
 		 * Size of the keyboard on screen.
@@ -69,13 +69,16 @@ define([
 		 * Initialize listeners.
 		 */
 		initListeners: function() {
+			var eventBus = this.eventBus;
+			console.log(this, this.eventBus, window.eventBus);
+
 			// fire midi output events when a key is pressed
 			this.bind('key', function(noteState, noteNumber, noteVelocity) {
-				this.radio('noteMidiOutput').broadcast(noteState, noteNumber, noteVelocity);
+				eventBus.trigger('noteMidiOutput', noteState, noteNumber, noteVelocity);
 			});
 
 			// react to midi input events
-			this.radio('noteMidiInput').subscribe([this.onNoteInput, this]);
+			eventBus.bind('noteMidiInput', _.bind(this.onNoteInput, this));
 		},
 
 		/**

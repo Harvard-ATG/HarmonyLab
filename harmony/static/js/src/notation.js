@@ -1,4 +1,4 @@
-define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
+define(['lodash', 'vexflow', 'app/eventbus'], function(_, Vex, eventBus) {
 
 	/**
 	 * Notation object for converting MIDI notes to musical notation and
@@ -23,9 +23,9 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 		staveSize: { width: 180 },
 
 		/**
-		 * Reference to radio event bus.
+		 * Reference to event bus.
 		 */
-		radio: radio,
+		eventBus: eventBus,
 
 		/**
 		 * Map of midi notes currently playing.
@@ -51,7 +51,7 @@ define(['lodash', 'vexflow', 'radio'], function(_, Vex, radio) {
 
 			this.renderer = new Vex.Flow.Renderer(this.el[0], Vex.Flow.Renderer.Backends.CANVAS);
 
-			this.radio('noteDraw').subscribe([this.onNoteEvent, this]);
+			this.eventBus.bind('noteDraw', _.bind(this.onNoteEvent, this));
 		},
 		/**
 		 * Renders the notation.
