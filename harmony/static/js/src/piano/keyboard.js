@@ -70,7 +70,6 @@ define([
 		 */
 		initListeners: function() {
 			var eventBus = this.eventBus;
-			console.log(this, this.eventBus, window.eventBus);
 
 			// fire midi output events when a key is pressed
 			this.bind('key', function(noteState, noteNumber, noteVelocity) {

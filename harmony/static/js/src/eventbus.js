@@ -7,7 +7,7 @@
 		MicroEvent.mixin(EventBus);
 
 		var eventBus = global.eventBus;
-		if(typeof eventBus === 'object') {
+		if(typeof eventBus !== 'object') {
 			eventBus = global.eventBus = new EventBus();
 		}  
 		return eventBus;
