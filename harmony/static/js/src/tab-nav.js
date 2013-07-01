@@ -1,41 +1,31 @@
 define(['jquery'], function($) {
-	$(document).ready(function() {
-	$('#tab-nav-1 > ul > li > a').click(function() {
-		var $parentItem = $(this).parent(),
-			slideAmt = $(this).next().width(),
-			direction;
-
-		if (parseInt($parentItem.css('marginLeft'), 10) < 0) {
-		  direction = '+=';
-		  $(this).removeClass('expanded');
-		} else {
-		  $(this).addClass('expanded');
-		  direction = '-=';
+	var tab_buttons = {
+		'#tab-nav-1 > ul > li > a': function(marginLeft) {
+			return marginLeft < 0 
+				? {'cls':'removeClass','dir':'+='}
+				: {'cls':'addClass','dir':'-='};
+		},
+		'#tab-nav-2 > ul > li > a': function(marginLeft) {
+			return marginLeft > 0
+				? {'cls':'removeClass','dir':'-='}
+				: {'cls':'addClass','dir':'+='};
 		}
-		$parentItem
-		  .animate({marginLeft: direction + slideAmt}, 00);
-		return false;
-	  });
-	 
-	});
+	};
 
 	$(document).ready(function() {
-		$('#tab-nav-2 > ul > li > a').click(function() {
-		var $parentItem = $(this).parent(),
-			slideAmt = $(this).next().width(),
-			direction;
+		$.each(tab_buttons, function(selector, toggle) {
+			$(selector).click(function() {
+				var $parentItem = $(this).parent(),
+					slideAmt = $(this).next().width(),
+					change;
 
-		if (parseInt($parentItem.css('marginLeft'), 10) > 0) {
-		  direction = '-=';
-		  $(this).removeClass('expanded');
-		} else {
-		  $(this).addClass('expanded');
-		  direction = '+=';
-		}
-		$parentItem
-		  .animate({marginLeft: direction + slideAmt}, 00);
-		return false;
-	  });
-	 
+				change = toggle(parseInt($parentItem.css('marginLeft'), 10));
+
+				$(this)[change.cls]('expanded');
+				$parentItem.animate({marginLeft: change.dir + slideAmt}, 00);
+
+				return false;
+			});
+		});
 	});
 });
