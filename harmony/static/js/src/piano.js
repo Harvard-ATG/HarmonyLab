@@ -11,7 +11,7 @@ function(_, $, PianoKeyboard, MIDIRouter, Notation) {
 		var notation = new Notation();
 
 		$('#piano').append(keyboard.render().el)
-		$('#notation').append(notation.render().el);
+		$('#staff-area').append(notation.render().el);
 
 		var router = new MIDIRouter();
 

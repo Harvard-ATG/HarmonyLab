@@ -35,14 +35,14 @@ body {
 	xpadding-top: 5px;
 }
 
-#notation {
-	background: rgb(238, 238, 221) center no-repeat;
+#staff-area {
+	background-color: rgb(238, 238, 221);
 	width:540px;
 	height:400px;
-	margin-left:205px;
+	margin: 0 auto;
 	position:relative;
 	z-index:10;
-	padding:0 0;
+	padding:0;
 	
 	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
@@ -121,14 +121,36 @@ body {
 	line-height: 1.3em;
 }
 
-
-
-
+#tab-nav-1 .tab-content-inner select {
+	float: right;
+	margin-right: 15px;
+	margin-top: -2px;
+	margin-bottom: 10px;
+}
+#tab-nav-2 ul.midi-tab .tab-content-inner select {
+	float: left;
+	margin-top: -2px;
+	margin-bottom: 10px;
+}
+.sig-lock {
+	background: url(../img/v-line.png) 1px 0 repeat-y; 
+	line-height: 3em;
+}
+#tab-nav-1 #brackets {
+	width: 120px;
+	margin: 10px auto;
+}
+#tab-nav-1 .tab-content-inner #notation-checkboxes {
+	margin-left: 25px;
+}
+#tab-nav-1 .tab-content-inner #notation-checkboxes input {
+	margin: 2px 5px;
+}
 /* --- RIGHT SIDE TABS  --- */
 .right-panel-bed {
 	width: 200px;
 	position: absolute;
-	right: 217px;
+	right: 210px;
 	top: 75px;
 	padding:15px 0;
 }
@@ -183,7 +205,7 @@ body {
 	margin-left: 12px; 
 }
 #tab-nav-2 .tab-content-inner {
-	margin: 10px 4px 4px 24px;
+	margin: 2px 4px 4px 24px;
 	display:inline-block;
 	font-size: .8em;
 
@@ -220,14 +242,17 @@ body {
 	-moz-border-radius-topright: 9px;
 	border-top-left-radius: 9px;
 	border-top-right-radius: 9px;
-	background:#222 url(../img/kb-controller-bkg2.png) repeat-x;
+	background:#222 url(../img/kb-controller-bkg2.png) repeat-x;	
+	position:relative;
+	z-index: 10;
+
 }
 #controller-wrapper {
 	height: 25px;
 	margin: 0px;
 	padding:5px 0;
 	border-bottom: 1px solid #222;
-	
+
 }
 
 #music-controls {
@@ -235,24 +260,36 @@ body {
 	float:left;
 	}
 
-#color-controls {
-	width: 120px;
+#transpose-controls {
+	width: 150px;
 	margin:2px auto;
+	color:white;
 	}
 
 #metronome-controls {
-	width:230px;
+	width:120px;
 	float:right;
-	padding:0 10px;
+	xpadding:0 10px;
 	text-align:right;
 	color:#fff;
 }
 
+.bpm-input {
+	width: 30px; 
+	float:left;
+	margin-left: 5px;
+	margin-rightt: 5px;
+}
+.metroButton {
+	float:left;
+	margin-left: 5px;
+}
+
 #keyboard-area {
-width:100%;
-margin:0 10px;
-padding-bottom: 6px;
-overflow:hidden;
+	margin:0 10px;
+	padding-bottom: 6px;
+	overflow:hidden;
+	
 }
 
 #keyboard-area img.keys37 {margin-left: 10px;}
@@ -269,8 +306,10 @@ overflow:hidden;
 }
 
 #kb-pedals {
-	margin:0 auto;
+	margin:-47px auto 0;
 	text-align:center;
+	
+	
 }
 #kb-pedals input {
 	background:#ccc;
@@ -304,6 +343,7 @@ width: 40px;
 xtext-align:center;
 color:#999;
 font-size:large;
+display:none;
 }
 
 /*this is only for webkit, not opera*/
