@@ -93,6 +93,8 @@ define(['lodash'], function(_) {
 				this.calculateHeight(keyboardHeight)
 			);
 			this.el.mousedown(this.onPress);
+			this.el.mouseup(this.onRelease);
+			this.el.mouseout(this.onRelease);
 			return this;
 		},
 
@@ -121,6 +123,15 @@ define(['lodash'], function(_) {
 		 */
 		updateColor: function() {
 			this.el.attr('fill', this.keyColorMap[this.state]);
+		},
+		
+		/**
+		 * Destroys the key.
+		 */
+		destroy: function() {
+			this.el.unmousedown(this.onPress);
+			this.el.unmouseup(this.onRelease);
+			this.el.unmouseout(this.onRelease);
 		}
 	};
 
@@ -191,8 +202,6 @@ define(['lodash'], function(_) {
 			var el = this.el;
 			el.attr({'stroke': '#000', 'fill': '#fffff0'});
 			el.toBack();
-			el.mouseup(this.onRelease);
-			el.mouseout(this.onRelease);
 			return this;
 		},
 	});
@@ -269,8 +278,6 @@ define(['lodash'], function(_) {
 			var el = this.el;
 			el.attr('fill', '90-#333-#000');
 			el.toFront();
-			el.mouseup(this.onRelease);
-			el.mouseout(this.onRelease);
 			return this;
 		}
 	});

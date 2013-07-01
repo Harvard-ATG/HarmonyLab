@@ -19,8 +19,12 @@ function(_, $, PianoKeyboard, MIDIRouter, Notation) {
 		$('#select_keyboard_size').on('change', function() {
 			var size = parseInt($(this).val(), 10);
 			var new_keyboard = new PianoKeyboard(size);
+
 			$('#kb-wrapper').width( new_keyboard.width + 2 * $('#piano').position().left);
 			$('#piano').html('').append(new_keyboard.render().el);
+
+			keyboard.destroy();
+			keyboard = new_keyboard;
 		});
 
 		router.bind('devices', function(inputs, outputs, defaults) {

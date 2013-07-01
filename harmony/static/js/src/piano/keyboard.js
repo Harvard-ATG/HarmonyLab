@@ -62,6 +62,9 @@ define([
 			this.width = (this.getNumWhiteKeys() * PianoKey.width);
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 
+			this.onNoteInput = _.bind(this.onNoteInput, this);
+			this.onNoteOutput = _.bind(this.onNoteOutput, this);
+
 			this.initListeners();
 		},
 
@@ -69,15 +72,23 @@ define([
 		 * Initialize listeners.
 		 */
 		initListeners: function() {
-			var eventBus = this.eventBus;
+			this.eventBus.bind('noteMidiInput', this.onNoteInput);
+			this.bind('key', this.onNoteOutput);
+		},
 
-			// fire midi output events when a key is pressed
-			this.bind('key', function(noteState, noteNumber, noteVelocity) {
-				eventBus.trigger('noteMidiOutput', noteState, noteNumber, noteVelocity);
-			});
+		/**
+		 * Remove listeners
+		 */
+		removeListeners: function() {
+			this.eventBus.unbind('noteMidiInput', this.onNoteInput);
+			this.unbind('key', this.onNoteOutput);
+		},
 
-			// react to midi input events
-			eventBus.bind('noteMidiInput', _.bind(this.onNoteInput, this));
+		/**
+		 * Transmit key presses to the midi bus.
+		 */
+		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
+			this.eventBus.trigger('noteMidiOutput', noteState, noteNumber, noteVelocity);
 		},
 
 		/**
@@ -85,7 +96,9 @@ define([
 		 */
 		onNoteInput: function(noteState, noteNumber, noteVelocity) {
 			var key = this.getKeyByNumber(noteNumber);
-			key[noteState==='on'?'press':'release']();
+			if(typeof key !== 'undefined') {
+				key[noteState==='on'?'press':'release']();
+			}
 		},
 
 		/**
@@ -149,6 +162,18 @@ define([
 			});
 
 			return this;
+		},
+
+		/**
+		 * Destroys the keyboard.
+		 */
+		destroy: function() {
+			this.removeListeners();			
+			_.each(this.keys, function(key) {
+				key.destroy();
+			});
+			this.paper.clear();
+			this.el.remove();
 		}
 	});
 
