@@ -77,6 +77,8 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, M
 
 			this.eventBus.bind('noteMidiOutput', _.bind(this.onNoteOutput, this));
 
+			this.eventBus.bind('pedalMidiOutput', _.bind(this.onPedalEvent, this));
+
 			if(this.input) {
 				this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
 			}
@@ -100,6 +102,22 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, M
 				this.eventBus.trigger('noteDraw', noteState, noteNumber, noteVelocity);
 				this.eventBus.trigger('noteMidiInput', noteState, noteNumber, noteVelocity);
 			}
+		},
+
+		/**
+		 * Handles sustain, sostenuto, soft pedal events.
+		 */
+		onPedalEvent: function(pedal, state) {
+			var controlNumberOf = { 'sustain': 64, 'sostenuto': 66, 'soft': 67 },
+				controlValueOf = { 'on': 127, 'off': 0 },
+				command = JMB.CONTROL_CHANGE,
+				controlNumber = controlNumberOf[pedal], 
+				controlValue = controlValueOf[state];
+
+				var msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
+				if(this.output) {
+					this.output.sendMIDIMessage(msg);
+				}
 		},
 
 		/**
