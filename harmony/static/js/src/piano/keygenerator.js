@@ -30,7 +30,7 @@ define(['lodash', './key',], function(_, PianoKey) {
 			37: { 'firstNote': 'C', 'firstNoteNumber': 48 }, 
 			49: { 'firstNote': 'C', 'firstNoteNumber': 36 }, 
 			61: { 'firstNote': 'C', 'firstNoteNumber': 36 }, 
-			88: { 'firstNote': 'A', 'firstNoteNumber': 12 }
+			88: { 'firstNote': 'A', 'firstNoteNumber': 9 }
 		},
 
 		/**
