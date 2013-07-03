@@ -20,7 +20,6 @@ function smoothblue() {
 {# TODO: get raphaeljs to work with requirejs #}
 <script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
 <script src="{{ STATIC_URL }}js/src/piano.js"></script>
-<script>require(['app/tab-nav']);</script>
 {% endblock %}
 
 
@@ -43,7 +42,7 @@ function smoothblue() {
                       <div class="tab-content-inner">
     
                        <br /> 
-                            <select name="instrument">
+                            <select id="select_instrument" name="instrument">
                             <option value="piano">Piano</option>
                             <option value="harpsichord">Harpsichord</option>
                             <option value="organ">Organ</option>
@@ -58,15 +57,15 @@ function smoothblue() {
                             </select>
                             <br /><br />
                             Style: 
-                            <select name="player-style">
+                            <select name="player-style" disabled>
                             <option value="singlefinger">Single Finger</option>
                             <option value="Manual">Manual</option>
                             </select>
 
                             <div id="brackets" >
-                                <input name="" type="button" value="[" class="metroButton"/>  
-                                <input name="" type="button" value="/" class="metroButton"/>  
-                                <input name="" type="button" value="\" class="metroButton"/> 
+                                <input name="" type="button" value="[" class="metroButton" disabled/>  
+                                <input name="" type="button" value="/" class="metroButton" disabled/>  
+                                <input name="" type="button" value="\" class="metroButton" disabled/> 
                             </div> 
     
                       </div>
@@ -79,23 +78,23 @@ function smoothblue() {
                   <div class="tab-content-wrapper">
                     <div class="tab-content-inner">
                         	<br />
-                            <select name="">
+                            <select name="" disabled>
                             <option value="piano">Analysis</option>
                             <option value="harpsichord">ThoroughBass</option>
                             </select>
                         <br /><br />
                             
-                            <select name="notation">
+                            <select name="notation" disabled>
                             <option value="25">Roman Numeral</option>
                             <option value="37">Type 2</option>
                             <option value="49">Type 3</option>
                             </select>
                             
                             <div id="notation-checkboxes">
-                                <br /><input name="root" type="checkbox" value="Root" /> Root
-                                <br /><input name="doublings" type="checkbox" value="Doublings" /> Doublings
-                                <br /><input name="tritones" type="checkbox" value="Tritones" /> Tritones
-                                <br /><input name="Chords" type="checkbox" value="8ths & 5ths" /> 8ths &amp; 5ths
+                                <br /><input name="root" type="checkbox" value="Root" disabled/> Root
+                                <br /><input name="doublings" type="checkbox" value="Doublings" disabled/> Doublings
+                                <br /><input name="tritones" type="checkbox" value="Tritones" disabled/> Tritones
+                                <br /><input name="Chords" type="checkbox" value="8ths & 5ths" disabled/> 8ths &amp; 5ths
                             </div>
     
                     </div>
@@ -131,7 +130,7 @@ function smoothblue() {
                     <div class="tab-content-inner">
                     	<br />
                         
-                            <select name="">
+                            <select name="" disabled>
                             <option value="F">F major</option>
                             <option value="C">C major</option>
                             <option value="G">G major</option>
@@ -139,10 +138,10 @@ function smoothblue() {
                            </select>
                            
                         
-                           <div class="sig-lock"> <input name="key-lock" type="checkbox" value="lock" /> Lock</div>
+                           <div class="sig-lock"> <input name="key-lock" type="checkbox" value="lock" disabled/> Lock</div>
                             
                         
-                            <select name="signature">
+                            <select name="signature" disabled>
                             <option value="#">#</option>
                             <option value="##">##</option>
                             <option value="###">###</option>

@@ -24,6 +24,12 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, M
 			outputIndex: 0, 
 			inputIndex: 0 
 		},
+		// @TODO refactor to pull from reference list of MIDI instruments
+		instruments: {
+			'piano': 0, // Acoustic Grand Piano
+			'harpsichord': 6, // Harpsichord
+			'organ': 16  // Drawbar Organ
+		},
 
 		/**
 		 * Initializes the MIDI router to send and receive MIDI messages.
@@ -79,6 +85,8 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, M
 
 			this.eventBus.bind('pedalMidiOutput', _.bind(this.onPedalEvent, this));
 
+			this.eventBus.bind('changeInstrument', _.bind(this.onChangeInstrument, this));
+
 			if(this.input) {
 				this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
 			}
@@ -112,12 +120,25 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus'], function(_, M
 				controlValueOf = { 'on': 127, 'off': 0 },
 				command = JMB.CONTROL_CHANGE,
 				controlNumber = controlNumberOf[pedal], 
-				controlValue = controlValueOf[state];
+				controlValue = controlValueOf[state],
+				msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
 
-				var msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
 				if(this.output) {
 					this.output.sendMIDIMessage(msg);
 				}
+		},
+
+		/**
+		 * Handles change of instrument.
+		 */
+		onChangeInstrument: function(instrument) {
+			var command = JMB.PROGRAM_CHANGE,
+				instrumentNum = this.instruments[instrument] || this.instruments.piano,
+				msg = this.midiAccess.createMIDIMessage(command,instrumentNum,0,this.channel);
+
+			if(this.output) {
+				this.output.sendMIDIMessage(msg);
+			}
 		},
 
 		/**

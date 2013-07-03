@@ -6,20 +6,23 @@ require([
 	'app/piano/keyboard',
 	'app/midirouter',
 	'app/notation',
+	'app/ui/staff-tab-nav',
 	'app/eventbus'
 ], 
-function(_, $, PianoKeyboard, MIDIRouter, Notation, eventBus) {
+function(_, $, PianoKeyboard, MIDIRouter, Notation, StaffTabNav, eventBus) {
 	$(document).ready(function() {
 		var keyboard = new PianoKeyboard(), 
 			notation = new Notation(), 
 			router = new MIDIRouter();
-
 
 		// setup the on-screen piano keyboard
 		$('#piano').append(keyboard.render().el)
 
 		// setup the staff and notation area
 		$('#staff-area').append(notation.render().el);
+
+		// initialize the staff area tab navigation
+		StaffTabNav.init();
 
 		// setup the keyboard size selector so the user can 
 		// change the on-screen keyboard
@@ -43,6 +46,12 @@ function(_, $, PianoKeyboard, MIDIRouter, Notation, eventBus) {
 				state = (state == 'on' ? 'off' : 'on');
 				eventBus.trigger('pedalMidiOutput', pedals[index], state); 
 			});
+		});
+
+		// setup the list of instruments control
+		$('#select_instrument').on('change', function() {
+			var instrument = $(this).val();
+			eventBus.trigger('changeInstrument', instrument);
 		});
 
 		// setup the list of midi input devices that the user can select and
