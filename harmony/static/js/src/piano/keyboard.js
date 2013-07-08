@@ -33,10 +33,12 @@ define([
 		/**
 		 * Size of the keyboard on screen.
 		 *
+		 * @property {integer} keyWidth
 		 * @property {integer} width
 		 * @property {integer} height
 		 */
-		width: 800,
+		keyWidth: 30,
+		width: 870,
 		height: 150,
 
 		/**
@@ -59,11 +61,16 @@ define([
 			this.el = $('<div class="keyboard"></div>');
 			this.keys = this.getKeys() || [];
 			this.keysByNumber = this.mapKeysByNumber(this.keys);
-			this.width = (this.getNumWhiteKeys() * PianoKey.width);
+
+			if(this.getNumWhiteKeys() <= 49) {
+				this.width = (this.getNumWhiteKeys() * this.keyWidth);
+			} else {
+				this.keyWidth = (this.width / this.getNumWhiteKeys());
+			}
+
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 
-			this.onNoteInput = _.bind(this.onNoteInput, this);
-			this.onNoteOutput = _.bind(this.onNoteOutput, this);
+			_.bindAll(this, ['onNoteInput', 'onNoteOutput']);
 
 			this.initListeners();
 		},

@@ -165,7 +165,7 @@ define(['lodash'], function(_) {
 		 * @return {number}
 		 */
 		calculateWidth: function() {
-			return PianoKey.width; 
+			return this.keyboard.keyWidth; 
 		},
 
 		/**
@@ -239,7 +239,7 @@ define(['lodash'], function(_) {
 		 * @return {number}
 		 */
 		calculateWidth: function() {
-			return PianoKey.width / 2;
+			return this.keyboard.keyWidth / 2;
 		},
 
 		/**
@@ -259,7 +259,7 @@ define(['lodash'], function(_) {
 		 * @return {number}
 		 */
 		calculateOffsetX: function(whiteKeyIndex) {
-			var offset = (whiteKeyIndex * PianoKey.width); 
+			var offset = (whiteKeyIndex * this.keyboard.keyWidth); 
 			var width = this.calculateWidth();
 			return offset - (width / 2);
 		},
@@ -297,12 +297,7 @@ define(['lodash'], function(_) {
 		create: function(config) {
 			var keyConstructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
 			return new keyConstructor(config);
-		},
-
-		/**
-		 * The width a white piano key.
-		 */
-		width: 30
+		}
 	};
 
 	return PianoKey;
