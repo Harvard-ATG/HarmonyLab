@@ -79,7 +79,7 @@ define([
 		 * Initialize listeners.
 		 */
 		initListeners: function() {
-			this.eventBus.bind('noteMidiInput', this.onNoteInput);
+			this.eventBus.bind('note:input', this.onNoteInput);
 			this.bind('key', this.onNoteOutput);
 		},
 
@@ -87,7 +87,7 @@ define([
 		 * Remove listeners
 		 */
 		removeListeners: function() {
-			this.eventBus.unbind('noteMidiInput', this.onNoteInput);
+			this.eventBus.unbind('note:input', this.onNoteInput);
 			this.unbind('key', this.onNoteOutput);
 		},
 
@@ -95,7 +95,7 @@ define([
 		 * Transmit key presses to the midi bus.
 		 */
 		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
-			this.eventBus.trigger('noteMidiOutput', noteState, noteNumber, noteVelocity);
+			this.eventBus.trigger('note:output', noteState, noteNumber, noteVelocity);
 		},
 
 		/**

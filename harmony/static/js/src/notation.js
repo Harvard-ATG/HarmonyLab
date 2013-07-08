@@ -51,7 +51,7 @@ define(['lodash', 'vexflow', 'app/eventbus'], function(_, Vex, eventBus) {
 
 			this.renderer = new Vex.Flow.Renderer(this.el[0], Vex.Flow.Renderer.Backends.CANVAS);
 
-			this.eventBus.bind('noteDraw', _.bind(this.onNoteEvent, this));
+			this.eventBus.bind('note:render', _.bind(this.onNoteRender, this));
 		},
 		/**
 		 * Renders the notation.
@@ -162,7 +162,7 @@ define(['lodash', 'vexflow', 'app/eventbus'], function(_, Vex, eventBus) {
 		 * @param {integer} noteNumber the midi note number
 		 * @param {integer} noteVelocity defaults to 100
 		 */
-		onNoteEvent: function(eventName, noteNumber, noteVelocity) {
+		onNoteRender: function(eventName, noteNumber, noteVelocity) {
 			if(eventName === 'on') {
 				this.midiNotesPlaying[noteNumber] = true;
 			} else {

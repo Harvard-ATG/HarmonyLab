@@ -1,4 +1,4 @@
-define(['lodash'], function() {
+define(function() {
 
 var instruments = {
     "0": {
@@ -516,10 +516,7 @@ var instruments = {
 };
 
 	return {
-		getByNum: function(num) {
-			return instruments[num];
-		},
-		getNumByName: function(name) {
+		numberOf: function(name) {
 			for(var num in instruments) {
 				if(instruments.hasOwnProperty(num) 
 					&& instruments[num].name.toLowerCase() === name.toLowerCase()) {
@@ -527,6 +524,9 @@ var instruments = {
 				}
 			}
 			return -1;
+		},
+		getDefault: function() {
+			return 0;
 		}
 	};
 });

@@ -44,14 +44,14 @@ function(_, $, PianoKeyboard, MIDIRouter, Notation, StaffTabNav, eventBus) {
 	
 			$(el).on('click', function() {
 				state = (state == 'on' ? 'off' : 'on');
-				eventBus.trigger('pedalMidiOutput', pedals[index], state); 
+				eventBus.trigger('pedal', pedals[index], state); 
 			});
 		});
 
 		// setup the list of instruments control
 		$('#select_instrument').on('change', function() {
 			var instrument = $(this).val();
-			eventBus.trigger('changeInstrument', instrument);
+			eventBus.trigger('instrument', instrument);
 		});
 
 		// setup the list of midi input devices that the user can select and

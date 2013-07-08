@@ -23,7 +23,7 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 		defaults: { 
 			outputIndex: 0, 
 			inputIndex: 0,
-			instrumentName: 'Acoustic Grand Piano',
+			instrumentNum: midiInstruments.getDefault(),
 		},
 
 		/**
@@ -32,7 +32,14 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 		 * @return {this}
 		 */
 		init: function() {
-			JMB.init(_.bind(this.onJMBInit, this));
+			_.bindAll(this, [
+				'onJMBInit',
+				'onNoteInput',
+				'onNoteOutput',
+				'onPedalChange',
+				'onChangeInstrument'
+			]);
+			JMB.init(this.onJMBInit);
 		},
 
 		/**
@@ -74,16 +81,13 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 		 * Initializes listeners.
 		 */
 		initListeners: function() {
-			var MIDIAccess = this.midiAccess;
 
-			this.eventBus.bind('noteMidiOutput', _.bind(this.onNoteOutput, this));
-
-			this.eventBus.bind('pedalMidiOutput', _.bind(this.onPedalEvent, this));
-
-			this.eventBus.bind('changeInstrument', _.bind(this.onChangeInstrument, this));
+			this.eventBus.bind('note:output', this.onNoteOutput);
+			this.eventBus.bind('pedal', this.onPedalChange);
+			this.eventBus.bind('instrument', this.onChangeInstrument);
 
 			if(this.input) {
-				this.input.addEventListener('midimessage', _.bind(this.onNoteInput, this));
+				this.input.addEventListener('midimessage', this.onNoteInput);
 			}
 		},
 
@@ -102,15 +106,15 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
 				var noteNumber = msg.data1;
 				var noteVelocity = msg.data2;
-				this.eventBus.trigger('noteDraw', noteState, noteNumber, noteVelocity);
-				this.eventBus.trigger('noteMidiInput', noteState, noteNumber, noteVelocity);
+				this.eventBus.trigger('note:render', noteState, noteNumber, noteVelocity);
+				this.eventBus.trigger('note:input', noteState, noteNumber, noteVelocity);
 			}
 		},
 
 		/**
 		 * Handles sustain, sostenuto, soft pedal events.
 		 */
-		onPedalEvent: function(pedal, state) {
+		onPedalChange: function(pedal, state) {
 			var controlNumberOf = { 'sustain': 64, 'sostenuto': 66, 'soft': 67 },
 				controlValueOf = { 'on': 127, 'off': 0 },
 				command = JMB.CONTROL_CHANGE,
@@ -128,9 +132,9 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 		 */
 		onChangeInstrument: function(instrumentName) {
 			var command = JMB.PROGRAM_CHANGE;
-			var instrumentNum = midiInstruments.getNumByName(instrumentName);
+			var instrumentNum = midiInstruments.numberOf(instrumentName);
 			if(instrumentNum < 0) {
-				instrumentNum = midiInstruments.getNumByName(this.defaults.instrumentName);
+				instrumentNum = this.defaults.instrumentNum;
 			}
 			var msg = this.midiAccess.createMIDIMessage(command,instrumentNum,0,this.channel);
 
@@ -154,7 +158,7 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
 			this.output.sendMIDIMessage(midiMessage);
-			this.eventBus.trigger('noteDraw', noteState, noteNumber, noteVelocity);
+			this.eventBus.trigger('note:render', noteState, noteNumber, noteVelocity);
 		}
 	});
 
