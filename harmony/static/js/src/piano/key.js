@@ -71,8 +71,8 @@ define(['lodash'], function(_) {
 			this.noteNumber = config.noteNumber;
 			this.noteName = config.noteName || '';
 			this.keyboard = config.keyboard;
-			this.onPress = _.bind(this.onPress, this);
-			this.onRelease = _.bind(this.onRelease, this);
+			this.onPress = this.preventDefault(this.onPress);
+			this.onRelease = this.preventDefault(this.onRelease);
 			return this;
 		},
 
@@ -101,7 +101,7 @@ define(['lodash'], function(_) {
 		/**
 		 * Event handler for key press.
 		 */
-		onPress: function() {
+		onPress: function(e) {
 			if(this.isReleased()) {
 				this.press();
 				this.keyboard.trigger('key', this.state, this.noteNumber)
@@ -111,11 +111,23 @@ define(['lodash'], function(_) {
 		/**
 		 * Event handler for key release.
 		 */
-		onRelease: function() {
+		onRelease: function(e) {
 			if(this.isPressed()) { 
 				this.release();
 				this.keyboard.trigger('key', this.state, this.noteNumber)
 			}
+		},
+
+		/**
+		 * Wrapper for mouse event handlers to prevent default actions.
+		 */
+		preventDefault: function(handler) {
+			var self = this;
+			return function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				return handler.apply(self, arguments);
+			};
 		},
 
 		/**
