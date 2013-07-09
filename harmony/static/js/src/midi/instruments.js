@@ -1,3 +1,4 @@
+// Module that defines the available MIDI instruments
 define(function() {
 
 var instruments = {
@@ -517,7 +518,8 @@ var instruments = {
 
 	return {
 		numberOf: function(name) {
-			for(var num in instruments) {
+			var num;
+			for(num in instruments) {
 				if(instruments.hasOwnProperty(num) 
 					&& instruments[num].name.toLowerCase() === name.toLowerCase()) {
 					return parseInt(num, 10);

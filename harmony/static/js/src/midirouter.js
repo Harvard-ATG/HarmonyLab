@@ -1,4 +1,10 @@
-define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/instruments'], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
+define([
+	'lodash', 
+	'microevent', 
+	'jazzmidibridge', 
+	'app/eventbus', 
+	'app/midi/instruments'
+], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
 
 	/**
 	 * The MIDI Router is responsible for translating and routing MIDI 
@@ -23,7 +29,7 @@ define(['lodash', 'microevent', 'jazzmidibridge', 'app/eventbus', 'app/midi/inst
 		defaults: { 
 			outputIndex: 0, 
 			inputIndex: 0,
-			instrumentNum: midiInstruments.getDefault(),
+			instrumentNum: 0
 		},
 
 		/**
