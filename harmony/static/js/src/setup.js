@@ -29,11 +29,11 @@ function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 			var size = parseInt($(this).val(), 10);
 			var new_keyboard = new PianoKeyboard(size);
 			var offset = $('#piano').position();
-			var new_width = new_keyboard.width + offset.left + offset.right;
+			var new_width = new_keyboard.width + (2 * offset.left);
 
 			new_keyboard.render()
-			$('#kb-wrapper').width(new_width);
 			$('#piano').html('').append(new_keyboard.el);
+			$('#kb-wrapper').width(new_width);
 
 			keyboard.destroy();
 			keyboard = new_keyboard;
