@@ -28,9 +28,12 @@ function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 		$('#select_keyboard_size').on('change', function() {
 			var size = parseInt($(this).val(), 10);
 			var new_keyboard = new PianoKeyboard(size);
+			var offset = $('#piano').position();
+			var new_width = new_keyboard.width + offset.left + offset.right;
 
-			$('#kb-wrapper').width( new_keyboard.width + 2 * $('#piano').position().left);
-			$('#piano').html('').append(new_keyboard.render().el);
+			new_keyboard.render()
+			$('#kb-wrapper').width(new_width);
+			$('#piano').html('').append(new_keyboard.el);
 
 			keyboard.destroy();
 			keyboard = new_keyboard;

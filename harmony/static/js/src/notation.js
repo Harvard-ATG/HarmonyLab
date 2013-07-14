@@ -1,173 +1,194 @@
-define(['lodash', 'vexflow', 'app/eventbus'], function(_, Vex, eventBus) {
+define(['lodash', 'vexflow', 'app/eventbus', 'app/notation/keysignature'], function(_, Vex, eventBus, KeySignature) {
 
-	/**
-	 * Notation object for converting MIDI notes to musical notation and
-	 * displaying the notes on the screen as they are played.
-	 */
+	//--------------------------------------------------
+	var MidiNotes = function() {
+		this.init();
+	};
+	_.extend(MidiNotes.prototype, {
+		init: function() {
+			this._notes = {};
+		},
+		noteOn: function(number) {
+			this._notes[number] = true;
+		},
+		noteOff: function(number) {
+			delete this._notes[number];
+		},
+		getNotes: function() {
+			return _.keys(this._notes);
+		},
+		getNotesForClef: function(clef) {
+			var notes = [], _notes = this._notes; 
+			var note;
+			for(note in _notes) {
+				switch(clef) {
+					case 'treble':
+						if(note >= 60) {
+							notes.push(note);
+						}
+						break;
+					case 'bass':
+						if(note < 60) {
+							notes.push(note);
+						}
+						break;
+					default:
+						throw new Error("invalid clef");
+				}
+			}
+			return notes;
+		}
+	});
+
+	//--------------------------------------------------
+	var StaveRenderer = function(config) {
+		this.init(config);
+	};
+	_.extend(StaveRenderer.prototype, {
+		width: 180,
+		clefs: {
+			'treble': { 'index': 1 },
+			'bass':   { 'index': 2 }
+		},
+		init: function(config) {
+			if(!this.clefs.hasOwnProperty(config.clef)) {
+				throw new Error("Invalid clef");
+			}
+			_.extend(this, config);
+
+			this.clefConfig = this.clefs[this.clef];
+		},
+		render: function() {
+			var x = 25;
+			var y = 75 * this.clefConfig.index; 
+			var width = this.width;
+			var ctx = this.vexRenderer.getContext();
+			var clef = this.clef;
+			var keySpec = 'C' || this.keySignature.getSpec();
+			var stave, voice, formatter, notes;
+
+			stave = new Vex.Flow.Stave(x, y, width);
+			stave.addClef(clef);
+			stave.addKeySignature(keySpec);
+			stave.setContext(ctx);
+			stave.draw();
+
+			if(this.hasNotes()) {
+				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
+				voice.addTickables(this.getNotes());
+				formatter = new Vex.Flow.Formatter();
+				formatter.joinVoices([voice]).format([voice], width);
+				voice.draw(ctx, stave);
+			}
+
+			this.vexStave = stave;
+
+			return this;
+		},
+		connectWith: function(staveRenderer) {
+			if(staveRenderer) {
+				var BRACE = Vex.Flow.StaveConnector.type.BRACE
+				var ctx = this.vexRenderer.getContext();
+				var connector = new Vex.Flow.StaveConnector(this.getVexStave(), staveRenderer.getVexStave());
+		
+				connector.setType(BRACE).setContext(ctx).draw();
+			}
+		},
+		getVexStave: function() {
+			return this.vexStave;
+		},
+		hasNotes: function() {
+			var notes = this.midiNotes.getNotesForClef(this.clef);
+			return notes.length > 0;
+		},
+		getNotes: function() {
+			var notes = this.midiNotes.getNotesForClef(this.clef);
+			var keys = [], accs = [];
+			var accidentals = ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
+
+			_.each(notes, function(noteNumber, index) {
+				var octave = Math.floor(noteNumber / 12) - 1;
+				var note = accidentals[noteNumber % 12];
+				var note_name = note + '/' + octave;
+				var accidental = note.substr(1);
+
+				keys.push(note_name);
+				accs.push(accidental);
+			});
+
+			var stave_note = new Vex.Flow.StaveNote({
+				keys: keys,
+				duration: 'w',
+				clef: this.clef
+			});
+
+			for(var i = 0, len = accs.length; i < len; i++) {
+				if(accs[i] !== '') {
+					stave_note.addAccidental(i, new Vex.Flow.Accidental(accs[i]));
+				}
+			}
+	
+			return [stave_note];
+		}
+	});
+
+	//--------------------------------------------------
 	var Notation = function() {
 		this.init();
 	};
-
 	_.extend(Notation.prototype, {
-		/**
-		 * Size of the canvas and staves.
-		 */
-		canvasSize: { 
-			width: 520, 
-			height: 380 // note: height is padded a bit for low notes on the 88-key piano
-		},
-
-		/**
-		 * Size of the staff (i.e. stave).
-		 */
-		staveSize: { width: 180 },
-
-		/**
-		 * Reference to event bus.
-		 */
 		eventBus: eventBus,
-
-		/**
-		 * Map of midi notes currently playing.
-		 */
-		midiNotesPlaying: {},
-	
-		/**
-		 * Initialize.
-		 */
+		midiNotes: new MidiNotes(),
+		css: {
+			'background-color': '#eed',
+			'padding': '10px',
+			'border': '1px solid #ddc'
+		},
 		init: function() {
 			this.el = $('<canvas></canvas>');
+			this.el.css(this.css);
+			this.el[0].width = 520;
+			this.el[0].height = 380;
 
-			// TODO: move to CSS
-			this.el.css({
-				'margin': '0 auto',
-				'background-color': '#eed',
-				'padding': '10px',
-				'border': '1px solid #ddc'
-			});
+			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], Vex.Flow.Renderer.Backends.CANVAS);
 
-			this.el[0].height = this.canvasSize.height;
-			this.el[0].width = this.canvasSize.width;
+			this.staves = [];
+			this.addStave({ clef: 'treble' });
+			this.addStave({ clef: 'bass' });
 
-			this.renderer = new Vex.Flow.Renderer(this.el[0], Vex.Flow.Renderer.Backends.CANVAS);
-
-			this.eventBus.bind('note:render', _.bind(this.onNoteRender, this));
+			this.onNoteRender = _.bind(this.onNoteRender, this);
+			this.eventBus.bind('note:render', this.onNoteRender);
 		},
-		/**
-		 * Renders the notation.
-		 * @return {this}
-		 */
+		clear: function() {
+			this.vexRenderer.getContext().clear();
+		},
 		render: function() { 
-			this.renderer.getContext().clear();
+			this.clear();
 			this.renderStaves();
+			this.connectStaves();
 			return this;
 		},
-		/**
-		 * Renders the stave(s).
-		 * @return {this}
-		 */
+		addStave: function(config) {
+			_.extend(config, {
+				midiNotes: this.midiNotes,
+				vexRenderer: this.vexRenderer
+			});
+			this.staves.push(new StaveRenderer(config));
+		},
 		renderStaves: function() {
-			var ctx = this.renderer.getContext();
-			var x = 25;
-			var width = this.staveSize.width;
-			var keySignatureSpec = 'C';
-			var vexNotes = this.getVexNotes();
-			var clefs = {}, voices = [];
-			var staveConnector, formatter;
-
-			_.each(['treble','bass'], function(clef, index) {
-				var y = 75 * index, stave, voice, keySignature;
-
-				stave = new Vex.Flow.Stave(x, y, width);
-				stave.addClef(clef);
-				stave.addKeySignature(keySignatureSpec);
-				stave.setContext(ctx).draw();
-
-				if(vexNotes[clef] && vexNotes[clef].length > 0) {
-					voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-					voice.addTickables(vexNotes[clef]);
-					voices.push(voice);
-				}
-
-				clefs[clef] = {
-					'stave': stave,
-					'voice': voice,
-				};
-			});
-
-			staveConnector = new Vex.Flow.StaveConnector(clefs.treble.stave, clefs.bass.stave);
-			staveConnector.setType(Vex.Flow.StaveConnector.type.BRACE).setContext(ctx).draw();
-
-			if(voices.length > 0) {
-				formatter = new Vex.Flow.Formatter()
-					.joinVoices(voices)
-					.format(voices, width);
-
-				_.each(clefs, function(clef, name) {
-					if(clef.voice) {
-						clef.voice.draw(ctx, clef.stave);
-					}
-				});
+			var i, len;
+			for(i = 0, len = this.staves.length; i < len; i++) {
+				this.staves[i].render();
 			}
-
-			return this;
 		},
-		/**
-		 * Returns notes that are playing for Vex.Flow rendering.
-		 * @return {this}
-		 */
-		getVexNotes: function() {
-			var ctx = this.renderer.getContext();
-			var midiNotesPlaying = _.keys(this.midiNotesPlaying);
-			var notes = {'treble': [], 'bass': []};
-			var accidentals = ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"]; // for C Major
-			var vex_notes = {};
-
-			_.each(this.midiNotesPlaying, function(on, noteNumber) {
-				var octave = Math.floor(noteNumber / 12) - 1;
-				var relativeNoteNumber = noteNumber % 12;
-				var note = accidentals[relativeNoteNumber];
-				var note_name = note + '/' + octave;
-				var clef = (noteNumber > 59 ? 'treble' : 'bass');
-				var accidental = note.substr(1);
-	
-				notes[clef].push({ name: note_name, accidental: accidental});
-			});
-
-			_.each(notes, function(notes, clef) {
-				var stave_note;
-				vex_notes[clef] = [];
-				if(notes.length > 0) {
-					stave_note = new Vex.Flow.StaveNote({ 
-						keys: _.pluck(notes, 'name'),
-						duration: "w", 
-						clef: clef 
-					});
-					_.each(_.pluck(notes, 'accidental'), function(acc, index) {
-						if(acc !== '') {
-							stave_note.addAccidental(index, new Vex.Flow.Accidental(acc));
-						}
-					});
-					vex_notes[clef].push(stave_note);
-				}
-			});
-
-			return vex_notes;
+		connectStaves: function() {
+			if(this.staves.length === 2) { 
+				this.staves[0].connectWith(this.staves[1]);
+			}
 		},
-		/**
-		 * Handles note on/off events and upates the map of notes that
-		 * are currently playing. 
-		 *
-		 * @param {string} eventName on|off
-		 * @param {integer} noteNumber the midi note number
-		 * @param {integer} noteVelocity defaults to 100
-		 */
 		onNoteRender: function(eventName, noteNumber, noteVelocity) {
-			if(eventName === 'on') {
-				this.midiNotesPlaying[noteNumber] = true;
-			} else {
-				delete this.midiNotesPlaying[noteNumber];
-			}
+			var toggle = (eventName == 'on'? 'noteOn' : 'noteOff');
+			this.midiNotes[toggle](noteNumber);
 			this.render();
 		}
 	});

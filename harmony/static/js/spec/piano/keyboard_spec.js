@@ -1,3 +1,3 @@
-define(['app/piano/keyboard'], function(PianoKeyboard) {
-	console.log('keyboard spec');
+define(['app/piano'], function(PianoKeyboard) {
+	console.log('piano keyboard spec');
 });
