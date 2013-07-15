@@ -2,17 +2,19 @@
 require([
 	'lodash',
 	'jquery', 
-	'app/midirouter',
+	'app/midi/controller',
+	'app/midi/notes',
 	'app/notation',
 	'app/piano',
-	'app/ui/staff-tab-nav',
+	'app/ui/staff_tab_nav',
 	'app/eventbus'
 ], 
-function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
+function(_, $, MidiController, MidiNotes, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 	$(document).ready(function() {
-		var keyboard = new PianoKeyboard(), 
-			notation = new Notation(), 
-			router = new MIDIRouter();
+		var keyboard = new PianoKeyboard();
+		var midi_notes = new MidiNotes();
+		var midi_controller = new MidiController({ midiNotes: midi_notes });
+		var notation = new Notation({ midiNotes: midi_notes });
 
 		// setup the on-screen piano keyboard
 		$('#piano').append(keyboard.render().el)
@@ -50,20 +52,20 @@ function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 			});
 		});
 
-		// setup the list of instruments control
+		// change the midi instruments 
 		$('#select_instrument').on('change', function() {
 			var instrument = $(this).val();
 			eventBus.trigger('instrument', instrument);
 		});
 
+		// change the key and key signature
 		$('#select_key_name').on('change', function() {
 			var key_name = $(this).val();
 			notation.changeKey(key_name);
 		});
 
-		// setup the list of midi input devices that the user can select and
-		// activate
-		router.bind('devices', function(inputs, outputs, defaults) {
+		// list of midi input devices 
+		midi_controller.bind('devices', function(inputs, outputs, defaults) {
 			options = _.map(inputs, function(input, idx) {
 				return '<option value="'+idx+'">'+input.deviceName+'</option>';
 			});
@@ -74,6 +76,6 @@ function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 				$('#midi_input').html('<option>---</option>');
 			}
 		});
-		router.init();
+		midi_controller.init();
 	});
 });

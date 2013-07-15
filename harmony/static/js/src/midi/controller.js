@@ -7,16 +7,20 @@ define([
 ], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
 
 	/**
-	 * The MIDI Router is responsible for translating and routing MIDI 
-	 * messages from both external keyboard devices and onscreen devices.
+	 * The midi controller is responsible for coordinating midi messages 
+	 * from both external keyboard devices and onscreen devices as well
+	 * as handling midi control changes.
 	 *
-	 * It directly interfaces with external devices using the Jazz Midi Bridge
-	 * (JMB) and depends on the event bus to interface with other system 
-	 * components. 
+	 * It interfaces with external devices using the Jazz Midi Bridge
+	 * (JMB) and uses the event bus to broadcast interesting events
+	 * to other application components.
 	 */
-	var MIDIRouter = function() {};
+	var MidiController = function(config) {
+		this.config = config || {};
+		this.init();
+	};
 
-	_.extend(MIDIRouter.prototype, {
+	_.extend(MidiController.prototype, {
 		eventBus: eventBus,
 
 		channel: 0,
@@ -38,6 +42,12 @@ define([
 		 * @return {this}
 		 */
 		init: function() {
+			if(!this.config.hasOwnProperty('midiNotes')) {
+				throw new Error("missing config property");
+			}
+
+			this.midiNotes = this.config.midiNotes;
+
 			_.bindAll(this, [
 				'onJMBInit',
 				'onNoteInput',
@@ -45,6 +55,7 @@ define([
 				'onPedalChange',
 				'onChangeInstrument'
 			]);
+
 			JMB.init(this.onJMBInit);
 		},
 
@@ -98,7 +109,14 @@ define([
 		},
 
 		/**
-		 * Initializes listeners.
+		 * Toggles a note state.
+		 */
+		toggleNote: function(noteState, noteNumber) {
+			this.midiNotes[noteState==='on'?'noteOn':'noteOff'](noteNumber);
+		},
+
+		/**
+		 * Handles note input from an external device.
 		 */
 		onNoteInput: function(msg) {
 			var output = this.output;
@@ -112,9 +130,23 @@ define([
 				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
 				var noteNumber = msg.data1;
 				var noteVelocity = msg.data2;
-				this.eventBus.trigger('note:render', noteState, noteNumber, noteVelocity);
+
 				this.eventBus.trigger('note:input', noteState, noteNumber, noteVelocity);
+				this.toggleNote(noteState, noteNumber);
 			}
+		},
+
+		/**
+		 * Handles note output (not from an external device). 
+		 */
+		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
+			var midiMessage, midiCommand;
+			midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+			noteVelocity = noteVelocity || 100;
+			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
+
+			this.output.sendMIDIMessage(midiMessage);
+			this.toggleNote(noteState, noteNumber);
 		},
 
 		/**
@@ -147,28 +179,10 @@ define([
 			if(this.output) {
 				this.output.sendMIDIMessage(msg);
 			}
-		},
-
-		/**
-		 * Handles note on/off events by creating and transmitting the
-		 * appropriate MIDI message.
-		 *
-		 * @param {string} noteState on|off
-		 * @param {integer} noteNumber the midi note number
-		 * @param {integer} noteVelocity defaults to 100
-		 */
-		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
-			var midiMessage, midiCommand;
-			midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-			noteVelocity = noteVelocity || 100;
-			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
-
-			this.output.sendMIDIMessage(midiMessage);
-			this.eventBus.trigger('note:render', noteState, noteNumber, noteVelocity);
 		}
 	});
 
-	MicroEvent.mixin(MIDIRouter);
+	MicroEvent.mixin(MidiController); // make object observable
 
-	return MIDIRouter;
+	return MidiController;
 });
