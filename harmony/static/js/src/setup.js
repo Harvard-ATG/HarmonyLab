@@ -85,17 +85,38 @@ function(
 				var makeOptions = function(device, idx) {
 					return tpl({ id: idx, name: device.deviceName });
 				};
-				var options = {
-					'#select_midi_input': _.map(inputs, makeOptions),
-					'#select_midi_output': _.map(outputs, makeOptions)
+				var devices = {
+					'input': {
+						'selector': '#select_midi_input',
+						'options': _.map(inputs, makeOptions),
+					},
+					'output': {
+						'selector': '#select_midi_output', 
+						'readonly': true,
+						'options': _.map(outputs, makeOptions)
+					}
 				};
 
-				_.each(options, function(opts, selector) {
-					if(opts.length > 0) {
-						$(selector).html(opts.join(''))
+				_.each(devices, function(device, type) {
+					if(device.options.length > 0) {
+						$(device.selector).html(device.options.join(''))
 					} else {
-						$(selector).html('<option>--</option>');
+						$(device.selector).html('<option>--</option>');
 					}
+
+					if(device.readonly) {
+						$(device.selector).attr('disabled', 'disabled');
+					} else {
+						$(device.selector).on('change', function() {
+							var index = $(this).val();
+							midi_controller.selectDevice(type, index);
+						});
+					}
+				});
+
+				$('#refresh_midi_devices').on('click', function() {
+					midi_controller.scanDevices();
+					midi_controller.detectDevices();
 				});
 			});
 			midi_controller.detectDevices();

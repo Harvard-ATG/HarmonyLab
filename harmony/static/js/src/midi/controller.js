@@ -80,6 +80,13 @@ define([
 		},
 
 		/**
+		 * Scans for changes to midi devices.
+		 */
+		scanDevices: function() {
+			JMB.rescan();
+		},
+
+		/**
 		 * Selects a default midi input and output device (if any). 
 		 */
 		selectDefaultDevices: function() {
@@ -90,6 +97,24 @@ define([
 			}
 			if(inputs && inputs.length > 0) {
 				this.input = inputs[this.defaults.inputIndex];
+			}
+		},
+
+		/**
+		 * Selects a device for input/output.
+		 */
+		selectDevice: function(type, index) {
+			switch(type) {
+				case 'input': 
+					if(this.inputDevices.length > 0) {
+						this.input = this.inputDevices[index];
+					}
+					break;
+				case 'output':
+					if(this.outputDevices.length > 0) {
+						this.output = this.outputDevices[index];
+					}
+					break;
 			}
 		},
 

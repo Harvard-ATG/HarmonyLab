@@ -136,6 +136,7 @@
 			list;
         //get inputs
         list = Jazz.MidiInList();
+		inputs = [];
         for(name in list){
             if(list.hasOwnProperty(name)){
                 inputs.push(createMIDIDevice(name,"INPUT",list[name]));
@@ -143,6 +144,7 @@
         }
         //get outputs
         list = Jazz.MidiOutList();
+		outputs = [];
         for(name in list){
             if(list.hasOwnProperty(name)){
                 outputs.push(createMIDIDevice(name,"OUTPUT",list[name]));
