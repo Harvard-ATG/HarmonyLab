@@ -42,7 +42,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		getAccidentals: function(key) {
 			var spec = Vex.Flow.keySignature.keySpecs[key];
-			var order = accidentalOrder.slice(0);
+			var order = accidentalOrder.slice(0); // copy
 			if(spec.acc == 'b') {
 				order.reverse();
 			}

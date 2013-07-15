@@ -130,21 +130,27 @@ function smoothblue() {
                     <div class="tab-content-inner">
                     	<br />
                         
-                            <select name="" disabled>
-                            <option value="F">F major</option>
-                            <option value="C">C major</option>
-                            <option value="G">G major</option>
-                            <option value="D">D major</option>
+                            <select id="select_key_name">
+								<option value="F">F major</option>
+								<option value="C" selected>C major</option>
+								<option value="G">G major</option>
+								<option value="D">D major</option>
+								<option value="A">A major</option>
+								<option value="E">E major</option>
+								<option value="B">B major</option>
                            </select>
                            
+						   <div class="sig-lock"> 
+							   <input name="key_and_signature_locked" type="checkbox" value="lock"/> Lock
+						   </div>
                         
-                           <div class="sig-lock"> <input name="key-lock" type="checkbox" value="lock" disabled/> Lock</div>
-                            
-                        
-                            <select name="signature" disabled>
-                            <option value="#">#</option>
-                            <option value="##">##</option>
-                            <option value="###">###</option>
+                            <select id="select_key_signature">
+								<option value="#">#</option>
+								<option value="#">#</option>
+								<option value="##">##</option>
+								<option value="###">###</option>
+								<option value="####">####</option>
+								<option value="#####">#####</option>
                             </select>
     
                     </div>

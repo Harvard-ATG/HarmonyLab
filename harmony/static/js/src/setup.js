@@ -56,6 +56,11 @@ function(_, $, MIDIRouter, Notation, PianoKeyboard, StaffTabNav, eventBus) {
 			eventBus.trigger('instrument', instrument);
 		});
 
+		$('#select_key_name').on('change', function() {
+			var key_name = $(this).val();
+			notation.changeKey(key_name);
+		});
+
 		// setup the list of midi input devices that the user can select and
 		// activate
 		router.bind('devices', function(inputs, outputs, defaults) {
