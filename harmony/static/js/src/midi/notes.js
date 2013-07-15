@@ -7,14 +7,14 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 	_.extend(MidiNotes.prototype, {
 		noteOn: function(number) {
-			var changed = this._notes[number]; 
+			var changed = (this._notes[number] !== true); 
 			this._notes[number] = true;
 			if(changed) {
 				this.trigger('note:change', 'on', number);
 			}
 		},
 		noteOff: function(number) {
-			var changed = !this._notes[number];
+			var changed = (this._notes[number] === true);
 			delete this._notes[number];
 			if(changed) {
 				this.trigger('note:change', 'off', number);

@@ -42,11 +42,7 @@ function smoothblue() {
                       <div class="tab-content-inner">
     
                        <br /> 
-                            <select id="select_instrument" name="instrument">
-                            <option value="Acoustic Grand Piano">Piano</option>
-                            <option value="Harpsichord">Harpsichord</option>
-                            <option value="Drawbar Organ">Organ</option>
-                            </select>
+							<select id="select_instrument"></select>
                         <br /><br />
                             Keyboard size: 
                             <select id="select_keyboard_size" name="keyboard">
@@ -117,7 +113,10 @@ function smoothblue() {
                   <div class="tab-content-wrapper">
                     <div class="tab-content-inner">
 						<br />
-						<select id="midi_input" name="midi_input"></select>
+						<div class="label">MIDI in:</div>
+						<select id="select_midi_input" name="select_midi_input"></select>
+						<div class="label">MIDI out:</div>
+						<select id="select_midi_output" name="select_midi_output"></select>
 						<br />
                     </div>
                    </div>

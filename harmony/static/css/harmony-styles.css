@@ -128,10 +128,13 @@ body {
 	margin-bottom: 10px;
 }
 #tab-nav-2 ul.midi-tab .tab-content-inner select {
-	float: left;
 	margin-top: -2px;
 	margin-bottom: 10px;
 }
+#tab-nav-2 ul.midi-tab .tab-content-inner .label {
+	padding-bottom: 5px;
+}
+
 .sig-lock {
 	background: url(../img/v-line.png) 1px 0 repeat-y; 
 	line-height: 3em;

@@ -3,79 +3,121 @@ require([
 	'lodash',
 	'jquery', 
 	'app/midi/controller',
+	'app/midi/instruments',
 	'app/midi/notes',
 	'app/notation',
 	'app/piano',
 	'app/ui/staff_tab_nav',
 	'app/eventbus'
 ], 
-function(_, $, MidiController, MidiNotes, Notation, PianoKeyboard, StaffTabNav, eventBus) {
+function(
+	_,
+	$,
+	MidiController,
+	midiInstruments,
+	MidiNotes,
+	Notation,
+	PianoKeyboard,
+	StaffTabNav,
+	eventBus
+) {
+	var setup = {
+		initOnScreenPiano: function(keyboard) {
+			$('#piano').append(keyboard.render().el)
+		},
+		initNotation: function(notation) {
+			$('#staff-area').append(notation.render().el);
+		},
+		initTabs: function() {
+			// activate the tab menus around the staff area
+			StaffTabNav.init();
+		},
+		initInstruments: function() {
+			var el = $('#select_instrument');
+			var tpl = _.template('<option value="<%= num %>"><%= name %></option>');
+			var enabled = midiInstruments.getEnabled();
+
+			_.each(enabled, function(instrument, index) {
+				el.append(tpl(instrument));
+			});
+
+			el.on('change', function() {
+				var instrument_num = $(this).val();
+				eventBus.trigger('instrument', instrument_num);
+			});
+		},
+		initPedals: function() {
+			$('#kb-pedals img').each(function(index, el) {
+				var pedals = ['soft', 'sostenuto', 'sustain'];
+				var state = 'off';
+		
+				$(el).on('click', function() {
+					state = (state == 'on' ? 'off' : 'on');
+					eventBus.trigger('pedal', pedals[index], state); 
+				});
+			});
+		},
+		initKeyboardSizes: function(keyboard) {
+			$('#select_keyboard_size').on('change', function() {
+				var size = parseInt($(this).val(), 10);
+				var new_keyboard = new PianoKeyboard(size);
+				var offset = $('#piano').position();
+				var new_width = new_keyboard.width + (2 * offset.left);
+
+				new_keyboard.render()
+				$('#piano').html('').append(new_keyboard.el);
+				$('#kb-wrapper').width(new_width);
+
+				keyboard.destroy();
+				keyboard = new_keyboard;
+			});
+
+		},
+		initKeyAndSignature: function(notation) {
+			$('#select_key_name').on('change', function() {
+				var key_name = $(this).val();
+				notation.changeKey(key_name);
+			});
+		},
+		initDevices: function(midi_controller) {
+			midi_controller.bind('devices', function(inputs, outputs, defaults) {
+				var tpl = _.template('<option value="<%= id %>"><%= name %></option>');
+				var makeOptions = function(device, idx) {
+					return tpl({ id: idx, name: device.deviceName });
+				};
+				var options = {
+					'#select_midi_input': _.map(inputs, makeOptions),
+					'#select_midi_output': _.map(outputs, makeOptions)
+				};
+
+				_.each(options, function(opts, selector) {
+					if(opts.length > 0) {
+						$(selector).html(opts.join(''))
+					} else {
+						$(selector).html('<option>--</option>');
+					}
+				});
+			});
+			midi_controller.detectDevices();
+		},
+		init: function() {
+			var keyboard = new PianoKeyboard();
+			var midi_notes = new MidiNotes();
+			var midi_controller = new MidiController({ midiNotes: midi_notes });
+			var notation = new Notation({ midiNotes: midi_notes });
+
+			this.initOnScreenPiano(keyboard);
+			this.initNotation(notation);
+			this.initTabs();
+			this.initKeyboardSizes(keyboard);
+			this.initPedals();
+			this.initInstruments();
+			this.initKeyAndSignature(notation);
+			this.initDevices(midi_controller);
+		}
+	};
+
 	$(document).ready(function() {
-		var keyboard = new PianoKeyboard();
-		var midi_notes = new MidiNotes();
-		var midi_controller = new MidiController({ midiNotes: midi_notes });
-		var notation = new Notation({ midiNotes: midi_notes });
-
-		// setup the on-screen piano keyboard
-		$('#piano').append(keyboard.render().el)
-
-		// setup the staff and notation area
-		$('#staff-area').append(notation.render().el);
-
-		// initialize the staff area tab navigation
-		StaffTabNav.init();
-
-		// setup the keyboard size selector so the user can 
-		// change the on-screen keyboard
-		$('#select_keyboard_size').on('change', function() {
-			var size = parseInt($(this).val(), 10);
-			var new_keyboard = new PianoKeyboard(size);
-			var offset = $('#piano').position();
-			var new_width = new_keyboard.width + (2 * offset.left);
-
-			new_keyboard.render()
-			$('#piano').html('').append(new_keyboard.el);
-			$('#kb-wrapper').width(new_width);
-
-			keyboard.destroy();
-			keyboard = new_keyboard;
-		});
-
-		// setup the pedal buttons so they trigger midi pedal events
-		$('#kb-pedals img').each(function(index, el) {
-			var pedals = ['soft', 'sostenuto', 'sustain'],
-				state = 'off';
-	
-			$(el).on('click', function() {
-				state = (state == 'on' ? 'off' : 'on');
-				eventBus.trigger('pedal', pedals[index], state); 
-			});
-		});
-
-		// change the midi instruments 
-		$('#select_instrument').on('change', function() {
-			var instrument = $(this).val();
-			eventBus.trigger('instrument', instrument);
-		});
-
-		// change the key and key signature
-		$('#select_key_name').on('change', function() {
-			var key_name = $(this).val();
-			notation.changeKey(key_name);
-		});
-
-		// list of midi input devices 
-		midi_controller.bind('devices', function(inputs, outputs, defaults) {
-			options = _.map(inputs, function(input, idx) {
-				return '<option value="'+idx+'">'+input.deviceName+'</option>';
-			});
-
-			if(options.length > 0) {
-				$('#midi_input').html(options.join(''))
-			} else {
-				$('#midi_input').html('<option>---</option>');
-			}
-		});
-		midi_controller.init();
+		setup.init();
 	});
 });

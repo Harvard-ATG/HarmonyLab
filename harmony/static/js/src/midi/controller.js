@@ -3,7 +3,6 @@ define([
 	'microevent', 
 	'jazzmidibridge', 
 	'app/eventbus', 
-	'app/midi/instruments'
 ], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
 
 	/**
@@ -168,9 +167,8 @@ define([
 		/**
 		 * Handles change of instrument.
 		 */
-		onChangeInstrument: function(instrumentName) {
+		onChangeInstrument: function(instrumentNum) {
 			var command = JMB.PROGRAM_CHANGE;
-			var instrumentNum = midiInstruments.numberOf(instrumentName);
 			if(instrumentNum < 0) {
 				instrumentNum = this.defaults.instrumentNum;
 			}

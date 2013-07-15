@@ -4,6 +4,7 @@ define(function() {
 var instruments = {
     "0": {
         "name": "Acoustic Grand Piano",
+		"shortName": "Piano",
         "category": "Piano"
     },
     "1": {
@@ -28,6 +29,7 @@ var instruments = {
     },
     "6": {
         "name": "Harpsichord",
+		"shortName": "Harpsichord",
         "category": "Piano"
     },
     "7": {
@@ -68,6 +70,7 @@ var instruments = {
     },
     "16": {
         "name": "Drawbar Organ",
+		"shortName": "Organ",
         "category": "Organ"
     },
     "17": {
@@ -212,6 +215,7 @@ var instruments = {
     },
     "52": {
         "name": "Choir Aahs",
+		"shortName": "Choir",
         "category": "Ensemble"
     },
     "53": {
@@ -516,6 +520,8 @@ var instruments = {
     }
 };
 
+	var enabled = [0, 6, 16, 52]; // instrument numbers
+
 	return {
 		numberOf: function(name) {
 			var num;
@@ -529,6 +535,14 @@ var instruments = {
 		},
 		getDefault: function() {
 			return 0;
+		},
+		getEnabled: function() {
+			return _.map(enabled, function(num, index) {
+				return { 
+					num: num, 
+					name: instruments[num]['shortName'] || instruments[num]['name']
+				};
+			});
 		}
 	};
 });
