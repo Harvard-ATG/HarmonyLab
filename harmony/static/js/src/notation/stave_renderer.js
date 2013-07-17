@@ -6,7 +6,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 	};
 
 	_.extend(StaveRenderer.prototype, {
-		width: 180,
+		width: 450,
 		clefs: {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
