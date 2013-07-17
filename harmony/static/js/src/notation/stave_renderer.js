@@ -20,7 +20,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			this.clefConfig = this.clefs[this.clef];
 		},
 		render: function() {
-			var x = 25;
+			var x = 40;
 			var y = 75 * this.clefConfig.index; 
 			var width = this.width;
 			var ctx = this.vexRenderer.getContext();
