@@ -130,7 +130,7 @@ function smoothblue() {
                     <div class="tab-content-inner">
                     	<br />
                         
-                            <select id="select_key_name">
+                            <select id="select_key_name" disabled>
 								<option value="F">F major</option>
 								<option value="C" selected>C major</option>
 								<option value="G">G major</option>
@@ -141,10 +141,10 @@ function smoothblue() {
                            </select>
                            
 						   <div class="sig-lock"> 
-							   <input name="key_and_signature_locked" type="checkbox" value="lock"/> Lock
+							   <input name="key_and_signature_locked" type="checkbox" value="lock" disabled/> Lock
 						   </div>
                         
-                            <select id="select_key_signature">
+                            <select id="select_key_signature" disabled>
 								<option value="#">#</option>
 								<option value="#">#</option>
 								<option value="##">##</option>
@@ -223,7 +223,7 @@ function smoothblue() {
             
     </div><!-- end #kb-wrapper -->
         
-    <div id="kb-pedals">
+    <div id="pedals">
     
     	<!-- 
         
@@ -231,6 +231,10 @@ function smoothblue() {
         <input name="play" type="button" value="Pedal2" />
         <input name="play" type="button" value="Pedal3" />
         -->
+		<div class="pedal pedal-left"></div>
+		<div class="pedal pedal-center"></div>
+		<div class="pedal pedal-right"></div>
+
         
 		<img src="{{ STATIC_URL }}img/Harmony-Pedals-LEFT-Brass2.png" />
 		<img src="{{ STATIC_URL }}img/Harmony-Pedals-CENTER-Brass2.png" />

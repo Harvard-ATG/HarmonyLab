@@ -308,25 +308,29 @@ body {
 	height: 10px;
 }
 
-#kb-pedals {
+#pedals {
 	margin:-47px auto 0;
 	text-align:center;
-	
-	
 }
-#kb-pedals input {
+#kb-pedals .pedal {
 	background:#ccc;
 	border: 2px outset #666;
 	-webkit-border-radius: 5px;  
 }
-#kb-pedals input:active, #kb-pedals input.active-pedal {
+#kb-pedals .pedal:hover {
+	background:#eee;
+}
+#kb-pedals .pedal:active, #kb-pedals .pedal-active {
 	background:#cca;
 	border: 2px inset #666;
 	-webkit-border-radius: 5px;  
 }
-#kb-pedals input:hover {
-	background:#eee;
-}
+#kb-pedals .pedal-left { background: url(../img/Pedals-LEFT-normal.png) no-repeat;	}
+#kb-pedals .pedal-left:hover { background: url(../img/Pedals-LEFT-hover.png) no-repeat;	}
+#kb-pedals .pedal-center { background: url(../img/Pedals-CENTER-normal.png) no-repeat;	}
+#kb-pedals .pedal-center:hover { background: url(../img/Pedals-CENTER-hover.png) no-repeat;	}
+#kb-pedals .pedal-right { background: url(../img/Pedals-RIGHT-normal.png) no-repeat;	}
+#kb-pedals .pedal-right:hover { background: url(../img/Pedals-RIGHT-hover.png) no-repeat;	}
 
 
 #bg-select { margin-left: 10px;}
