@@ -47,12 +47,13 @@ function(
 			});
 		},
 		initPedals: function() {
-			$('#kb-pedals img').each(function(index, el) {
+			$('#kb-pedals .pedal').each(function(index, el) {
 				var pedals = ['soft', 'sostenuto', 'sustain'];
 				var state = 'off';
 		
 				$(el).on('click', function() {
 					state = (state == 'on' ? 'off' : 'on');
+					$(el).toggleClass('pedal-active');
 					eventBus.trigger('pedal', pedals[index], state); 
 				});
 			});
