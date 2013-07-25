@@ -5,6 +5,8 @@ define([
 	'app/eventbus', 
 ], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
 
+	var DEFAULT_NOTE_VELOCITY = 100;
+
 	/**
 	 * The midi controller is responsible for coordinating midi messages 
 	 * from both external keyboard devices and onscreen devices as well
@@ -153,7 +155,7 @@ define([
 			if(msg.command === JMB.NOTE_ON || msg.command === JMB.NOTE_OFF) {
 				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
 				var noteNumber = msg.data1;
-				var noteVelocity = msg.data2;
+				var noteVelocity = DEFAULT_NOTE_VELOCITY || msg.data2;
 
 				this.eventBus.trigger('note:input', noteState, noteNumber, noteVelocity);
 				this.toggleNote(noteState, noteNumber);
@@ -166,7 +168,7 @@ define([
 		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
 			var midiMessage, midiCommand;
 			midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-			noteVelocity = noteVelocity || 100;
+			noteVelocity = DEFAULT_NOTE_VELOCITY || noteVelocity; 
 			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
 			this.output.sendMIDIMessage(midiMessage);

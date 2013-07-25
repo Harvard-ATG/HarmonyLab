@@ -25,12 +25,12 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			var width = this.width;
 			var ctx = this.vexRenderer.getContext();
 			var clef = this.clef;
-			var keySpec = this.keySignature.getSpec();
+			var vexKeyName = this.keySignature.getVexKeyName();
 			var stave, voice, formatter, notes;
 
 			stave = new Vex.Flow.Stave(x, y, width);
 			stave.addClef(clef);
-			stave.addKeySignature(keySpec);
+			stave.addKeySignature(vexKeyName);
 			stave.setContext(ctx);
 			stave.draw();
 
@@ -64,29 +64,50 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		getNotes: function() {
 			var notes = this.midiNotes.getNotesForClef(this.clef);
-			var keys = [], accs = [];
-			var spelling = this.keySignature.getNoteSpelling();
+			var keys = [], modifiers = [];
+			var spelling = this.keySignature.getSpelling();
 
 			_.each(notes, function(noteNumber, index) {
-				var note_index = noteNumber % 12; 
-				var note_spelling = spelling[note_index];
-				var note_letter = note_spelling.charAt(0);
-				var note_accidental = note_spelling.substr(1);
-				var note_octave = Math.floor(noteNumber / 12) - 1;
-				if(note_index == spelling.length - 1 && note_letter == 'C') {
-					++note_octave;
-				}
-				var note_name = note_spelling + '/' + note_octave;
+				var note_parts = this.getNoteParts(spelling, noteNumber);
 
-				// modifiers
-				if(note_accidental !== '') { 
-					accs.push(function(staveNote) {
-						staveNote.addAccidental(index, new Vex.Flow.Accidental(note_accidental));
-					});
-				}
+				keys.push(note_parts.name);
 
-				keys.push(note_name);
-			});
+				if(note_parts.has_accidental) {
+					modifiers.push(this.makeAccidentalModifier(index, note_parts.accidental));
+				}
+			}, this);
+
+			var stave_note = this.getStaveNote(keys, modifiers);
+	
+			return [stave_note];
+		},
+		getNoteParts: function(spelling, noteNumber) {
+			var note_index = noteNumber % 12; 
+			var note_spelling = spelling[note_index];
+			var note_letter = note_spelling.charAt(0);
+			var note_accidental = note_spelling.substr(1);
+			var note_octave = Math.floor(noteNumber / 12) - 1;
+			var note_name = '';
+
+			if(note_index == spelling.length - 1 && note_letter == 'C') {
+				++note_octave;
+			}
+
+			note_name = note_spelling + '/' + note_octave;
+
+			return { 
+				'name': note_name, 
+				'accidental': note_accidental, 
+				'has_accidental': note_accidental !== '', 
+			};
+		},
+		makeAccidentalModifier: function(index, accidental) {
+			return function(staveNote) {
+				staveNote.addAccidental(index, new Vex.Flow.Accidental(accidental));
+			};
+		},
+		getStaveNote: function(keys, modifiers) {
+			modifiers = modifiers || [];
 
 			var stave_note = new Vex.Flow.StaveNote({
 				keys: keys,
@@ -94,11 +115,11 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 				clef: this.clef
 			});
 
-			for(var i = 0, len = accs.length; i < len; i++) {
-				accs[i](stave_note);
+			for(var i = 0, len = modifiers.length; i < len; i++) {
+				modifiers[i](stave_note);
 			}
-	
-			return [stave_note];
+
+			return stave_note;
 		}
 	});
 
