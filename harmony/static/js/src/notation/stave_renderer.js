@@ -20,16 +20,13 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			this.clefConfig = this.clefs[this.clef];
 		},
 		render: function() {
-			var x = 40;
-			var y = 75 * this.clefConfig.index; 
-			var width = this.width;
+			var x = 40, y = 75 * this.clefConfig.index; 
 			var ctx = this.vexRenderer.getContext();
-			var clef = this.clef;
 			var vexKeyName = this.keySignature.getVexKeyName();
 			var stave, voice, formatter, notes;
 
-			stave = new Vex.Flow.Stave(x, y, width);
-			stave.addClef(clef);
+			stave = new Vex.Flow.Stave(x, y, this.width);
+			stave.addClef(this.clef);
 			stave.addKeySignature(vexKeyName);
 			stave.setContext(ctx);
 			stave.draw();
@@ -38,15 +35,16 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
 				voice.addTickables(this.getVexNotes());
 				formatter = new Vex.Flow.Formatter();
-				formatter.joinVoices([voice]).format([voice], width);
+				formatter.joinVoices([voice]).format([voice], this.width);
 				voice.draw(ctx, stave);
 			}
 
-			this.vexStave = stave;
+			this.vexStave = stave; // save reference to stave
 
 			return this;
 		},
 		connectWith: function(staveRenderer) {
+			// This method should only be called *after* the stave has been rendered
 			if(staveRenderer) {
 				var BRACE = Vex.Flow.StaveConnector.type.BRACE
 				var ctx = this.vexRenderer.getContext();
@@ -54,6 +52,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		
 				connector.setType(BRACE).setContext(ctx).draw();
 			}
+			return this;
 		},
 		getVexStave: function() {
 			return this.vexStave;
@@ -62,8 +61,8 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			return this.midiNotes.hasNotes(this.clef);
 		},
 		getVexNotes: function() {
-			var notes = this.getNoteKeysAndModifiers();
-			var stave_note = this.getStaveNote(notes.keys, notes.modifiers);
+			var note_struct = this.getNoteKeysAndModifiers();
+			var stave_note = this.makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
 		},
 		getNoteKeysAndModifiers: function() {
@@ -77,7 +76,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 				keys.push(spelling.name);
 				if(spelling.has_accidental) {
-					modifiers.push(this.makeAccidentalModifier(index, spelling.accidental));
+					modifiers.push(this.makeAccidentalModifier(i, spelling.accidental));
 				}
 			}
 
@@ -88,7 +87,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 				staveNote.addAccidental(index, new Vex.Flow.Accidental(accidental));
 			};
 		},
-		getStaveNote: function(keys, modifiers) {
+		makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
 			var stave_note = new Vex.Flow.StaveNote({
