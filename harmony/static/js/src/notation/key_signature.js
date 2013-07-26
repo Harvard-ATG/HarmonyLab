@@ -1,28 +1,35 @@
 define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_CONFIG) {
 
+	var DEFAULT_KEY = ANALYSIS_CONFIG.defaultKey;
+	var DEFAULT_SIGNATURE = ANALYSIS_CONFIG.defaultSignature;
+	var ORDER_OF_ACCIDENTALS = ANALYSIS_CONFIG.orderOfAccidentals;
+	var NOTE_SPELLING = ANALYSIS_CONFIG.noteSpelling;
+
 	// The KeySignature object is responsible for knowing the current key and
 	// signature as well as how to spell and notate pitches.
 	var KeySignature = function(key, signature) {
-		this.setKey(key || ANALYSIS_CONFIG.defaultKey);
-		this.setSignature(signature || ANALYSIS_CONFIG.defaultSignature);
+		this.setKey(key, DEFAULT_KEY);
+		this.setSignature(signature, DEFAULT_SIGNATURE);
 	};
 
 	_.extend(KeySignature.prototype, {
-		setKey: function(key) {
+		setKey: function(key, _default) {
+			key = key || _default;
 			this.key = key;
 		},
 		getKey: function() {
 			return this.key;
 		},
-		setSignature: function(signature) {
+		setSignature: function(signature, _default) {
+			signature = signature || _default;
 			if(!/^(?:b|#)*$/.test(signature)) {
 				throw new Error("invalid signature");
 			}
 
 			var accidental = signature.charAt(0) || '';
-			var order = ANALYSIS_CONFIG.accidentalOrder.slice(0); // make a copy
+			var order = ORDER_OF_ACCIDENTALS;
 			if(accidental === 'b') {
-				order.reverse();
+				order = order.slice(0).reverse(); // slice to copy because reverse() is destructive
 			}
 
 			this.signature = _.map(order.slice(0, signature.length), function(note) {
@@ -31,9 +38,6 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 		},
 		getSignature: function() {
 			return this.signature;
-		},
-		getSpelling: function() {
-			return ANALYSIS_CONFIG.noteSpelling[this.key];
 		},
 		// This function translates our system for naming keys, prefixed with i or j, 
 		// into the key names used by the Vex.Flow library.
@@ -48,6 +52,14 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 			}
 
 			return vexKeyName;
+		},
+		spellingOf: function(pitchClass, octave) {
+			var name = NOTE_SPELLING[this.key][pitchClass];
+			return {
+				'name': [name, octave].join('/'),
+				'has_accidental': false,
+				'accidental': ''
+			};
 		}
 	});
 

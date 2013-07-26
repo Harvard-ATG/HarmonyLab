@@ -20,29 +20,68 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				this.trigger('note:change', 'off', number);
 			}
 		},
-		getNotes: function() {
-			return _.keys(this._notes);
+		getNotes: function(clef) {
+			return this.getNoteNumbers(clef);
 		},
-		getNotesForClef: function(clef) {
-			var notes = [], _notes = this._notes; 
-			var note;
-			for(note in _notes) {
-				switch(clef) {
-					case 'treble':
-						if(note >= 60) {
-							notes.push(note);
-						}
-						break;
-					case 'bass':
-						if(note < 60) {
-							notes.push(note);
-						}
-						break;
-					default:
-						throw new Error("invalid clef");
+		iterNotes: function(callback, clef) {
+			var notes = [], _notes = this._notes;
+			var note_num, wanted = true;
+			for(note_num in _notes) {
+				if(_notes.hasOwnProperty(note_num)) {
+					if(clef) {
+						wanted = this.noteNumBelongsToClef(note_num, clef);
+					}
+					if(wanted) {
+						notes.push(callback.call(this, note_num));
+					}
 				}
 			}
 			return notes;
+		},
+		hasNotes: function(clef) {
+			var note_num, _notes = this._notes;
+			for(note_num in _notes) {
+				if(_notes.hasOwnProperty(note_num)) {
+					if(clef) {
+						if(this.noteNumBelongsToClef(note_num, clef)) {
+							return true;
+						}
+					} else {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		getNoteNumbers: function(clef) {
+			return this.iterNotes(function(noteNum) {
+				return noteNum;
+			}, clef);
+		},
+		getNotePitches: function(clef) {
+			return this.iterNotes(function(noteNum) {
+				return {
+					pitchClass: (noteNum % 12),
+					octave: (Math.floor(noteNum / 12) -1)
+				};
+			}, clef);
+		},
+		noteNumBelongsToClef: function(noteNum, clef) {
+			switch(clef) {
+				case 'treble':
+					if(noteNum >= 60) {
+						return true;
+					}
+					break;
+				case 'bass':
+					if(noteNum < 60) {
+						return true;
+					}
+					break;
+				default:
+					throw new Error("invalid clef");
+			}
+			return false;
 		}
 	});
 

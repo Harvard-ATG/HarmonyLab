@@ -36,7 +36,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 			if(this.hasNotes()) {
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-				voice.addTickables(this.getNotes());
+				voice.addTickables(this.getVexNotes());
 				formatter = new Vex.Flow.Formatter();
 				formatter.joinVoices([voice]).format([voice], width);
 				voice.draw(ctx, stave);
@@ -59,47 +59,29 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			return this.vexStave;
 		},
 		hasNotes: function() {
-			var notes = this.midiNotes.getNotesForClef(this.clef);
-			return notes.length > 0;
+			return this.midiNotes.hasNotes(this.clef);
 		},
-		getNotes: function() {
-			var notes = this.midiNotes.getNotesForClef(this.clef);
-			var keys = [], modifiers = [];
-			var spelling = this.keySignature.getSpelling();
-
-			_.each(notes, function(noteNumber, index) {
-				var note_parts = this.getNoteParts(spelling, noteNumber);
-
-				keys.push(note_parts.name);
-
-				if(note_parts.has_accidental) {
-					modifiers.push(this.makeAccidentalModifier(index, note_parts.accidental));
-				}
-			}, this);
-
-			var stave_note = this.getStaveNote(keys, modifiers);
-	
+		getVexNotes: function() {
+			var notes = this.getNoteKeysAndModifiers();
+			var stave_note = this.getStaveNote(notes.keys, notes.modifiers);
 			return [stave_note];
 		},
-		getNoteParts: function(spelling, noteNumber) {
-			var note_index = noteNumber % 12; 
-			var note_spelling = spelling[note_index];
-			var note_letter = note_spelling.charAt(0);
-			var note_accidental = note_spelling.substr(1);
-			var note_octave = Math.floor(noteNumber / 12) - 1;
-			var note_name = '';
+		getNoteKeysAndModifiers: function() {
+			var notes = this.midiNotes.getNotePitches(this.clef);
+			var keys = [], modifiers = [];
+			var i, len, note, spelling;
 
-			if(note_index == spelling.length - 1 && note_letter == 'C') {
-				++note_octave;
+			for(i = 0, len = notes.length; i < len; i++) {
+				note = notes[i];
+				spelling = this.keySignature.spellingOf(note.pitchClass, note.octave);
+
+				keys.push(spelling.name);
+				if(spelling.has_accidental) {
+					modifiers.push(this.makeAccidentalModifier(index, spelling.accidental));
+				}
 			}
 
-			note_name = note_spelling + '/' + note_octave;
-
-			return { 
-				'name': note_name, 
-				'accidental': note_accidental, 
-				'has_accidental': note_accidental !== '', 
-			};
+			return {keys: keys, modifiers: modifiers};
 		},
 		makeAccidentalModifier: function(index, accidental) {
 			return function(staveNote) {
