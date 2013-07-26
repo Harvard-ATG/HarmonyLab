@@ -123,6 +123,6 @@ define({
 	},
 
 	// Default key and signature for 
-	defaultKey: 'jF_',
-	defaultSignature: 'b', // #[1-7]|b[1-7]
+	defaultKey: 'jBb',
+	defaultSignature: 'bb', // #[1-7]|b[1-7]
 });

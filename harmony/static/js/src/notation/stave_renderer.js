@@ -74,7 +74,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 				note = notes[i];
 				spelling = this.keySignature.spellingOf(note.pitchClass, note.octave);
 
-				keys.push(spelling.name);
+				keys.push(spelling.key_name);
 				if(spelling.has_accidental) {
 					modifiers.push(this.makeAccidentalModifier(i, spelling.accidental));
 				}

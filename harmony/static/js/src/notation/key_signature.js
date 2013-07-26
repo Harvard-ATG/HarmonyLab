@@ -43,7 +43,7 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 		// into the key names used by the Vex.Flow library.
 		getVexKeyName: function() {
 			var key = this.key;
-			var vexKeyName = key.slice(1).replace('_','').toUpperCase();
+			var vexKeyName = key.slice(1).replace('_','');
 
 			// vex key names have "m" appended to signify a minor key
 			// rather than prepending "i," like we do
@@ -54,12 +54,50 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 			return vexKeyName;
 		},
 		spellingOf: function(pitchClass, octave) {
-			var name = NOTE_SPELLING[this.key][pitchClass];
-			return {
-				'name': [name, octave].join('/'),
-				'has_accidental': false,
-				'accidental': ''
+			var note = NOTE_SPELLING[this.key][pitchClass];
+			var accidental = this.calculateAccidental(note);
+
+			octave = this.calculateOctave(pitchClass, octave, note);
+
+			var spelling = {
+				key_name: [note, octave].join('/'),
+				accidental: accidental,
+				has_accidental: (accidental !== '')
 			};
+
+			return spelling;
+		},
+		calculateOctave: function(pitchClass, octave, note) {
+			if(pitchClass === 0 && note.charAt(0) === 'B') {
+				return octave - 1;
+			}
+			return octave;
+		},
+		calculateAccidental: function(note) {
+			if(this.signatureContains(note)) {
+				return '';
+			} else if(this.needsNatural(note)) {
+				return 'n';
+			}
+			return note.substr(1);
+		},
+		needsNatural: function(note) {
+			var i, len, signature = this.signature;
+			for(i = 0, len = signature.length; i < len; i++) {
+				if(signature[i].charAt(0) === note) {
+					return true;
+				}
+			}
+			return false;
+		},
+		signatureContains: function(note) {
+			var i, len, signature = this.signature;
+			for(i = 0, len = signature.length; i < len; i++) {
+				if(signature[i] === note) {
+					return true;
+				}
+			}
+			return false;
 		}
 	});
 
