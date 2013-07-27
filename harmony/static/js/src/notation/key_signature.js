@@ -1,41 +1,70 @@
-define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_CONFIG) {
+define(['lodash', 'app/config/analysis'], function(_, ANALYSIS_CONFIG) {
 
-	var DEFAULT_KEY = ANALYSIS_CONFIG.defaultKey;
-	var DEFAULT_SIGNATURE = ANALYSIS_CONFIG.defaultSignature;
-	var ORDER_OF_ACCIDENTALS = ANALYSIS_CONFIG.orderOfAccidentals;
-	var NOTE_SPELLING = ANALYSIS_CONFIG.noteSpelling;
+	var DEFAULT_KEY = ANALYSIS_CONFIG.defaultKeyAndSignature;
+	var KEY_MAP = ANALYSIS_CONFIG.keyMap;
+	var KEY_SIGNATURE_MAP = ANALYSIS_CONFIG.keySignatureMap;
 
 	// The KeySignature object is responsible for knowing the current key and
 	// signature as well as how to spell and notate pitches.
-	var KeySignature = function(key, signature) {
-		this.setKey(key, DEFAULT_KEY);
-		this.setSignature(signature, DEFAULT_SIGNATURE);
+	var KeySignature = function(key) {
+		this.setKey(key || DEFAULT_KEY, true);
 	};
 
 	_.extend(KeySignature.prototype, {
-		setKey: function(key, _default) {
-			key = key || _default;
+		// sets the key and optionally locks or syncs the signature to the key
+		setKey: function(key, lock) {
+			key = key;
+			if(!KEY_MAP.hasOwnProperty(key)) {
+				throw new Error("invalid key");
+			}
+
 			this.key = key;
+
+			if(lock) {
+				this.setSignature(KEY_MAP[this.key].signature);
+			}
 		},
+		// returns the current key value
 		getKey: function() {
 			return this.key;
 		},
-		setSignature: function(signature, _default) {
-			signature = signature || _default;
-			if(!/^(?:b|#)*$/.test(signature)) {
+		// returns the name of the current key
+		getKeyName: function() {
+			return KEY_MAP[this.key].name;
+		},
+		// returns the spelling for the current key
+		getNoteSpelling: function() {
+			return KEY_MAP[this.key].spelling;
+		},
+		// returns true if the signature is valid, false otherwise
+		isSignatureSpec: function(spec) {
+			return /^(?:b|#){0,7}$/.test(spec); // should be a string of sharp or flat symbols
+		},
+		// set the signature
+		setSignature: function(accidentals, lock) {
+			var accidental, accidental_order = ["F","C","G","D","A","E","B"]; 
+	
+			if(!this.isSignatureSpec(accidentals)) {
 				throw new Error("invalid signature");
 			}
 
-			var accidental = signature.charAt(0) || '';
-			var order = ORDER_OF_ACCIDENTALS;
+			// reverse the order of accidentals to notate flats
+			accidental = accidentals.charAt(0) || '';
 			if(accidental === 'b') {
-				order = order.slice(0).reverse(); // slice to copy because reverse() is destructive
+				accidental_order = accidental_order.reverse();
 			}
 
-			this.signature = _.map(order.slice(0, signature.length), function(note) {
+			// save signature as list of notes with accidentals
+			this.signature = _.map(accidental_order.slice(0, accidentals.length), function(note) {
 				return note + accidental;
 			});
+
+			// optionally update the key value implied by the signature
+			if(lock) {
+				this.setKey(KEY_SIGNATURE_MAP[accidentals]);
+			}
 		},
+		// returns the current signature
 		getSignature: function() {
 			return this.signature;
 		},
@@ -53,8 +82,10 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 
 			return vexKeyName;
 		},
+		// returns the spelling of a note identified by its pitch class and octave
 		spellingOf: function(pitchClass, octave) {
-			var note = NOTE_SPELLING[this.key][pitchClass];
+			var spelling = this.getNoteSpelling();
+			var note = spelling[pitchClass];
 			var accidental = this.calculateAccidental(note);
 
 			octave = this.calculateOctave(pitchClass, octave, note);
@@ -67,12 +98,18 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 
 			return spelling;
 		},
+		// returns the octave for a note (for edge cases)
 		calculateOctave: function(pitchClass, octave, note) {
-			if(pitchClass === 0 && note.charAt(0) === 'B') {
+			var note_letter = note.charAt(0);
+			if(pitchClass === 0 && note_letter === 'B') {
 				return octave - 1;
+			} else if(pitchClass === 11 && note_letter === 'C') {
+				return octave + 1;
 			}
 			return octave;
 		},
+		// returns the accidental for a note (if any) based upon 
+		// the current key signature
 		calculateAccidental: function(note) {
 			if(this.signatureContains(note)) {
 				return '';
@@ -81,6 +118,8 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 			}
 			return note.substr(1);
 		},
+		// returns true if the note needs a "natural" accidental
+		// as a result of the current key signature, false otherwise
 		needsNatural: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {
@@ -90,6 +129,8 @@ define(['lodash', 'vexflow', 'app/config/analysis'], function(_, Vex, ANALYSIS_C
 			}
 			return false;
 		},
+		// returns true if the note is contained in the key signature, false
+		// otherwise
 		signatureContains: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {

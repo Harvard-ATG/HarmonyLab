@@ -113,6 +113,7 @@ function(
 							midi_controller.selectDevice(type, index);
 						});
 					}
+					$(device.selector).css('width', '100%');
 				});
 
 				$('#refresh_midi_devices').on('click', function() {

@@ -5,124 +5,232 @@
 // 
 
 define({
+
 	// The default notation or spelling of the twelve pitches in the 
 	// chromatic scale is based on D-minor. 
 	noteNames: ['C','C#','D','Eb','E','F','F#','G','G#','A','Bb','B'],
 
-	// The spelling filters for raw MIDI information.
-	// Maps a major/minor key to a default spelling of the twelve pitches.
-	noteSpelling: {
-		"iD_":  ["C","C#","D","Eb","E","F","F#","G","G#","A","Bb","B"],
-
-		"iAb": ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
-		"jCb": ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"], 
-		"iEb": ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
-		"jGb": ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
-		"iBb": ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
-		"jDb": ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
-		"iF_":  ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],
-		"jAb": ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],
-		"iC_":  ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
-		"jEb": ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
-		"iG_":  ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
-		"jBb": ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
-
-		// D minor would fit here in the cycle of fifths.
-
-		"jF_":  ["C","C#","D","Eb","E","F","F#","G","G#","A","Bb","B"],
-		"iA_":  ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"],
-		"jC_":  ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"], 
-		"iE_":  ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],
-		"jG_":  ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],
-		"iB_":  ["C","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
-		"jD_":  ["C","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
-		"iF#": ["B#","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
-		"jA_":  ["B#","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
-		"iC#": ["B#","C#","D","D#","E","E#","F#","F##","G#","A","A#","B"],
-		"jE_":  ["B#","C#","D","D#","E","E#","F#","F##","G#","A","A#","B"],
-		"iG#": ["B#","C#","C##","D#","E","E#","F#","F##","G#","A","A#","B"],
-		"jB_":  ["B#","C#","C##","D#","E","E#","F#","F##","G#","A","A#","B"],
-		"iD#": ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
-		"jF#": ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
-		"iA#": ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","B"],
-		"jC#": ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","A##"]
+	// Maps each major/minor key to a default spelling of the twelve pitches
+	// along with related key information. The keys are identified by unique 
+	// three character strings with the following format:
+	//
+	//		key identifier = [i|j] + [A-G] + [_|#|b] 
+	//
+	//		[i|j] = minor key, major key
+	//		[A-G] = note from A to G
+	//		[_|#|b] = natural, sharp, flat
+	//
+	keyMap: {
+		"iAb": {
+			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
+			pitchClass: 8,
+			name: "A minor",
+			signature: "bbbbbbb",
+		},
+		"jCb": {
+			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"], 
+			pitchClass: 11,
+			name: "Cb major",
+			signature: "bbbbbbb",
+		},
+		"iEb": {
+			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
+			pitchClass: 3,
+			name: "Eb major",
+			signature: "bbbbbb",
+		},
+		"jGb": {
+			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
+			pitchClass: 6,
+			name: "Gb major",
+			signature: "bbbbbb",
+		},
+		"iBb": {
+			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
+			pitchClass: 10,
+			name: "Bb minor",
+			signature: "bbbbb",
+		},
+		"jDb": {
+			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
+			pitchClass: 1,
+			name: "Db major",
+			signature: "bbbbb", 
+		},
+		"iF_":  {
+			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],
+			pitchClass: 5,
+			name: "F minor",
+			signature: "bbbb",
+		},
+		"jAb": {
+			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],
+			pitchClass: 8,
+			name: "Ab major",
+			signature: "bbbb",
+		},
+		"iC_": {
+			spelling: ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
+			pitchClass: 0,
+			name: "C minor",
+			signature: "bbb",
+		},
+		"jEb": {
+			spelling: ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
+			pitchClass: 3,
+			name: "Eb major",
+			signature: "bbb",
+		},
+		"iG_":  {
+			spelling: ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
+			pitchClass: 7,
+			name: "G minor",
+			signature: "bb",
+		},
+		"jBb": {
+			spelling: ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
+			pitchClass: 10,
+			name: "Bb major",
+			signature: "bb",
+		},
+		"iD_":  {
+			spelling: ["C","C#","D","Eb","E","F","F#","G","G#","A","Bb","B"],
+			pitchClass: 2,
+			name: "D minor",
+			signature: "b",
+		},
+		"jF_":  {
+			spelling: ["C","C#","D","Eb","E","F","F#","G","G#","A","Bb","B"],
+			pitchClass: 5,
+			name: "F major",
+			signature: "b",
+		},
+		"iA_":  {
+			spelling: ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"],
+			pitchClass: 9,
+			name: "A minor",
+			signature: "",
+		},
+		"jC_":  {
+			spelling: ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"], 
+			pitchClass: 0,
+			name: "C major",
+			signature: "",
+		},
+		"iE_":  {
+			spelling: ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],
+			pitchClass: 4,
+			name: "E minor",
+			signature: "#",
+		},
+		"jG_": {
+			spelling: ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],
+			pitchClass: 7,
+			name: "G major",
+			signature: "#",
+		},
+		"iB_": {
+			spelling: ["C","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
+			pitchClass: 11,
+			name: "B minor",
+			signature: "##",
+		},
+		"jD_": {
+			spelling: ["C","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
+			pitchClass: 2,
+			name: "D major",
+			signature: "##",
+		},
+		"iF#": {
+			spelling: ["B#","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
+			pitchClass: 6,
+			name: "F# minor",
+			signature: "###",
+		},
+		"jA_": {
+			spelling: ["B#","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
+			pitchClass: 9,
+			name: "A major",
+			signature: "###",
+		},
+		"iC#": {
+			spelling: ["B#","C#","D","D#","E","E#","F#","F##","G#","A","A#","B"],
+			pitchClass: 1,
+			name: "C# minor",
+			signature: "####",
+		},
+		"jE_": {
+			spelling: ["B#","C#","D","D#","E","E#","F#","F##","G#","A","A#","B"],
+			pitchClass: 4,
+			name: "E major",
+			signature: "####",
+		},
+		"iG#": {
+			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","A","A#","B"],
+			pitchClass: 8,
+			name: "G# minor",
+			signature: "#####",
+		},
+		"jB_":  {
+			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","A","A#","B"],
+			pitchClass: 11,
+			name: "B major",
+			signature: "#####",
+		},
+		"iD#": {
+			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
+			pitchClass: 3,
+			name: "D# minor",
+			signature: "######",
+		},
+		"jF#": {
+			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
+			pitchClass: 6,
+			name: "F# major",
+			signature: "######",
+		},
+		"iA#": {
+			spelling: ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","B"],
+			pitchClass: 10,
+			name: "A# minor",
+			signature: "#######",
+		},
+		"jC#": {
+			spelling: ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","A##"],
+			pitchClass: 1,
+			name: "C# major",
+			signature: "#######",
+		}
 	},
 
-	// Maps key identifers (3 characters) with their associated key name
-	keyNames: {
-		"jC_": "C major ",
-		"iD_": "D minor ",
-		"jF_": "F major ",
-		"jG_": "G major ",
-		"iA_": "A minor ",
-		"jEb": "Eb major",
-		"jBb": "Bb major",
-		"jD_": "D major",
-		"jA_": "A major",
-		"iC_": "C minor",
-		"iG_": "G minor",
-		"iE_": "E minor",
-		"iB_": "B minor",
-		"iF#": "F# minor",
-		"jCb": "Cb major",
-		"jGb": "Gb major",
-		"jDb": "Db major",
-		"jAb": "Ab major",
-		"jE_": "E major",
-		"jB_": "B major",
-		"jF#": "F# major",
-		"jC#": "C# major",
-		"iAb": "Ab minor",
-		"iEb": "Eb minor",
-		"iBb": "Bb minor",
-		"iF_": "F minor",
-		"iC#": "C# minor",
-		"iG#": "G# minor",
-		"iD#": "D# minor",
-		"iA#": "A# minor"
+	// Maps each of the 15 key signatures to an associated key.
+	keySignatureMap: {
+		"bbbbbbb": "jCb",
+		"bbbbbb": "jGb",	
+		"bbbbb": "jDb",
+		"bbbb": "jAb",
+		"bbb": "jEb",
+		"bb": "jBb",
+		"b": "jF_",
+		"": "jC_",
+		"#": "jG_",
+		"##": "jD_",
+		"###": "jA_",
+		"####": "jE_",
+		"#####": "jB_",
+		"######": "jF#",
+		"#######": "jC#"
 	},
 
-	// The order of accidentals from C-major on the circle of fifths.
-	orderOfAccidentals: ['F','C','G','D','A','E','B'],
-
-	// This defines the keynote pitch class for each key. In other words,
-	// it maps the key name to an integer [0,11] such that 0=C,1=C#,...,B=11
-	// that represents the keynote.
-	keynotePitchClass: {
-		"none": 0,
-		"jC":  0,
-		"iC":  0,
-		"jC#": 1,
-		"iC#": 1,
-		"jDb": 1,
-		"jD":  2,
-		"iDm": 2,
-		"iD#": 3,
-		"jEb": 3,
-		"iEb": 3,
-		"jE":  4,
-		"iE":  4,
-		"jF":  5,
-		"iF":  5,
-		"jF#": 6,
-		"iF#": 6,
-		"jGb": 6,
-		"jG":  7,
-		"iG":  7,
-		"iG#": 8,
-		"jAb": 8,
-		"iAb": 8,
-		"jA":  9,
-		"iA":  9,
-		"iA#": 10,
-		"jBb": 10,
-		"iBb": 10,
-		"jB":  11,
-		"iB":  11,
-		"jCb": 11
-	},
+	// Grouping of keys as they are to be displayed on the UI.
+	keyDisplayGroups: [
+		["jC_","iD_","jF_","jG_","iA_"],
+		["jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
+		["iC_","iG_","iD_","iA_","iE_","iB_","iF#"],
+		["jCb","jGb","jDb","jAb","jE_","jB_","jF#","jC#"],
+		["iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
+	],
 
 	// Default key and signature for 
-	defaultKey: 'jBb',
-	defaultSignature: 'bb', // #[1-7]|b[1-7]
+	defaultKeyAndSignature: "iD_",
 });

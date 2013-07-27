@@ -45,8 +45,8 @@ define([
 			this.addStave({ clef: 'bass' });
 		},
 		initListeners: function() {
-			_.bindAll(this, ['onNoteChange']);
-			this.midiNotes.bind('note:change', this.onNoteChange);
+			_.bindAll(this, ['render']);
+			this.midiNotes.bind('note:change', this.render);
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -76,11 +76,8 @@ define([
 				this.staves[0].connectWith(this.staves[1]);
 			}
 		},
-		changeKey: function(spec) {
-			this.keySignature.setSpec(spec);
-			this.render();
-		},
-		onNoteChange: function(noteState, noteNumber) {
+		changeKey: function(k) {
+			this.keySignature.setKey(k);
 			this.render();
 		}
 	});
