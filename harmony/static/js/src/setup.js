@@ -8,6 +8,7 @@ require([
 	'app/notation',
 	'app/piano',
 	'app/ui/staff_tab_nav',
+	'app/widget/key_signature',
 	'app/eventbus'
 ], 
 function(
@@ -19,6 +20,7 @@ function(
 	Notation,
 	PianoKeyboard,
 	StaffTabNav,
+	KeySignatureWidget,
 	eventBus
 ) {
 	var setup = {
@@ -75,10 +77,14 @@ function(
 
 		},
 		initKeyAndSignature: function(notation) {
-			$('#select_key_name').on('change', function() {
-				var key_name = $(this).val();
-				notation.changeKey(key_name);
+			var widget = new KeySignatureWidget();
+			widget.bind('changekey', function(key) {
+				notation.changeKey(key);
 			});
+			widget.bind('changesignature', function(key, v) {
+				notation.changeKey(key);
+			});
+			$('#key_signature_widget').append(widget.render().el);
 		},
 		initDevices: function(midi_controller) {
 			midi_controller.bind('devices', function(inputs, outputs, defaults) {
