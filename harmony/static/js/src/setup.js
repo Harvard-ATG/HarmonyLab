@@ -6,6 +6,7 @@ require([
 	'app/midi/instruments',
 	'app/midi/notes',
 	'app/notation',
+	'app/notation/key_signature',
 	'app/piano',
 	'app/ui/staff_tab_nav',
 	'app/widget/key_signature',
@@ -18,6 +19,7 @@ function(
 	midiInstruments,
 	MidiNotes,
 	Notation,
+	KeySignature,
 	PianoKeyboard,
 	StaffTabNav,
 	KeySignatureWidget,
@@ -76,14 +78,8 @@ function(
 			});
 
 		},
-		initKeyAndSignature: function(notation) {
-			var widget = new KeySignatureWidget();
-			widget.bind('changekey', function(key) {
-				notation.changeKey(key);
-			});
-			widget.bind('changesignature', function(key, v) {
-				notation.changeKey(key);
-			});
+		initKeyAndSignature: function(key_signature) {
+			var widget = new KeySignatureWidget(key_signature);
 			$('#key_signature_widget').append(widget.render().el);
 		},
 		initDevices: function(midi_controller) {
@@ -132,8 +128,9 @@ function(
 		init: function() {
 			var keyboard = new PianoKeyboard();
 			var midi_notes = new MidiNotes();
+			var key_signature = new KeySignature();
 			var midi_controller = new MidiController({ midiNotes: midi_notes });
-			var notation = new Notation({ midiNotes: midi_notes });
+			var notation = new Notation({ midiNotes: midi_notes, keySignature: key_signature });
 
 			this.initOnScreenPiano(keyboard);
 			this.initNotation(notation);
@@ -141,7 +138,7 @@ function(
 			this.initKeyboardSizes(keyboard);
 			this.initPedals();
 			this.initInstruments();
-			this.initKeyAndSignature(notation);
+			this.initKeyAndSignature(key_signature);
 			this.initDevices(midi_controller);
 		}
 	};

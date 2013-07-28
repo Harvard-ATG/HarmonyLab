@@ -18,7 +18,7 @@ define([
 			}
 
 			this.midiNotes = this.config.midiNotes;
-			this.keySignature = new KeySignature();
+			this.keySignature = this.config.keySignature;
 
 			this.initRenderer();
 			this.initStaves();
@@ -47,6 +47,7 @@ define([
 		initListeners: function() {
 			_.bindAll(this, ['render']);
 			this.midiNotes.bind('note:change', this.render);
+			this.keySignature.bind('change', this.render);
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -75,10 +76,6 @@ define([
 			if(this.staves.length === 2) { 
 				this.staves[0].connectWith(this.staves[1]);
 			}
-		},
-		changeKey: function(k) {
-			this.keySignature.setKey(k);
-			this.render();
 		}
 	});
 

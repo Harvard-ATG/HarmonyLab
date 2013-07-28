@@ -1,4 +1,4 @@
-define(['lodash', 'app/config/analysis'], function(_, ANALYSIS_CONFIG) {
+define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, ANALYSIS_CONFIG) {
 
 	var DEFAULT_KEY = ANALYSIS_CONFIG.defaultKeyAndSignature;
 	var KEY_MAP = ANALYSIS_CONFIG.keyMap;
@@ -23,6 +23,8 @@ define(['lodash', 'app/config/analysis'], function(_, ANALYSIS_CONFIG) {
 			if(lock) {
 				this.setSignature(KEY_MAP[this.key].signature);
 			}
+
+			this.trigger('change');
 		},
 		// returns the current key value
 		getKey: function() {
@@ -63,6 +65,8 @@ define(['lodash', 'app/config/analysis'], function(_, ANALYSIS_CONFIG) {
 			if(lock) {
 				this.setKey(KEY_SIGNATURE_MAP[accidentals]);
 			}
+
+			this.trigger('change');
 		},
 		// returns the current signature
 		getSignature: function() {
@@ -141,6 +145,8 @@ define(['lodash', 'app/config/analysis'], function(_, ANALYSIS_CONFIG) {
 			return false;
 		}
 	});
+
+	MicroEvent.mixin(KeySignature);
 
 	return KeySignature;
 });
