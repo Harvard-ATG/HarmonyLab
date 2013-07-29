@@ -11,6 +11,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
 		},
+		// initialization
 		init: function(config) {
 			if(!this.clefs.hasOwnProperty(config.clef)) {
 				throw new Error("Invalid clef");
@@ -19,15 +20,16 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 			this.clefConfig = this.clefs[this.clef];
 		},
+		// renders the stave along with its notes 
 		render: function() {
 			var x = 40, y = 75 * this.clefConfig.index; 
 			var ctx = this.vexRenderer.getContext();
-			var vexKeyName = this.keySignature.getVexKeyName();
+			var vexKey = this.keySignature.getVexKey();
 			var stave, voice, formatter, notes;
 
 			stave = new Vex.Flow.Stave(x, y, this.width);
 			stave.addClef(this.clef);
-			stave.addKeySignature(vexKeyName);
+			stave.addKeySignature(vexKey);
 			stave.setContext(ctx);
 			stave.draw();
 
@@ -43,6 +45,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 			return this;
 		},
+		// connects two staves together to form a grand staff
 		connectWith: function(staveRenderer) {
 			// This method should only be called *after* the stave has been rendered
 			if(staveRenderer) {
@@ -54,17 +57,21 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			}
 			return this;
 		},
+		// returns a reference to the Vex.Flow stave
 		getVexStave: function() {
 			return this.vexStave;
 		},
+		// returns true if notes exist
 		hasNotes: function() {
 			return this.midiNotes.hasNotes(this.clef);
 		},
+		// Returns a list of Vex.Flow stave notes
 		getVexNotes: function() {
 			var note_struct = this.getNoteKeysAndModifiers();
 			var stave_note = this.makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
 		},
+		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
 		getNoteKeysAndModifiers: function() {
 			var notes = this.midiNotes.getNotePitches(this.clef);
 			var keys = [], modifiers = [];
@@ -82,11 +89,13 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 			return {keys: keys, modifiers: modifiers};
 		},
+		// Returns a function that will add an accidental to a Vex.Flow stave note
 		makeAccidentalModifier: function(index, accidental) {
 			return function(staveNote) {
 				staveNote.addAccidental(index, new Vex.Flow.Accidental(accidental));
 			};
 		},
+		// Returns a new Vex.Flow stave note
 		makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
