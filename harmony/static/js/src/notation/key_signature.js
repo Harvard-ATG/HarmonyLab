@@ -6,25 +6,45 @@ define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, 
 
 	// The KeySignature object is responsible for knowing the current key and
 	// signature as well as how to spell and notate pitches.
+	//
+	// --Note-- 
+	// From the user's point of view, there is only one "key," but in order
+	// to notate the pitches with Vex.Flow, we must also maintain a *keyOfSignature*
+	// property. The *key* property does not need to match *keyOfSignature*, 
+	// although most of the time it will.
+	
 	var KeySignature = function(key) {
-		this.setKey(key || DEFAULT_KEY, true);
+		var k = key || DEFAULT_KEY;
+		this.setKey(k);
+		this.setKeyOfSignature(k);
+		this.setSignature(this.keyToSignature(k));
 	};
 
 	_.extend(KeySignature.prototype, {
-		// sets the key and optionally locks or syncs the signature to the key
-		setKey: function(key, lock) {
-			key = key;
+		// change the key value
+		changeKey: function(key, lock) {
+			this.setKey(key);
+			if(lock) {
+				this.setKeyOfSignature(key);
+				this.setSignature(this.keyToSignature(key));
+			}
+			this.trigger('change');
+		},
+		// change the signature value
+		changeSignature: function(keyOfSignature, lock) {
+			this.setKeyOfSignature(keyOfSignature);
+			this.setSignature(this.keyToSignature(keyOfSignature));
+			if(lock) {
+				this.setKey(keyOfSignature);
+			}
+			this.trigger('change');
+		},
+		// sets the key 
+		setKey: function(key) {
 			if(!KEY_MAP.hasOwnProperty(key)) {
 				throw new Error("invalid key");
 			}
-
 			this.key = key;
-
-			if(lock) {
-				this.setSignature(KEY_MAP[this.key].signature);
-			}
-
-			this.trigger('change');
 		},
 		// returns the current key value
 		getKey: function() {
@@ -32,50 +52,75 @@ define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, 
 		},
 		// returns the name of the current key
 		getKeyName: function() {
-			return KEY_MAP[this.key].name;
-		},
-		// returns the spelling for the current key
-		getNoteSpelling: function() {
-			return KEY_MAP[this.key].spelling;
+			return this.keyToName(this.key);
 		},
 		// returns true if the signature is valid, false otherwise
 		isSignatureSpec: function(spec) {
-			return /^(?:b|#){0,7}$/.test(spec); // should be a string of sharp or flat symbols
+			var re = /^(?:b|#){0,7}$/; // string of sharp or flat symbols
+			return re.test(spec); 
 		},
-		// set the signature
-		setSignature: function(accidentals, lock) {
-			var accidental, accidental_order = ["F","C","G","D","A","E","B"]; 
+		// returns list of notes in the correct order to notate 
+		// the signature for sharps or flats
+		getAccidentalList: function(accidental, num_accidentals) {
+			var order = ["F","C","G","D","A","E","B"];
+			if(accidental === 'b') {
+				order = order.reverse();
+			}
+			return order.slice(0, num_accidentals);
+		},
+		// return list of accidentals for the signature spec
+		specToSignature: function(signatureSpec) {
+			var notes, accidental, num_accidentals;
 	
-			if(!this.isSignatureSpec(accidentals)) {
+			// ensure valid signature specification
+			if(!this.isSignatureSpec(signatureSpec)) {
 				throw new Error("invalid signature");
 			}
 
-			// reverse the order of accidentals to notate flats
-			accidental = accidentals.charAt(0) || '';
-			if(accidental === 'b') {
-				accidental_order = accidental_order.reverse();
-			}
+			// reverse the order of accidentals to notate flats (default order for sharps)
+			accidental = signatureSpec.charAt(0) || '';
+			num_accidentals = signatureSpec.length;
+			notes = this.getAccidentalList(accidental, num_accidentals);
 
-			// save signature as list of notes with accidentals
-			this.signature = _.map(accidental_order.slice(0, accidentals.length), function(note) {
+			return _.map(notes, function(note) {
 				return note + accidental;
 			});
-
-			// optionally update the key value implied by the signature
-			if(lock) {
-				this.setKey(KEY_SIGNATURE_MAP[accidentals]);
-			}
-
-			this.trigger('change');
 		},
-		// returns the current signature
+		// set the signature
+		setSignature: function(signatureSpec) {
+			this.signatureSpec = signatureSpec;
+			this.signature = this.specToSignature(signatureSpec);
+		},
+		// returns the signature, or list of accidentals
 		getSignature: function() {
 			return this.signature;
+		},
+		// returns the signature specification
+		getSignatureSpec: function() {
+			return this.signatureSpec;
+		},
+		setKeyOfSignature: function(key) {
+			this.keyOfSignature = key;
+		},
+		getKeyOfSignature: function() {
+			return this.keyOfSignature;
+		},
+		// returns the signature for a key
+		keyToSignature: function(key) {
+			return KEY_MAP[key].signature;
+		},
+		// returns the name for a key
+		keyToName: function(key) {
+			return KEY_MAP[key].name;
+		},
+		// returns the spelling based on the current key signature
+		keyToSpelling: function(key) {
+			return KEY_MAP[key].spelling;
 		},
 		// This function translates our system for naming keys, prefixed with i or j, 
 		// into the key names used by the Vex.Flow library.
 		getVexKeyName: function() {
-			var key = this.key;
+			var key = this.keyOfSignature;
 			var vexKeyName = key.slice(1).replace('_','');
 
 			// vex key names have "m" appended to signify a minor key
@@ -88,19 +133,17 @@ define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, 
 		},
 		// returns the spelling of a note identified by its pitch class and octave
 		spellingOf: function(pitchClass, octave) {
-			var spelling = this.getNoteSpelling();
-			var note = spelling[pitchClass];
+			var note_spelling = this.keyToSpelling(this.keyOfSignature);
+			var note = note_spelling[pitchClass];
 			var accidental = this.calculateAccidental(note);
 
 			octave = this.calculateOctave(pitchClass, octave, note);
 
-			var spelling = {
+			return {
 				key_name: [note, octave].join('/'),
 				accidental: accidental,
 				has_accidental: (accidental !== '')
 			};
-
-			return spelling;
 		},
 		// returns the octave for a note (for edge cases)
 		calculateOctave: function(pitchClass, octave, note) {

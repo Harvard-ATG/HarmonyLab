@@ -1,4 +1,4 @@
-define(['lodash', 'jquery', 'microevent', 'app/config/analysis'], function(_, $, MicroEvent, ANALYSIS_CONFIG) {
+define(['lodash', 'jquery', 'app/config/analysis'], function(_, $, ANALYSIS_CONFIG) {
 
 	var KEY_MAP = ANALYSIS_CONFIG.keyMap;
 	var KEY_DISPLAY_GROUPS = ANALYSIS_CONFIG.keyDisplayGroups;	
@@ -22,30 +22,39 @@ define(['lodash', 'jquery', 'microevent', 'app/config/analysis'], function(_, $,
 		},
 		initListeners: function() {
 			var that = this;
-			this.keyEl.on('change', function() {
-				that.keySignature.setKey($(this).val(), that.lock);
-				that.render();
-			});
-			this.signatureEl.on('change', function() {
-				that.keySignature.setSignature($(this).val(), that.lock);
-				that.render();
-			});
-			this.lockEl.on('change', function() {
-				that.lock = ($(this).val() === 'lock');
+
+			// delegate events on the root element
+			this.el.on('change', function(e) {
+				var target = e.target;
+				if(target === that.keyEl[0]) {
+					that.keySignature.changeKey($(target).val(), that.lock);
+					that.render();
+				} else if(target === that.signatureEl[0]) {
+					that.keySignature.changeSignature($(target).val(), that.lock);
+					that.render();
+				} else if(target === that.lockEl.find('input')[0]) {
+					that.lock = that.lockEl.find('input').is(':checked'); 
+				}
 			});
 		},
 		_renderSignatureLock: function() {
-			this.lockEl = $('<div class="sig-lock"><input data-component="lock" type="checkbox" value="lock" '+(this.lock?'checked="checked"':'')+'/></div>');
+			var input = document.createElement('input');
+			input.type = 'checkbox';
+			input.value = 'locked';
+			input.checked = this.lock ? true : false;
+
+			this.lockEl = $('<div class="sig-lock"></div>').append(input);
+	
 			return this;
 		},
 		_renderSignatureSelector: function() {
 			var select = document.createElement('select');
-			var selected_signature = KEY_MAP[this.keySignature.getKey()].signature;
-			select.setAttribute('component', 'signature');
+			var selected_signature = this.keySignature.getSignatureSpec();
 
 			_.each(KEY_SIGNATURE_MAP, function(key, signature) {
 				var option = document.createElement('option');
-				option.text = option.value = signature;
+				option.text = signature;
+				option.value = key;
 				if(signature === selected_signature) {
 					option.selected = true;
 				}
@@ -58,12 +67,12 @@ define(['lodash', 'jquery', 'microevent', 'app/config/analysis'], function(_, $,
 		_renderKeySelector: function() {
 			var select = document.createElement('select');
 			var selected_key = this.keySignature.getKey();
-			select.setAttribute('component', 'key');
 
 			_.each(KEY_DISPLAY_GROUPS, function(keyList, index) {
 				var optgroup = document.createElement('optgroup');
+				optgroup.label = keyList[0]
 	
-				_.each(keyList, function(key, index) {
+				_.each(keyList.slice(1), function(key, index) {
 					var opt = document.createElement('option');
 					opt.value = key;
 					opt.text = KEY_MAP[key].name;
@@ -80,8 +89,6 @@ define(['lodash', 'jquery', 'microevent', 'app/config/analysis'], function(_, $,
 			return this;
 		}
 	});
-
-	MicroEvent.mixin(KeySignatureWidget);
 
 	return KeySignatureWidget;
 });

@@ -224,11 +224,11 @@ define({
 
 	// Grouping of keys as they are to be displayed on the UI.
 	keyDisplayGroups: [
-		["jC_","iD_","jF_","jG_","iA_"],
-		["jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
-		["iC_","iG_","iD_","iA_","iE_","iB_","iF#"],
-		["jCb","jGb","jDb","jAb","jE_","jB_","jF#","jC#"],
-		["iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
+		["----", "jC_","iD_","jF_","jG_","iA_"],
+		["----", "jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
+		["----", "iC_","iG_","iD_","iA_","iE_","iB_","iF#"],
+		["----", "jCb","jGb","jDb","jAb","jE_","jB_","jF#","jC#"],
+		["----", "iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
 	],
 
 	// Default key and signature for 
