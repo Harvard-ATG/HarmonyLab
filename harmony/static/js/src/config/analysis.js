@@ -224,6 +224,7 @@ define({
 
 	// Grouping of keys as they are to be displayed on the UI.
 	keyDisplayGroups: [
+		// [label, key1, key2, key3, ..., keyN]
 		["----", "jC_","iD_","jF_","jG_","iA_"],
 		["----", "jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
 		["----", "iC_","iG_","iD_","iA_","iE_","iB_","iF#"],
@@ -231,6 +232,7 @@ define({
 		["----", "iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
 	],
 
-	// Default key and signature for 
-	defaultKeyAndSignature: "iD_",
+	// Default key and signature to use for notation. This should be
+	// automatically selected on the UI.
+	defaultKeyAndSignature: "iD_", // D minor
 });
