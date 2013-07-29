@@ -78,6 +78,14 @@ define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, 
 		getKey: function() {
 			return this.key;
 		},
+		// returns the current key name
+		getKeyName: function() {
+			return this.keyToName(this.key);
+		},
+		// returns the current key short name
+		getKeyShortName: function() {
+			return this.keyToShortName(this.key);
+		},
 		// This function translates the i/j prefix scheme of key names
 		// to Vex.Flow style key names. For right now, it simply strips
 		// the prefix, and if it's a minor key, appends "m" to it.
@@ -128,6 +136,10 @@ define(['lodash', 'microevent', 'app/config/analysis'], function(_, MicroEvent, 
 		// returns the name for a key
 		keyToName: function(key) {
 			return KEY_MAP[key].name;
+		},
+		// returns the short name for a key
+		keyToShortName: function(key) {
+			return KEY_MAP[key].shortName;
 		},
 		// returns the note spelling based on the current key signature
 		keyToSpelling: function(key) {

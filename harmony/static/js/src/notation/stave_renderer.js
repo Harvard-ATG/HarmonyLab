@@ -7,6 +7,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 	_.extend(StaveRenderer.prototype, {
 		width: 450,
+		marginLeft: 40,
 		clefs: {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
@@ -22,7 +23,8 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		// renders the stave along with its notes 
 		render: function() {
-			var x = 40, y = 75 * this.clefConfig.index; 
+			var x = this.marginLeft; 
+			var y = 75 * this.clefConfig.index; 
 			var ctx = this.vexRenderer.getContext();
 			var vexKey = this.keySignature.getVexKey();
 			var stave, voice, formatter, notes;
