@@ -6,9 +6,13 @@
 
 define({
 
-	// The default notation or spelling of the twelve pitches in the 
-	// chromatic scale is based on D-minor. 
+	// Defines the default spelling of the twelve pitches based on D-minor.
 	noteNames: ['C','C#','D','Eb','E','F','F#','G','G#','A','Bb','B'],
+
+	// Maps the twleve pitch classes [0-11] onto [0-9,y,z]. We are substituting
+	// y and z for 10 and 11 so that we can represent each pitch class with a
+	// single character. 
+	pitchClasses: ["0","1","2","3","4","5","6","7","8","9","y","z"],
 
 	// Maps each major/minor key to a default spelling of the twelve pitches
 	// along with related key information. The keys are identified by unique 
