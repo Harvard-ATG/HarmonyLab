@@ -51,8 +51,8 @@ define([
 
 			_.bindAll(this, [
 				'onJMBInit',
-				'onNoteInput',
-				'onNoteOutput',
+				'onMidiMessage',
+				'onNoteChange',
 				'onPedalChange',
 				'onChangeInstrument'
 			]);
@@ -125,12 +125,12 @@ define([
 		 */
 		initListeners: function() {
 
-			this.eventBus.bind('note:output', this.onNoteOutput);
+			this.eventBus.bind('note', this.onNoteChange);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.eventBus.bind('instrument', this.onChangeInstrument);
 
 			if(this.input) {
-				this.input.addEventListener('midimessage', this.onNoteInput);
+				this.input.addEventListener('midimessage', this.onMidiMessage);
 			}
 		},
 
@@ -142,34 +142,30 @@ define([
 		},
 
 		/**
-		 * Handles note input from an external device.
+		 * Handles a midi message. 
 		 */
-		onNoteInput: function(msg) {
-			var output = this.output;
-			var channel = this.channel;
-			var m = this.midiAccess.createMIDIMessage(msg.command,msg.data1,msg.data2,channel);
-			if(output) {
-				output.sendMIDIMessage(m);
-			}
-
-			if(msg.command === JMB.NOTE_ON || msg.command === JMB.NOTE_OFF) {
-				var noteState = (msg.command === JMB.NOTE_ON ? 'on' : 'off');
-				var noteNumber = msg.data1;
-				var noteVelocity = DEFAULT_NOTE_VELOCITY || msg.data2;
-
-				this.eventBus.trigger('note:input', noteState, noteNumber, noteVelocity);
-				this.toggleNote(noteState, noteNumber);
+		onMidiMessage: function(msg) {
+			switch(msg.command) {
+				case JMB.NOTE_ON:
+					this.eventBus.trigger('note', 'on', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
+					break;
+				case JMB.NOTE_OFF:
+					this.eventBus.trigger('note', 'off', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
+					break;
+				case JMB.CONTROL_CHANGE:
+					break;
+				default:
+					console.log("midi message not handled: ", msg);
 			}
 		},
 
 		/**
 		 * Handles note output (not from an external device). 
 		 */
-		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
-			var midiMessage, midiCommand;
-			midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+		onNoteChange: function(noteState, noteNumber, noteVelocity) {
 			noteVelocity = DEFAULT_NOTE_VELOCITY || noteVelocity; 
-			midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
+			var midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+			var midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
 
 			this.output.sendMIDIMessage(midiMessage);
 			this.toggleNote(noteState, noteNumber);

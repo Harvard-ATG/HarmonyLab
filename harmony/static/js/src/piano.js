@@ -58,7 +58,7 @@ define([
 
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 
-			_.bindAll(this, ['onNoteInput', 'onNoteOutput']);
+			_.bindAll(this, ['onNoteChange', 'relayNoteEvent']);
 
 			this.initListeners();
 		},
@@ -67,15 +67,15 @@ define([
 		 * Initialize listeners.
 		 */
 		initListeners: function() {
-			this.eventBus.bind('note:input', this.onNoteInput);
-			this.bind('key', this.onNoteOutput);
+			this.eventBus.bind('note', this.onNoteChange);
+			this.bind('key', this.relayNoteEvent);
 		},
 
 		/**
 		 * Remove listeners
 		 */
 		removeListeners: function() {
-			this.eventBus.unbind('note:input', this.onNoteInput);
+			this.eventBus.unbind('note:input', this.onNoteChange);
 			this.unbind('key', this.onNoteOutput);
 		},
 
@@ -98,16 +98,16 @@ define([
 		},
 
 		/**
-		 * Transmit key presses to the midi bus.
+		 * Relays a note change event to the event bus.
 		 */
-		onNoteOutput: function(noteState, noteNumber, noteVelocity) {
-			this.eventBus.trigger('note:output', noteState, noteNumber, noteVelocity);
+		relayNoteEvent: function(noteState, noteNumber, noteVelocity) {
+			this.eventBus.trigger('note', noteState, noteNumber, noteVelocity);
 		},
 
 		/**
-		 * Listen for midi input events and update the corresponding piano keys.
+		 * Listen for note change events and updates the associated piano keys.
 		 */
-		onNoteInput: function(noteState, noteNumber, noteVelocity) {
+		onNoteChange: function(noteState, noteNumber, noteVelocity) {
 			var key = this.getKeyByNumber(noteNumber);
 			if(typeof key !== 'undefined') {
 				key[noteState==='on'?'press':'release']();

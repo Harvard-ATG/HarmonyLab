@@ -269,48 +269,96 @@ define({
 	// automatically selected on the UI.
 	defaultKeyAndSignature: "iD_", // D minor
 
-	// For configuring computer keyboard shortcuts to play MIDI notes
-	// and control application behavior.
+	// For configuring computer keyboard shortcuts.
 	keyboardShortcuts: {
-		// Maps a keycode to a note (assumes 0 = middle C).
-		// Note: unused letters to avoid mishaps: 3[51], 6[54], g[71].
-		"notes": {
-			49: -4, // 1 = GA
-			81: -3, // q = A
-			50: -2, // 2 = AB
-			87: -1, // w = B
-			69: 0, // e = C
-			52: 1, // 4 = CD
-			82: 2, // r = D
-			53: 3, // 5 = DE
-			84: 4, // t = E
-			89: 5, // y = F
-			55: 6, // 7 = FG
-			85: 7, // u = G
-			65: 16, // a = E
-			90: 17, // z = F
-			83: 18, // s = FG
-			88: 19, // x = G
-			68: 20, // d = GA
-			67: 21, // c = A
-			70: 22, // f = AB
-			86: 23, // v = B
-			66: 24, // b = C
-			72: 25, // h = CD
-			78: 26, // n = D
-			74: 27, // j = DE
-			77: 28 // m = E
+		// Application note on/off keyboard shortcuts.
+		// Maps a key to an integer that is relative to middle C.
+		// Note: unused letters to avoid mishaps: 3, 6, and g.
+		"note": {
+			"1": -4, // 1 = GA
+			"q": -3, // q = A
+			"2": -2, // 2 = AB
+			"w": -1, // w = B
+			"e": 0, // e = C
+			"4": 1, // 4 = CD
+			"r": 2, // r = D
+			"5": 3, // 5 = DE
+			"t": 4, // t = E
+			"y": 5, // y = F
+			"7": 6, // 7 = FG
+			"u": 7, // u = G
+			"a": 16, // a = E
+			"z": 17, // z = F
+			"s": 18, // s = FG
+			"x": 19, // x = G
+			"d": 20, // d = GA
+			"c": 21, // c = A
+			"f": 22, // f = AB
+			"v": 23, // v = B
+			"b": 24, // b = C
+			"h": 25, // h = CD
+			"n": 26, // n = D
+			"j": 27, // j = DE
+			"m": 28 // m = E
 		},
-		// Maps a keycode to a control function.
-		"controls": {
-			27:  "toggleShortcutMode", // char = ESC switch for MIDI on QWERTY
-			13:  "clearNotes", // char = RETURN
-			222: "depressSustain", // char = '
-			186: "retakeSustain", // char = ;
-			190: "releaseSustain", // char = .
-			75:  "rotateKeyFlatward", // char = k
-			76:  "rotateKeySharpward", // char = l
-			188: "setKeyToNone", // char = ,
+		// Application control shortcuts.
+		// Maps a key to function name.
+		"control": {
+			"ESC":    "toggleShortcutMode",
+			"RETURN": "clearNotes",
+			"'":      "depressSustain",
+			";":      "retakeSustain",
+			".":      "releaseSustain",
+			"k":      "rotateKeyFlatward",
+			"l":      "rotateKeySharpward",
+			",":      "setKeyToNone",
+		},
+		// Defines the key -> keycode mappings
+		// This is not intended to be comprehensive.
+		"keycode": {
+			"0": 48,
+			"1": 49,
+			"2": 50,
+			"3": 51,
+			"4": 52,
+			"5": 53,
+			"6": 54,
+			"7": 55,
+			"8": 56,
+			"9": 57,
+			"q": 81,
+			"w": 87,
+			"e": 69,
+			"r": 82,
+			"t": 84,
+			"y": 89,
+			"u": 85,
+			"i": 73,
+			"o": 79,
+			"p": 80,
+			"a": 65,
+			"s": 83,
+			"d": 68,
+			"f": 70,
+			"g": 71,
+			"h": 72,
+			"j": 74,
+			"k": 75,
+			"l": 76,
+			";": 186,
+			"'": 222,
+			"z": 90,
+			"x": 88,
+			"c": 67,
+			"v": 86,
+			"b": 66,
+			"n": 78,
+			"m": 77,
+			",": 188,
+			".": 190,
+			"/": 191,
+			"ENTER": 13,
+			"ESC": 27,
 		},
 	}
 

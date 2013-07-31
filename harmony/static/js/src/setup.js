@@ -8,6 +8,7 @@ require([
 	'app/notation',
 	'app/notation/key_signature',
 	'app/piano',
+	'app/shortcuts',
 	'app/ui/staff_tab_nav',
 	'app/widget/key_signature',
 	'app/eventbus'
@@ -21,6 +22,7 @@ function(
 	Notation,
 	KeySignature,
 	PianoKeyboard,
+	KeyboardShortcuts,
 	StaffTabNav,
 	KeySignatureWidget,
 	eventBus
@@ -125,6 +127,10 @@ function(
 			});
 			midi_controller.detectDevices();
 		},
+		initKeyboardShortcuts: function() {
+			var shortcuts = new KeyboardShortcuts();
+			shortcuts.enabled = true;
+		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
 			var midi_notes = new MidiNotes();
@@ -140,6 +146,7 @@ function(
 			this.initInstruments();
 			this.initKeyAndSignature(key_signature);
 			this.initDevices(midi_controller);
+			this.initKeyboardShortcuts();
 		}
 	};
 
