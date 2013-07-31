@@ -128,8 +128,7 @@ function(
 			midi_controller.detectDevices();
 		},
 		initKeyboardShortcuts: function() {
-			var shortcuts = new KeyboardShortcuts();
-			shortcuts.enabled = true;
+			var shortcuts = new KeyboardShortcuts({enabled: false});
 		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
