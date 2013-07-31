@@ -17,6 +17,7 @@ define(['lodash', 'jquery', 'app/eventbus', 'app/config'], function(_, $, eventB
 			this.mapKeyName = _.memoize(this.mapKeyName);
 			this.onKeyDown = this.filterKey(this.onKeyDown);
 			this.onKeyUp = this.filterKey(this.onKeyUp);
+			this.noteCache = {};
 
 			_.bindAll(this, ['onKeyDown', 'onKeyUp', 'onKeyChange']);
 			this.events = {
@@ -42,10 +43,12 @@ define(['lodash', 'jquery', 'app/eventbus', 'app/config'], function(_, $, eventB
 			this.enabled = !this.enabled;
 		},
 		noteOn: function(noteOffset) {
-			eventBus.trigger('note', 'on', this.calculateNote(noteOffset));
+			var note = this.calculateNote(noteOffset);
+			eventBus.trigger('note', 'on', note);
 		},
 		noteOff: function(noteOffset) {
-			eventBus.trigger('note', 'off', this.calculateNote(noteOffset));
+			var note = this.calculateNote(noteOffset);
+			eventBus.trigger('note', 'off', note);
 		},
 		calculateNote: function(noteOffset) {
 			return this.midiNote + noteOffset;
@@ -62,12 +65,16 @@ define(['lodash', 'jquery', 'app/eventbus', 'app/config'], function(_, $, eventB
 				case 'note':
 					this[state==='down'?'noteOn':'noteOff'](mapped.value);
 					e.preventDefault();
+					e.stopPropagation();
 					break;
 				case 'control':
 					if(state === 'down') {
-						this[mapped.value]();
+						if(this[mapped.value]) {
+							this[mapped.value]();
+						}
 					}
 					e.preventDefault();
+					e.stopPropagation();
 					break;
 			}
 		},

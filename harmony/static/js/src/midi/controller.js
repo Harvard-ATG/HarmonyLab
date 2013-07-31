@@ -138,7 +138,7 @@ define([
 		 * Toggles a note state.
 		 */
 		toggleNote: function(noteState, noteNumber) {
-			this.midiNotes[noteState==='on'?'noteOn':'noteOff'](noteNumber);
+			return this.midiNotes[noteState==='on'?'noteOn':'noteOff'](noteNumber);
 		},
 
 		/**
@@ -164,11 +164,12 @@ define([
 		 */
 		onNoteChange: function(noteState, noteNumber, noteVelocity) {
 			noteVelocity = DEFAULT_NOTE_VELOCITY || noteVelocity; 
-			var midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-			var midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
-
-			this.output.sendMIDIMessage(midiMessage);
-			this.toggleNote(noteState, noteNumber);
+			var changed = this.toggleNote(noteState, noteNumber);
+			if(changed) {
+				var midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+				var midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
+				this.output.sendMIDIMessage(midiMessage);
+			}
 		},
 
 		/**

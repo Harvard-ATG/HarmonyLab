@@ -19,6 +19,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			if(changed) {
 				this.trigger('note:change', 'on', number);
 			}
+			return changed;
 		},
 		// Command to turn off a note. Fires a change event if the note status has changed.
 		noteOff: function(number) {
@@ -27,6 +28,11 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			if(changed) {
 				this.trigger('note:change', 'off', number);
 			}
+			return changed;
+		},
+		// Returns true if the note is on, false otherwise
+		isNoteOn: function(number) {
+			return this._notes[number] ? true : false;
 		},
 		// Returns a list of notes for the given clef.
 		getNotes: function(clef) {
