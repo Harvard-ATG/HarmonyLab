@@ -1,42 +1,46 @@
-define(['lodash', 'jquery', 'app/config/analysis'], function(_, $, ANALYSIS_CONFIG) {
+define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
 
-	var KEY_MAP = ANALYSIS_CONFIG.keyMap;
-	var KEY_DISPLAY_GROUPS = ANALYSIS_CONFIG.keyDisplayGroups;	
-	var KEY_SIGNATURE_MAP = ANALYSIS_CONFIG.keySignatureMap;
+	var KEY_MAP = CONFIG.keyMap;
+	var KEY_DISPLAY_GROUPS = CONFIG.keyDisplayGroups;	
+	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;
 
 	var KeySignatureWidget = function(keySignature) {
-		this.el = $('<div></div>');
 		this.lock = true;
 		this.keySignature = keySignature;
+		this.el = $('<div></div>');
+		this.initListeners();
 	};
 
 	_.extend(KeySignatureWidget.prototype, {
+		// render the control elements
 		render: function() {
-			this.el.empty();
 			this._renderKeySelector();
 			this._renderSignatureLock();
 			this._renderSignatureSelector();
+			this.el.empty();
 			this.el.append(this.keyEl, this.lockEl, this.signatureEl);
-			this.initListeners();
 			return this;
 		},
+		// initialize event listeners
 		initListeners: function() {
 			var that = this;
 
-			// delegate events on the root element
+			// delegate change events on the root element
 			this.el.on('change', function(e) {
 				var target = e.target;
 				if(target === that.keyEl[0]) {
 					that.keySignature.changeKey($(target).val(), that.lock);
 					that.render();
 				} else if(target === that.signatureEl[0]) {
-					that.keySignature.changeSignature($(target).val(), that.lock);
+					that.keySignature.changeSignatureKey($(target).val(), that.lock);
 					that.render();
 				} else if(target === that.lockEl.find('input')[0]) {
 					that.lock = that.lockEl.find('input').is(':checked'); 
 				}
 			});
 		},
+		// renders the lock checkbox that is used to bind the key and signature
+		// together (change one and the other should change accordingly).
 		_renderSignatureLock: function() {
 			var input = document.createElement('input');
 			input.type = 'checkbox';
@@ -47,6 +51,7 @@ define(['lodash', 'jquery', 'app/config/analysis'], function(_, $, ANALYSIS_CONF
 	
 			return this;
 		},
+		// renders a selectable list of signatures
 		_renderSignatureSelector: function() {
 			var select = document.createElement('select');
 			var selected_signature = this.keySignature.getSignatureSpec();
@@ -64,6 +69,7 @@ define(['lodash', 'jquery', 'app/config/analysis'], function(_, $, ANALYSIS_CONF
 			this.signatureEl = $(select);
 			return this;
 		},
+		// renders a selectable list of keys
 		_renderKeySelector: function() {
 			var select = document.createElement('select');
 			var selected_key = this.keySignature.getKey();

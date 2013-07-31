@@ -1,8 +1,7 @@
-// Analysis Configuration
-// ----------------------
-//
-// Define analysis-specific information here.
+// Configuration
+// -------------
 // 
+// Configuration data used by the application for notation, analysis, and ui.
 
 define({
 
@@ -269,4 +268,50 @@ define({
 	// Default key and signature to use for notation. This should be
 	// automatically selected on the UI.
 	defaultKeyAndSignature: "iD_", // D minor
+
+	// For configuring computer keyboard shortcuts to play MIDI notes
+	// and control application behavior.
+	keyboardShortcuts: {
+		// Maps a keycode to a note (assumes 0 = middle C).
+		// Note: unused letters to avoid mishaps: 3[51], 6[54], g[71].
+		"notes": {
+			49: -4, // 1 = GA
+			81: -3, // q = A
+			50: -2, // 2 = AB
+			87: -1, // w = B
+			69: 0, // e = C
+			52: 1, // 4 = CD
+			82: 2, // r = D
+			53: 3, // 5 = DE
+			84: 4, // t = E
+			89: 5, // y = F
+			55: 6, // 7 = FG
+			85: 7, // u = G
+			65: 16, // a = E
+			90: 17, // z = F
+			83: 18, // s = FG
+			88: 19, // x = G
+			68: 20, // d = GA
+			67: 21, // c = A
+			70: 22, // f = AB
+			86: 23, // v = B
+			66: 24, // b = C
+			72: 25, // h = CD
+			78: 26, // n = D
+			74: 27, // j = DE
+			77: 28 // m = E
+		},
+		// Maps a keycode to a control function.
+		"controls": {
+			27:  "toggleShortcutMode", // char = ESC switch for MIDI on QWERTY
+			13:  "clearNotes", // char = RETURN
+			222: "depressSustain", // char = '
+			186: "retakeSustain", // char = ;
+			190: "releaseSustain", // char = .
+			75:  "rotateKeyFlatward", // char = k
+			76:  "rotateKeySharpward", // char = l
+			188: "setKeyToNone", // char = ,
+		},
+	}
+
 });
