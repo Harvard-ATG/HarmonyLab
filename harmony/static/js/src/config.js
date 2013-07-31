@@ -275,31 +275,31 @@ define({
 		// Maps a key to an integer that is relative to middle C.
 		// Note: unused letters to avoid mishaps: 3, 6, and g.
 		"note": {
-			"1": -4, // 1 = GA
-			"q": -3, // q = A
-			"2": -2, // 2 = AB
-			"w": -1, // w = B
-			"e": 0, // e = C
-			"4": 1, // 4 = CD
-			"r": 2, // r = D
-			"5": 3, // 5 = DE
-			"t": 4, // t = E
-			"y": 5, // y = F
-			"7": 6, // 7 = FG
-			"u": 7, // u = G
-			"a": 16, // a = E
-			"z": 17, // z = F
-			"s": 18, // s = FG
-			"x": 19, // x = G
-			"d": 20, // d = GA
-			"c": 21, // c = A
-			"f": 22, // f = AB
-			"v": 23, // v = B
-			"b": 24, // b = C
-			"h": 25, // h = CD
-			"n": 26, // n = D
-			"j": 27, // j = DE
-			"m": 28 // m = E
+			"1": -4, // GA
+			"q": -3, // A
+			"2": -2, // AB
+			"w": -1, // B
+			"e": 0, // C
+			"4": 1, // CD
+			"r": 2, // D
+			"5": 3, // DE
+			"t": 4, // E
+			"y": 5, // F
+			"7": 6, // FG
+			"u": 7, // G
+			"a": 16, // E
+			"z": 17, // F
+			"s": 18, // FG
+			"x": 19, // G
+			"d": 20, // GA
+			"c": 21, // A
+			"f": 22, // AB
+			"v": 23, // B
+			"b": 24, // C
+			"h": 25, // CD
+			"n": 26, // D
+			"j": 27, // DE
+			"m": 28 // E
 		},
 		// Application control shortcuts.
 		// Maps a key to function name.
