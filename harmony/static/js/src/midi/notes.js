@@ -4,7 +4,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	// currently active.  It also must know how to partition notes by clef and
 	// convert MIDI note numbers to their associated pitch classes and octaves.
 	//
-	// This object is observable and fires "note:change" events when a note is
+	// This object is observable and fires "change" events when a note is
 	// turned on or off.
 	
 	var MidiNotes = function() {
@@ -13,20 +13,22 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 	_.extend(MidiNotes.prototype, {
 		// Command to turn on a note. Fires a change event if the note status has changed.
+		// Returns true if the note status was changed, false otherwise.
 		noteOn: function(number) {
 			var changed = (this._notes[number] !== true); 
 			this._notes[number] = true;
 			if(changed) {
-				this.trigger('note:change', 'on', number);
+				this.trigger('change', 'on', number);
 			}
 			return changed;
 		},
 		// Command to turn off a note. Fires a change event if the note status has changed.
+		// Returns true if the note status was changed, false otherwise.
 		noteOff: function(number) {
 			var changed = (this._notes[number] === true);
 			delete this._notes[number];
 			if(changed) {
-				this.trigger('note:change', 'off', number);
+				this.trigger('change', 'off', number);
 			}
 			return changed;
 		},

@@ -4,7 +4,18 @@ define([
 	'app/notation/stave_renderer',
 ], function(_, Vex, StaveRenderer) {
 
-	// Knows how to render the grand staff and notes as they are played.
+	// The Notation object is responsible for knowing to construct the grand staff
+	// and coordinate the rendering process for notating pitches as they 
+	// are played.
+	//
+	// Delegates responsibility for rendering notes and signatures to
+	// the StaveRenderer and the Vex.Flow library.
+	//
+	// Also collaborates with the MidiNotes object, responsible for modeling
+	// the state of notes and the KeySignature object for modeling the
+	// signature.
+	// 
+
 	var Notation = function(config) {
 		this.config = config || {};
 		this.init();
@@ -46,12 +57,12 @@ define([
 		},
 		initStaves: function() {
 			this.staves = [];
-			this.addStave({ clef: 'treble' });
-			this.addStave({ clef: 'bass' });
+			this.addStave('treble'); 
+			this.addStave('bass');
 		},
 		initListeners: function() {
 			_.bindAll(this, ['render']);
-			this.midiNotes.bind('note:change', this.render);
+			this.midiNotes.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
 		},
 		clear: function() {
@@ -64,13 +75,14 @@ define([
 			this.renderAnnotations();
 			return this;
 		},
-		addStave: function(config) {
-			_.extend(config, {
+		addStave: function(clef) {
+			var config = {
+				clef: clef,
 				width: (.8 * this.width),
 				midiNotes: this.midiNotes,
 				keySignature: this.keySignature,
 				vexRenderer: this.vexRenderer
-			});
+			};
 			this.staves.push(new StaveRenderer(config));
 		},
 		renderStaves: function() {
