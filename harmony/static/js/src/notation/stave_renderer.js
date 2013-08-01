@@ -67,7 +67,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		hasNotes: function() {
 			return this.midiNotes.hasNotes(this.clef);
 		},
-		// Returns a list of Vex.Flow stave notes
+		// returns a list of Vex.Flow stave notes
 		getVexNotes: function() {
 			var note_struct = this.getNoteKeysAndModifiers();
 			var stave_note = this.makeStaveNote(note_struct.keys, note_struct.modifiers);
@@ -91,13 +91,13 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 
 			return {keys: keys, modifiers: modifiers};
 		},
-		// Returns a function that will add an accidental to a Vex.Flow stave note
+		// returns a function that will add an accidental to a Vex.Flow stave note
 		makeAccidentalModifier: function(index, accidental) {
 			return function(staveNote) {
 				staveNote.addAccidental(index, new Vex.Flow.Accidental(accidental));
 			};
 		},
-		// Returns a new Vex.Flow stave note
+		// returns a new Vex.Flow stave note
 		makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 

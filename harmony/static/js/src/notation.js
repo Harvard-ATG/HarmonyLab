@@ -1,9 +1,8 @@
 define([
 	'lodash', 
 	'vexflow', 
-	'app/notation/stave_renderer', 
-	'app/notation/key_signature'
-], function(_, Vex, StaveRenderer, KeySignature) {
+	'app/notation/stave_renderer',
+], function(_, Vex, StaveRenderer) {
 
 	// Knows how to render the grand staff and notes as they are played.
 	var Notation = function(config) {
@@ -15,27 +14,31 @@ define([
 		width: 520,
 		height: 380,
 		init: function() {
-			if(!this.config.hasOwnProperty('midiNotes')) {
-				throw new Error("missing config property");
-			}
-
-			this.midiNotes = this.config.midiNotes;
-			this.keySignature = this.config.keySignature;
-
+			this.initConfig();
 			this.initRenderer();
 			this.initStaves();
 			this.initListeners();
 		},
+		initConfig: function() {
+			var required = ['midiNotes', 'keySignature'];
+
+			_.each(required, function(propName) {
+				if(this.config.hasOwnProperty(propName)) {
+					this[propName] = this.config[propName];
+				} else {
+					throw new Error("missing required config property: "+propName);
+				}
+			}, this);
+		},
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
-			var css = {
+
+			this.el = $('<canvas></canvas>');
+			this.el.css({
 				'background-color': '#eed',
 				'padding': '10px',
 				'border': '1px solid #ddc'
-			};
-	
-			this.el = $('<canvas></canvas>');
-			this.el.css(css);
+			});
 			this.el[0].width = this.width;
 			this.el[0].height = this.height;
 

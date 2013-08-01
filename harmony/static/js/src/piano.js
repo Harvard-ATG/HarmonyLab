@@ -58,7 +58,7 @@ define([
 
 			this.paper = Raphael(this.el.get(0), this.width, this.height);
 
-			_.bindAll(this, ['onNoteChange', 'relayNoteEvent']);
+			_.bindAll(this, ['onNoteChange', 'triggerNoteChange']);
 
 			this.initListeners();
 		},
@@ -68,15 +68,15 @@ define([
 		 */
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
-			this.bind('key', this.relayNoteEvent);
+			this.bind('key', this.triggerNoteChange);
 		},
 
 		/**
 		 * Remove listeners
 		 */
 		removeListeners: function() {
-			this.eventBus.unbind('note:input', this.onNoteChange);
-			this.unbind('key', this.onNoteOutput);
+			this.eventBus.unbind('note', this.onNoteChange);
+			this.unbind('key', this.triggerNoteChange);
 		},
 
 		/**
@@ -98,9 +98,9 @@ define([
 		},
 
 		/**
-		 * Relays a note change event to the event bus.
+		 * Triggers a note change event to the event bus.
 		 */
-		relayNoteEvent: function(noteState, noteNumber, noteVelocity) {
+		triggerNoteChange: function(noteState, noteNumber, noteVelocity) {
 			this.eventBus.trigger('note', noteState, noteNumber, noteVelocity);
 		},
 
