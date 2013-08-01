@@ -1,2 +1,3 @@
 *.db
 *.pyc
+/harmony/static/js/build/*.js
