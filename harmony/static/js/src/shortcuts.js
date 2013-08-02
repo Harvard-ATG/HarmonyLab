@@ -14,38 +14,38 @@ define([
 
 	_.extend(KeyboardShortcuts.prototype, {
 		midiNote: 48, // anchor for MIDI note offsets
+
 		enabled: false, // shortcuts mode disabled by default
 
 		// intialization
 		init: function(config) {
+			if(config.hasOwnProperty('keySignature')) {
+				this.keySignature = config.keySignature;
+			} else {
+				throw new Error("missing key signature");
+			}
 			if(config.hasOwnProperty('enabled')) {
 				this.enabled = config.enabled;
 			}
 
-			// memoize for speed - we assume the mappings won't change
-			// while the application is running
+			// memoize for speed - assumes mappings are fixed
 			this.mapKeyName = _.memoize(this.mapKeyName);
 
-			this.initEvents();
 			this.initListeners();
 		},
 		// setup bindings for events
-		initEvents: function() {
+		initListeners: function() {
 			this.onKeyDown = this.filterKey(this.onKeyDown);
 			this.onKeyUp = this.filterKey(this.onKeyUp);
 
 			_.bindAll(this, ['onKeyDown', 'onKeyUp', 'onKeyChange']);
 
-			this.events = {'keydown': this.onKeyDown, 'keyup': this.onKeyUp};
+			this.events = {
+				'keydown': this.onKeyDown, 
+				'keyup': this.onKeyUp
+			};
 
-		},
-		// initializes or activates key event listeners
-		initListeners: function() {
 			$('body').on(this.events);
-		},
-		// removes event listeners
-		removeListeners: function() {
-			$('body').off(this.events);
 		},
 		// enables keyboard shortcuts
 		enable: function() {
@@ -59,25 +59,47 @@ define([
 		isEnabled: function() {
 			return this.enabled;
 		},
+
+		//--------------------------------------------------
+		// Control shortcut functions
+
 		// toggles shortcuts on/off
 		toggleMode: function() {
 			this.enabled = !this.enabled;
 			this.trigger('toggle', this.enabled);
 		},
+		// rotates the key to one with more flats
+		rotateKeyFlatward: function() {
+			this.keySignature.rotateFlatward();
+		},
+		// rotates the key to one with more sharps
+		rotateKeySharpward: function() {
+			this.keySignature.rotateSharpward();
+		},
+		// changes the key to "none"
+		setKeyToNone: function() {
+			this.keySignature.changeKey('jC_', true);	
+		},
+
+		//--------------------------------------------------
+		// Note on/off functions
+
 		// activate a note
 		noteOn: function(noteOffset) {
-			var note = this.calculateNote(noteOffset);
-			eventBus.trigger('note', 'on', note);
+			eventBus.trigger('note', 'on', this.calculateNote(noteOffset));
 		},
 		// deactivate a note
 		noteOff: function(noteOffset) {
-			var note = this.calculateNote(noteOffset);
-			eventBus.trigger('note', 'off', note);
+			eventBus.trigger('note', 'off', this.calculateNote(noteOffset));
 		},
 		// calculates the MIDI note given an offset 
 		calculateNote: function(noteOffset) {
 			return this.midiNote + noteOffset;
 		},
+
+		//--------------------------------------------------
+		// Event handler functions
+
 		// handles key down event
 		onKeyDown: function(e) {
 			this.onKeyChange('down', e.keyCode, e);
@@ -143,6 +165,10 @@ define([
 			var mapped = this.mapKeyName(keyCode);
 			return mapped ? true : false;
 		},
+
+		//--------------------------------------------------
+		// Utility functions
+
 		// maps a key code to its associated entry in the shortcut table
 		// returns a hash with the type of entry, name of the key, and the
 		// value.

@@ -3,13 +3,17 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
 	var DEFAULT_KEY = CONFIG.defaultKeyAndSignature;
 	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;
 	var KEY_MAP = CONFIG.keyMap;
+	var KEY_WHEEL = CONFIG.keyWheel;
 
 	// The KeySignature object is responsible for knowing the current key and
 	// signature as well as how to spell and notate pitches with correct 
 	// accidentals.
 	//
-	// It collaborates with the configuration object that holds the mapping for
-	// keys and signatures. 
+	// It collaborates with the global configuration object that holds the 
+	// mapping for keys and signatures as well as other relevant information. 
+	//
+	// This object is observable and Fires "change" events when the key or 
+	// signature are changed using the change methods.
 	//
 	// Note
 	// ----
@@ -23,6 +27,7 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
 	
 	var KeySignature = function(key) {
 		key = key || DEFAULT_KEY;
+		this.lock = true;
 		this.setKey(key);
 		this.setKeyOfSignature(key);
 		this.setSignature(this.keyToSignature(key));
@@ -30,25 +35,31 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
 
 	_.extend(KeySignature.prototype, {
 		//--------------------------------------------------
-		// API for UI widgets
+		// Public methods for changing/locking the key and signature
 
-		// change the key value
+		// change the key value, optionally locking the signature to it
 		changeKey: function(key, lock) {
 			this.setKey(key);
 			if(lock) {
 				this.setKeyOfSignature(key);
 				this.setSignature(this.keyToSignature(key));
 			}
+			this.lock = lock;
 			this.trigger('change');
 		},
-		// change the signature key value
+		// change the signature key value, optionally locking the key to it
 		changeSignatureKey: function(keyOfSignature, lock) {
 			this.setKeyOfSignature(keyOfSignature);
 			this.setSignature(this.keyToSignature(keyOfSignature));
 			if(lock) {
 				this.setKey(keyOfSignature);
 			}
+			this.lock = lock;
 			this.trigger('change');
+		},
+		// returns true if the key and signature are locked, false otherwise 
+		locked: function() {
+			return this.lock ? true : false;
 		},
 
 		//--------------------------------------------------
@@ -190,6 +201,32 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
 		},
 
 		//--------------------------------------------------
+		// Key manipulation functions
+
+		// Changes the key to one that is sharper.
+		rotateSharpward: function() {
+			this.rotateKey(1);
+		},
+
+		// Changes the key to one that is flatter.
+		rotateFlatward: function() {
+			this.rotateKey(-1);
+		},
+
+		// Rotates the key by moving left or right around the key wheel. 
+		// Direction should be a positive integer to rotate to a sharper key,
+		// or negative to rotate to a flatter key.
+		rotateKey: function(direction) {
+			var wheel = KEY_WHEEL.slice(0);
+			var index = wheel.indexOf(this.getKey());
+			if(index === -1) {
+				index = 0;
+			}
+			var new_key = wheel[(wheel.length + index + direction) % wheel.length];
+			this.changeKey(new_key, true);
+		},
+
+		//--------------------------------------------------
 		// Utility functions
 
 		// returns true if the signature is valid, false otherwise
@@ -226,8 +263,7 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
 		// returns the note spelling based on the current key signature
 		keyToSpelling: function(key) {
 			return KEY_MAP[key].spelling;
-		}
-
+		},
 	});
 
 	MicroEvent.mixin(KeySignature);

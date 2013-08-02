@@ -265,6 +265,14 @@ define({
 		["----", "iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
 	],
 
+	// Wheel for rotating keys sharpward or flatward
+	// Default order is sharpward.
+	keyWheel: [
+		"iD_","jF_","iA_","jC_", "iE_","jG_","iB_","jD_",
+		"iF#","jA_","iC#","jE_", "iG#","jB_","iEb","jGb",
+		"iBb","iF_","jAb","iC_", "jEb","iG_","jBb"
+	],
+
 	// Default key and signature to use for notation. This should be
 	// automatically selected on the UI.
 	defaultKeyAndSignature: "iD_", // D minor
@@ -305,10 +313,10 @@ define({
 		// Maps a key to function name.
 		"control": {
 			"ESC":    "toggleMode",
-			"RETURN": "clearNotes",
-			"'":      "depressSustain",
-			";":      "retakeSustain",
-			".":      "releaseSustain",
+			"RETURN": "clearNotes", // todo
+			"'":      "depressSustain", // todo
+			";":      "retakeSustain", // todo
+			".":      "releaseSustain", // todo
 			"k":      "rotateKeyFlatward",
 			"l":      "rotateKeySharpward",
 			",":      "setKeyToNone",
