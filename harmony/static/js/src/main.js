@@ -147,8 +147,14 @@ function(
 			var midi_notes = new MidiNotes();
 			var key_signature = new KeySignature();
 			var midi_controller = new MidiController({ midiNotes: midi_notes });
-			var notation = new Notation({ midiNotes: midi_notes, keySignature: key_signature });
-			var shortcuts = new KeyboardShortcuts({enabled: false});
+			var notation = new Notation({ 
+				midiNotes: midi_notes, 
+				keySignature: key_signature 
+			});
+			var shortcuts = new KeyboardShortcuts({
+				enabled: false, 
+				keySignature: key_signature 
+			});
 
 			this.initOnScreenPiano(keyboard);
 			this.initNotation(notation);

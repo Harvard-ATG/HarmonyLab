@@ -5,22 +5,13 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
 	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;
 
 	var KeySignatureWidget = function(keySignature) {
-		this.lock = true;
+		this.lock = keySignature.locked();
 		this.keySignature = keySignature;
 		this.el = $('<div></div>');
 		this.initListeners();
 	};
 
 	_.extend(KeySignatureWidget.prototype, {
-		// render the control elements
-		render: function() {
-			this._renderKeySelector();
-			this._renderSignatureLock();
-			this._renderSignatureSelector();
-			this.el.empty();
-			this.el.append(this.keyEl, this.lockEl, this.signatureEl);
-			return this;
-		},
 		// initialize event listeners
 		initListeners: function() {
 			var that = this;
@@ -38,6 +29,21 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
 					that.lock = that.lockEl.find('input').is(':checked'); 
 				}
 			});
+
+			// observe changes to key signature and refresh when needed
+			this.keySignature.bind('change', function() {
+				that.lock = this.locked();
+				that.render();
+			});
+		},
+		// render the control elements
+		render: function() {
+			this._renderKeySelector();
+			this._renderSignatureLock();
+			this._renderSignatureSelector();
+			this.el.empty();
+			this.el.append(this.keyEl, this.lockEl, this.signatureEl);
+			return this;
 		},
 		// renders the lock checkbox that is used to bind the key and signature
 		// together (change one and the other should change accordingly).
