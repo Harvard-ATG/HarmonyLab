@@ -8,6 +8,9 @@ The Harmony Lab suite is Open Source educational software that notates, teaches,
 your harmony; unlike Sibelius and Finale this application enhances a learner's understanding of
 harmony by providing instant feedback.
 
+
+Demo: http://harmony-lab.appspot.com/
+
 # Quickstart
 
 - Requires [Python 2.7.x](http://python.org/download/releases/) and [Pip](http://www.pip-installer.org/) to install. 
