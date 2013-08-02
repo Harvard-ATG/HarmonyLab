@@ -1,5 +1,9 @@
-// This module initializes the user interface.
-require([
+// This module initializes the application (hence the "main")
+//
+// Usage from template: 
+//		require(['main']) 
+//
+define([
 	'lodash',
 	'jquery', 
 	'app/midi/controller',
@@ -27,6 +31,7 @@ function(
 	KeySignatureWidget,
 	eventBus
 ) {
+
 	var setup = {
 		initOnScreenPiano: function(keyboard) {
 			$('#piano').append(keyboard.render().el)
@@ -168,7 +173,5 @@ function(
 		}
 	};
 
-	$(document).ready(function() {
-		setup.init();
-	});
+	$(document).ready(_.bind(setup.init, setup));
 });
