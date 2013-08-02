@@ -40,23 +40,39 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		getNotes: function(clef) {
 			return this.getNoteNumbers(clef);
 		},
+		// Returns all notes in sorted order.
+		getSortedNotes: function() {
+			var _notes = this._notes, notes_sorted = [];
+			var note_num, i, len;
+
+			for(note_num in _notes) {
+				if(_notes.hasOwnProperty(note_num)) {
+					notes_sorted.push(note_num);
+				}
+			}
+
+			notes_sorted.sort();
+
+			return notes_sorted;
+		},
 		// Returns a list that is the result of executing a callback on each
 		// note. If no clef is specified, all notes are mapped, otherwise
 		// notes are filtered by clef.
 		mapNotes: function(callback, clef) {
-			var notes = [], _notes = this._notes;
-			var note_num, wanted = true;
-			for(note_num in _notes) {
-				if(_notes.hasOwnProperty(note_num)) {
-					if(clef) {
-						wanted = this.noteNumBelongsToClef(note_num, clef);
-					}
-					if(wanted) {
-						notes.push(callback.call(this, note_num));
-					}
+			var mapped_notes = [], notes_sorted = this.getSortedNotes();
+			var wanted = true, note_num, i, len;
+
+			for(i = 0, len = notes_sorted.length; i < len; i++) {
+				note_num = notes_sorted[i];
+				if(clef) {
+					wanted = this.noteNumBelongsToClef(note_num, clef);
+				}
+				if(wanted) {
+					mapped_notes.push(callback.call(this, note_num));
 				}
 			}
-			return notes;
+
+			return mapped_notes;
 		},
 		// Returns true if the clef has any notes, or if no clef is specified,
 		// if any notes exist on any clefs.
