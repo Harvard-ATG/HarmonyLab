@@ -3,10 +3,19 @@ define([
 	'jquery', 
 	'lodash', 
 	'microevent',
+	'raphael',
 	'app/eventbus',
 	'app/piano/keygenerator', 
 	'app/piano/key'
-], function($, _, MicroEvent, eventBus, PianoKeyGenerator, PianoKey) {
+], function(
+	$, 
+	_, 
+	MicroEvent, 
+	Raphael,
+	eventBus, 
+	PianoKeyGenerator, 
+	PianoKey
+) {
 
 	/**
 	 * Piano Keyboard class.

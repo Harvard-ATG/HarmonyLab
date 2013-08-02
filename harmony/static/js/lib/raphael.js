@@ -377,7 +377,6 @@
     };
     (typeof module != "undefined" && module.exports) ? (module.exports = eve) : (typeof define != "undefined" ? (define("eve", [], function() { return eve; })) : (glob.eve = eve));
 })(this);
-
 // ┌─────────────────────────────────────────────────────────────────────┐ \\
 // │ "Raphaël 2.1.0" - JavaScript Vector Library                         │ \\
 // ├─────────────────────────────────────────────────────────────────────┤ \\
@@ -385,19 +384,20 @@
 // │ Copyright (c) 2008-2011 Sencha Labs (http://sencha.com)             │ \\
 // │ Licensed under the MIT (http://raphaeljs.com/license.html) license. │ \\
 // └─────────────────────────────────────────────────────────────────────┘ \\
+
 (function (glob, factory) {
     // AMD support
     if (typeof define === "function" && define.amd) {
-        // Define as named module for the sake of raphael.svg.js and raphael.vml.js
-        // Adjust AMD paths if needed
-        // example:
-        // require.config({ paths: { raphael: "libs/raphael" } });
-        define("raphael", ["eve"], factory);
+        // Define as an anonymous module
+        define(["eve"], function( eve ) {
+            return factory(glob, eve);
+        });
     } else {
         // Browser globals (glob is window)
-        glob.Raphael = factory(glob.eve);
+        // Raphael adds itself to window
+        factory(glob, glob.eve);
     }
-}(this, function (eve) {
+}(this, function (window, eve) {
     /*\
      * Raphael
      [ method ]
@@ -520,7 +520,7 @@
         appendChild = "appendChild",
         apply = "apply",
         concat = "concat",
-        supportsTouch = "createTouch" in g.doc,
+        supportsTouch = ('ontouchstart' in g.win) || g.win.DocumentTouch && g.doc instanceof DocumentTouch, //taken from Modernizr touch test
         E = "",
         S = " ",
         Str = String,
@@ -883,7 +883,7 @@
         }
         return value;
     };
-    
+
     /*\
      * Raphael.createUUID
      [ method ]
@@ -978,7 +978,7 @@
             g /= 255;
             b /= 255;
         }
-        
+
         return [r, g, b];
     },
     packageRGB = function (r, g, b, o) {
@@ -995,7 +995,7 @@
         R.is(o, "finite") && (rgb.opacity = o);
         return rgb;
     };
-    
+
     /*\
      * Raphael.color
      [ method ]
@@ -1238,7 +1238,7 @@
         g.doc.body.appendChild(img);
         img.src = src;
     };
-    
+
     function clrToString() {
         return this.hex;
     }
@@ -1470,7 +1470,7 @@
         if (pth.arr) {
             return pathClone(pth.arr);
         }
-        
+
         var paramCounts = {a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0},
             data = [];
         if (R.is(pathString, array) && R.is(pathString[0], array)) { // rough assumption
@@ -1978,7 +1978,7 @@
             return {x: 0, y: 0, width: 0, height: 0, x2: 0, y2: 0};
         }
         path = path2curve(path);
-        var x = 0, 
+        var x = 0,
             y = 0,
             X = [],
             Y = [],
@@ -3030,7 +3030,7 @@
                 s.scalex = +s.scalex.toFixed(4);
                 s.scaley = +s.scaley.toFixed(4);
                 s.rotate = +s.rotate.toFixed(4);
-                return  (s.dx || s.dy ? "t" + [s.dx, s.dy] : E) + 
+                return  (s.dx || s.dy ? "t" + [s.dx, s.dy] : E) +
                         (s.scalex != 1 || s.scaley != 1 ? "s" + [s.scalex, s.scaley, 0, 0] : E) +
                         (s.rotate ? "r" + [s.rotate, 0, 0] : E);
             } else {
@@ -3058,7 +3058,7 @@
     } else {
         paperproto.safari = fun;
     }
- 
+
     var preventDefault = function () {
         this.returnValue = false;
     },
@@ -3071,19 +3071,31 @@
     stopTouch = function () {
         return this.originalEvent.stopPropagation();
     },
+    getEventPosition = function (e) {
+        var scrollY = g.doc.documentElement.scrollTop || g.doc.body.scrollTop,
+            scrollX = g.doc.documentElement.scrollLeft || g.doc.body.scrollLeft;
+
+        return {
+            x: e.clientX + scrollX,
+            y: e.clientY + scrollY
+        };
+    },
     addEvent = (function () {
         if (g.doc.addEventListener) {
             return function (obj, type, fn, element) {
-                var realName = supportsTouch && touchMap[type] ? touchMap[type] : type,
-                    f = function (e) {
-                        var scrollY = g.doc.documentElement.scrollTop || g.doc.body.scrollTop,
-                            scrollX = g.doc.documentElement.scrollLeft || g.doc.body.scrollLeft,
-                            x = e.clientX + scrollX,
-                            y = e.clientY + scrollY;
-                    if (supportsTouch && touchMap[has](type)) {
+                var f = function (e) {
+                    var pos = getEventPosition(e);
+                    return fn.call(element, e, pos.x, pos.y);
+                };
+                obj.addEventListener(type, f, false);
+
+                if (supportsTouch && touchMap[type]) {
+                    var _f = function (e) {
+                        var pos = getEventPosition(e),
+                            olde = e;
+
                         for (var i = 0, ii = e.targetTouches && e.targetTouches.length; i < ii; i++) {
                             if (e.targetTouches[i].target == obj) {
-                                var olde = e;
                                 e = e.targetTouches[i];
                                 e.originalEvent = olde;
                                 e.preventDefault = preventTouch;
@@ -3091,12 +3103,18 @@
                                 break;
                             }
                         }
-                    }
-                    return fn.call(element, e, x, y);
-                };
-                obj.addEventListener(realName, f, false);
+
+                        return fn.call(element, e, pos.x, pos.y);
+                    };
+                    obj.addEventListener(touchMap[type], _f, false);
+                }
+
                 return function () {
-                    obj.removeEventListener(realName, f, false);
+                    obj.removeEventListener(type, f, false);
+
+                    if (supportsTouch && touchMap[type])
+                        obj.removeEventListener(touchMap[type], f, false);
+
                     return true;
                 };
             };
@@ -3131,7 +3149,7 @@
             j = drag.length;
         while (j--) {
             dragi = drag[j];
-            if (supportsTouch) {
+            if (supportsTouch && e.touches) {
                 var i = e.touches.length,
                     touch;
                 while (i--) {
@@ -3203,10 +3221,10 @@
      **
      * Removes event handler for click for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.dblclick
      [ method ]
@@ -3222,10 +3240,10 @@
      **
      * Removes event handler for double click for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.mousedown
      [ method ]
@@ -3241,10 +3259,10 @@
      **
      * Removes event handler for mousedown for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.mousemove
      [ method ]
@@ -3260,10 +3278,10 @@
      **
      * Removes event handler for mousemove for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.mouseout
      [ method ]
@@ -3279,10 +3297,10 @@
      **
      * Removes event handler for mouseout for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.mouseover
      [ method ]
@@ -3298,10 +3316,10 @@
      **
      * Removes event handler for mouseover for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.mouseup
      [ method ]
@@ -3317,10 +3335,10 @@
      **
      * Removes event handler for mouseup for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.touchstart
      [ method ]
@@ -3336,10 +3354,10 @@
      **
      * Removes event handler for touchstart for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.touchmove
      [ method ]
@@ -3355,10 +3373,10 @@
      **
      * Removes event handler for touchmove for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.touchend
      [ method ]
@@ -3374,10 +3392,10 @@
      **
      * Removes event handler for touchend for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
-    
+
     /*\
      * Element.touchcancel
      [ method ]
@@ -3393,7 +3411,7 @@
      **
      * Removes event handler for touchcancel for the element.
      > Parameters
-     - handler (function) handler for the event
+     - handler (function) #optional handler for the event
      = (object) @Element
     \*/
     for (var i = events.length; i--;) {
@@ -3408,17 +3426,18 @@
             R["un" + eventName] = elproto["un" + eventName] = function (fn) {
                 var events = this.events || [],
                     l = events.length;
-                while (l--) if (events[l].name == eventName && events[l].f == fn) {
-                    events[l].unbind();
-                    events.splice(l, 1);
-                    !events.length && delete this.events;
-                    return this;
+                while (l--){
+                    if (events[l].name == eventName && (R.is(fn, "undefined") || events[l].f == fn)) {
+                        events[l].unbind();
+                        events.splice(l, 1);
+                        !events.length && delete this.events;
+                    }
                 }
                 return this;
             };
         })(events[i]);
     }
-    
+
     /*\
      * Element.data
      [ method ]
@@ -3432,6 +3451,8 @@
      = (object) @Element
      * or, if value is not specified:
      = (any) value
+     * or, if key and value are not specified:
+     = (object) Key/value pairs for all the data associated with the element.
      > Usage
      | for (var i = 0, i < 5, i++) {
      |     paper.circle(10 + 15 * i, 10, 10)
@@ -3444,6 +3465,9 @@
     \*/
     elproto.data = function (key, value) {
         var data = eldata[this.id] = eldata[this.id] || {};
+        if (arguments.length == 0) {
+            return data;
+        }
         if (arguments.length == 1) {
             if (R.is(key, "object")) {
                 for (var i in key) if (key[has](i)) {
@@ -4239,11 +4263,16 @@
      = (number) length.
     \*/
     elproto.getTotalLength = function () {
-        if (this.type != "path") {return;}
+        var path = this.getPath();
+        if (!path) {
+            return;
+        }
+
         if (this.node.getTotalLength) {
             return this.node.getTotalLength();
         }
-        return getTotalLength(this.attrs.path);
+
+        return getTotalLength(path);
     };
     /*\
      * Element.getPointAtLength
@@ -4263,8 +4292,34 @@
      o }
     \*/
     elproto.getPointAtLength = function (length) {
-        if (this.type != "path") {return;}
-        return getPointAtLength(this.attrs.path, length);
+        var path = this.getPath();
+        if (!path) {
+            return;
+        }
+
+        return getPointAtLength(path, length);
+    };
+    /*\
+     * Element.getPath
+     [ method ]
+     **
+     * Returns path of the element. Only works for elements of “path” type and simple elements like circle.
+     = (object) path
+     **
+    \*/
+    elproto.getPath = function () {
+        var path,
+            getPath = R._getPath[this.type];
+        
+        if (this.type == "text" || this.type == "set") {
+            return;
+        }
+
+        if (getPath) {
+            path = getPath(this);
+        }
+
+        return path;
     };
     /*\
      * Element.getSubpath
@@ -4280,8 +4335,12 @@
      = (string) pathstring for the segment
     \*/
     elproto.getSubpath = function (from, to) {
-        if (this.type != "path") {return;}
-        return R.getSubpath(this.attrs.path, from, to);
+        var path = this.getPath();
+        if (!path) {
+            return;
+        }
+
+        return R.getSubpath(path, from, to);
     };
     /*\
      * Raphael.easing_formulas
@@ -4648,7 +4707,7 @@
      **
      = (object) new altered Animation object
     \*/
-    Animation.prototype.repeat = function (times) { 
+    Animation.prototype.repeat = function (times) {
         var a = new Animation(this.anim, this.ms);
         a.del = this.del;
         a.times = math.floor(mmax(times, 0)) || 1;
@@ -5247,6 +5306,7 @@
         item = this.items[--i].animate(anim);
         while (i--) {
             this.items[i] && !this.items[i].removed && this.items[i].animateWith(item, anim, anim);
+            (this.items[i] && !this.items[i].removed) || len--;
         }
         return this;
     };
@@ -5304,6 +5364,31 @@
             }
         });
         return ret;
+    };
+
+
+    /*\
+     * Set.isPointInside
+     [ method ]
+     **
+     * Determine if given point is inside this set’s elements
+     **
+     > Parameters
+     **
+     - x (number) x coordinate of the point
+     - y (number) y coordinate of the point
+     = (boolean) `true` if point is inside any of the set's elements
+     \*/
+    setproto.isPointInside = function (x, y) {
+        var isPointInside = false;
+        this.forEach(function (el) {
+            if (el.isPointInside(x, y)) {
+                console.log('runned');
+                isPointInside = true;
+                return false; // stop loop
+            }
+        });
+        return isPointInside;
     };
 
     /*\
@@ -5420,13 +5505,15 @@
      - size (number) #optional size of the font, default is `16`
      - origin (string) #optional could be `"baseline"` or `"middle"`, default is `"middle"`
      - letter_spacing (number) #optional number in range `-1..1`, default is `0`
+     - line_spacing (number) #optional number in range `1..3`, default is `1`
      = (object) resulting path element, which consist of all letters
      > Usage
      | var txt = r.print(10, 50, "print", r.getFont("Museo"), 30).attr({fill: "#fff"});
     \*/
-    paperproto.print = function (x, y, string, font, size, origin, letter_spacing) {
+    paperproto.print = function (x, y, string, font, size, origin, letter_spacing, line_spacing) {
         origin = origin || "middle"; // baseline|middle
         letter_spacing = mmax(mmin(letter_spacing || 0, 1), -1);
+        line_spacing = mmax(mmin(line_spacing || 1, 3), 1);
         var letters = Str(string)[split](E),
             shift = 0,
             notfirst = 0,
@@ -5445,7 +5532,7 @@
                     shift = 0;
                     curr = 0;
                     notfirst = 0;
-                    shifty += lineHeight;
+                    shifty += lineHeight * line_spacing;
                 } else {
                     var prev = notfirst && font.glyphs[letters[i - 1]] || {},
                         curr = font.glyphs[letters[i]];
@@ -5631,14 +5718,9 @@
         isLoaded();
     })(document, "DOMContentLoaded");
 
-    oldRaphael.was ? (g.win.Raphael = R) : (Raphael = R);
-    
     eve.on("raphael.DOMload", function () {
         loaded = true;
     });
-
-    return R;
-}));
 
 // ┌─────────────────────────────────────────────────────────────────────┐ \\
 // │ Raphaël - JavaScript Vector Library                                 │ \\
@@ -5649,16 +5731,8 @@
 // │ Copyright (c) 2008-2011 Sencha Labs (http://sencha.com)             │ \\
 // │ Licensed under the MIT (http://raphaeljs.com/license.html) license. │ \\
 // └─────────────────────────────────────────────────────────────────────┘ \\
-(function (glob, factory) {
-    // AMD support
-    if (typeof define === "function" && define.amd) {
-        // Require Raphael
-        require(["raphael"], factory);
-    } else if (glob.Raphael) {
-        // Browser globals (glob is window)
-        factory(glob.Raphael);
-    }
-}(this, function (R) {
+
+(function(){
     if (!R.svg) {
         return;
     }
@@ -5903,7 +5977,7 @@
                 attr = {};
                 attr["marker-" + se] = "url(#" + markerId + ")";
                 if (to || from) {
-                    attr.d = Raphael.getSubpath(attrs.path, from, to);
+                    attr.d = R.getSubpath(attrs.path, from, to);
                 }
                 $(node, attr);
                 o._.arrows[se + "Path"] = pathId;
@@ -5919,7 +5993,7 @@
                     from = 0;
                     to = R.getTotalLength(attrs.path) - (o._.arrows.enddx * stroke || 0);
                 }
-                o._.arrows[se + "Path"] && $(node, {d: Raphael.getSubpath(attrs.path, from, to)});
+                o._.arrows[se + "Path"] && $(node, {d: R.getSubpath(attrs.path, from, to)});
                 delete o._.arrows[se + "Path"];
                 delete o._.arrows[se + "Marker"];
                 delete o._.arrows[se + "dx"];
@@ -6797,6 +6871,7 @@
             }
             t.node.removeAttribute("filter");
         }
+        return t;
     };
     R._engine.circle = function (svg, x, y, r) {
         var el = $("circle");
@@ -7011,7 +7086,7 @@
             };
         })(method);
     }
-}));
+})();
 
 // ┌─────────────────────────────────────────────────────────────────────┐ \\
 // │ Raphaël - JavaScript Vector Library                                 │ \\
@@ -7022,16 +7097,8 @@
 // │ Copyright (c) 2008-2011 Sencha Labs (http://sencha.com)             │ \\
 // │ Licensed under the MIT (http://raphaeljs.com/license.html) license. │ \\
 // └─────────────────────────────────────────────────────────────────────┘ \\
-(function (glob, factory) {
-    // AMD support
-    if (typeof define === "function" && define.amd) {
-        // Require Raphael
-        require(["raphael"], factory);
-    } else if (glob.Raphael) {
-        // Browser globals (glob is window)
-        factory(glob.Raphael);
-    }
-}(this, function (R) {
+
+(function(){
     if (!R.vml) {
         return;
     }
@@ -7210,6 +7277,7 @@
                 rx = +a.rx || +a.r || 0,
                 ry = +a.ry || +a.r || 0;
             node.path = R.format("ar{0},{1},{2},{3},{4},{1},{4},{1}x", round((cx - rx) * zoom), round((cy - ry) * zoom), round((cx + rx) * zoom), round((cy + ry) * zoom), round(cx * zoom));
+            o._.dirty = 1;
         }
         if ("clip-rect" in params) {
             var rect = Str(params["clip-rect"]).split(separator);
@@ -7740,6 +7808,7 @@
             s.margin = 0;
             delete this.attrs.blur;
         }
+        return this;
     };
 
     R._engine.path = function (pathString, vml) {
@@ -7997,4 +8066,12 @@
             };
         })(method);
     }
+})();
+
+    // EXPOSE
+    // SVG and VML are appended just before the EXPOSE line
+    // Even with AMD, Raphael should be defined globally
+    oldRaphael.was ? (g.win.Raphael = R) : (Raphael = R);
+
+    return R;
 }));
