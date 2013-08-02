@@ -127,8 +127,20 @@ function(
 			});
 			midi_controller.detectDevices();
 		},
-		initKeyboardShortcuts: function() {
-			var shortcuts = new KeyboardShortcuts({enabled: false});
+		initKeyboardShortcuts: function(shortcuts) {
+			var $shortcutsEl = $('#keyboard_shortcuts');
+
+			// toggle shortcuts on/off via gui control
+			$shortcutsEl.attr('checked', shortcuts.enabled)
+				.on('change', function() {
+					var toggle = $(this).is(':checked')? 'enable' : 'disable';
+					shortcuts[toggle]();
+				});
+
+			// update gui control when toggled via ESC key
+			shortcuts.bind('toggle', function(enabled) {
+				$shortcutsEl[0].checked = enabled;
+			});
 		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
@@ -136,6 +148,7 @@ function(
 			var key_signature = new KeySignature();
 			var midi_controller = new MidiController({ midiNotes: midi_notes });
 			var notation = new Notation({ midiNotes: midi_notes, keySignature: key_signature });
+			var shortcuts = new KeyboardShortcuts({enabled: false});
 
 			this.initOnScreenPiano(keyboard);
 			this.initNotation(notation);
@@ -145,7 +158,7 @@ function(
 			this.initInstruments();
 			this.initKeyAndSignature(key_signature);
 			this.initDevices(midi_controller);
-			this.initKeyboardShortcuts();
+			this.initKeyboardShortcuts(shortcuts);
 		}
 	};
 

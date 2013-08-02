@@ -1,9 +1,10 @@
 define([
 	'lodash', 
 	'jquery', 
+	'microevent',
 	'app/eventbus', 
 	'app/config'
-], function(_, $, eventBus, CONFIG) {
+], function(_, $, MicroEvent, eventBus, CONFIG) {
 
 	var SHORTS = CONFIG.keyboardShortcuts;
 
@@ -54,9 +55,14 @@ define([
 		disable: function() {
 			this.enabled = false;
 		},
+		// returns true if shortcuts are enabled, false otherwise
+		isEnabled: function() {
+			return this.enabled;
+		},
 		// toggles shortcuts on/off
 		toggleMode: function() {
 			this.enabled = !this.enabled;
+			this.trigger('toggle', this.enabled);
 		},
 		// activate a note
 		noteOn: function(noteOffset) {
@@ -159,6 +165,8 @@ define([
 			return false;
 		},
 	});
+
+	MicroEvent.mixin(KeyboardShortcuts);
 
 	return KeyboardShortcuts;
 });
