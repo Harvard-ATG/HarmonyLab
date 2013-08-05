@@ -2,6 +2,7 @@
 from harmony.settings.common import *
 
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -23,10 +24,10 @@ DATABASES = {
 #
 try: 
 	REQUIREJS_BUILD = None
-	with open(path.join(PROJECT_ROOT, 'static', 'js', 'build', 'current.txt')) as f:
-		REQUIREJS_BUILD = f.readline().rstrip()
+	with open(path.join(ROOT_DIR, 'rjs-build.json'), 'r') as f:
+		REQUIREJS_BUILD = json.loads(f.read())
 
 	REQUIREJS_DEBUG = False
-	REQUIREJS_CONFIG['paths']['app/main'] = path.join(STATIC_URL, 'js', 'build', REQUIREJS_BUILD)
+	REQUIREJS_CONFIG['paths']['app/main'] = path.join(STATIC_URL, 'js', 'build', REQUIREJS_BUILD['main'])
 except IOError as e:
 	log.error('error configuring requirejs: ({0}) {1}'.format(e.errno, e.strerror))

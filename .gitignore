@@ -1,3 +1,4 @@
 *.db
 *.pyc
-/harmony/static/js/build/*.js
+/harmony/static/js/build/*
+/harmony/rjs-build.json
