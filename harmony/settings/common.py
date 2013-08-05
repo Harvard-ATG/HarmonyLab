@@ -1,6 +1,7 @@
 # Common settings for all environments
 from os import path
 from glob import glob
+import time
 
 # Django settings for harmony project.
 
@@ -175,6 +176,15 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+# Default configuration for require.js
+REQUIREJS_DEBUG = True
+REQUIREJS_CONFIG = {
+	'baseUrl': path.join(STATIC_URL, 'js', 'lib'),
+	'paths': {
+		'app': path.join(STATIC_URL, 'js', 'src'),
+	},
 }
 
 #AUTHENTICATION_BACKENDS = (
