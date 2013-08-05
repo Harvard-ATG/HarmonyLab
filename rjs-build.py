@@ -2,22 +2,26 @@
 
 from harmony.settings import common
 
-# This script builds the javascript modules into a single
-# file that may be loaded instead of loading each module
-# separately. This is intended for production usage.
+# DESCRIPTION
+#
+# This script builds the javascript require.js modules into 
+# a single file. This is intended for production usage. For
+# development, it is not necessary to run this script.
 #
 # The result of running this script is a build directory 
-# with the following files:
+# with the resulting js and a JSON file that points to
+# current build:
 #
-# build/
-# 		current.txt 
+# {{ ROOT_DIR }}/rjs-build.json
+#
+# {{ STATIC_FILES_DIR }}/js/build/
 # 		main-built.js
 #		main-a47208f8dbbc5e65f4d6424d90f26aa628a007e6.js
 #
-# The current.txt file contains a single line with the name
-# of the most current build version (i.e. "main-a472...js").
-# This directory and its contents should be ignored by git.
+# --------------------------------------------------
 #
+# DEPENDENCIES:
+# 	
 # In order to run this script, node.js must be installed
 # along with the require.js optimizer "r.js." 
 #
@@ -28,6 +32,8 @@ from harmony.settings import common
 # 	r.js -o build.js optimize=none
 #
 # The"optimize=none" flag disables minification.
+#
+# --------------------------------------------------
 #
 # USAGE:
 #

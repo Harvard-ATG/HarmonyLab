@@ -20,7 +20,7 @@ DATABASES = {
 # If a main.js build can't be found, the default require.js config will be used,
 # which will result in each module file being loaded separately.
 #
-# To build main.js, see static/js/build.py.
+# To build main.js, run rjs-build.py wrapper script in the root dir
 #
 try: 
 	REQUIREJS_BUILD = None
