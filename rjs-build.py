@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from harmony.settings import common
-
 # DESCRIPTION
 #
 # This script builds the javascript require.js modules into 
@@ -39,7 +37,9 @@ from harmony.settings import common
 #
 # 	./rjs-build.py
 
-from subprocess import call, check_call, check_output
+from harmony.settings import common
+
+import subprocess
 import os
 import shutil
 import json
@@ -56,10 +56,10 @@ if not os.path.exists(BUILD_DIR):
 # Run the require.js optimizer
 requirejs_optimizer = "r.js -o {0} optimize=none".format(BUILD_JS)
 print "Running require.js optimizer: {0}".format(requirejs_optimizer)
-check_call(requirejs_optimizer, shell=True)
+subprocess.check_call(requirejs_optimizer, shell=True)
 
 # Lookup current git head version
-version = check_output("git rev-parse HEAD", shell=True) 
+version = subprocess.check_output("git rev-parse HEAD", shell=True) 
 version = version.rstrip()
 print "Got version {0}".format(version)
 
