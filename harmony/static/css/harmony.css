@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/* CSS Document */
 
 html, body, h1, h2, h3, h4, div, p  {
 	margin: 0; 
@@ -57,9 +56,8 @@ body {
 }
 
 
-
-
-/* --- LEFT SIDE TABS  --- */
+/*--------------------------------------------------*/
+/* Left side tabs of staff area */
 .left-panel-bed {
 	width: 200px;
 	margin: 0 auto;
@@ -149,7 +147,9 @@ body {
 #tab-nav-1 .tab-content-inner #notation-checkboxes input {
 	margin: 2px 5px;
 }
-/* --- RIGHT SIDE TABS  --- */
+
+/*--------------------------------------------------*/
+/* Right side tabs of staff area */
 .right-panel-bed {
 	width: 200px;
 	position: absolute;
@@ -232,8 +232,8 @@ body {
     visibility: hidden;
 }
 
-
-
+/*--------------------------------------------------*/
+/* On-screen keyboard */
 
 #kb-wrapper {
 	width: 888px;
@@ -295,59 +295,34 @@ body {
 	
 }
 
-#keyboard-area img.keys37 {margin-left: 10px;}
-#keyboard-area img#pic.full88 {margin-left:-400px;}
 
-#kb-scroller {
-	border-bottom: 1px solid #000;
-	visibility:visible; /* Toggle off/on as needed for full size (88 keys) keyboard */
-}
-
-#kb-scroller img {
-	display:block; 
-	height: 10px;
-}
-
+/*--------------------------------------------------*/
+/* Pedals */
 #kb-pedals {
 	margin: 0 auto;
-	width: 150px;
+	width: 182px; /* left (65px) + center (52px) + right (65px) */
 }
 #kb-pedals .pedal {
 	float: left;
-	margin-top:-40px;
-	width: 50px;
-	height: 135px;
+	display: block;
+	width: 65px; /* note: center pedal overrides this (52px) */
+	height: 109px;
+	background: url(../img/pedal-sprite-110.png) no-repeat;
 }
-#kb-pedals .pedal:active, #kb-pedals .pedal-active {
-}
-#kb-pedals .pedal-left { 
-	background: url(../img/Pedals-LEFT-normal.png) no-repeat;	
-}
-#kb-pedals .pedal-left:hover { 
-	background: url(../img/Pedals-LEFT-hover.png) no-repeat;	
-}
-#kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { 
-	background: url(../img/Pedals-LEFT-active.png) no-repeat;	
-}
-#kb-pedals .pedal-center { 
-	background: url(../img/Pedals-CENTER-normal.png) no-repeat;	
-}
-#kb-pedals .pedal-center:hover { 
-	background: url(../img/Pedals-CENTER-hover.png) no-repeat;	
-}
-#kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { 
-	background: url(../img/Pedals-CENTER-active.png) no-repeat;	
-}
-#kb-pedals .pedal-right { 
-	background: url(../img/Pedals-RIGHT-normal.png) no-repeat;	
-}
-#kb-pedals .pedal-right:hover { 
-	background: url(../img/Pedals-RIGHT-hover.png) no-repeat;	
-}
-#kb-pedals .pedal-right:active, #kb-pedals .pedal-right.pedal-active { 
-	background: url(../img/Pedals-RIGHT-active.png) no-repeat;	
-}
+#kb-pedals .pedal-left { background-position: -21px -21px; }
+#kb-pedals .pedal-left:hover { background-position: -21px -221px; }
+#kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { background-position: -21px -421px; }
 
+#kb-pedals .pedal-center { background-position: -121px -21px; width: 52px; }
+#kb-pedals .pedal-center:hover { background-position: -121px -221px; width: 52px }
+#kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { background-position: -121px -421px; width: 52px; }
+
+#kb-pedals .pedal-right { background-position: -221px -21px; }
+#kb-pedals .pedal-right:hover { background-position: -221px -221px }
+#kb-pedals .pedal-right:active, #kb-pedals .pedal-right.pedal-active { background-position: -221px -421px }
+
+/*--------------------------------------------------*/
+/* Background image selection */
 
 #bg-select { margin-left: 10px;}
 #bg-select img {
@@ -357,24 +332,21 @@ body {
 	width:20px;
 	cursor:pointer;
 }
-
-
 #chosen {
-padding-right: 10px;
-margin: 0 auto;
-width: 40px;
-xtext-align:center;
-color:#999;
-font-size:large;
-display:none;
+	padding-right: 10px;
+	margin: 0 auto;
+	width: 40px;
+	xtext-align:center;
+	color:#999;
+	font-size:large;
+	display:none;
 }
 
 /*this is only for webkit, not opera*/
 input[type='range'] {  
--webkit-appearance: none;
--webkit-border-radius: 0px;  
-background-image: -webkit-linear-gradient(top, #000000, #333333, #555555);
-width:805px;
-height:15px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 0px;  
+	background-image: -webkit-linear-gradient(top, #000000, #333333, #555555);
+	width:805px;
+	height:15px;
 }  
-
