@@ -23,7 +23,7 @@ define([
 
 	_.extend(Notation.prototype, {
 		width: 520,
-		height: 380,
+		height: 355,
 		init: function() {
 			this.initConfig();
 			this.initRenderer();
@@ -45,11 +45,6 @@ define([
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
 			this.el = $('<canvas></canvas>');
-			this.el.css({
-				'background-color': '#eed',
-				'padding': '10px',
-				'border': '1px solid #ddc'
-			});
 			this.el[0].width = this.width;
 			this.el[0].height = this.height;
 

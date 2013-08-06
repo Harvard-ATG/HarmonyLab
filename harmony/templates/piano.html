@@ -75,7 +75,7 @@ function smoothblue() {
                 <li><a href="#">NOTATION</a>
                   <div class="tab-content-wrapper">
                     <div class="tab-content-inner">
-                        	<br />
+							<br />
                             <select name="" disabled>
                             <option value="piano">Analysis</option>
                             <option value="harpsichord">ThoroughBass</option>
@@ -130,90 +130,80 @@ function smoothblue() {
                 <li><a href="#">KEY &amp; SIGNATURES</a>
                   <div class="tab-content-wrapper">
                     <div class="tab-content-inner">
-						<div id="key_signature_widget"></div>
+                        <div id="key_signature_widget"></div>
                     </div>
                    </div>
                  </li>
               </ul>
-    
             </div><!-- end #tab-nav-2 -->
-    
         </div><!-- end .right-panel-bed -->
-    
-        <div id="staff-area">
-            
-            <!--This is where the staffs go --> 
-            
-        </div>
-        
-        <br class="clr" style="clear:both;" />
-    
-    
-    </div><!-- end #staff-wrapper -->
-    
-    <div id="kb-wrapper">
-            
-            <div id="controller-wrapper">
-            
-                <div id="music-controls">
-                
-                    <select name="demos">
-                    <option value="bach">Bach Demo</option>
-                    <option value="mozart">Mozart</option>
-                    <option value="nugent">Ted Nugent</option>
-                    <option value="nelson">Willie Nelson</option>
-                   </select>
-                   
-                   <input name="play" type="button" value="P" />
-                   <input name="stop" type="button" value="S"/>
-                   <input name="record" type="button" value="R" />
-               </div>
-               <div id="metronome-controls">
-				   <img src="{{ STATIC_URL }}img/metronome-wire24.png" style="height:20px; margin-top: 2px; float:left;" />
-                    <input name="bpm" type="text" size="3" maxlength="3" class="bpm-input" />
-                    <input name="play" type="button" value="P" class="metroButton"/>                   
-                    &nbsp; &nbsp;
-                </div>
-                <div id="chosen">100</div>
-                <div id="transpose-controls">
+		<div id="staff-area">
+			<div id="staff-toolbar">
+				<div class="staff-btn staff-btn-info"></div>
+				<div class="staff-btn staff-btn-open js-toggle-tabs"></div>
+				<div class="staff-btn staff-btn-help hide"></div>
+			</div>
+			<!-------------------------------------------->
+			<!--This is where the grand staff should go --> 
+			<!-------------------------------------------->
+		</div>
+		<br class="clr" style="clear:both;" />
+	</div><!-- end #staff-wrapper -->
+		<div id="kb-wrapper">
+			<div id="controller-wrapper">
+				<div id="music-controls">
+					<select name="demos">
+						<option value="">- Play Demo -</option>
+						<option value="bach">Bach Demo</option>
+						<option value="mozart">Mozart</option>
+						<option value="nugent">Ted Nugent</option>
+						<option value="nelson">Willie Nelson</option>
+					</select>
+					<input name="play" 
+						type="button" 
+						value="&#x25B8;"
+						onclick="this.value = (this.value === '\u25B8' ? '\u25FE' : '\u25B8');" />
+					<input name="record"
+						type="button" 
+						value="&#x25CF;" 
+						onclick="this.foo = !!!this.foo; this.style.color = (this.foo ? 'red': '');">
+				</div>
+				<div id="metronome-controls">
+					<img src="{{ STATIC_URL }}img/metronome-wire24.png" style="height:20px; margin-top: 2px; float:left;" />
+					<input name="bpm" type="text" size="3" maxlength="3" class="bpm-input" />
+					<input name="play" type="button" value="&#x25B8;"
+						onclick="this.value = (this.value === '\u25B8' ? '\u25FE' : '\u25B8');" />
+				</div>
+				<div id="transpose-controls">
 					<img src="{{ STATIC_URL }}img/transpose1.png" height="20" align="top" /> 
-                    <select name="transposeNum">
-                      <option value="3">+3</option>
-                      <option value="2">+2</option>
-                      <option value="1">+1</option>
-                      <option value="0" selected>-0-</option>
-                      <option value="-1">-1</option>
-                      <option value="-2">-2</option>
-                      <option value="-3">-3</option>
-                    </select>
-                </div>
-            </div><!-- end #controller-wrapper -->
-           
-            
-            <div id="kb-scroller" style="visibility: hidden;">
-				<img src="{{ STATIC_URL }}img/kb-scroller.png" />
-            </div>
-                
-            <div id="keyboard-area">
-				<!--img src="{{ STATIC_URL }}img/49keys.png" /-->
+					<select name="transposeNum">
+						<option value="3">+3</option>
+						<option value="2">+2</option>
+						<option value="1">+1</option>
+						<option value="0" selected>-0-</option>
+						<option value="-1">-1</option>
+						<option value="-2">-2</option>
+						<option value="-3">-3</option>
+					</select>
+				</div>
+			</div><!-- end #controller-wrapper -->
+			<div id="keyboard-area">
 				<div id="piano"></div>
-            </div>
-            
-    </div><!-- end #kb-wrapper -->
-        
-    <div id="kb-pedals">
+			</div>
+	</div><!-- end #kb-wrapper -->
+
+	<div id="kb-pedals">
 		<div class="pedal pedal-left"></div>
 		<div class="pedal pedal-center"></div>
 		<div class="pedal pedal-right"></div>
-    </div>
-        
-  	<br class="clr" style="clear:both;" /><br />
-    
-    <div id="bg-select">
+	</div>
+
+	<br class="clr" style="clear:both; margin-bottom: 15px;" />
+
+	<div id="bg-select">
 		<img src="{{ STATIC_URL }}img/Harmony1-bkg.jpg" onclick="concert();" />
 		<img src="{{ STATIC_URL }}img/Harmony-bkg.jpg" onclick="downlights();" />
 		<img src="{{ STATIC_URL }}img/bluelights.jpg" onclick="smoothblue();" />
-    </div>
-    
+	</div>
 </div><!-- end #container -->    
 {% endblock %}

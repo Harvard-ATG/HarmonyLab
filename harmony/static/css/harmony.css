@@ -34,18 +34,46 @@ body {
 	xpadding-top: 5px;
 }
 
-#staff-area {
-	background-color: rgb(238, 238, 221);
-	width:540px;
+#staff-area { 
+	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+	box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	height:400px;
+	width: 540px;
+	background-color: rgb(238, 238, 221);
 	margin: 0 auto;
 	position:relative;
 	z-index:10;
 	padding:0;
-	
-	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-	box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+}
+#staff-toolbar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 35px;
+	padding: 5px 0px;
+}
+#staff-toolbar .staff-btn {
+	float: left;
+	background: url(../img/staff-btn-sprite.png) no-repeat;
+	height: 25px;
+	margin: 4px 0 0 4px;
+}
+#staff-toolbar .staff-btn:first-child  {
+	margin-left: 8px;
+}
+#staff-toolbar .staff-btn-open { background-position: -10px -50px; width: 50px; }
+#staff-toolbar .staff-btn-open:hover { background-position: -10px -150px; width: 50px; }
+#staff-toolbar .staff-btn-close { background-position: -110px -50px; width: 50px; }
+#staff-toolbar .staff-btn-close:hover { background-position: -110px -150px; width: 50px; }
+#staff-toolbar .staff-btn-info { background-position: -210px -50px; width: 25px; }
+#staff-toolbar .staff-btn-info:hover { background-position: -210px -150px; width: 25px; }
+#staff-toolbar .staff-btn-help { background-position: -310px -50px; width: 25px; }
+#staff-toolbar .staff-btn-help:hover { background-position: -310px -150px; width: 25px; }
+#staff-area canvas {
+	position: absolute;
+	top: 35px;
+	left: 0;
 }
 
 .tab-nav {
@@ -270,10 +298,9 @@ body {
 	}
 
 #metronome-controls {
-	width:120px;
+	width:110px;
 	float:right;
 	xpadding:0 10px;
-	text-align:right;
 	color:#fff;
 }
 
@@ -281,7 +308,7 @@ body {
 	width: 30px; 
 	float:left;
 	margin-left: 5px;
-	margin-rightt: 5px;
+	margin-right: 5px;
 }
 .metroButton {
 	float:left;
@@ -332,15 +359,6 @@ body {
 	width:20px;
 	cursor:pointer;
 }
-#chosen {
-	padding-right: 10px;
-	margin: 0 auto;
-	width: 40px;
-	xtext-align:center;
-	color:#999;
-	font-size:large;
-	display:none;
-}
 
 /*this is only for webkit, not opera*/
 input[type='range'] {  
@@ -350,3 +368,7 @@ input[type='range'] {
 	width:805px;
 	height:15px;
 }  
+
+/*--------------------------------------------------*/
+/* Utilities */
+.hide { display: none; }
