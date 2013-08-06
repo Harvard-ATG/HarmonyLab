@@ -6,13 +6,4 @@
 	{% else %}
 		<p>Welcome, new user. Please log in.</p>
 	{% endif %}
-
-	<div id="notation"></div>
-	<div id="piano"></div>
-{% endblock %}
-
-{% block js_extra %}
-{# TODO: get raphaeljs to work with requirejs #}
-<script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
-<script src="{{ STATIC_URL }}js/src/piano.js"></script>
 {% endblock %}
