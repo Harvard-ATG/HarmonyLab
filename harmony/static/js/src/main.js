@@ -147,6 +147,32 @@ function(
 				$shortcutsEl[0].checked = enabled;
 			});
 		},
+		initThemeSelector: function() {
+			var $themeSelect = $('#theme-select');
+			var themes = [];
+			if($themeSelect.data('themes')) {
+				themes = $themeSelect.data('themes').split(',');
+			}
+	
+			_.each(themes, function(themeName) {
+				var el = document.createElement('div');
+				el.className = ['theme-thumbnail','theme-'+themeName].join(' ');
+				el.setAttribute('data-theme', themeName);
+				$themeSelect.append(el);
+			});
+
+			$themeSelect.delegate('.theme-thumbnail', 'click', function(ev) {
+				var prefix = 'theme-';
+				var $el = $(ev.target), $container = $('#container');
+				var new_theme = $el.data('theme'), old_theme = $container.data('theme');
+
+				if(new_theme !== old_theme) {
+					$container.removeClass(prefix + old_theme);
+					$container.addClass(prefix + new_theme);
+					$container.data('theme', new_theme);
+				}
+			});
+		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
 			var midi_notes = new MidiNotes();
@@ -161,15 +187,16 @@ function(
 				keySignature: key_signature 
 			});
 
+			this.initTabs();
 			this.initOnScreenPiano(keyboard);
 			this.initNotation(notation);
-			this.initTabs();
 			this.initKeyboardSizes(keyboard);
 			this.initPedals();
 			this.initInstruments();
 			this.initKeyAndSignature(key_signature);
-			this.initDevices(midi_controller);
 			this.initKeyboardShortcuts(shortcuts);
+			this.initThemeSelector();
+			this.initDevices(midi_controller);
 		}
 	};
 

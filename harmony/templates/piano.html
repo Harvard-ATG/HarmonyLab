@@ -5,115 +5,91 @@
 {% endblock %}
 
 {% block js_extra %}
-<script>
-function downlights() {
-	document.getElementById('container').style.cssText = 'background: url({{ STATIC_URL }}img/Harmony-bkg.jpg) no-repeat; background-position: center;';
-}
-function concert() {
-	document.getElementById('container').style.cssText = 'background: url({{ STATIC_URL }}img/Harmony1-bkg.jpg) center -20px no-repeat;';
-}
-function smoothblue() {
-	document.getElementById('container').style.cssText = 'background: url({{ STATIC_URL }}img/bluelights.jpg) center 50px no-repeat;';
-}
-</script>
-
 <script>require(['app/main']);</script>
 {% endblock %}
 
-
 {% block content %}
-<div id="container" style="background:#748da5 url('{{ STATIC_URL }}img/Harmony-bkg.jpg') center top no-repeat;"> 
-
-    <div id="staff-wrapper">
-    
-        <div id="header">
-            <h1>Harmony Lab</h1>
-        </div>
-        
-        <div class="left-panel-bed">
-                
-            <div id="tab-nav-1" class="tab-nav">
-    
-              <ul class="inst-tab">
-                <li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
-                  <div class="tab-content-wrapper">
-                      <div class="tab-content-inner">
-    
-                       <br /> 
+<div id="container" class="theme theme-downlights" data-theme="downlights">
+	<div id="staff-wrapper">
+		<div id="header">
+			<h1>Harmony Lab</h1>
+		</div>
+		<div class="left-panel-bed">
+			<div id="tab-nav-1" class="tab-nav">
+			  <ul class="inst-tab">
+				<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
+				  <div class="tab-content-wrapper">
+					  <div class="tab-content-inner">
+						   <br /> 
 							<select id="select_instrument"></select>
-                        <br /><br />
-                            Keyboard size: 
-                            <select id="select_keyboard_size" name="keyboard">
-                            <option value="25">25</option>
-                            <option value="37">37</option>
-                            <option value="49" selected="selected">49</option>
-                            <option value="88">88</option>
-                            </select>
-                            <br /><br />
+							<br /><br />
+							Keyboard size: 
+							<select id="select_keyboard_size" name="keyboard">
+							<option value="25">25</option>
+							<option value="37">37</option>
+							<option value="49" selected="selected">49</option>
+							<option value="88">88</option>
+							</select>
+							<br /><br />
 							<label>Keyboard shortcuts:
 								<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
 							</label>
 							<br /><br />
-                            Style: 
-                            <select name="player-style" disabled>
-                            <option value="singlefinger">Single Finger</option>
-                            <option value="Manual">Manual</option>
-                            </select>
+							Style: 
+							<select name="player-style" disabled>
+							<option value="singlefinger">Single Finger</option>
+							<option value="Manual">Manual</option>
+							</select>
 
-                            <div id="brackets" >
-                                <input name="" type="button" value="[" class="metroButton" disabled/>  
-                                <input name="" type="button" value="/" class="metroButton" disabled/>  
-                                <input name="" type="button" value="\" class="metroButton" disabled/> 
-                            </div> 
-    
-                      </div>
-                  </div>
-                 </li>
-              </ul>
-     
-              <ul class="note-tab">
-                <li><a href="#" class="js-tab js-tab-left">NOTATION</a>
-                  <div class="tab-content-wrapper">
-                    <div class="tab-content-inner">
-							<br />
-                            <select name="" disabled>
-                            <option value="piano">Analysis</option>
-                            <option value="harpsichord">ThoroughBass</option>
-                            </select>
-                        <br /><br />
-                            
-                            <select name="notation" disabled>
-                            <option value="25">Roman Numeral</option>
-                            <option value="37">Type 2</option>
-                            <option value="49">Type 3</option>
-                            </select>
-                            
-                            <div id="notation-checkboxes">
-                                <br /><input name="root" type="checkbox" value="Root" disabled/> Root
-                                <br /><input name="doublings" type="checkbox" value="Doublings" disabled/> Doublings
-                                <br /><input name="tritones" type="checkbox" value="Tritones" disabled/> Tritones
-                                <br /><input name="Chords" type="checkbox" value="8ths & 5ths" disabled/> 8ths &amp; 5ths
-                            </div>
-    
-                    </div>
-                  </div>
-                 </li>
-              </ul>
-     
-     
-            </div><!-- end tab-nav-1 -->
-                        
-        </div><!-- end left-panel-bed -->
-        
-    
-        <div class="right-panel-bed">
-        
-            <div id="tab-nav-2" class="tab-nav">
-    
-              <ul class="midi-tab">
-                <li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
-                  <div class="tab-content-wrapper">
-                    <div class="tab-content-inner">
+							<div id="brackets" >
+								<input name="" type="button" value="[" class="metroButton" disabled/>  
+								<input name="" type="button" value="/" class="metroButton" disabled/>  
+								<input name="" type="button" value="\" class="metroButton" disabled/> 
+							</div> 
+
+					  </div>
+				  </div>
+				 </li>
+			  </ul>
+
+			  <ul class="note-tab">
+				<li><a href="#" class="js-tab js-tab-left">NOTATION</a>
+				  <div class="tab-content-wrapper">
+					<div class="tab-content-inner">
+						<br />
+						<select name="" disabled>
+						<option value="piano">Analysis</option>
+						<option value="harpsichord">ThoroughBass</option>
+						</select>
+
+						<br /><br />
+
+						<select name="notation" disabled>
+						<option value="25">Roman Numeral</option>
+						<option value="37">Type 2</option>
+						<option value="49">Type 3</option>
+						</select>
+
+						<div id="notation-checkboxes">
+							<br /><input name="root" type="checkbox" value="Root" disabled/> Root
+							<br /><input name="doublings" type="checkbox" value="Doublings" disabled/> Doublings
+							<br /><input name="tritones" type="checkbox" value="Tritones" disabled/> Tritones
+							<br /><input name="Chords" type="checkbox" value="8ths & 5ths" disabled/> 8ths &amp; 5ths
+						</div>
+					</div>
+				  </div>
+				 </li>
+			  </ul>
+			</div><!-- end tab-nav-1 -->
+		</div><!-- end left-panel-bed -->
+
+		<div class="right-panel-bed">
+			<div id="tab-nav-2" class="tab-nav">
+
+			  <ul class="midi-tab">
+				<li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
+				  <div class="tab-content-wrapper">
+					<div class="tab-content-inner">
 						<br />
 						<div class="label">MIDI in:</div>
 						<select id="select_midi_input" name="select_midi_input"></select>
@@ -121,22 +97,22 @@ function smoothblue() {
 						<select id="select_midi_output" name="select_midi_output"></select>
 						<br />
 						<button id="refresh_midi_devices">Refresh</button>
-                    </div>
-                   </div>
-                 </li>
-              </ul>
-              
-              <ul class="key-tab">
-                <li><a href="#" class="js-tab js-tab-right">KEY &amp; SIGNATURES</a>
-                  <div class="tab-content-wrapper">
-                    <div class="tab-content-inner">
-                        <div id="key_signature_widget"></div>
-                    </div>
-                   </div>
-                 </li>
-              </ul>
-            </div><!-- end #tab-nav-2 -->
-        </div><!-- end .right-panel-bed -->
+					</div>
+				   </div>
+				 </li>
+			  </ul>
+
+			  <ul class="key-tab">
+				<li><a href="#" class="js-tab js-tab-right">KEY &amp; SIGNATURES</a>
+				  <div class="tab-content-wrapper">
+					<div class="tab-content-inner">
+						<div id="key_signature_widget"></div>
+					</div>
+				   </div>
+				 </li>
+			  </ul>
+			</div><!-- end #tab-nav-2 -->
+		</div><!-- end .right-panel-bed -->
 		<div id="staff-area">
 			<div id="staff-toolbar">
 				<div class="staff-btn staff-btn-info"></div>
@@ -198,12 +174,8 @@ function smoothblue() {
 		<div class="pedal pedal-right"></div>
 	</div>
 
-	<br class="clr" style="clear:both; margin-bottom: 15px;" />
+	<br class="clr" style="clear:both" />
 
-	<div id="bg-select">
-		<img src="{{ STATIC_URL }}img/Harmony1-bkg.jpg" onclick="concert();" />
-		<img src="{{ STATIC_URL }}img/Harmony-bkg.jpg" onclick="downlights();" />
-		<img src="{{ STATIC_URL }}img/bluelights.jpg" onclick="smoothblue();" />
-	</div>
-</div><!-- end #container -->    
+	<div id="theme-select" data-themes="downlights,concert,smoothblue,speakerwave"></div>
+</div><!-- end #container -->	 
 {% endblock %}

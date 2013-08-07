@@ -13,12 +13,11 @@ body {
   background:#000;
 }
 #container {
-	background:#000 url('../img/Harmony1-bkg.jpg') center -20px no-repeat;	
 	width: 960px;
 	margin: 0 auto;
 	margin-bottom: 30px;
-	position:relative;
 	text-align:left;
+	position:relative;
 }
 
 #header {
@@ -336,7 +335,7 @@ body {
 	display: block;
 	background: url(../img/pedal-sprite.png) no-repeat;
 	width: 61px; /* NOTE: center pedal overrides the width */
-	height: 79px;
+	height: 77px;
 }
 #kb-pedals .pedal-left { background-position: -21px -22px; }
 #kb-pedals .pedal-left:hover { background-position: -21px -121px; }
@@ -353,24 +352,39 @@ body {
 /*--------------------------------------------------*/
 /* Background image selection */
 
-#bg-select { margin-left: 10px;}
-#bg-select img {
-	border:1px solid #666;
-	padding:0;
+.theme-downlights {
+	background:#000 url('../img/Harmony-bkg.jpg') center no-repeat;
+}
+.theme-concert {
+	background:#000 url('../img/Harmony1-bkg.jpg') center no-repeat;
+}
+.theme-smoothblue {
+	background:#000 url('../img/bluelights.jpg') center no-repeat;
+}
+.theme-speakerwave {
+	background:#000 url('../img/speakerwave.jpg') center no-repeat;
+}
+.theme-thumbnail {
+	border: 1px solid #666;
+	padding: 0;
+	margin-left: 10px;
+	width: 20px;
 	height: 20px;
-	width:20px;
+	background-size: 100%;
 	cursor:pointer;
 }
-
-/*this is only for webkit, not opera*/
-input[type='range'] {  
-	-webkit-appearance: none;
-	-webkit-border-radius: 0px;  
-	background-image: -webkit-linear-gradient(top, #000000, #333333, #555555);
-	width:805px;
-	height:15px;
-}  
+#theme-select { 
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	margin: -10px 0 10px 0; 
+	height: 20px;
+}
+#theme-select .theme-thumbnail { 
+	float: left 
+}
 
 /*--------------------------------------------------*/
 /* Utilities */
+
 .hide { display: none; }
