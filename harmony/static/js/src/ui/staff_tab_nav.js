@@ -47,7 +47,7 @@ define(['jquery'], function($) {
 				});
 
 				that.tabsExpanded = !that.tabsExpanded;
-	
+
 				e.preventDefault();
 				e.stopPropagation();
 			});
