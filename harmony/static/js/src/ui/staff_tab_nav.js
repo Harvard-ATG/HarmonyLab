@@ -2,69 +2,67 @@
 // tabs on either side of the staff notation area. 
 define(['jquery'], function($) {
 	return {
-		// Defines a mapping of tabs (via selector) to toggle functions.
-		// The toggle functions encapsulate the difference between left
-		// and right tabs.
-		tabs: {
-			// left side 
-			'#tab-nav-1 > ul > li > a': function(expanded) {
-				return expanded ? {'cls':'removeClass','dir':'+='} : {'cls':'addClass','dir':'-='};
-			},
-			// right side 
-			'#tab-nav-2 > ul > li > a': function(expanded) {
-				return expanded ? {'cls':'removeClass','dir':'-='} : {'cls':'addClass','dir':'+='};
-			}
-		},
+		// initialize tabs
 		init: function() {
-			$.each(this.tabs, this.setupTab);
-			this.setupToggleAllTabs();
-		},
-		// for toggling all tabs at once (open or close)
-		setupToggleAllTabs: function() {
-			var that = this;
+			var tabs = [], 
+				that = this;
 
+			// initialize each tab
+			$('.js-tab').each(function(index, el) {
+				var tab = {
+					'el': $(this),
+					'animEl': $(this).parent(),
+					'width': $(this).next().width(),
+					'expanded': false
+				};
+
+				if($(this).hasClass('js-tab-left')) {
+					tab.expand = that.makeExpander(tab, '-=', true);
+					tab.collapse = that.makeExpander(tab, '+=', false);
+				} else {
+					tab.expand = that.makeExpander(tab, '+=', true);
+					tab.collapse = that.makeExpander(tab, '-=', false);
+				}
+
+				$(this).on('click', function(e) {
+					tab[tab.expanded?'collapse':'expand']();
+					e.preventDefault();
+					e.stopPropagation();
+				});
+
+				tabs.push(tab);
+			});
+	
+			// initialize button to expand/collapse all tabs
 			$('.js-toggle-tabs').on('click', function(e) {
 				var cls = ['staff-btn-open','staff-btn-close'];
 				if($(this).hasClass('staff-btn-close')) {
 					cls.reverse();
 				}
+
 				$(this).removeClass(cls[0]).addClass(cls[1]);
-				that.toggleAllTabs();
-				return false;
+
+				$.each(tabs, function(index, tab) {
+					tab[that.tabsExpanded?'collapse':'expand']();
+				});
+
+				that.tabsExpanded = !that.tabsExpanded;
+	
+				e.preventDefault();
+				e.stopPropagation();
 			});
 		},
-		// should cause all tabs to be opened or closed
-		toggleAllTabs: function() {
-			this.expanded = !!!this.expanded;
-			for(var k in this.tabs) {
-				if(this.tabs.hasOwnProperty(k)) {
-					this.toggleTab(k, this.expanded);
+		// function to expand or collapse a tab
+		makeExpander: function(tab, dir, expand) {
+			return function() {
+				if(tab.expanded !== expand) {
+					tab.animEl.animate({marginLeft: dir + tab.width}, 0, 'swing', function() {
+						tab.el[expand?'addClass':'removeClass']('expanded');
+						tab.expanded = expand;
+					});
 				}
-			}
-		},
-		// setup a tab to be toggled open or closed
-		setupTab: function(tabSelector) {
-			$(tabSelector).on('click', function(e) {
-				this.toggleTab(tabSelector, null);
 				return false;
-			}, this);
-		},
-		toggleTab: function(tabSelector, expanded) {
-			var $tab = $(tabSelector),
-				$parentItem = $tab.parent(),
-				slideAmt = $tab.next().width(),
-				change;
-
-			if(expanded === null) {
-				expanded = $tab.hasClass('expanded');
 			}
-
-			change = this.tabs[tabSelector](expanded);
-			if(change) {
-				$parentItem.animate({marginLeft: change.dir + slideAmt}, 0, 'swing', function() {
-					$tab[change.cls]('expanded');
-				});
-			}
-		},
+		}
 	};
 });
