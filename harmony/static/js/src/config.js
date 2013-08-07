@@ -280,7 +280,8 @@ define({
 	// For configuring computer keyboard shortcuts.
 	keyboardShortcuts: {
 		// Application note on/off keyboard shortcuts.
-		// Maps a key to an integer that is relative to middle C.
+		// Maps a key to an intgeger relative to one octave below middle C.
+		//
 		// Note: unused letters to avoid mishaps: 3, 6, and g.
 		"note": {
 			"1": -4, // GA
