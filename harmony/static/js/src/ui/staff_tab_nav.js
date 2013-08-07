@@ -1,62 +1,66 @@
 // This module is responsible for the expand/collapse behavior of the
 // tabs on either side of the staff notation area. 
-define(['jquery'], function($) {
+define(['jquery', 'lodash'], function($, _) {
 	return {
-		// initialize tabs
+		tabs: [],
+		tabsExpanded: false,
 		init: function() {
-			var tabs = [], 
-				that = this;
+			_.bindAll(this, ['initTab', 'onClickToggleTabs']);
 
-			// initialize each tab
-			$('.js-tab').each(function(index, el) {
-				var tab = {
-					'el': $(this),
-					'animEl': $(this).parent(),
-					'width': $(this).next().width(),
-					'expanded': false
-				};
+			$('.js-tab').each(this.initTab);
+			$('.js-toggle-tabs').on('click', this.onClickToggleTabs);
+		},
+		// initializes each tab so it can expand/collapse
+		initTab: function(index, el) {
+			var $el = $(el);
+			var tab = {
+				'el': $el,
+				'animEl': $el.parent(),
+				'width': $el.next().width(),
+				'expanded': false
+			};
 
-				if($(this).hasClass('js-tab-left')) {
-					tab.expand = that.makeExpander(tab, '-=', true);
-					tab.collapse = that.makeExpander(tab, '+=', false);
-				} else {
-					tab.expand = that.makeExpander(tab, '+=', true);
-					tab.collapse = that.makeExpander(tab, '-=', false);
-				}
+			if($el.hasClass('js-tab-left')) {
+				tab.expand = this.makeExpander(tab, '-=', true);
+				tab.collapse = this.makeExpander(tab, '+=', false);
+			} else {
+				tab.expand = this.makeExpander(tab, '+=', true);
+				tab.collapse = this.makeExpander(tab, '-=', false);
+			}
 
-				$(this).on('click', function(e) {
-					tab[tab.expanded?'collapse':'expand']();
-					e.preventDefault();
-					e.stopPropagation();
-				});
-
-				tabs.push(tab);
+			$el.on('click', function(ev) {
+				tab[tab.expanded?'collapse':'expand']();
+				return false;
 			});
-	
-			// initialize button to expand/collapse all tabs
-			$('.js-toggle-tabs').on('click', function(e) {
-				var cls = ['staff-btn-open','staff-btn-close'];
-				if($(this).hasClass('staff-btn-close')) {
-					cls.reverse();
-				}
 
-				$(this).removeClass(cls[0]).addClass(cls[1]);
+			this.tabs.push(tab);
+		},
+		// expands or collapses *all* tabs
+		onClickToggleTabs: function(ev) {
+			var el = ev.target;
+			var cls = ['staff-btn-open','staff-btn-close'];
+			var tabsExpanded = this.tabsExpanded;
 
-				$.each(tabs, function(index, tab) {
-					tab[that.tabsExpanded?'collapse':'expand']();
-				});
+			if($(el).hasClass('staff-btn-close')) {
+				cls.reverse();
+			}
 
-				that.tabsExpanded = !that.tabsExpanded;
+			$(el).removeClass(cls[0]).addClass(cls[1]);
 
-				e.preventDefault();
-				e.stopPropagation();
+			$.each(this.tabs, function(index, tab) {
+				tab[tabsExpanded?'collapse':'expand']();
 			});
+
+			this.tabsExpanded = !tabsExpanded;
+
+			return false;
 		},
 		// function to expand or collapse a tab
 		makeExpander: function(tab, dir, expand) {
+			var animOpts = {marginLeft: dir + tab.width};
 			return function() {
 				if(tab.expanded !== expand) {
-					tab.animEl.animate({marginLeft: dir + tab.width}, 0, 'swing', function() {
+					tab.animEl.animate(animOpts, 0, 'swing', function() {
 						tab.el[expand?'addClass':'removeClass']('expanded');
 						tab.expanded = expand;
 					});
