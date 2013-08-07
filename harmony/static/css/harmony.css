@@ -334,16 +334,16 @@ body {
 #kb-pedals .pedal {
 	float: left;
 	display: block;
-	width: 65px; /* note: center pedal overrides this (52px) */
-	height: 109px;
-	background: url(../img/pedal-sprite-110.png) no-repeat;
+	width: 61px; /* note: center pedal overrides this */
+	height: 79px;
+	background: url(../img/pedal-sprite.png) no-repeat;
 }
 #kb-pedals .pedal-left { background-position: -21px -21px; }
 #kb-pedals .pedal-left:hover { background-position: -21px -221px; }
 #kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { background-position: -21px -421px; }
 
-#kb-pedals .pedal-center { background-position: -121px -21px; width: 52px; }
-#kb-pedals .pedal-center:hover { background-position: -121px -221px; width: 52px }
+#kb-pedals .pedal-center { background-position: -121px -21px; width: 50px; }
+#kb-pedals .pedal-center:hover { background-position: -121px -221px; width: 50px }
 #kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { background-position: -121px -421px; width: 52px; }
 
 #kb-pedals .pedal-right { background-position: -221px -21px; }
