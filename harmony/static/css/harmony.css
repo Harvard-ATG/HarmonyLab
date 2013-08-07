@@ -329,14 +329,14 @@ body {
 /* Pedals */
 #kb-pedals {
 	margin: 0 auto;
-	width: 182px; /* left (65px) + center (52px) + right (65px) */
+	width: 172px; 
 }
 #kb-pedals .pedal {
 	float: left;
 	display: block;
-	width: 61px; /* note: center pedal overrides this */
-	height: 79px;
 	background: url(../img/pedal-sprite.png) no-repeat;
+	width: 61px; /* NOTE: center pedal overrides the width */
+	height: 79px;
 }
 #kb-pedals .pedal-left { background-position: -21px -21px; }
 #kb-pedals .pedal-left:hover { background-position: -21px -121px; }
