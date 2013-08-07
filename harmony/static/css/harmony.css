@@ -339,16 +339,16 @@ body {
 	background: url(../img/pedal-sprite.png) no-repeat;
 }
 #kb-pedals .pedal-left { background-position: -21px -21px; }
-#kb-pedals .pedal-left:hover { background-position: -21px -221px; }
-#kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { background-position: -21px -421px; }
+#kb-pedals .pedal-left:hover { background-position: -21px -121px; }
+#kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { background-position: -21px -221px; }
 
 #kb-pedals .pedal-center { background-position: -121px -21px; width: 50px; }
-#kb-pedals .pedal-center:hover { background-position: -121px -221px; width: 50px }
-#kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { background-position: -121px -421px; width: 52px; }
+#kb-pedals .pedal-center:hover { background-position: -121px -121px; width: 50px }
+#kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { background-position: -121px -221px; width: 50px; }
 
 #kb-pedals .pedal-right { background-position: -221px -21px; }
-#kb-pedals .pedal-right:hover { background-position: -221px -221px }
-#kb-pedals .pedal-right:active, #kb-pedals .pedal-right.pedal-active { background-position: -221px -421px }
+#kb-pedals .pedal-right:hover { background-position: -221px -121px }
+#kb-pedals .pedal-right:active, #kb-pedals .pedal-right.pedal-active { background-position: -221px -221px }
 
 /*--------------------------------------------------*/
 /* Background image selection */
