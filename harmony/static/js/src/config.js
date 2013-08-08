@@ -27,7 +27,7 @@ define({
 		"iAb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
 			pitchClass: 8,
-			name: "A minor",
+			name: "Ab minor",
 			shortName: "a",
 			signature: "bbbbbbb",
 		},
@@ -41,7 +41,7 @@ define({
 		"iEb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 3,
-			name: "Eb major",
+			name: "Eb minor",
 			shortName: "Eb",
 			signature: "bbbbbb",
 		},
@@ -280,7 +280,8 @@ define({
 	// For configuring computer keyboard shortcuts.
 	keyboardShortcuts: {
 		// Application note on/off keyboard shortcuts.
-		// Maps a key to an intgeger relative to *one octave below* middle C.
+		// Maps a key to an integer relative to the C *one octave below* 
+		// middle C.
 		//
 		// Note: unused letters to avoid mishaps: 3, 6, and g.
 		"note": {
