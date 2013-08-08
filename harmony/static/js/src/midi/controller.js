@@ -35,6 +35,18 @@ define([
 			inputIndex: 0,
 			instrumentNum: 0
 		},
+		// Mappings for MIDI control changes
+		midiControlMap: {
+			// maps num->key and key->num for convenient lookup
+			'pedal': {
+				'64': 'sustain',
+				'66': 'sostenuto', 
+				'67': 'soft',
+				'sustain': 64,
+				'sostenuto': 66,
+				'soft': 67
+			},
+		},
 
 		// Initializes the MIDI router to send and receive MIDI messages.
 		init: function() {
@@ -137,6 +149,9 @@ define([
 					this.eventBus.trigger('note', 'off', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
 					break;
 				case JMB.CONTROL_CHANGE:
+					if(this.midiControlMap.pedal.hasOwnProperty(msg.data1)) {
+						this.eventBus.trigger('pedal', this.midiControlMap.pedal[msg.data1], msg.data2 === 0 ? 'off' : 'on');
+					}
 					break;
 				default:
 					console.log("midi message not handled: ", msg);
@@ -156,11 +171,9 @@ define([
 
 		// Handles sustain, sostenuto, soft pedal events.
 		onPedalChange: function(pedal, state) {
-			var controlNumberOf = { 'sustain': 64, 'sostenuto': 66, 'soft': 67 },
-				controlValueOf = { 'on': 127, 'off': 0 },
-				command = JMB.CONTROL_CHANGE,
-				controlNumber = controlNumberOf[pedal], 
-				controlValue = controlValueOf[state],
+			var command = JMB.CONTROL_CHANGE,
+				controlNumber = this.midiControlMap.pedal[pedal], 
+				controlValue = (state === 'off' ? 0 : 127),
 				msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
 
 				if(this.output) {

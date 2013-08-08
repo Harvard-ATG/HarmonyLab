@@ -280,7 +280,7 @@ define({
 	// For configuring computer keyboard shortcuts.
 	keyboardShortcuts: {
 		// Application note on/off keyboard shortcuts.
-		// Maps a key to an intgeger relative to one octave below middle C.
+		// Maps a key to an intgeger relative to *one octave below* middle C.
 		//
 		// Note: unused letters to avoid mishaps: 3, 6, and g.
 		"note": {
@@ -314,10 +314,10 @@ define({
 		// Maps a key to function name.
 		"control": {
 			"ESC":    "toggleMode",
-			"RETURN": "clearNotes", // todo
-			"'":      "depressSustain", // todo
-			";":      "retakeSustain", // todo
-			".":      "releaseSustain", // todo
+			"RETURN": "clearNotes", // TODO
+			"'":      "depressSustain",
+			";":      "retakeSustain",
+			".":      "releaseSustain",
 			"k":      "rotateKeyFlatward",
 			"l":      "rotateKeySharpward",
 			",":      "setKeyToNone",
