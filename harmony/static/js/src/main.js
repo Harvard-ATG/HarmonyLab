@@ -58,15 +58,22 @@ function(
 			});
 		},
 		initPedals: function() {
+			var pedals = ['soft', 'sostenuto', 'sustain'];
+			var elementFor = {};
+
 			$('#kb-pedals .pedal').each(function(index, el) {
-				var pedals = ['soft', 'sostenuto', 'sustain'];
-				var state = 'off';
-		
+				var pedal = pedals[index], state = 'off';
 				$(el).on('click', function() {
 					state = (state == 'on' ? 'off' : 'on');
 					$(el).toggleClass('pedal-active');
-					eventBus.trigger('pedal', pedals[index], state); 
+					eventBus.trigger('pedal', pedal, state); 
 				});
+				elementFor[pedal] = el;
+			});
+
+			eventBus.bind('pedal', function(pedal, state) {
+				var el = elementFor[pedal];
+				$(el)[state==='on'?'addClass':'removeClass']('pedal-active');
 			});
 		},
 		initKeyboardSizes: function(keyboard) {
