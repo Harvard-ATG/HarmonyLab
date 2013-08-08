@@ -58,22 +58,36 @@ function(
 			});
 		},
 		initPedals: function() {
-			var pedals = ['soft', 'sostenuto', 'sustain'];
-			var elementFor = {};
+			var pedalNameByIndex = ['soft','sostenuto','sustain'];
+			var pedals = {
+				'soft': {},
+				'sostenuto' : {},
+				'sustain' : {},
+			};
 
 			$('#kb-pedals .pedal').each(function(index, el) {
-				var pedal = pedals[index], state = 'off';
+				var name = pedalNameByIndex[index];
+				var pedal = pedals[name];
+	
+				pedal.el = el;
+				pedal.state = 'off';
+				pedal.toggle = function(state) { 
+					if(state) {
+						this.state = state;
+					} else {
+						this.state = (this.state === 'on' ? 'off' : 'on');
+					}
+					$(this.el)[this.state=='on'?'addClass':'removeClass']('pedal-active'); 
+				};
+
 				$(el).on('click', function() {
-					state = (state == 'on' ? 'off' : 'on');
-					$(el).toggleClass('pedal-active');
-					eventBus.trigger('pedal', pedal, state); 
+					pedal.toggle();
+					eventBus.trigger('pedal', name, pedal.state);
 				});
-				elementFor[pedal] = el;
 			});
 
 			eventBus.bind('pedal', function(pedal, state) {
-				var el = elementFor[pedal];
-				$(el)[state==='on'?'addClass':'removeClass']('pedal-active');
+				pedals[pedal].toggle(state);
 			});
 		},
 		initKeyboardSizes: function(keyboard) {
