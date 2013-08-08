@@ -237,6 +237,16 @@ define({
 	},
 
 	// Maps each of the 15 key signatures to an associated key.
+	//
+	// This mapping is arbitrary because a key signature could be major or
+	// minor. Normally, we expect the user to select a specific key on the UI
+	// and the key signature will then be updated to match due to the
+	// key-to-key-signature lock. 
+	//
+	// However, if the user chooses a key signature instead of (as we expect) a
+	// key, and the key-to-key-signature lock is enabled, the app needs to know
+	// what key should be selected in response, and this mapping provides that.
+	//
 	keySignatureMap: {
 		"bbbbbbb": "jCb",
 		"bbbbbb": "jGb",	
