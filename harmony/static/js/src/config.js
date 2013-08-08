@@ -280,7 +280,7 @@ define({
 	keyWheel: [
 		"iD_","jF_","iA_","jC_", "iE_","jG_","iB_","jD_",
 		"iF#","jA_","iC#","jE_", "iG#","jB_","iEb","jGb",
-		"iBb","iF_","jAb","iC_", "jEb","iG_","jBb"
+		"iBb","jDb","iF_","jAb", "iC_","jEb","iG_","jBb"
 	],
 
 	// Default key and signature to use for notation. This should be
