@@ -1,8 +1,11 @@
+/* global define: false */
 define([
+	'jquery',
 	'lodash', 
 	'vexflow', 
 	'app/notation/stave_renderer',
-], function(_, Vex, StaveRenderer) {
+], function($, _, Vex, StaveRenderer) {
+	"use strict";
 
 	// The Notation object is responsible for knowing to construct the grand staff
 	// and coordinate the rendering process for notating pitches as they 
@@ -71,9 +74,10 @@ define([
 			return this;
 		},
 		addStave: function(clef) {
+			var width = 0.8 * this.width;
 			var config = {
 				clef: clef,
-				width: (.8 * this.width),
+				width: width,
 				midiNotes: this.midiNotes,
 				keySignature: this.keySignature,
 				vexRenderer: this.vexRenderer

@@ -1,4 +1,6 @@
+/* global define: false */
 define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
+	"use strict";
 
 	var DEFAULT_KEY = CONFIG.defaultKeyAndSignature;
 	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;

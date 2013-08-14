@@ -1,4 +1,6 @@
+/* global define: false */
 define(['lodash', 'vexflow'], function(_, Vex) {
+	"use strict";
 
 	// Knows how to render and manipulate a staff/stave.
 	var StaveRenderer = function(config) {
@@ -51,7 +53,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		connectWith: function(staveRenderer) {
 			// This method should only be called *after* the stave has been rendered
 			if(staveRenderer) {
-				var BRACE = Vex.Flow.StaveConnector.type.BRACE
+				var BRACE = Vex.Flow.StaveConnector.type.BRACE;
 				var ctx = this.vexRenderer.getContext();
 				var connector = new Vex.Flow.StaveConnector(this.getVexStave(), staveRenderer.getVexStave());
 		

@@ -1,3 +1,4 @@
+/* global define: false */
 define([
 	'lodash', 
 	'jquery', 
@@ -5,6 +6,7 @@ define([
 	'app/eventbus', 
 	'app/config'
 ], function(_, $, MicroEvent, eventBus, CONFIG) {
+	"use strict";
 
 	var SHORTS = CONFIG.keyboardShortcuts;
 
@@ -189,7 +191,7 @@ define([
 			}
 
 			return false;
-		},
+		}
 	});
 
 	MicroEvent.mixin(KeyboardShortcuts);

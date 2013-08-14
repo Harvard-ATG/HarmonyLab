@@ -1,4 +1,7 @@
+/* global define: false */
+
 define(['lodash'], function(_) {
+	"use strict";
 
 	// constants for piano key states
 	var STATE_KEYUP = 'off', STATE_KEYDN = 'on';
@@ -104,7 +107,7 @@ define(['lodash'], function(_) {
 		onPress: function(e) {
 			if(this.isReleased()) {
 				this.press();
-				this.keyboard.trigger('key', this.state, this.noteNumber)
+				this.keyboard.trigger('key', this.state, this.noteNumber);
 			}
 		},
 
@@ -114,7 +117,7 @@ define(['lodash'], function(_) {
 		onRelease: function(e) {
 			if(this.isPressed()) { 
 				this.release();
-				this.keyboard.trigger('key', this.state, this.noteNumber)
+				this.keyboard.trigger('key', this.state, this.noteNumber);
 			}
 		},
 
@@ -307,8 +310,8 @@ define(['lodash'], function(_) {
 		 * @return {PianoKey}
 		 */
 		create: function(config) {
-			var keyConstructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
-			return new keyConstructor(config);
+			var KeyConstructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
+			return new KeyConstructor(config);
 		}
 	};
 

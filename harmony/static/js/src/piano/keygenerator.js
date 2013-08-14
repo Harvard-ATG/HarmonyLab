@@ -1,4 +1,6 @@
+/* global define: false */
 define(['lodash', './key',], function(_, PianoKey) {
+	"use strict";
 
 	/**
 	 * The PianoKeyGenerator object is responsible for knowing how to generate a
@@ -154,7 +156,7 @@ define(['lodash', './key',], function(_, PianoKey) {
 				return PianoKey.create({ 
 					'noteName': noteName,
 					'noteNumber': noteNumber,
-				    'isWhite': isWhite,
+					'isWhite': isWhite,
 					'keyboard': keyboard
 				});
 			};

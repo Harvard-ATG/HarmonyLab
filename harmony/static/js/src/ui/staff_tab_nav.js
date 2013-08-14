@@ -1,6 +1,9 @@
 // This module is responsible for the expand/collapse behavior of the
 // tabs on either side of the staff notation area. 
+
+/* global define: false */
 define(['jquery'], function($) {
+	"use strict";
 	return {
 		// Defines a mapping of tabs (via selector) to toggle functions.
 		// The toggle functions encapsulate the difference between left

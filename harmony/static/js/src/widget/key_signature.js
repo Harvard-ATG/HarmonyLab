@@ -1,4 +1,6 @@
+/* global define:false, document:false */
 define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
+	"use strict";
 
 	var KEY_MAP = CONFIG.keyMap;
 	var KEY_DISPLAY_GROUPS = CONFIG.keyDisplayGroups;	
@@ -82,7 +84,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
 
 			_.each(KEY_DISPLAY_GROUPS, function(keyList, index) {
 				var optgroup = document.createElement('optgroup');
-				optgroup.label = keyList[0]
+				optgroup.label = keyList[0];
 	
 				_.each(keyList.slice(1), function(key, index) {
 					var opt = document.createElement('option');

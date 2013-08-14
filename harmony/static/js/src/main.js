@@ -1,8 +1,4 @@
-// This module initializes the application (hence the "main")
-//
-// Usage from template: 
-//		require(['main']) 
-//
+/* global define: false */
 define([
 	'lodash',
 	'jquery', 
@@ -31,10 +27,11 @@ function(
 	KeySignatureWidget,
 	eventBus
 ) {
+	"use strict";
 
 	var setup = {
 		initOnScreenPiano: function(keyboard) {
-			$('#piano').append(keyboard.render().el)
+			$('#piano').append(keyboard.render().el);
 		},
 		initNotation: function(notation) {
 			$('#staff-area').append(notation.render().el);
@@ -76,7 +73,7 @@ function(
 				var offset = $('#piano').position();
 				var new_width = new_keyboard.width + (2 * offset.left);
 
-				new_keyboard.render()
+				new_keyboard.render();
 				$('#piano').html('').append(new_keyboard.el);
 				$('#kb-wrapper').width(new_width);
 
@@ -109,7 +106,7 @@ function(
 
 				_.each(devices, function(device, type) {
 					if(device.options.length > 0) {
-						$(device.selector).html(device.options.join(''))
+						$(device.selector).html(device.options.join(''));
 					} else {
 						$(device.selector).html('<option>--</option>');
 					}

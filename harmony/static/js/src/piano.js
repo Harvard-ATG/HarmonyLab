@@ -1,4 +1,4 @@
-// NOTE: this module also requires "raphael.js" (loaded synchronously - AMD issues)
+/* global define: false */
 define([
 	'jquery', 
 	'lodash', 
@@ -16,6 +16,7 @@ define([
 	PianoKeyGenerator, 
 	PianoKey
 ) {
+	"use strict";
 
 	/**
 	 * Piano Keyboard class.

@@ -1,7 +1,10 @@
-// Module that defines the available MIDI instruments
-define(function() {
+// Module that defines the available MIDI INSTRUMENTS
 
-var instruments = {
+/* global define: false */
+define(['lodash'], function(_) {
+	"use strict";
+
+var INSTRUMENTS = {
     "0": {
         "name": "Acoustic Grand Piano",
 		"shortName": "Piano",
@@ -525,9 +528,9 @@ var instruments = {
 	return {
 		numberOf: function(name) {
 			var num;
-			for(num in instruments) {
-				if(instruments.hasOwnProperty(num) 
-					&& instruments[num].name.toLowerCase() === name.toLowerCase()) {
+			for(num in INSTRUMENTS) {
+				if(INSTRUMENTS.hasOwnProperty(num) && 
+					INSTRUMENTS[num].name.toLowerCase() === name.toLowerCase()) {
 					return parseInt(num, 10);
 				}
 			}
@@ -540,7 +543,7 @@ var instruments = {
 			return _.map(enabled, function(num, index) {
 				return { 
 					num: num, 
-					name: instruments[num]['shortName'] || instruments[num]['name']
+					name: INSTRUMENTS[num].shortName || INSTRUMENTS[num].name
 				};
 			});
 		}

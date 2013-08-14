@@ -3,7 +3,12 @@
 // 
 // Configuration data used by the application for notation, analysis, and ui.
 
-define({
+/* global define: false */
+define(function() {
+
+"use strict";
+
+var CONFIG = {
 
 	// Defines the default spelling of the twelve pitches based on D-minor.
 	noteNames: ['C','C#','D','Eb','E','F','F#','G','G#','A','Bb','B'],
@@ -370,5 +375,8 @@ define({
 			"222": "'"
 		},
 	}
+}; // end config
+
+return CONFIG;
 
 });

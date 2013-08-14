@@ -1,8 +1,7 @@
-/**
- * Defines a global event bus.
- */
+/* global define: false */
 (function(global) {
 	define(['microevent'], function(MicroEvent) {
+		"use strict";
 		var EventBus = function() {};
 		MicroEvent.mixin(EventBus);
 

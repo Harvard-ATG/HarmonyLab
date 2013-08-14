@@ -1,4 +1,6 @@
+/* global define: false */
 define(['lodash', 'microevent'], function(_, MicroEvent) {
+	"use strict";
 
 	// This object is responsible for tracking the MIDI notes that are "on" or
 	// currently active.  It also must know how to partition notes by clef and

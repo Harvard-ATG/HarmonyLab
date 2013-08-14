@@ -1,9 +1,11 @@
+/* global define:false, console:false */
 define([
 	'lodash', 
 	'microevent', 
 	'jazzmidibridge', 
-	'app/eventbus', 
+	'app/eventbus'
 ], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
+	"use strict";
 
 	var DEFAULT_NOTE_VELOCITY = 100;
 
