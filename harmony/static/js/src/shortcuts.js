@@ -82,6 +82,16 @@ define([
 		setKeyToNone: function() {
 			this.keySignature.changeKey('jC_', true);	
 		},
+		depressSustain: function() {
+			eventBus.trigger('pedal', 'sustain', 'on');
+		},
+		releaseSustain: function() {
+			eventBus.trigger('pedal', 'sustain', 'off');
+		},
+		retakeSustain: function() {
+			this.releaseSustain();
+			this.depressSustain();
+		},
 
 		//--------------------------------------------------
 		// Note on/off functions

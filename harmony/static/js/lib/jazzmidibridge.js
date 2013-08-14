@@ -259,7 +259,7 @@
             if(!Jazz || !Jazz.isJazz){
                 Jazz = jazz2Obj;
             }
-            if(Jazz){
+            if(Jazz.isJazz){
                 scanDevices();
                 callback(MIDIAccess);
             }else if(onerror !== undefined){

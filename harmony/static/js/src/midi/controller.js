@@ -25,7 +25,6 @@ define([
 
 	_.extend(MidiController.prototype, {
 		eventBus: eventBus,
-
 		channel: 0,
 		program: 0,
 		outputDevices: [],
@@ -38,12 +37,20 @@ define([
 			inputIndex: 0,
 			instrumentNum: 0
 		},
+		// Mappings for MIDI control changes
+		midiControlMap: {
+			// maps num->key and key->num for convenient lookup
+			'pedal': {
+				'64': 'sustain',
+				'66': 'sostenuto', 
+				'67': 'soft',
+				'sustain': 64,
+				'sostenuto': 66,
+				'soft': 67
+			},
+		},
 
-		/**
-		 * Initializes the MIDI router to send and receive MIDI messages.
-		 *
-		 * @return {this}
-		 */
+		// Initializes the MIDI router to send and receive MIDI messages.
 		init: function() {
 			if(!this.config.hasOwnProperty('midiNotes')) {
 				throw new Error("missing config property");
@@ -62,11 +69,7 @@ define([
 			JMB.init(this.onJMBInit);
 		},
 
-		/**
-		 * Initializes the Jazz Midi Bridge (JMB) and related event handlers.
-		 *
-		 * @param {object} MIDIAccess object
-		 */
+		// Initializes the Jazz Midi Bridge (JMB) and related event handlers.
 		onJMBInit: function(MIDIAccess) {
 			this.midiAccess = MIDIAccess;
 			this.detectDevices();
@@ -74,25 +77,19 @@ define([
 			this.initListeners();
 		},
 
-		/**
-		 * Detects midi devices.
-		 */
+		// Detects midi devices.
 		detectDevices: function() {
 			this.outputDevices = this.midiAccess.enumerateOutputs() || [];
 			this.inputDevices = this.midiAccess.enumerateInputs() || [];
 			this.trigger('devices', this.inputDevices, this.outputDevices, this.defaults);
 		},
 
-		/**
-		 * Scans for changes to midi devices.
-		 */
+		// Scans for changes to midi devices.
 		scanDevices: function() {
 			JMB.rescan();
 		},
 
-		/**
-		 * Selects a default midi input and output device (if any). 
-		 */
+		// Selects a default midi input and output device (if any). 
 		selectDefaultDevices: function() {
 			var outputs = this.outputDevices;
 			var inputs = this.inputDevices;
@@ -104,9 +101,7 @@ define([
 			}
 		},
 
-		/**
-		 * Selects a device for input/output.
-		 */
+		// Selects a device for input/output.
 		selectDevice: function(type, index) {
 			switch(type) {
 				case 'input': 
@@ -122,9 +117,7 @@ define([
 			}
 		},
 
-		/**
-		 * Initializes listeners.
-		 */
+		// Initializes listeners.
 		initListeners: function() {
 
 			this.eventBus.bind('note', this.onNoteChange);
@@ -136,18 +129,21 @@ define([
 			}
 		},
 
-		/**
-		 * Toggles a note state.
-		 */
+		// Toggles a note state.
 		toggleNote: function(noteState, noteNumber) {
 			return this.midiNotes[noteState==='on'?'noteOn':'noteOff'](noteNumber);
 		},
 
-		/**
-		 * Handles a midi message. 
-		 */
+		// Handles a midi message. 
 		onMidiMessage: function(msg) {
-			switch(msg.command) {
+			var command = msg.command;
+
+			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
+			if(command === JMB.NOTE_ON && !msg.data2) {
+				command = JMB.NOTE_OFF;
+			}
+
+			switch(command) {
 				case JMB.NOTE_ON:
 					this.eventBus.trigger('note', 'on', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
 					break;
@@ -155,15 +151,16 @@ define([
 					this.eventBus.trigger('note', 'off', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
 					break;
 				case JMB.CONTROL_CHANGE:
+					if(this.midiControlMap.pedal.hasOwnProperty(msg.data1)) {
+						this.eventBus.trigger('pedal', this.midiControlMap.pedal[msg.data1], msg.data2 === 0 ? 'off' : 'on');
+					}
 					break;
 				default:
 					console.log("midi message not handled: ", msg);
 			}
 		},
 
-		/**
-		 * Handles note output (not from an external device). 
-		 */
+		// Handles note output (not from an external device). 
 		onNoteChange: function(noteState, noteNumber, noteVelocity) {
 			noteVelocity = DEFAULT_NOTE_VELOCITY || noteVelocity; 
 			var changed = this.toggleNote(noteState, noteNumber);
@@ -174,15 +171,11 @@ define([
 			}
 		},
 
-		/**
-		 * Handles sustain, sostenuto, soft pedal events.
-		 */
+		// Handles sustain, sostenuto, soft pedal events.
 		onPedalChange: function(pedal, state) {
-			var controlNumberOf = { 'sustain': 64, 'sostenuto': 66, 'soft': 67 },
-				controlValueOf = { 'on': 127, 'off': 0 },
-				command = JMB.CONTROL_CHANGE,
-				controlNumber = controlNumberOf[pedal], 
-				controlValue = controlValueOf[state],
+			var command = JMB.CONTROL_CHANGE,
+				controlNumber = this.midiControlMap.pedal[pedal], 
+				controlValue = (state === 'off' ? 0 : 127),
 				msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
 
 				if(this.output) {
@@ -190,9 +183,7 @@ define([
 				}
 		},
 
-		/**
-		 * Handles change of instrument.
-		 */
+		// Handles change of instrument.
 		onChangeInstrument: function(instrumentNum) {
 			var command = JMB.PROGRAM_CHANGE;
 			if(instrumentNum < 0) {

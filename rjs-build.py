@@ -29,7 +29,7 @@
 #
 # 	r.js -o build.js optimize=none
 #
-# The"optimize=none" flag disables minification.
+# Note: "optimize=none" flag disables minification.
 #
 # --------------------------------------------------
 #
@@ -42,6 +42,7 @@ from harmony.settings import common
 import subprocess
 import os
 import shutil
+import hashlib
 import json
 
 PROJECT_ROOT = common.PROJECT_ROOT
@@ -49,6 +50,7 @@ ROOT_DIR = common.ROOT_DIR
 
 BUILD_JS = os.path.join(PROJECT_ROOT, 'static', 'js', 'build.js')
 BUILD_DIR = os.path.join(PROJECT_ROOT, 'static', 'js', 'build')
+BUILD_OUTPUT_FILE = os.path.join(BUILD_DIR, 'main-built.js')
 
 if not os.path.exists(BUILD_DIR):
 	os.makedirs(BUILD_DIR)
@@ -58,24 +60,33 @@ requirejs_optimizer = "r.js -o {0} optimize=none".format(BUILD_JS)
 print "Running require.js optimizer: {0}".format(requirejs_optimizer)
 subprocess.check_call(requirejs_optimizer, shell=True)
 
-# Lookup current git head version
-version = subprocess.check_output("git rev-parse HEAD", shell=True) 
-version = version.rstrip()
+# Hash the file to get a version number.
+version = 'VERSION'
+with open(BUILD_OUTPUT_FILE) as f:
+    m = hashlib.md5()
+    while True:
+        chunk = f.read(128) # 128 bytes for md5 block size
+        if not chunk:
+            break
+        m.update(chunk)
+    version = m.hexdigest()
 print "Got version {0}".format(version)
 
-# Set the build file name using the version and make a copy 
+# Copy and rename the build file 
 build_file = 'main-{0}'.format(version)
-shutil.copy(
-	os.path.join(BUILD_DIR, 'main-built.js'), 
-	os.path.join(BUILD_DIR, build_file+'.js')
-)
-print "Copied main-built.js to {0}.js".format(build_file)
+build_path = os.path.join(BUILD_DIR, build_file+'.js')
 
-build_json = json.dumps({'main': build_file})
-f = open(os.path.join(ROOT_DIR, 'rjs-build.json'), 'w+') 
-f.write(build_json)
-f.close()
-print "Saved data to rjs-build.json"
+if os.path.exists(build_path):
+    print "Build version already exists: {0}.js".format(build_file)
+else:
+    shutil.copy(os.path.join(BUILD_DIR, 'main-built.js'), build_path)
+    print "Copied main-built.js to {0}.js".format(build_file)
+
+    build_json = json.dumps({'main': build_file})
+    f = open(os.path.join(ROOT_DIR, 'rjs-build.json'), 'w+') 
+    f.write(build_json)
+    f.close()
+    print "Saved data to rjs-build.json"
 
 print ("-" * 50)
 print "Done."

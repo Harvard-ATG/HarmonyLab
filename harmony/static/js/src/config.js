@@ -32,7 +32,7 @@ var CONFIG = {
 		"iAb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
 			pitchClass: 8,
-			name: "A minor",
+			name: "Ab minor",
 			shortName: "a",
 			signature: "bbbbbbb",
 		},
@@ -46,7 +46,7 @@ var CONFIG = {
 		"iEb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 3,
-			name: "Eb major",
+			name: "Eb minor",
 			shortName: "Eb",
 			signature: "bbbbbb",
 		},
@@ -242,6 +242,16 @@ var CONFIG = {
 	},
 
 	// Maps each of the 15 key signatures to an associated key.
+	//
+	// This mapping is arbitrary because a key signature could be major or
+	// minor. Normally, we expect the user to select a specific key on the UI
+	// and the key signature will then be updated to match due to the
+	// key-to-key-signature lock. 
+	//
+	// However, if the user chooses a key signature instead of (as we expect) a
+	// key, and the key-to-key-signature lock is enabled, the app needs to know
+	// what key should be selected in response, and this mapping provides that.
+	//
 	keySignatureMap: {
 		"bbbbbbb": "jCb",
 		"bbbbbb": "jGb",	
@@ -275,7 +285,7 @@ var CONFIG = {
 	keyWheel: [
 		"iD_","jF_","iA_","jC_", "iE_","jG_","iB_","jD_",
 		"iF#","jA_","iC#","jE_", "iG#","jB_","iEb","jGb",
-		"iBb","iF_","jAb","iC_", "jEb","iG_","jBb"
+		"iBb","jDb","iF_","jAb", "iC_","jEb","iG_","jBb"
 	],
 
 	// Default key and signature to use for notation. This should be
@@ -285,7 +295,9 @@ var CONFIG = {
 	// For configuring computer keyboard shortcuts.
 	keyboardShortcuts: {
 		// Application note on/off keyboard shortcuts.
-		// Maps a key to an integer that is relative to middle C.
+		// Maps a key to an integer relative to the C *one octave below* 
+		// middle C.
+		//
 		// Note: unused letters to avoid mishaps: 3, 6, and g.
 		"note": {
 			"1": -4, // GA
@@ -318,10 +330,10 @@ var CONFIG = {
 		// Maps a key to function name.
 		"control": {
 			"ESC":    "toggleMode",
-			"RETURN": "clearNotes", // todo
-			"'":      "depressSustain", // todo
-			";":      "retakeSustain", // todo
-			".":      "releaseSustain", // todo
+			"RETURN": "clearNotes", // TODO
+			"'":      "depressSustain",
+			";":      "retakeSustain",
+			".":      "releaseSustain",
 			"k":      "rotateKeyFlatward",
 			"l":      "rotateKeySharpward",
 			",":      "setKeyToNone",

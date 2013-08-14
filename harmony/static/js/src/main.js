@@ -55,15 +55,36 @@ function(
 			});
 		},
 		initPedals: function() {
+			var pedalNameByIndex = ['soft','sostenuto','sustain'];
+			var pedals = {
+				'soft': {},
+				'sostenuto' : {},
+				'sustain' : {},
+			};
+
 			$('#kb-pedals .pedal').each(function(index, el) {
-				var pedals = ['soft', 'sostenuto', 'sustain'];
-				var state = 'off';
-		
+				var name = pedalNameByIndex[index];
+				var pedal = pedals[name];
+	
+				pedal.el = el;
+				pedal.state = 'off';
+				pedal.toggle = function(state) { 
+					if(state) {
+						this.state = state;
+					} else {
+						this.state = (this.state === 'on' ? 'off' : 'on');
+					}
+					$(this.el)[this.state=='on'?'addClass':'removeClass']('pedal-active'); 
+				};
+
 				$(el).on('click', function() {
-					state = (state == 'on' ? 'off' : 'on');
-					$(el).toggleClass('pedal-active');
-					eventBus.trigger('pedal', pedals[index], state); 
+					pedal.toggle();
+					eventBus.trigger('pedal', name, pedal.state);
 				});
+			});
+
+			eventBus.bind('pedal', function(pedal, state) {
+				pedals[pedal].toggle(state);
 			});
 		},
 		initKeyboardSizes: function(keyboard) {
@@ -144,6 +165,32 @@ function(
 				$shortcutsEl[0].checked = enabled;
 			});
 		},
+		initThemeSelector: function() {
+			var $themeSelect = $('#theme-select');
+			var themes = [];
+			if($themeSelect.data('themes')) {
+				themes = $themeSelect.data('themes').split(',');
+			}
+	
+			_.each(themes, function(themeName) {
+				var el = document.createElement('div');
+				el.className = ['theme-thumbnail','theme-'+themeName].join(' ');
+				el.setAttribute('data-theme', themeName);
+				$themeSelect.append(el);
+			});
+
+			$themeSelect.delegate('.theme-thumbnail', 'click', function(ev) {
+				var prefix = 'theme-';
+				var $el = $(ev.target), $container = $('#container');
+				var new_theme = $el.data('theme'), old_theme = $container.data('theme');
+
+				if(new_theme !== old_theme) {
+					$container.removeClass(prefix + old_theme);
+					$container.addClass(prefix + new_theme);
+					$container.data('theme', new_theme);
+				}
+			});
+		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
 			var midi_notes = new MidiNotes();
@@ -158,15 +205,16 @@ function(
 				keySignature: key_signature 
 			});
 
+			this.initTabs();
 			this.initOnScreenPiano(keyboard);
 			this.initNotation(notation);
-			this.initTabs();
 			this.initKeyboardSizes(keyboard);
 			this.initPedals();
 			this.initInstruments();
 			this.initKeyAndSignature(key_signature);
-			this.initDevices(midi_controller);
 			this.initKeyboardShortcuts(shortcuts);
+			this.initThemeSelector();
+			this.initDevices(midi_controller);
 		}
 	};
 
