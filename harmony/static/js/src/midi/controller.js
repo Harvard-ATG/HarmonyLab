@@ -1,4 +1,4 @@
-/* global define:false, console:false */
+/* global define:false */
 define([
 	'lodash', 
 	'microevent', 
@@ -6,8 +6,6 @@ define([
 	'app/eventbus'
 ], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
 	"use strict";
-
-	var DEFAULT_NOTE_VELOCITY = 100;
 
 	/**
 	 * The midi controller is responsible for coordinating midi messages 
@@ -25,21 +23,26 @@ define([
 
 	_.extend(MidiController.prototype, {
 		eventBus: eventBus,
-		channel: 0,
-		program: 0,
-		outputDevices: [],
-		inputDevices: [],
-		output: null,
-		input: null,
-		midiAccess: null, // api via jazzmidibridge
-		defaults: { 
-			outputIndex: 0, 
-			inputIndex: 0,
-			instrumentNum: 0
-		},
-		// Mappings for MIDI control changes
+
+		// jazzmidibridge api for midi input/output
+		midiAccess: null, 
+
+		channel: 0, // default midi channel
+		defaultInstrumentNum: 0, // default instrument
+
+		// apply uniform note velocity (volume is too low otherwise)
+		noteVelocity: 127, // current value: 0-127
+		defaultNoteVelocity: 127,
+		reducedNoteVelocity: 84,
+
+		outputDevices: [], // list of available outputs
+		inputDevices: [], // list of available inputs
+		output: null, // selected output device
+		input: null, // selected input device
+		defaultDevices: { outputIndex: 0, inputIndex: 0 },
+
+		// mappings for MIDI control changes
 		midiControlMap: {
-			// maps num->key and key->num for convenient lookup
 			'pedal': {
 				'64': 'sustain',
 				'66': 'sostenuto', 
@@ -60,28 +63,39 @@ define([
 
 			_.bindAll(this, [
 				'onJMBInit',
+				'onJMBError',
 				'onMidiMessage',
 				'onNoteChange',
 				'onPedalChange',
 				'onChangeInstrument'
 			]);
 
-			JMB.init(this.onJMBInit);
+			JMB.init(this.onJMBInit, this.onJMBError);
 		},
 
 		// Initializes the Jazz Midi Bridge (JMB) and related event handlers.
 		onJMBInit: function(MIDIAccess) {
-			this.midiAccess = MIDIAccess;
-			this.detectDevices();
-			this.selectDefaultDevices();
+			if(MIDIAccess) {
+				this.midiAccess = MIDIAccess;
+				this.detectDevices();
+				this.selectDefaultDevices();
+			}
+			this.initListeners();
+		},
+
+		// Handles error on Jazz Midi Bridge error
+		onJMBError: function() {
+			alert('Please download the Jazz MIDI plugin: http://jazz-soft.net/download/');
 			this.initListeners();
 		},
 
 		// Detects midi devices.
 		detectDevices: function() {
-			this.outputDevices = this.midiAccess.enumerateOutputs() || [];
-			this.inputDevices = this.midiAccess.enumerateInputs() || [];
-			this.trigger('devices', this.inputDevices, this.outputDevices, this.defaults);
+			if(this.midiAccess) {
+				this.outputDevices = this.midiAccess.enumerateOutputs() || [];
+				this.inputDevices = this.midiAccess.enumerateInputs() || [];
+				this.trigger('devices', this.inputDevices, this.outputDevices, this.defaultDevices);
+			}
 		},
 
 		// Scans for changes to midi devices.
@@ -94,10 +108,10 @@ define([
 			var outputs = this.outputDevices;
 			var inputs = this.inputDevices;
 			if(outputs && outputs.length > 0) {
-				this.output = outputs[this.defaults.outputIndex];
+				this.output = outputs[this.defaultDevices.outputIndex];
 			}
 			if(inputs && inputs.length > 0) {
-				this.input = inputs[this.defaults.inputIndex];
+				this.input = inputs[this.defaultDevices.inputIndex];
 			}
 		},
 
@@ -145,10 +159,10 @@ define([
 
 			switch(command) {
 				case JMB.NOTE_ON:
-					this.eventBus.trigger('note', 'on', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
+					this.eventBus.trigger('note', 'on', msg.data1, this.noteVelocity || msg.data2);
 					break;
 				case JMB.NOTE_OFF:
-					this.eventBus.trigger('note', 'off', msg.data1, DEFAULT_NOTE_VELOCITY || msg.data2);
+					this.eventBus.trigger('note', 'off', msg.data1, this.noteVelocity || msg.data2);
 					break;
 				case JMB.CONTROL_CHANGE:
 					if(this.midiControlMap.pedal.hasOwnProperty(msg.data1)) {
@@ -161,38 +175,43 @@ define([
 		},
 
 		// Handles note output (not from an external device). 
-		onNoteChange: function(noteState, noteNumber, noteVelocity) {
-			noteVelocity = DEFAULT_NOTE_VELOCITY || noteVelocity; 
+		onNoteChange: function(noteState, noteNumber) {
 			var changed = this.toggleNote(noteState, noteNumber);
 			if(changed) {
-				var midiCommand = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-				var midiMessage = this.midiAccess.createMIDIMessage(midiCommand, noteNumber, noteVelocity);
-				this.output.sendMIDIMessage(midiMessage);
+				var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+				this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
 			}
 		},
 
 		// Handles sustain, sostenuto, soft pedal events.
 		onPedalChange: function(pedal, state) {
-			var command = JMB.CONTROL_CHANGE,
-				controlNumber = this.midiControlMap.pedal[pedal], 
-				controlValue = (state === 'off' ? 0 : 127),
-				msg = this.midiAccess.createMIDIMessage(command,controlNumber,controlValue,this.channel);
+			var command = JMB.CONTROL_CHANGE;
+			var controlNumber = this.midiControlMap.pedal[pedal];
+			var controlValue = (state === 'off' ? 0 : 127);
 
-				if(this.output) {
-					this.output.sendMIDIMessage(msg);
-				}
+			if(pedal === 'soft') {
+				this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
+			}
+
+			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);
 		},
 
 		// Handles change of instrument.
 		onChangeInstrument: function(instrumentNum) {
 			var command = JMB.PROGRAM_CHANGE;
-			if(instrumentNum < 0) {
-				instrumentNum = this.defaults.instrumentNum;
-			}
-			var msg = this.midiAccess.createMIDIMessage(command,instrumentNum,0,this.channel);
+			var instrumentNum = instrumentNum < 0 ? this.defaultInstrumentNum : instrumentNum;
 
-			if(this.output) {
-				this.output.sendMIDIMessage(msg);
+			this.sendMIDIMessage(command, instrumentNum, 0, this.channel);
+		},
+
+		// Outputs a MIDI message via the Jazz MIDI bridge
+		sendMIDIMessage: function() {
+			var msg, output = this.output, midiAccess = this.midiAccess;
+			if(this.midiAccess) {
+				msg = midiAccess.createMIDIMessage.apply(midiAccess, arguments);
+				if(output) {
+					output.sendMIDIMessage(msg);
+				} 
 			}
 		}
 	});
