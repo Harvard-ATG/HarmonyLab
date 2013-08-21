@@ -30,18 +30,18 @@ define(['lodash', 'jquery'], function(_, $) {
 			return this;
 		},
 		initListeners: function() {
-			var that = this;
-			this.el.on('click', '.js-modal-close-btn', null, function(e) {
-				e.stopPropagation();
-				e.preventDefault();
-				that.close();
-			});
+			this.el.on('click', '.js-modal-close-btn', null, _.bind(this.onClose,this));
 			return this;
 		},
 		open: function() {
 			this.render().appendToDOM();
 			this.el.removeClass('close').addClass('open');
 			return this;
+		},
+		onClose: function(evt) {
+			evt.stopPropagation();
+			evt.preventDefault();
+			this.close();
 		},
 		close: function() {
 			this.el.removeClass('open').addClass('close');
