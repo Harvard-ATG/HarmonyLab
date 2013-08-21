@@ -3,8 +3,9 @@ define([
 	'lodash', 
 	'microevent', 
 	'jazzmidibridge', 
-	'app/eventbus'
-], function(_, MicroEvent, JMB, eventBus, midiInstruments) {
+	'app/eventbus',
+	'app/ui/widget/modal'
+], function(_, MicroEvent, JMB, eventBus, Modal) {
 	"use strict";
 
 	/**
@@ -67,8 +68,12 @@ define([
 				'onMidiMessage',
 				'onNoteChange',
 				'onPedalChange',
-				'onChangeInstrument'
+				'onChangeInstrument',
+				'initListeners',
 			]);
+
+			this.onJMBInit = this.execAfter(this.onJMBInit, this.initListeners);
+			this.onJMBError = this.execAfter(this.onJMBError, this.initListeners);
 
 			JMB.init(this.onJMBInit, this.onJMBError);
 		},
@@ -80,13 +85,17 @@ define([
 				this.detectDevices();
 				this.selectDefaultDevices();
 			}
-			this.initListeners();
 		},
 
 		// Handles error on Jazz Midi Bridge error
 		onJMBError: function() {
-			alert('Please download the Jazz MIDI plugin: http://jazz-soft.net/download/');
-			this.initListeners();
+			var title = 'Jazz MIDI Plugin Required';
+			var msg = '<p>Your browser is missing the Jazz MIDI plugin. '
+				+ 'This browser plugin is required if you want to connect your MIDI keyboard to the application.</p>'
+				+ '<p>Please download and install the Jazz MIDI plugin here: <br/>'
+				+ '<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
+
+			Modal.msg(title, msg);
 		},
 
 		// Detects midi devices.
@@ -133,7 +142,6 @@ define([
 
 		// Initializes listeners.
 		initListeners: function() {
-
 			this.eventBus.bind('note', this.onNoteChange);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.eventBus.bind('instrument', this.onChangeInstrument);
@@ -213,6 +221,15 @@ define([
 					output.sendMIDIMessage(msg);
 				} 
 			}
+		},
+
+		// Execute the second fn after the first one, returning the result of the first
+		execAfter: function(firstFn, secondFn) {
+			return function() {
+				var result = firstFn();
+				secondFn();
+				return result;
+			};
 		}
 	});
 

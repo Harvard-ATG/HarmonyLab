@@ -10,7 +10,7 @@ define([
 	'app/piano',
 	'app/shortcuts',
 	'app/ui/staff_tab_nav',
-	'app/widget/key_signature',
+	'app/ui/widget/key_signature',
 	'app/eventbus'
 ], 
 function(

@@ -1,4 +1,4 @@
-/* global define:false, document:false */
+/* global define:false */
 define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
 	"use strict";
 
