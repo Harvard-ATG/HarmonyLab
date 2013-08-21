@@ -398,14 +398,15 @@ body {
 	-webkit-transition: opacity 500ms ease-in;
 	-moz-transition: opacity 500ms ease-in;
 	transition: opacity 500ms ease-in;
+	z-index: 10000;
 }
 .modal.close {
 	opacity:0;
-	z-index: -10000;
+	pointer-events: none;
 }
 .modal.open {
 	opacity:1;
-	z-index: 10000;
+	pointer-events: auto;
 }
 .modal > div {
 	width: 400px;
