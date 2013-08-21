@@ -63,13 +63,10 @@ define([
 			this.midiNotes = this.config.midiNotes;
 
 			_.bindAll(this, [
-				'onJMBInit',
-				'onJMBError',
 				'onMidiMessage',
 				'onNoteChange',
 				'onPedalChange',
-				'onChangeInstrument',
-				'initListeners',
+				'onChangeInstrument'
 			]);
 
 			this.onJMBInit = this.execAfter(this.onJMBInit, this.initListeners);
@@ -225,9 +222,10 @@ define([
 
 		// Execute the second fn after the first one, returning the result of the first
 		execAfter: function(firstFn, secondFn) {
+			var that = this;
 			return function() {
-				var result = firstFn();
-				secondFn();
+				var result = firstFn.apply(that, arguments);
+				secondFn.call(that);
 				return result;
 			};
 		}

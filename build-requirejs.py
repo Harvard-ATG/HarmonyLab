@@ -51,7 +51,7 @@ for d in [BUILD_DATA_DIR, BUILD_OUTPUT_DIR]:
 
 #----------
 # Run the require.js optimizer
-requirejs_optimizer = "r.js -o {0} optimize=none".format(BUILD_CONFIG)
+requirejs_optimizer = "r.js -o {0}".format(BUILD_CONFIG)
 print "Running require.js optimizer: {0}".format(requirejs_optimizer)
 subprocess.check_call(requirejs_optimizer, shell=True)
 
