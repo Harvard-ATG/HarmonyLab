@@ -7,7 +7,7 @@ define(['lodash', 'jquery'], function(_, $) {
 			'<a href="#" class="modal-close-btn js-modal-close-btn">X</a>',
 			'<h2 class="modal-title"><%= title %></h2>',
 			'<div class="modal-body"><%= msg %><div>',
-		'</div>',
+		'</div>'
 	].join(''));
 
 	// Simple modal dialog to display a message to the user.
