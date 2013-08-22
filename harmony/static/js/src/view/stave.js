@@ -67,7 +67,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		// returns true if notes exist
 		hasNotes: function() {
-			return this.midiNotes.hasNotes(this.clef);
+			return this.chord.hasNotes(this.clef);
 		},
 		// returns a list of Vex.Flow stave notes
 		getVexNotes: function() {
@@ -77,7 +77,7 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
 		getNoteKeysAndModifiers: function() {
-			var notes = this.midiNotes.getNotePitches(this.clef);
+			var notes = this.chord.getNotePitches(this.clef);
 			var keys = [], modifiers = [];
 			var i, len, note, spelling;
 

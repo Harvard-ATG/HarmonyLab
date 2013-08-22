@@ -2,18 +2,18 @@
 define(['lodash', 'microevent'], function(_, MicroEvent) {
 	"use strict";
 
-	// This object is responsible for tracking the MIDI notes that are "on" or
-	// currently active.  It also must know how to partition notes by clef and
-	// convert MIDI note numbers to their associated pitch classes and octaves.
+	// This object is responsible for knowing which MIDI notes are present in the chord.
+	// It must know how to partition notes by clef and convert MIDI note numbers to 
+	// their associated pitch classes and octaves.
 	//
 	// This object is observable and fires "change" events when a note is
 	// turned on or off.
 	
-	var MidiNotes = function() {
+	var Chord = function() {
 		this._notes = {};
 	};
 
-	_.extend(MidiNotes.prototype, {
+	_.extend(Chord.prototype, {
 		// Command to turn on a note. Fires a change event if the note status has changed.
 		// Returns true if the note status was changed, false otherwise.
 		noteOn: function(number) {
@@ -128,7 +128,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		}
 	});
 
-	MicroEvent.mixin(MidiNotes); // make object observable
+	MicroEvent.mixin(Chord); // make object observable
 
-	return MidiNotes;
+	return Chord;
 });

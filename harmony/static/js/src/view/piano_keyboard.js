@@ -4,9 +4,9 @@ define([
 	'lodash', 
 	'microevent',
 	'raphael',
-	'app/eventbus',
-	'app/piano/keygenerator', 
-	'app/piano/key'
+	'app/model/event_bus',
+	'app/util/piano_key_generator', 
+	'app/view/piano_key'
 ], function(
 	$, 
 	_, 

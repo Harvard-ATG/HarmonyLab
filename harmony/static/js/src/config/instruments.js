@@ -1,10 +1,7 @@
-// Module that defines the available MIDI INSTRUMENTS
+// Instrument Configuration
 
 /* global define: false */
-define(['lodash'], function(_) {
-	"use strict";
-
-var INSTRUMENTS = {
+define({
     "0": {
         "name": "Acoustic Grand Piano",
 		"shortName": "Piano",
@@ -521,31 +518,4 @@ var INSTRUMENTS = {
         "name": "Gunshot",
         "category": "Sound effects"
     }
-};
-
-	var enabled = [0, 6, 16, 52]; // instrument numbers
-
-	return {
-		numberOf: function(name) {
-			var num;
-			for(num in INSTRUMENTS) {
-				if(INSTRUMENTS.hasOwnProperty(num) && 
-					INSTRUMENTS[num].name.toLowerCase() === name.toLowerCase()) {
-					return parseInt(num, 10);
-				}
-			}
-			return -1;
-		},
-		getDefault: function() {
-			return 0;
-		},
-		getEnabled: function() {
-			return _.map(enabled, function(num, index) {
-				return { 
-					num: num, 
-					name: INSTRUMENTS[num].shortName || INSTRUMENTS[num].name
-				};
-			});
-		}
-	};
 });

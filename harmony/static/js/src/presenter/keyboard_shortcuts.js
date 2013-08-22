@@ -3,12 +3,12 @@ define([
 	'lodash', 
 	'jquery', 
 	'microevent',
-	'app/eventbus', 
+	'app/model/event_bus', 
 	'app/config'
-], function(_, $, MicroEvent, eventBus, CONFIG) {
+], function(_, $, MicroEvent, eventBus, Config) {
 	"use strict";
 
-	var SHORTS = CONFIG.keyboardShortcuts;
+	var SHORTS = Config.get('general.keyboardShortcuts');
 
 	var KeyboardShortcuts = function(config) {
 		this.init(config);

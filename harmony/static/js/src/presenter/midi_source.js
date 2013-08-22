@@ -3,13 +3,13 @@ define([
 	'lodash', 
 	'microevent', 
 	'jazzmidibridge', 
-	'app/eventbus',
-	'app/ui/widget/modal'
+	'app/model/event_bus',
+	'app/view/modal'
 ], function(_, MicroEvent, JMB, eventBus, Modal) {
 	"use strict";
 
 	/**
-	 * The midi controller is responsible for coordinating midi messages 
+	 * The midi source is responsible for handling midi messages 
 	 * from both external keyboard devices and onscreen devices as well
 	 * as handling midi control changes.
 	 *
@@ -17,12 +17,12 @@ define([
 	 * (JMB) and uses the event bus to broadcast interesting events
 	 * to other application components.
 	 */
-	var MidiController = function(config) {
+	var MidiSource = function(config) {
 		this.config = config || {};
 		this.init();
 	};
 
-	_.extend(MidiController.prototype, {
+	_.extend(MidiSource.prototype, {
 		eventBus: eventBus,
 
 		// jazzmidibridge api for midi input/output
@@ -56,11 +56,11 @@ define([
 
 		// Initializes the MIDI router to send and receive MIDI messages.
 		init: function() {
-			if(!this.config.hasOwnProperty('midiNotes')) {
+			if(!this.config.hasOwnProperty('chord')) {
 				throw new Error("missing config property");
 			}
 
-			this.midiNotes = this.config.midiNotes;
+			this.chord = this.config.chord;
 
 			_.bindAll(this, [
 				'onMidiMessage',
@@ -150,7 +150,7 @@ define([
 
 		// Toggles a note state.
 		toggleNote: function(noteState, noteNumber) {
-			return this.midiNotes[noteState==='on'?'noteOn':'noteOff'](noteNumber);
+			return this.chord[noteState==='on'?'noteOn':'noteOff'](noteNumber);
 		},
 
 		// Handles a midi message. 
@@ -231,7 +231,7 @@ define([
 		}
 	});
 
-	MicroEvent.mixin(MidiController); // make object observable
+	MicroEvent.mixin(MidiSource); // make object observable
 
-	return MidiController;
+	return MidiSource;
 });

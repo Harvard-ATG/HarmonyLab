@@ -3,8 +3,8 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow', 
-	'app/notation/stave_renderer',
-], function($, _, Vex, StaveRenderer) {
+	'app/view/stave',
+], function($, _, Vex, Stave) {
 	"use strict";
 
 	// The Notation object is responsible for knowing to construct the grand staff
@@ -12,7 +12,7 @@ define([
 	// are played.
 	//
 	// Delegates responsibility for rendering notes and signatures to
-	// the StaveRenderer and the Vex.Flow library.
+	// the Stave and the Vex.Flow library.
 	//
 	// Also collaborates with the MidiNotes object, responsible for modeling
 	// the state of notes and the KeySignature object for modeling the
@@ -34,7 +34,7 @@ define([
 			this.initListeners();
 		},
 		initConfig: function() {
-			var required = ['midiNotes', 'keySignature'];
+			var required = ['chord', 'keySignature'];
 
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
@@ -60,7 +60,7 @@ define([
 		},
 		initListeners: function() {
 			_.bindAll(this, ['render']);
-			this.midiNotes.bind('change', this.render);
+			this.chord.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
 		},
 		clear: function() {
@@ -78,11 +78,11 @@ define([
 			var config = {
 				clef: clef,
 				width: width,
-				midiNotes: this.midiNotes,
+				chord: this.chord,
 				keySignature: this.keySignature,
 				vexRenderer: this.vexRenderer
 			};
-			this.staves.push(new StaveRenderer(config));
+			this.staves.push(new Stave(config));
 		},
 		renderStaves: function() {
 			var i, len;

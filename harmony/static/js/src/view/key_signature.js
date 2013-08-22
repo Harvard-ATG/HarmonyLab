@@ -1,10 +1,10 @@
 /* global define:false */
-define(['lodash', 'jquery', 'app/config'], function(_, $, CONFIG) {
+define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 	"use strict";
 
-	var KEY_MAP = CONFIG.keyMap;
-	var KEY_DISPLAY_GROUPS = CONFIG.keyDisplayGroups;	
-	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;
+	var KEY_MAP = Config.get('general.keyMap');
+	var KEY_DISPLAY_GROUPS = Config.get('general.keyDisplayGroups')	
+	var KEY_SIGNATURE_MAP = Config.get('general.keySignatureMap');
 
 	var KeySignatureWidget = function(keySignature) {
 		this.lock = keySignature.locked();

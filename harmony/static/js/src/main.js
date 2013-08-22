@@ -2,30 +2,30 @@
 define([
 	'lodash',
 	'jquery', 
-	'app/midi/controller',
-	'app/midi/instruments',
-	'app/midi/notes',
-	'app/notation',
-	'app/notation/key_signature',
-	'app/piano',
-	'app/shortcuts',
-	'app/ui/staff_tab_nav',
-	'app/ui/widget/key_signature',
-	'app/eventbus'
+	'app/model/chord',
+	'app/model/event_bus',
+	'app/model/key_signature',
+	'app/view/notation',
+	'app/view/piano_keyboard',
+	'app/presenter/midi_source',
+	'app/presenter/keyboard_shortcuts',
+	'app/presenter/notation_tabs',
+	'app/view/key_signature',
+	'app/util/instruments',
 ], 
 function(
 	_,
 	$,
-	MidiController,
-	midiInstruments,
-	MidiNotes,
-	Notation,
+	Chord,
+	eventBus,
 	KeySignature,
+	Notation,
 	PianoKeyboard,
+	MidiSource,
 	KeyboardShortcuts,
-	StaffTabNav,
+	NotationTabs,
 	KeySignatureWidget,
-	eventBus
+	Instruments
 ) {
 	"use strict";
 
@@ -38,12 +38,12 @@ function(
 		},
 		initTabs: function() {
 			// activate the tab menus around the staff area
-			StaffTabNav.init();
+			NotationTabs.init();
 		},
 		initInstruments: function() {
 			var el = $('#select_instrument');
 			var tpl = _.template('<option value="<%= num %>"><%= name %></option>');
-			var enabled = midiInstruments.getEnabled();
+			var enabled = Instruments.getEnabled();
 
 			_.each(enabled, function(instrument, index) {
 				el.append(tpl(instrument));
@@ -107,8 +107,8 @@ function(
 			var widget = new KeySignatureWidget(key_signature);
 			$('#key_signature_widget').append(widget.render().el);
 		},
-		initDevices: function(midi_controller) {
-			midi_controller.bind('devices', function(inputs, outputs, defaults) {
+		initDevices: function(midi_source) {
+			midi_source.bind('devices', function(inputs, outputs, defaults) {
 				var tpl = _.template('<option value="<%= id %>"><%= name %></option>');
 				var makeOptions = function(device, idx) {
 					return tpl({ id: idx, name: device.deviceName });
@@ -137,18 +137,18 @@ function(
 					} else {
 						$(device.selector).on('change', function() {
 							var index = $(this).val();
-							midi_controller.selectDevice(type, index);
+							midi_source.selectDevice(type, index);
 						});
 					}
 					$(device.selector).css('width', '100%');
 				});
 
 				$('#refresh_midi_devices').on('click', function() {
-					midi_controller.scanDevices();
-					midi_controller.detectDevices();
+					midi_source.scanDevices();
+					midi_source.detectDevices();
 				});
 			});
-			midi_controller.detectDevices();
+			midi_source.detectDevices();
 		},
 		initKeyboardShortcuts: function(shortcuts) {
 			var $shortcutsEl = $('#keyboard_shortcuts');
@@ -193,11 +193,11 @@ function(
 		},
 		init: function() {
 			var keyboard = new PianoKeyboard();
-			var midi_notes = new MidiNotes();
+			var chord = new Chord();
 			var key_signature = new KeySignature();
-			var midi_controller = new MidiController({ midiNotes: midi_notes });
+			var midi_source = new MidiSource({ chord: chord });
 			var notation = new Notation({ 
-				midiNotes: midi_notes, 
+				chord: chord, 
 				keySignature: key_signature 
 			});
 			var shortcuts = new KeyboardShortcuts({
@@ -214,7 +214,7 @@ function(
 			this.initKeyAndSignature(key_signature);
 			this.initKeyboardShortcuts(shortcuts);
 			this.initThemeSelector();
-			this.initDevices(midi_controller);
+			this.initDevices(midi_source);
 		}
 	};
 

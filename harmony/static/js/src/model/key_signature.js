@@ -1,11 +1,11 @@
 /* global define: false */
-define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, CONFIG) {
+define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 	"use strict";
 
-	var DEFAULT_KEY = CONFIG.defaultKeyAndSignature;
-	var KEY_SIGNATURE_MAP = CONFIG.keySignatureMap;
-	var KEY_MAP = CONFIG.keyMap;
-	var KEY_WHEEL = CONFIG.keyWheel;
+	var DEFAULT_KEY = Config.get('general.defaultKeyAndSignature');
+	var KEY_SIGNATURE_MAP = Config.get('general.keySignatureMap');
+	var KEY_MAP = Config.get('general.keyMap');
+	var KEY_WHEEL = Config.get('general.keyWheel');
 
 	// The KeySignature object is responsible for knowing the current key and
 	// signature as well as how to spell and notate pitches with correct 
