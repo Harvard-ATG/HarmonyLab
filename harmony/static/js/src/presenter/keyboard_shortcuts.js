@@ -8,7 +8,7 @@ define([
 ], function(_, $, MicroEvent, eventBus, Config) {
 	"use strict";
 
-	var SHORTS = Config.get('general.keyboardShortcuts');
+	var SHORTS = Config.get('keyboardShortcuts');
 
 	var KeyboardShortcuts = function(config) {
 		this.init(config);

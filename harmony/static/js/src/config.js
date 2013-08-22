@@ -8,10 +8,12 @@ define([
 	'lodash', 
 	'app/config/general',
 	'app/config/instruments',
+	'app/config/keyboard_shortcuts'
 ], function(
 	_, 
 	ConfigGeneral, 
-	ConfigInstruments) {
+	ConfigInstruments,
+	ConfigKeyboardShortcuts) {
 	"use strict";
 
 	var Config = {
@@ -19,11 +21,15 @@ define([
 		// private cache of config data
 		__config: {
 			'general': ConfigGeneral,
-			'instruments': ConfigInstruments
+			'instruments': ConfigInstruments,
+			'keyboardShortcuts': ConfigKeyboardShortcuts
 		},
 
-		// returns the value of a key
-		// nested values may be retrieved using dot notation (i.e. x.y.z)
+		// public method that returns the value of a key.
+		//
+		// For convenience, nested values may be retrieved 
+		// using dot notation: get("x.y.z") => value of z.
+		//
 		get: function(key) {
 			if(typeof key !== 'string') {
 				throw new Error("Config key must be a string: " + key);
