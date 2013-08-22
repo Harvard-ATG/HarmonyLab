@@ -51,7 +51,7 @@ define([
 				'sustain': 64,
 				'sostenuto': 66,
 				'soft': 67
-			},
+			}
 		},
 
 		// Initializes the MIDI router to send and receive MIDI messages.
@@ -87,8 +87,9 @@ define([
 		// Handles error on Jazz Midi Bridge error
 		onJMBError: function() {
 			var title = 'Jazz MIDI Plugin Required';
-			var msg = '<p>Your browser is missing the Jazz MIDI plugin. '
-				+ 'This browser plugin is required if you want to connect your MIDI keyboard to the application.</p>'
+			var msg = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. '
+				+ 'This browser plugin is required to produce sound with the on-screen keyboard or to '
+				+ 'connect and use your own MIDI keyboard.</p>'
 				+ '<p>Please download and install the Jazz MIDI plugin here: <br/>'
 				+ '<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
@@ -204,7 +205,7 @@ define([
 		// Handles change of instrument.
 		onChangeInstrument: function(instrumentNum) {
 			var command = JMB.PROGRAM_CHANGE;
-			var instrumentNum = instrumentNum < 0 ? this.defaultInstrumentNum : instrumentNum;
+			instrumentNum = instrumentNum < 0 ? this.defaultInstrumentNum : instrumentNum;
 
 			this.sendMIDIMessage(command, instrumentNum, 0, this.channel);
 		},
