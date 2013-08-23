@@ -29,6 +29,7 @@ function(
 ) {
 	"use strict";
 
+	// TODO: encapsulate each setup method in a presenter object
 	var setup = {
 		initOnScreenPiano: function(keyboard) {
 			$('#piano').append(keyboard.render().el);
