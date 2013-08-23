@@ -17,6 +17,8 @@ define([
 	_.extend(KeyboardShortcuts.prototype, {
 		midiNote: 48, // anchor for MIDI note offsets
 
+		eventBus: eventBus, // reference to the global event bus
+
 		enabled: false, // shortcuts mode disabled by default
 
 		// intialization
@@ -83,10 +85,10 @@ define([
 			this.keySignature.changeKey('jC_', true);	
 		},
 		depressSustain: function() {
-			eventBus.trigger('pedal', 'sustain', 'on');
+			this.eventBus.trigger('pedal', 'sustain', 'on');
 		},
 		releaseSustain: function() {
-			eventBus.trigger('pedal', 'sustain', 'off');
+			this.eventBus.trigger('pedal', 'sustain', 'off');
 		},
 		retakeSustain: function() {
 			this.releaseSustain();
@@ -98,11 +100,11 @@ define([
 
 		// activate a note
 		noteOn: function(noteOffset) {
-			eventBus.trigger('note', 'on', this.calculateNote(noteOffset));
+			this.eventBus.trigger('note', 'on', this.calculateNote(noteOffset));
 		},
 		// deactivate a note
 		noteOff: function(noteOffset) {
-			eventBus.trigger('note', 'off', this.calculateNote(noteOffset));
+			this.eventBus.trigger('note', 'off', this.calculateNote(noteOffset));
 		},
 		// calculates the MIDI note given an offset 
 		calculateNote: function(noteOffset) {
