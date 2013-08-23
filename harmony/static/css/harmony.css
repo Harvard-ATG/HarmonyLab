@@ -261,6 +261,10 @@ body {
     visibility: hidden;
 }
 
+.tab-content-inner select {
+	max-width: 125px;
+}
+
 /*--------------------------------------------------*/
 /* On-screen keyboard */
 

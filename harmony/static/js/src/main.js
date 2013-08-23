@@ -7,10 +7,10 @@ define([
 	'app/model/key_signature',
 	'app/view/notation',
 	'app/view/piano_keyboard',
+	'app/view/key_signature',
 	'app/presenter/midi_source',
 	'app/presenter/keyboard_shortcuts',
 	'app/presenter/notation_tabs',
-	'app/view/key_signature',
 	'app/util/instruments',
 ], 
 function(
@@ -21,10 +21,10 @@ function(
 	KeySignature,
 	Notation,
 	PianoKeyboard,
+	KeySignatureWidget,
 	MidiSource,
 	KeyboardShortcuts,
 	NotationTabs,
-	KeySignatureWidget,
 	Instruments
 ) {
 	"use strict";
