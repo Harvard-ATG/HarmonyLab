@@ -2,9 +2,8 @@
 define(['lodash', 'microevent'], function(_, MicroEvent) {
 	"use strict";
 
-	// This object is responsible for knowing which MIDI notes are present in the chord.
-	// It must know how to partition notes by clef and convert MIDI note numbers to 
-	// their associated pitch classes and octaves.
+	// This object is responsible for knowing which MIDI notes are active at one time
+	// and how to manipulate their representation and select them by clef.
 	//
 	// This object is observable and fires "change" events when a note is
 	// turned on or off.

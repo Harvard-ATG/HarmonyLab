@@ -8,8 +8,7 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 	var KEY_WHEEL = Config.get('general.keyWheel');
 
 	// The KeySignature object is responsible for knowing the current key and
-	// signature as well as how to spell and notate pitches with correct 
-	// accidentals.
+	// signature and how to manipulate them.
 	//
 	// It collaborates with the global configuration object that holds the 
 	// mapping for keys and signatures as well as other relevant information. 
