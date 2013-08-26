@@ -77,17 +77,13 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
 		getNoteKeysAndModifiers: function() {
-			var notes = this.chord.getNotePitches(this.clef);
-			var keys = [], modifiers = [];
-			var i, len, note, spelling;
+			var keys = this.chord.getNoteKeys(this.keySignature, this.clef);
+			var accidentals = this.chord.getNoteAccidentals(this.keySignature, keys);
+			var modifiers = [];
 
-			for(i = 0, len = notes.length; i < len; i++) {
-				note = notes[i];
-				spelling = this.keySignature.spellingOf(note.pitchClass, note.octave);
-
-				keys.push(spelling.key_name);
-				if(spelling.has_accidental) {
-					modifiers.push(this.makeAccidentalModifier(i, spelling.accidental));
+			for(var i = 0, len = accidentals.length; i < len; i++) {
+				if(accidentals[i]) {
+					modifiers.push(this.makeAccidentalModifier(i, accidentals[i]));
 				}
 			}
 

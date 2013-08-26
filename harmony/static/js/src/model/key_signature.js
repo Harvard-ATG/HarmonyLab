@@ -132,53 +132,14 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		getKeyOfSignature: function() {
 			return this.keyOfSignature;
 		},
+		// Returns the current note spelling 
+		getSpelling: function() {
+			return this.keyToSpelling(this.keyOfSignature);
+		},
 
 		//--------------------------------------------------
 		// Note spelling functions
-
-		// returns list of note accidentals in the correct order to notate 
-		// the signature for sharps or flats
-		orderOfAccidentals: function(accidental, num_accidentals) {
-			var order = ["F","C","G","D","A","E","B"]; // order of sharps
-			if(accidental === 'b') {
-				order = order.reverse(); // reverse to notate flats 
-			}
-			return order.slice(0, num_accidentals);
-		},
-		// returns the spelling of a note identified by its pitch class and octave
-		spellingOf: function(pitchClass, octave) {
-			var note_spelling = this.keyToSpelling(this.keyOfSignature);
-			var note = note_spelling[pitchClass];
-			var accidental = this.calculateAccidental(note);
-
-			octave = this.calculateOctave(pitchClass, octave, note);
-
-			return {
-				key_name: [note, octave].join('/'),
-				accidental: accidental,
-				has_accidental: (accidental !== '')
-			};
-		},
-		// returns the octave for a note (for edge cases)
-		calculateOctave: function(pitchClass, octave, note) {
-			var note_letter = note.charAt(0);
-			if(pitchClass === 0 && note_letter === 'B') {
-				return octave - 1;
-			} else if(pitchClass === 11 && note_letter === 'C') {
-				return octave + 1;
-			}
-			return octave;
-		},
-		// returns the accidental for a note (if any) based upon 
-		// the current key signature
-		calculateAccidental: function(note) {
-			if(this.signatureContains(note)) {
-				return '';
-			} else if(this.needsNatural(note)) {
-				return 'n';
-			}
-			return note.substr(1);
-		},
+		
 		// returns true if the note needs a "natural" accidental
 		// as a result of the current key signature, false otherwise
 		needsNatural: function(note) {
@@ -265,6 +226,15 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		// returns the note spelling based on the current key signature
 		keyToSpelling: function(key) {
 			return KEY_MAP[key].spelling;
+		},
+		// returns list of note accidentals in the correct order to notate 
+		// the signature for sharps or flats
+		orderOfAccidentals: function(accidental, num_accidentals) {
+			var order = ["F","C","G","D","A","E","B"]; // order of sharps
+			if(accidental === 'b') {
+				order = order.reverse(); // reverse to notate flats 
+			}
+			return order.slice(0, num_accidentals);
 		},
 	});
 

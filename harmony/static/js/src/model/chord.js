@@ -125,7 +125,68 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 					throw new Error("invalid clef");
 			}
 			return false;
-		}
+		},
+		// returns a list of key names ["note/octave", ...] 
+		getNoteKeys: function(keySignature, clef) {
+			var pitches = this.getNotePitches(clef);
+			var spelling = keySignature.getSpelling();
+			var note, pitchClass, octave;
+			var note_keys = [];
+
+			for(var i = 0, len = pitches.length; i < len; i++) {
+				pitchClass = pitches[i].pitchClass;
+				octave = pitches[i].octave;
+				note = spelling[pitchClass];
+				octave = this.calculateOctave(pitchClass, octave, note);
+				note_keys.push([note, octave].join('/'));
+			}
+
+			return note_keys;
+		},
+		// returns a list of accidentals for the corresponding key names
+		getNoteAccidentals: function(keySignature, noteKeys) {
+			var accidentals = [];
+			var accidental, 
+				note, 
+				note_spelling,
+				natural_note, 
+				natural_found_idx;
+
+			for(var i = 0, len = noteKeys.length; i < len; i++) {
+				note = noteKeys[i];
+				note_spelling = note.replace(/\/\d$/, '');
+				accidental = note_spelling.substr(1); // get default accidental
+				natural_note = note.replace(accidental + "\/", '/');
+				natural_found_idx = noteKeys.indexOf(natural_note);
+
+				// check to see if the natural version of this note is active
+				if(natural_found_idx !== -1 && i !== natural_found_idx) {
+					accidentals[natural_found_idx] = 'n';
+				} else {
+					// otherwise modify the accidental according to the key signature
+					if(keySignature.signatureContains(note_spelling)) {
+						accidental = '';	
+					} else if(keySignature.needsNatural(note_spelling)) {
+						accidental = 'n';
+					} 
+				}
+
+				accidentals[i] = accidental;
+			}
+
+			return accidentals;
+		},
+		// returns the octave for a note, taking into account 
+		// the current note spelling 
+		calculateOctave: function(pitchClass, octave, note) {
+			var note_letter = note.charAt(0);
+			if(pitchClass === 0 && note_letter === 'B') {
+				return octave - 1;
+			} else if(pitchClass === 11 && note_letter === 'C') {
+				return octave + 1;
+			}
+			return octave;
+		},
 	});
 
 	MicroEvent.mixin(Chord); // make object observable
