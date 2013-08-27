@@ -149,20 +149,31 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				note, 
 				note_spelling,
 				natural_note, 
-				natural_found_idx;
+				natural_found_idx,
+				is_doubled;
 
 			for(var i = 0, len = noteKeys.length; i < len; i++) {
+				// skip to next iteration is for the case that the
+				// note has already been assigned a natural because
+				// the same note name appears twice (i.e. is doubled).
+				if(accidentals[i]) {
+					continue;
+				}
+
 				note = noteKeys[i];
 				note_spelling = note.replace(/\/\d$/, '');
 				accidental = note_spelling.substr(1); // get default accidental
 				natural_note = note.replace(accidental + "\/", '/');
 				natural_found_idx = noteKeys.indexOf(natural_note);
+				is_doubled = natural_found_idx !== -1 && i !== natural_found_idx;
 
-				// check to see if the natural version of this note is active
-				if(natural_found_idx !== -1 && i !== natural_found_idx) {
+				// check to see if this note is doubled - that is, the natrual version of
+				// the note is also active at the same time, in which case it needs to be
+				// distinguished with a natural accidental
+				if(is_doubled) {
 					accidentals[natural_found_idx] = 'n';
 				} else {
-					// otherwise modify the accidental according to the key signature
+					// otherwise check the key signature to determine the accidental
 					if(keySignature.signatureContains(note_spelling)) {
 						accidental = '';	
 					} else if(keySignature.needsNatural(note_spelling)) {
