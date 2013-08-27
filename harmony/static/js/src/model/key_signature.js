@@ -234,7 +234,7 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 				order = order.reverse(); // reverse to notate flats 
 			}
 			return order.slice(0, num_accidentals);
-		},
+		}
 	});
 
 	MicroEvent.mixin(KeySignature);

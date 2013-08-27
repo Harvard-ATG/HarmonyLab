@@ -1,5 +1,5 @@
 /* global define: false */
-define(['lodash', 'app/view/piano_key',], function(_, PianoKey) {
+define(['lodash', 'app/view/piano_key'], function(_, PianoKey) {
 	"use strict";
 
 	/**

@@ -218,7 +218,7 @@ define(['lodash'], function(_) {
 			el.attr({'stroke': '#000', 'fill': '#fffff0'});
 			el.toBack();
 			return this;
-		},
+		}
 	});
 
 	WhitePianoKey.prototype.keyColorMap[STATE_KEYUP] = '#fffff0';

@@ -196,7 +196,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				return octave + 1;
 			}
 			return octave;
-		},
+		}
 	});
 
 	MicroEvent.mixin(Chord); // make object observable

@@ -3,7 +3,7 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow', 
-	'app/view/stave',
+	'app/view/stave'
 ], function($, _, Vex, Stave) {
 	"use strict";
 
