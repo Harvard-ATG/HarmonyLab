@@ -88,14 +88,13 @@ body {
 .left-panel-bed {
 	width: 200px;
 	margin: 0 auto;
-	padding: 15px 0;  
+	padding: 0 0;  
 	text-align: left;
 	float:left;
 }
 
 #tab-nav-1.tab-nav ul {
 	position: relative;
-	float: left; 
 	width: 200px;
 	margin-left: 145px;
 	margin-top: 0;
@@ -106,8 +105,8 @@ body {
 
 #tab-nav-1.tab-nav a {
 	display: block;
-	margin:78px -60px 0 -41px;
-	width: 180px;
+	margin:88px -60px 0 -51px;
+	width: 200px;
 	float: left;
 	line-height: 24px;
 	text-align: center;
@@ -129,12 +128,12 @@ body {
 }
 #tab-nav-1.tab-nav a.expanded {
 	background-position: 2px -204px;
-	width: 180px;
+	width: 200px;
 }
 
 #tab-nav-1 .tab-content-wrapper {
 	width: 172px; 
-	height:172px; 
+	height:192px; 
 	margin-left: 61px; 
 	padding: 4px;
 }
@@ -169,11 +168,15 @@ body {
 	width: 120px;
 	margin: 10px auto;
 }
-#tab-nav-1 .tab-content-inner #notation-checkboxes {
-	margin-left: 25px;
-}
-#tab-nav-1 .tab-content-inner #notation-checkboxes input {
+
+.tab-content-inner .notation-checkboxes input {
 	margin: 2px 5px;
+}
+.tab-content-inner .notation-checkboxes label {
+	display: block;
+}
+#tab-nav-1 .tab-content-inner ul.notation-checkboxes {
+	margin-left: 25px;
 }
 
 /*--------------------------------------------------*/
@@ -182,7 +185,7 @@ body {
 	width: 200px;
 	position: absolute;
 	right: 210px;
-	top: 75px;
+	top: 59px;
 	padding:15px 0;
 }
 
@@ -199,8 +202,8 @@ body {
 
 #tab-nav-2.tab-nav a {
 	display: block;
-	margin:78px -104px 0 -40px;
-	width: 180px;
+	margin:88px -112px 0 -50px;
+	width: 200px;
 	float: right;
 	line-height: 24px;
 	text-align: center;
@@ -232,7 +235,7 @@ body {
 
 #tab-nav-2 .tab-content-wrapper {
 	width: 180px; 
-	height:180px; 
+	height: 200px; 
 	padding: 0px;
 	margin-left: 12px; 
 }

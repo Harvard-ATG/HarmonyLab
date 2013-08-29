@@ -7,7 +7,8 @@ define([
 	'app/model/key_signature',
 	'app/view/notation',
 	'app/view/piano_keyboard',
-	'app/view/key_signature',
+	'app/view/analyze_widget',
+	'app/view/key_signature_widget',
 	'app/presenter/midi_source',
 	'app/presenter/keyboard_shortcuts',
 	'app/presenter/notation_tabs',
@@ -21,6 +22,7 @@ function(
 	KeySignature,
 	Notation,
 	PianoKeyboard,
+	AnalyzeWidget,
 	KeySignatureWidget,
 	MidiSource,
 	KeyboardShortcuts,
@@ -103,6 +105,10 @@ function(
 				keyboard = new_keyboard;
 			});
 
+		},
+		initAnalyzeWidget: function() {
+			var widget = new AnalyzeWidget();
+			$('#analyze_widget').append(widget.render().el);
 		},
 		initKeyAndSignature: function(key_signature) {
 			var widget = new KeySignatureWidget(key_signature);
@@ -212,6 +218,7 @@ function(
 			this.initKeyboardSizes(keyboard);
 			this.initPedals();
 			this.initInstruments();
+			this.initAnalyzeWidget();
 			this.initKeyAndSignature(key_signature);
 			this.initKeyboardShortcuts(shortcuts);
 			this.initThemeSelector();
