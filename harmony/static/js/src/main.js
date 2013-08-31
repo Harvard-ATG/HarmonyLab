@@ -5,7 +5,7 @@ define([
 	'app/model/chord',
 	'app/model/event_bus',
 	'app/model/key_signature',
-	'app/view/notation',
+	'app/view/transcript',
 	'app/view/piano_keyboard',
 	'app/view/widget/analyze_widget',
 	'app/view/widget/key_signature_widget',
@@ -20,7 +20,7 @@ function(
 	Chord,
 	eventBus,
 	KeySignature,
-	Notation,
+	Transcript,
 	PianoKeyboard,
 	AnalyzeWidget,
 	KeySignatureWidget,
@@ -36,8 +36,8 @@ function(
 		initOnScreenPiano: function(keyboard) {
 			$('#piano').append(keyboard.render().el);
 		},
-		initNotation: function(notation) {
-			$('#staff-area').append(notation.render().el);
+		initTranscript: function(transcript) {
+			$('#staff-area').append(transcript.render().el);
 		},
 		initTabs: function() {
 			// activate the tab menus around the staff area
@@ -203,7 +203,7 @@ function(
 			var chord = new Chord();
 			var key_signature = new KeySignature();
 			var midi_source = new MidiSource({ chord: chord });
-			var notation = new Notation({ 
+			var transcript = new Transcript({ 
 				chord: chord, 
 				keySignature: key_signature 
 			});
@@ -214,7 +214,7 @@ function(
 
 			this.initTabs();
 			this.initOnScreenPiano(keyboard);
-			this.initNotation(notation);
+			this.initTranscript(transcript);
 			this.initKeyboardSizes(keyboard);
 			this.initPedals();
 			this.initInstruments();

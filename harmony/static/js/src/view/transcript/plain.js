@@ -3,31 +3,16 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow', 
-	'app/view/stave'
+	'app/view/transcript/stave'
 ], function($, _, Vex, Stave) {
 	"use strict";
 
-	// The Notation object is responsible for knowing to construct the grand staff
-	// and coordinate the rendering process for notating pitches as they 
-	// are played.
-	//
-	// Delegates responsibility for rendering notes and signatures to
-	// the Stave and the Vex.Flow library.
-	//
-	// Also collaborates with the MidiNotes object, responsible for modeling
-	// the state of notes and the KeySignature object for modeling the
-	// signature.
-	// 
+	// Plain Sheet Music Notation
+	var PlainNotation = function() {};
 
-	var Notation = function(config) {
-		this.config = config || {};
-		this.init();
-	};
-
-	_.extend(Notation.prototype, {
-		width: 520,
-		height: 355,
-		init: function() {
+	_.extend(PlainNotation.prototype, {
+		init: function(transcript) {
+			this.transcript = transcript;
 			this.initConfig();
 			this.initRenderer();
 			this.initStaves();
@@ -35,10 +20,11 @@ define([
 		},
 		initConfig: function() {
 			var required = ['chord', 'keySignature'];
+			var config = this.transcript.config;
 
 			_.each(required, function(propName) {
-				if(this.config.hasOwnProperty(propName)) {
-					this[propName] = this.config[propName];
+				if(config.hasOwnProperty(propName)) {
+					this[propName] = config[propName];
 				} else {
 					throw new Error("missing required config property: "+propName);
 				}
@@ -48,10 +34,12 @@ define([
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
 			this.el = $('<canvas></canvas>');
-			this.el[0].width = this.width;
-			this.el[0].height = this.height;
+			this.el[0].width = this.transcript.getWidth();
+			this.el[0].height = this.transcript.getHeight();
 
 			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], CANVAS);
+
+			this.transcript.el.append(this.el);
 		},
 		initStaves: function() {
 			this.staves = [];
@@ -74,7 +62,7 @@ define([
 			return this;
 		},
 		addStave: function(clef) {
-			var width = 0.8 * this.width;
+			var width = 0.8 * this.transcript.getWidth();
 			var config = {
 				clef: clef,
 				width: width,
@@ -157,5 +145,5 @@ define([
 		}
 	});
 
-	return Notation;
+	return PlainNotation;
 });

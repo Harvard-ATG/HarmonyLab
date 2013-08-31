@@ -3,11 +3,11 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 	"use strict";
 
 	// Knows how to render and manipulate a staff/stave.
-	var StaveRenderer = function(config) {
+	var Stave = function(config) {
 		this.init(config);
 	};
 
-	_.extend(StaveRenderer.prototype, {
+	_.extend(Stave.prototype, {
 		width: 450,
 		marginLeft: 40,
 		clefs: {
@@ -16,10 +16,18 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		},
 		// initialization
 		init: function(config) {
-			if(!this.clefs.hasOwnProperty(config.clef)) {
-				throw new Error("Invalid clef");
-			}
-			_.extend(this, config);
+			this.config = config;
+			this.initConfig();
+		},
+		initConfig: function() {
+			var required = ['clef', 'keySignature', 'chord', 'vexRenderer', 'width'];
+			_.each(required, function(propName) {
+				if(this.config.hasOwnProperty(propName) && this.config[propName]) {
+					this[propName] = this.config[propName];
+				} else {
+					throw new Error("missing required config property: "+propName);
+				}
+			}, this);
 
 			this.clefConfig = this.clefs[this.clef];
 		},
@@ -50,12 +58,12 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			return this;
 		},
 		// connects two staves together to form a grand staff
-		connectWith: function(staveRenderer) {
+		connectWith: function(stave) {
 			// This method should only be called *after* the stave has been rendered
-			if(staveRenderer) {
+			if(stave) {
 				var BRACE = Vex.Flow.StaveConnector.type.BRACE;
 				var ctx = this.vexRenderer.getContext();
-				var connector = new Vex.Flow.StaveConnector(this.getVexStave(), staveRenderer.getVexStave());
+				var connector = new Vex.Flow.StaveConnector(this.getVexStave(), stave.getVexStave());
 		
 				connector.setType(BRACE).setContext(ctx).draw();
 			}
@@ -113,5 +121,5 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		}
 	});
 
-	return StaveRenderer;
+	return Stave;
 });
