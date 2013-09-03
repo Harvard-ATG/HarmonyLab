@@ -55,9 +55,9 @@ define([
 			stave.setContext(ctx);
 			stave.draw();
 
-			if(this.hasTickables()) {
+			if(this.hasStaveNotes()) {
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-				voice.addTickables(this.getTickables());
+				voice.addTickables(this.getStaveNotes());
 				formatter = new Vex.Flow.Formatter();
 				formatter.joinVoices([voice]).format([voice], this.width);
 				voice.draw(ctx, stave);
@@ -84,12 +84,12 @@ define([
 			return this.vexStave;
 		},
 		// returns a list of tickables (i.e. notes) to render
-		getTickables: function() {
-			return this.staveNoteFactory.getVexNotes();
+		getStaveNotes: function() {
+			return this.staveNoteFactory.getStaveNotes();
 		},
 		// returns true if there are tickables 
-		hasTickables: function() {
-			return this.staveNoteFactory.hasNotes();
+		hasStaveNotes: function() {
+			return this.staveNoteFactory.hasStaveNotes();
 		}
 	});
 

@@ -35,11 +35,11 @@ define([
 			}, this);
 		},
 		// returns true if there are any notes 
-		hasNotes: function() {
+		hasStaveNotes: function() {
 			return this.chord.hasNotes(this.clef);
 		},
 		// returns a list of Vex.Flow stave notes
-		getVexNotes: function(clef) {
+		getStaveNotes: function(clef) {
 			var note_struct = this._getNoteKeysAndModifiers();
 			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
