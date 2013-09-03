@@ -1,4 +1,4 @@
-define(['lodash', 'app/piano/keygenerator'], function(_, PianoKeyGenerator) {
+define(['lodash', 'app/util/piano_key_generator'], function(_, PianoKeyGenerator) {
 	var PKG = PianoKeyGenerator;
 
 	describe('Piano key generator', function() {

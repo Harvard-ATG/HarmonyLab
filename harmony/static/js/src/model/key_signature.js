@@ -98,6 +98,9 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		getKeyShortName: function() {
 			return this.keyToShortName(this.key);
 		},
+		getKeyPitchClass: function() {
+			return this.keyToPitchClass(this.key);
+		},
 		// Translates the signature key name to one that is understandable by
 		// the Vex.Flow key signature object. 
 		getVexKey: function() {
@@ -134,6 +137,14 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		// Returns the current note spelling 
 		getSpelling: function() {
 			return this.keyToSpelling(this.keyOfSignature);
+		},
+		// Returns true if the key is minor, false otherwise.
+		isMinorKey: function() {
+			return this.keyIsMinor(this.key);
+		},
+		// Returns true if the key is major, false otherwise.
+		isMajorKey: function() {
+			return this.keyIsMajor(this.key); 
 		},
 
 		//--------------------------------------------------
@@ -218,6 +229,10 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		keyToName: function(key) {
 			return KEY_MAP[key].name;
 		},
+		// returns the pitch class for a key
+		keyToPitchClass: function(key) {
+			return KEY_MAP[key].pitchClass;
+		},
 		// returns the short name for a key
 		keyToShortName: function(key) {
 			return KEY_MAP[key].shortName;
@@ -225,6 +240,14 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		// returns the note spelling based on the current key signature
 		keyToSpelling: function(key) {
 			return KEY_MAP[key].spelling;
+		},
+		// returns true if the key is major, false otherwise.
+		keyIsMajor: function(key) {
+			 return key.indexOf('j') === 0;
+		},
+		// returns true if the key is minor, false otherwise.
+		keyIsMinor: function(key) {
+			 return key.indexOf('i') === 0;
 		},
 		// returns list of note accidentals in the correct order to notate 
 		// the signature for sharps or flats
