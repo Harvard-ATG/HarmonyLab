@@ -1,5 +1,9 @@
-/* global define: false */
-define(['lodash', 'vexflow'], function(_, Vex) {
+/* global define: false */ 
+define([
+	'lodash', 
+	'vexflow',
+	'app/view/transcript/stave_note_factory'
+], function(_, Vex, StaveNoteFactory) {
 	"use strict";
 
 	// Knows how to render and manipulate a staff/stave.
@@ -18,6 +22,12 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
+
+			this.staveNoteFactory = new StaveNoteFactory({
+				chord: this.chord,
+				keySignature: this.keySignature,
+				clef: this.clef
+			});
 		},
 		initConfig: function() {
 			var required = ['clef', 'keySignature', 'chord', 'vexRenderer', 'width'];
@@ -45,9 +55,9 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 			stave.setContext(ctx);
 			stave.draw();
 
-			if(this.hasNotes()) {
+			if(this.hasTickables()) {
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-				voice.addTickables(this.getVexNotes());
+				voice.addTickables(this.getTickables());
 				formatter = new Vex.Flow.Formatter();
 				formatter.joinVoices([voice]).format([voice], this.width);
 				voice.draw(ctx, stave);
@@ -73,51 +83,13 @@ define(['lodash', 'vexflow'], function(_, Vex) {
 		getVexStave: function() {
 			return this.vexStave;
 		},
-		// returns true if notes exist
-		hasNotes: function() {
-			return this.chord.hasNotes(this.clef);
+		// returns a list of tickables (i.e. notes) to render
+		getTickables: function() {
+			return this.staveNoteFactory.getVexNotes();
 		},
-		// returns a list of Vex.Flow stave notes
-		getVexNotes: function() {
-			var note_struct = this.getNoteKeysAndModifiers();
-			var stave_note = this.makeStaveNote(note_struct.keys, note_struct.modifiers);
-			return [stave_note];
-		},
-		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
-		getNoteKeysAndModifiers: function() {
-			var keys = this.chord.getNoteKeys(this.keySignature, this.clef);
-			var accidentals = this.chord.getNoteAccidentals(this.keySignature, keys);
-			var modifiers = [];
-
-			for(var i = 0, len = accidentals.length; i < len; i++) {
-				if(accidentals[i]) {
-					modifiers.push(this.makeAccidentalModifier(i, accidentals[i]));
-				}
-			}
-
-			return {keys: keys, modifiers: modifiers};
-		},
-		// returns a function that will add an accidental to a Vex.Flow stave note
-		makeAccidentalModifier: function(index, accidental) {
-			return function(staveNote) {
-				staveNote.addAccidental(index, new Vex.Flow.Accidental(accidental));
-			};
-		},
-		// returns a new Vex.Flow stave note
-		makeStaveNote: function(keys, modifiers) {
-			modifiers = modifiers || [];
-
-			var stave_note = new Vex.Flow.StaveNote({
-				keys: keys,
-				duration: 'w',
-				clef: this.clef
-			});
-
-			for(var i = 0, len = modifiers.length; i < len; i++) {
-				modifiers[i](stave_note);
-			}
-
-			return stave_note;
+		// returns true if there are tickables 
+		hasTickables: function() {
+			return this.staveNoteFactory.hasNotes();
 		}
 	});
 

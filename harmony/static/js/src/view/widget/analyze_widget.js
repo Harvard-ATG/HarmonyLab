@@ -18,7 +18,7 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 			{'label': 'Roots', 'value': 'roots'},
 			{'label': 'Tritones', 'value': 'tritones'},
 			{'label': 'Awk. Doublings', 'value': 'doubles'},
-			{'label': '8ves &amp; 5ths', 'value': '8ves_5ths'}
+			{'label': '8ves &amp; 5ths', 'value': 'octaves'}
 		]
 	}];
 
@@ -40,7 +40,7 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 				var checked = $(target).is(':checked');
 				if($children.length > 0) {
 					$children.toggle();
-					that.trigger('changeMode', val, checked);
+					that.trigger('changeCategory', val, checked);
 				} else {
 					that.trigger('changeOption', val, checked);
 				}

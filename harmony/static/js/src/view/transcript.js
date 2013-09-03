@@ -2,7 +2,7 @@
 define([
 	'jquery',
 	'lodash', 
-	'app/view/transcript/plain'
+	'app/view/transcript/plain_notation'
 ], function($, _, PlainNotation) {
 	"use strict";
 
@@ -40,11 +40,15 @@ define([
 			}, this);
 		},
 		initComponents: function() {
+			var config = {
+				'chord': this.chord, 
+				'keySignature': this.keySignature
+			};
 			if(this.sheets.length === 0) {
 				this.sheets = [this.sheetFactory('plain')];
 			}
-			this.initSheets(this);
-			this.initAnalyzers(this);
+			this.initSheets(this, config);
+			this.initAnalyzers(this, config);
 		},
 		initMethods: function() {
 			this.initSheets = this._invokeOn(this.getSheets, 'init');
