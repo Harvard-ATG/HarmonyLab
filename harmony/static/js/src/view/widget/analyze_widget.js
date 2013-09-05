@@ -6,19 +6,19 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 		'label': 'Analyze', 
 		'value': 'analyze',
 		'items': [
-			{'label': 'Roman Numerals', 'value': 'roman_numerals'},
-			{'label': 'Intervals', 'value': 'intervals'},
-			{'label': 'Scale Degrees', 'value': 'scale_degrees'},
-			{'label': 'Note Names', 'value': 'note_names'}
+			{'label': 'Roman Numerals', 'value': 'analyze.roman_numerals'},
+			{'label': 'Intervals', 'value': 'analyze.intervals'},
+			{'label': 'Scale Degrees', 'value': 'analyze.scale_degrees'},
+			{'label': 'Note Names', 'value': 'analyze.note_names'}
 		]
 	},{
 		'label': 'Highlight', 
 		'value': 'highlight',
 		'items': [
-			{'label': 'Roots', 'value': 'roots'},
-			{'label': 'Tritones', 'value': 'tritones'},
-			{'label': 'Awk. Doublings', 'value': 'doubles'},
-			{'label': '8ves &amp; 5ths', 'value': 'octaves'}
+			{'label': 'Roots', 'value': 'highlight.roots'},
+			{'label': 'Tritones', 'value': 'highlight.tritones'},
+			{'label': 'Awk. Doublings', 'value': 'highlight.doubles'},
+			{'label': '8ves &amp; 5ths', 'value': 'highlight.octaves'}
 		]
 	}];
 
@@ -38,11 +38,16 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 				var $children = $(currentTarget).children('ul');
 				var val = $(target).val();
 				var checked = $(target).is(':checked');
+				var valDot, valCat, valOpt;
+
 				if($children.length > 0) {
 					$children.toggle();
 					that.trigger('changeCategory', val, checked);
 				} else {
-					that.trigger('changeOption', val, checked);
+					valDot = val.indexOf('.');
+					valCat = val.substr(0, valDot);
+					valOpt = val.substr(valDot + 1);
+					that.trigger('changeOption', valCat, valOpt, checked);
 				}
 
 				e.stopPropagation();

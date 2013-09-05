@@ -7,9 +7,11 @@ define([
 	Config
 ) {
 
-	var Analyzer = {};
+	var Analyze = {};
 
-	_.extend(Analyzer, {
+	_.extend(Analyze, {
+
+		defaultHighlightColor: 'black',
 
 		// Returns a color as a string value that is intended to highlight 
 		// music theory attribute(s) of a given note in a collection of a notes.
@@ -18,7 +20,7 @@ define([
 			var highlightTritones = highlightMode['tritones'] ? true : false;
 			var highlightDoubles = highlightMode['doubles'] ? true : false;
 
-			var color = "black";
+			var color = this.defaultHighlightColor;
 			var interval = 0;
 			var keyPitchClass = keySignature.getKeyPitchClass();
 			var fromRoot = this.semitonalDistance(keyPitchClass, note) % 12;
@@ -55,13 +57,13 @@ define([
 			
 			if (highlightTritones) {
 				for (var j = 1; j < notes.length; j++) {
-					interval_up = this.knowSemitonalDistance(notes[i],notes[i + j]) % 12;
+					interval_up = this.semitonalDistance(notes[i],notes[i + j]) % 12;
 					if (interval_up == 6) {
 						color = "#d29"; // tritone
 					}
 				}
 				for (var j = i; j > 0; j--) {
-					interval_down = this.knowSemitonalDistance(notes[i],notes[i - j]) % 12;
+					interval_down = this.semitonalDistance(notes[i],notes[i - j]) % 12;
 					if (interval_down == 6) {
 						color = "#d29"; // tritone
 					}
@@ -89,7 +91,6 @@ define([
 				
 		//			var root = this.findRoot(notes);		// THERE ARE MUSIC-THEORETICAL PROBLEMS WITH THESE FIVE LINES OF CODE
 		//			var interval = this.semitonalDistance(note,root) % 12;
-		//			console.log(interval);
 		//			if (interval == 1 || interval == 2 || interval == 10 || interval == 11) {
 		//					for (var index in notes) {
 		//						if (index != i && (note % 12 == notes[index] % 12)) color = "orange";
@@ -118,5 +119,5 @@ define([
 
 	});
 
-	return Analyzer;
+	return Analyze;
 });

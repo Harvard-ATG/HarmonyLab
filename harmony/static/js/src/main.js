@@ -109,6 +109,18 @@ function(
 		initAnalyzeWidget: function() {
 			var widget = new AnalyzeWidget();
 			$('#analyze_widget').append(widget.render().el);
+
+			widget.bind('changeCategory', function(category, enabled) {
+				if(category === 'highlight') {
+					eventBus.trigger("highlightNotes", enabled);
+				}
+			});
+
+			widget.bind('changeOption', function(category, mode, enabled) {
+				if(category === 'highlight') {
+					eventBus.trigger("highlightNotesMode", mode, enabled);
+				}
+			});
 		},
 		initKeyAndSignature: function(key_signature) {
 			var widget = new KeySignatureWidget(key_signature);
