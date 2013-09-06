@@ -59,11 +59,15 @@ define([
 			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
 		},
-		// returns a list of midi key numbers
-		_getMidiKeys: function() {
-			return this.chord.getNoteNumbers(this.clef);
+		// returns a list of *all* midi key numbers (not limited to this particular stave)
+		_getMidiKeysAllStaves: function() {
+			// Note: omitting clef param because we want to set highlights based
+			// on all the notes that are active on both clefs/staves. For
+			// example, highlight two notes that span an octave that crosses
+			// between clefs.
+			return this.chord.getNoteNumbers();
 		},
-		// returns a list of key names ["note/octave", ...] 
+		// returns a list of key names for this stave only ["note/octave", ...] 
 		_getNoteKeys: function() {
 			var keySignature = this.keySignature;
 			var clef = this.clef;
@@ -141,7 +145,7 @@ define([
 		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
 		_getNoteKeysAndModifiers: function() {
 			var noteKeys = this._getNoteKeys();
-			var midiKeys = this._getMidiKeys();
+			var midiKeys = this._getMidiKeysAllStaves();
 			var accidentals = this._getAccidentalsOf(noteKeys);
 			var modifiers = [];
 
