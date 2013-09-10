@@ -146,12 +146,6 @@ body {
 	line-height: 1.3em;
 }
 
-#tab-nav-1 .tab-content-inner select {
-	float: right;
-	margin-right: 15px;
-	margin-top: -2px;
-	margin-bottom: 10px;
-}
 #tab-nav-2 ul.midi-tab .tab-content-inner select {
 	margin-top: -2px;
 	margin-bottom: 10px;

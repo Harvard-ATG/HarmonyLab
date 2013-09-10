@@ -20,9 +20,10 @@
 				<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
 				  <div class="tab-content-wrapper">
 					  <div class="tab-content-inner">
-						   <br /> 
-							<select id="select_instrument"></select>
-							<br /><br />
+						  <div>
+							<select style="float: right" id="select_instrument"></select>
+						  </div>
+						  <div>
 							Keyboard size: 
 							<select id="select_keyboard_size" name="keyboard">
 							<option value="25">25</option>
@@ -30,23 +31,12 @@
 							<option value="49" selected="selected">49</option>
 							<option value="88">88</option>
 							</select>
-							<br /><br />
+						  </div>
+						  <div>
 							<label>Keyboard shortcuts:
 								<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
 							</label>
-							<br /><br />
-							Style: 
-							<select name="player-style" disabled>
-							<option value="singlefinger">Single Finger</option>
-							<option value="Manual">Manual</option>
-							</select>
-
-							<div id="brackets" >
-								<input name="" type="button" value="[" class="metroButton" disabled/>  
-								<input name="" type="button" value="/" class="metroButton" disabled/>  
-								<input name="" type="button" value="\" class="metroButton" disabled/> 
-							</div> 
-
+						  </div>
 					  </div>
 				  </div>
 				 </li>
