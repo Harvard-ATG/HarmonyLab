@@ -170,9 +170,6 @@ body {
 .tab-content-inner .notation-checkboxes label {
 	display: block;
 }
-#tab-nav-1 .tab-content-inner ul.notation-checkboxes {
-	margin-left: 25px;
-}
 
 /*--------------------------------------------------*/
 /* Right side tabs of staff area */
@@ -193,6 +190,9 @@ body {
   margin-bottom:0;
   padding-left: 0;
   list-style-type: none;
+}
+#tab-nav-2 .tab-content-inner ul.notation-checkboxes ul {
+	margin-left: 25px;
 }
 
 #tab-nav-2.tab-nav a {
