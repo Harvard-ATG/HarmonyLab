@@ -146,13 +146,17 @@ define([
 		overrideKey: function(callback) {
 			return function(e) {
 				var keyCode = e.keyCode;
-				if(!this.existsKeyCode(keyCode)) {
-					return true;
+
+				if(e.altKey || e.ctrlKey || e.metaKey) {
+					return true; // skip alt/ctrl/meta key combos
+				} else if(!this.existsKeyCode(keyCode)) {
+					return true; // skip if not supported
 				} else if(!this.modeEnabled(keyCode)) {
-					return true;
+					return true; // skip if mode not enabled
 				} else if(!this.mappedKeyName(keyCode)) {
-					return true;
+					return true; // skip if there's no action mapping 
 				}
+
 				return callback.apply(this, arguments);
 			};
 		},
