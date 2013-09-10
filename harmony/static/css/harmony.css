@@ -288,17 +288,16 @@ body {
 
 }
 
-#music-controls {
-	padding:0 10px;
-	float:left;
-	}
-
 #transpose-controls {
 	width: 150px;
 	margin:2px auto;
 	color:white;
-	}
-
+}
+.transpose-icon {
+	background: transparent url(../img/transpose-arrows.png) no-repeat;
+	width: 34px;
+	height: 24px;
+}
 #metronome-controls {
 	width:110px;
 	float:right;

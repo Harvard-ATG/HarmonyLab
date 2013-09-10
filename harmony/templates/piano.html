@@ -98,23 +98,6 @@
 	</div><!-- end #staff-wrapper -->
 		<div id="kb-wrapper">
 			<div id="controller-wrapper">
-				<div id="music-controls">
-					<select name="demos">
-						<option value="">- Play Demo -</option>
-						<option value="bach">Bach Demo</option>
-						<option value="mozart">Mozart</option>
-						<option value="nugent">Ted Nugent</option>
-						<option value="nelson">Willie Nelson</option>
-					</select>
-					<input name="play" 
-						type="button" 
-						value="&#x25B8;"
-						onclick="this.value = (this.value === '\u25B8' ? '\u25FE' : '\u25B8');" />
-					<input name="record"
-						type="button" 
-						value="&#x25CF;" 
-						onclick="this.foo = !!!this.foo; this.style.color = (this.foo ? 'red': '');">
-				</div>
 				<div id="metronome-controls">
 					<img src="{{ STATIC_URL }}img/metronome-wire24.png" style="height:20px; margin-top: 2px; float:left;" />
 					<input name="bpm" type="text" size="3" maxlength="3" class="bpm-input" />
@@ -122,8 +105,8 @@
 						onclick="this.value = (this.value === '\u25B8' ? '\u25FE' : '\u25B8');" />
 				</div>
 				<div id="transpose-controls">
-					<img src="{{ STATIC_URL }}img/transpose1.png" height="20" align="top" /> 
-					<select name="transposeNum">
+					<div style="float:left" class="transpose-icon"> </div>
+					<select name="tranpose_num">
 						<option value="3">+3</option>
 						<option value="2">+2</option>
 						<option value="1">+1</option>
