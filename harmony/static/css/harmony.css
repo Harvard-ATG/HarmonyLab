@@ -299,30 +299,32 @@ body {
 	height: 24px;
 }
 #metronome-controls {
-	width:110px;
 	float:right;
-	xpadding:0 10px;
 	color:#fff;
+	margin-right: 25px;
 }
-
+.metronome-icon {
+	background: transparent url(../img/metronome_sprite.png) no-repeat;
+	background-position: -50px -10px;
+	width: 19px;
+	height: 20px;
+}
+.metronome-icon:hover {
+	background-position: -50px -109px;
+}
+.metronome-icon:active, .metronome-icon-active {
+	background-position: -50px -199px;
+}
 .bpm-input {
 	width: 30px; 
-	float:left;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-.metroButton {
-	float:left;
-	margin-left: 5px;
+	margin: 0 5px;
 }
 
 #keyboard-area {
 	margin:0 10px;
 	padding-bottom: 6px;
 	overflow:hidden;
-	
 }
-
 
 /*--------------------------------------------------*/
 /* Pedals */

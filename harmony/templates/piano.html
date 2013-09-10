@@ -96,10 +96,8 @@
 		<div id="kb-wrapper">
 			<div id="controller-wrapper">
 				<div id="metronome-controls">
-					<img src="{{ STATIC_URL }}img/metronome-wire24.png" style="height:20px; margin-top: 2px; float:left;" />
+					<div style="float:right" class="metronome-icon"> </div>
 					<input name="bpm" type="text" size="3" maxlength="3" class="bpm-input" />
-					<input name="play" type="button" value="&#x25B8;"
-						onclick="this.value = (this.value === '\u25B8' ? '\u25FE' : '\u25B8');" />
 				</div>
 				<div id="transpose-controls">
 					<div style="float:left" class="transpose-icon"> </div>
