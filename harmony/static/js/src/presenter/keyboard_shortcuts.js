@@ -39,8 +39,8 @@ define([
 		},
 		// setup bindings for events
 		initListeners: function() {
-			this.onKeyDown = this.filterKey(this.onKeyDown);
-			this.onKeyUp = this.filterKey(this.onKeyUp);
+			this.onKeyDown = this.overrideKey(this.onKeyDown);
+			this.onKeyUp = this.overrideKey(this.onKeyUp);
 
 			_.bindAll(this, ['onKeyDown', 'onKeyUp', 'onKeyChange']);
 
@@ -140,18 +140,18 @@ define([
 					break;
 			}
 		},
-		// filters a key up/down event and skips events 
-		// that aren't supported. if the event is supported,
-		// passes control to a callback.
-		filterKey: function(callback) {
+		// overrides key up/down events if they are supported
+		// and passes control to the provided callback, otherwise 
+		// lets the event propagate and do the default action as expected
+		overrideKey: function(callback) {
 			return function(e) {
 				var keyCode = e.keyCode;
 				if(!this.existsKeyCode(keyCode)) {
-					return;
+					return true;
 				} else if(!this.modeEnabled(keyCode)) {
-					return;
+					return true;
 				} else if(!this.mappedKeyName(keyCode)) {
-					return;
+					return true;
 				}
 				return callback.apply(this, arguments);
 			};
