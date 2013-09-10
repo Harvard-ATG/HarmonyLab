@@ -20,10 +20,10 @@
 				<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
 				  <div class="tab-content-wrapper">
 					  <div class="tab-content-inner">
-						  <div>
+						  <div class="tab-row" style="height: 20px">
 							<select style="float: right" id="select_instrument"></select>
 						  </div>
-						  <div>
+						  <div class="tab-row">
 							Keyboard size: 
 							<select id="select_keyboard_size" name="keyboard">
 							<option value="25">25</option>
@@ -32,7 +32,7 @@
 							<option value="88">88</option>
 							</select>
 						  </div>
-						  <div>
+						  <div class="tab-row">
 							<label>Keyboard shortcuts:
 								<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
 							</label>
@@ -42,13 +42,13 @@
 				 </li>
 			  </ul>
 
-			  <ul class="note-tab">
-				<li><a href="#" class="js-tab js-tab-left">NOTATION</a>
+			  <ul class="key-tab">
+				<li><a href="#" class="js-tab js-tab-left">KEY &amp; SIGNATURES</a>
 				  <div class="tab-content-wrapper">
 					<div class="tab-content-inner">
-						<div id="analyze_widget"></div>
+						<div id="key_signature_widget"></div>
 					</div>
-				  </div>
+				   </div>
 				 </li>
 			  </ul>
 			</div><!-- end tab-nav-1 -->
@@ -73,15 +73,16 @@
 				 </li>
 			  </ul>
 
-			  <ul class="key-tab">
-				<li><a href="#" class="js-tab js-tab-right">KEY &amp; SIGNATURES</a>
+			  <ul class="note-tab">
+				<li><a href="#" class="js-tab js-tab-right">NOTATION</a>
 				  <div class="tab-content-wrapper">
 					<div class="tab-content-inner">
-						<div id="key_signature_widget"></div>
+						<div id="analyze_widget"></div>
 					</div>
-				   </div>
+				  </div>
 				 </li>
 			  </ul>
+
 			</div><!-- end #tab-nav-2 -->
 		</div><!-- end .right-panel-bed -->
 		<div id="staff-area">

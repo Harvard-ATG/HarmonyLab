@@ -82,6 +82,10 @@ body {
   margin-bottom: 1px;
 }
 
+.tab-content-inner > .tab-row {
+	margin: 0 0 5px 0;
+}
+
 
 /*--------------------------------------------------*/
 /* Left side tabs of staff area */
@@ -157,10 +161,7 @@ body {
 .sig-lock {
 	background: url(../img/v-line.png) 1px 0 repeat-y; 
 	line-height: 3em;
-}
-#tab-nav-1 #brackets {
-	width: 120px;
-	margin: 10px auto;
+	margin-left:  50px;
 }
 
 .tab-content-inner .notation-checkboxes input {
