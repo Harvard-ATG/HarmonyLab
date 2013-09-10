@@ -44,7 +44,7 @@ define([
 		 * Default size of the keyboard and keys.
 		 */
 		defaultWidth: 870,
-		defaultHeight: 150,
+		defaultHeight: 120,
 		defaultKeyWidth: 30,
 
 		/**
