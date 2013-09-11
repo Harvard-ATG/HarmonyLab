@@ -12,7 +12,9 @@ define(['jquery', 'lodash'], function($, _) {
 			_.bindAll(this, ['initTab', 'onClickToggleTabs']);
 
 			$('.js-tab').each(this.initTab);
-			$('.js-toggle-tabs').on('click', this.onClickToggleTabs);
+			$('.js-toggle-tabs')
+				.on('mousedown', this.cancelEvent) // fixes issue with unwated text selections on click
+				.on('click', this.onClickToggleTabs) // handles the expand/collapse behavior we want
 		},
 		// initializes each tab so it can expand/collapse
 		initTab: function(index, el) {
@@ -71,6 +73,10 @@ define(['jquery', 'lodash'], function($, _) {
 				}
 				return false;
 			};
+		},
+		// utility function to cancel an event
+		cancelEvent: function(ev) {
+			return false;
 		}
 	};
 });
