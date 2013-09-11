@@ -21,6 +21,8 @@ define([
 
 		enabled: false, // shortcuts mode disabled by default
 
+		keyState: {}, // maps keyCode -> true|false (true=down, false=up)
+
 		// intialization
 		init: function(config) {
 			if(config.hasOwnProperty('keySignature')) {
@@ -116,10 +118,16 @@ define([
 
 		// handles key down event
 		onKeyDown: function(e) {
+			// skip repeated keydowns (chrome repeats keydown events)
+			if(this.keyState[e.keyCode]) {
+				return false;
+			}
+			this.keyState[e.keyCode] = true;
 			this.onKeyChange('down', e.keyCode, e);
 		},
 		// handles key up event
 		onKeyUp: function(e) {
+			this.keyState[e.keyCode] = false;
 			this.onKeyChange('up', e.keyCode, e);
 		},
 		// handles key change event

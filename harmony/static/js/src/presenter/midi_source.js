@@ -182,11 +182,10 @@ define([
 
 		// Handles note output (not from an external device). 
 		onNoteChange: function(noteState, noteNumber) {
-			var changed = this.toggleNote(noteState, noteNumber);
-			if(changed) {
-				var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-				this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
-			}
+			this.toggleNote(noteState, noteNumber);
+
+			var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
+			this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
 		},
 
 		// Handles sustain, sostenuto, soft pedal events.
