@@ -27,12 +27,12 @@ define([
 			var i = notes.indexOf(note);
 
 			if (highlightOctaves) {
-				for (var j = 1; j < notes.length; j++) {
-					interval_up = this.semitonalDistance(notes[i],notes[i + j]) % 12;
+				for (var j = i, len = notes.length; j < len; j++) {
+					interval_up = this.semitonalDistance(notes[i],notes[j]) % 12;
 					if (interval_up == 7) {
 						color = "green"; // perfect fifth
 					}
-					if (interval_up == 0 && i != (i+j)) { // octave
+					if (interval_up == 0 && i != j) { // octave
 						if (color == "green") {
 							color = "#099"
 						} else { 
@@ -40,8 +40,8 @@ define([
 						}
 					}
 				}
-				for (var j = i; j > 0; j--) {
-					interval_down = this.semitonalDistance(notes[i],notes[i - j]) % 12;
+				for (var j = i; j >= 0; j--) {
+					interval_down = this.semitonalDistance(notes[i],notes[j]) % 12;
 					if (interval_down == 5) {
 						if (color == "blue") {
 							color = "#099";
@@ -49,21 +49,21 @@ define([
 							color = "green"; // perfect fifth
 						}
 					}
-					if (interval_down == 0 && i != (i-j)) {
+					if (interval_down == 0 && i != j) {
 						color = "blue";
 					}
 				}
 			}
 			
 			if (highlightTritones) {
-				for (var j = 1; j < notes.length; j++) {
-					interval_up = this.semitonalDistance(notes[i],notes[i + j]) % 12;
+				for (var j = i, len = notes.length; j < len; j++) {
+					interval_up = this.semitonalDistance(notes[i],notes[j]) % 12;
 					if (interval_up == 6) {
 						color = "#d29"; // tritone
 					}
 				}
-				for (var j = i; j > 0; j--) {
-					interval_down = this.semitonalDistance(notes[i],notes[i - j]) % 12;
+				for (var j = i; j >= 0; j--) {
+					interval_down = this.semitonalDistance(notes[i],notes[j]) % 12;
 					if (interval_down == 6) {
 						color = "#d29"; // tritone
 					}
@@ -117,6 +117,16 @@ define([
 			return distance;
 		},
 
+	});
+
+	//--------------------------------------------------
+	// Memoize semitonalDistance for better performance. It is called repeatedly
+	// with a small range of inputs in the highlight notes method so it is a
+	// good candidate for memoization. 
+	Analyze.semitonalDistance = _.memoize(Analyze.semitonalDistance, function(note1, note2) {
+		var cacheKey = note1+','+note2;
+		console.log(cacheKey);
+		return cacheKey;
 	});
 
 	return Analyze;

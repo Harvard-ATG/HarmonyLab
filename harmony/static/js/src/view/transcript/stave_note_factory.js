@@ -59,14 +59,6 @@ define([
 			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
 		},
-		// returns a list of *all* midi key numbers (not limited to this particular stave)
-		_getMidiKeysAllStaves: function() {
-			// Note: omitting clef param because we want to set highlights based
-			// on all the notes that are active on both clefs/staves. For
-			// example, highlight two notes that span an octave that crosses
-			// between clefs.
-			return this.chord.getNoteNumbers();
-		},
 		// returns a list of key names for this stave only ["note/octave", ...] 
 		_getNoteKeys: function() {
 			var keySignature = this.keySignature;
@@ -144,21 +136,22 @@ define([
 		},
 		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
 		_getNoteKeysAndModifiers: function() {
-			var noteKeys = this._getNoteKeys();
-			var midiKeys = this._getMidiKeysAllStaves();
-			var accidentals = this._getAccidentalsOf(noteKeys);
+			var keys = this._getNoteKeys();
+			var accidentals = this._getAccidentalsOf(keys);
+			var allMidiKeys = this.chord.getNoteNumbers(); // for highlights across stave boundaries
+			var midiKeys = this.chord.getNoteNumbers(this.clef);
 			var modifiers = [];
 
-			for(var i = 0, len = noteKeys.length; i < len; i++) {
+			for(var i = 0, len = keys.length; i < len; i++) {
 				if(accidentals[i]) {
 					modifiers.push(this._makeAccidentalModifier(i, accidentals[i]));
 				}
 				if(this.highlights.enabled) {
-					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], midiKeys));
+					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
 				}
 			}
 
-			return {keys: noteKeys, modifiers: modifiers};
+			return {keys: keys, modifiers: modifiers};
 		},
 		// returns a function that will add an accidental to a Vex.Flow stave note
 		_makeAccidentalModifier: function(keyIndex, accidental) {
@@ -166,8 +159,8 @@ define([
 				staveNote.addAccidental(keyIndex, new Vex.Flow.Accidental(accidental));
 			};
 		},
-		_makeHighlightModifier: function(keyIndex, key, keys) {
-			var color = Analyze.highlightNote(this.highlights.mode, this.keySignature, keys, key);
+		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
+			var color = Analyze.highlightNote(this.highlights.mode, this.keySignature, allNotes, noteToHighlight);
 			var keyStyleOpts = {
 				shadowColor: color,
 				shadowBlur: 15,
