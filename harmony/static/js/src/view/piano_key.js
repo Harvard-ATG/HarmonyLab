@@ -1,10 +1,19 @@
 /* global define: false */
 
-define(['lodash'], function(_) {
+define([
+	'lodash',
+	'app/model/event_bus'
+], function(_, eventBus) {
 	"use strict";
 
 	// constants for piano key states
-	var STATE_KEYUP = 'off', STATE_KEYDN = 'on';
+	var STATE_KEYUP = 'off', 
+		STATE_KEYDN = 'on';
+
+	// constants for piano key colors
+	var COLOR_KEYUP = '90-#333-#000', 
+		COLOR_KEYDN = '#aaa', 
+		COLOR_KEYSUSTAINED = '#660000';
 
 	/**
 	 * Piano Key Mixin.
@@ -27,6 +36,11 @@ define(['lodash'], function(_) {
 		 * Possible states of the piano key.
 		 */
 		states: [STATE_KEYUP, STATE_KEYDN],
+
+		/**
+		 * Event bus
+		 */
+		eventBus: eventBus,
 
 		/**
 		 * Changes the piano key state to "pressed" (down).
@@ -76,6 +90,9 @@ define(['lodash'], function(_) {
 			this.keyboard = config.keyboard;
 			this.onPress = this.preventDefault(this.onPress);
 			this.onRelease = this.preventDefault(this.onRelease);
+
+			this.eventBus.bind('pedal', _.bind(this.onPedalChange, this));
+
 			return this;
 		},
 
@@ -118,6 +135,22 @@ define(['lodash'], function(_) {
 			if(this.isPressed()) { 
 				this.release();
 				this.keyboard.trigger('key', this.state, this.noteNumber);
+			}
+		},
+
+		/**
+		 * Modifies keyboard properties when the sutain pedal is changed.
+		 */
+		onPedalChange: function(name, state) {
+			if(name === 'sustain') {
+				if(state === 'on') {
+					// from here on out, when the key is up, it should be colored
+					// to indicate that the key is sustained
+					this.keyColorMap[STATE_KEYUP] = COLOR_KEYSUSTAINED;
+				} else if(state === 'off') {
+					this.keyColorMap[STATE_KEYUP] = this.defaultKeyColorMap[STATE_KEYUP];
+					this.updateColor(); // reset colors 
+				}
 			}
 		},
 
@@ -223,6 +256,7 @@ define(['lodash'], function(_) {
 
 	WhitePianoKey.prototype.keyColorMap[STATE_KEYUP] = '#fffff0';
 	WhitePianoKey.prototype.keyColorMap[STATE_KEYDN] = '#aaa';
+	WhitePianoKey.prototype.defaultKeyColorMap = _.clone(WhitePianoKey.prototype.keyColorMap);
 
 	/**
 	 * Black piano key class.
@@ -297,8 +331,9 @@ define(['lodash'], function(_) {
 		}
 	});
 
-	BlackPianoKey.prototype.keyColorMap[STATE_KEYUP] = '90-#333-#000',
-	BlackPianoKey.prototype.keyColorMap[STATE_KEYDN] = '#aaa';
+	BlackPianoKey.prototype.keyColorMap[STATE_KEYUP] = COLOR_KEYUP;
+	BlackPianoKey.prototype.keyColorMap[STATE_KEYDN] = COLOR_KEYDN; 
+	BlackPianoKey.prototype.defaultKeyColorMap = _.clone(BlackPianoKey.prototype.keyColorMap);
 
 	var PianoKey = {
 		/**

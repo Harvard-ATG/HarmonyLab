@@ -198,6 +198,9 @@ define([
 			if(pedal === 'soft') {
 				this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
 			}
+			if(pedal === 'sustain') {
+				this.chord[state==='off'?'releaseSustain':'sustainNotes']();
+			}
 
 			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);
 		},

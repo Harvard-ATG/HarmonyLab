@@ -10,6 +10,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	
 	var Chord = function() {
 		this._notes = {};
+		this._sustained = {};
 	};
 
 	_.extend(Chord.prototype, {
@@ -18,6 +19,9 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		noteOn: function(number) {
 			var changed = (this._notes[number] !== true); 
 			this._notes[number] = true;
+			if(this.sustain) {
+				this._sustained[number] = true;
+			}
 			if(changed) {
 				this.trigger('change', 'on', number);
 			}
@@ -25,17 +29,47 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		},
 		// Command to turn off a note. Fires a change event if the note status has changed.
 		// Returns true if the note status was changed, false otherwise.
+		//
+		// NOTE: this command is ignored as long as the note has been sustained.
 		noteOff: function(number) {
-			var changed = (this._notes[number] === true);
+			var changed;
+			if(this._sustained[number]) {
+				return false;
+			} 
+
+			changed = (this._notes[number] === true);
 			delete this._notes[number];
 			if(changed) {
 				this.trigger('change', 'off', number);
 			}
+
 			return changed;
 		},
 		// Returns true if the note is on, false otherwise
 		isNoteOn: function(number) {
 			return this._notes[number] ? true : false;
+		},
+		// All subsequent notes that are turned on should be sustained until
+		// such time as they are released. Should be used in conjunction with
+		// releaseSustain().
+		sustainNotes: function() {
+			this.sustain = true;
+		},
+		// Releases all sustained notes (turns them off) and triggers a change event.
+		releaseSustain: function() {
+			var _sustained = this._sustained;
+			var _notes = this._notes;
+			var notes = [];
+
+			this.sustain = false; 
+			this._sustained = {}; 
+
+			_.each(_sustained, function(state, number) {
+				notes.push(number);
+				delete _notes[number];
+			});
+
+			this.trigger('change', 'off', notes);
 		},
 		// Returns a list of notes for the given clef.
 		getNotes: function(clef) {
