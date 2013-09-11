@@ -19,6 +19,7 @@ define([
 			var highlightOctaves = highlightMode['octaves'] ? true : false;
 			var highlightTritones = highlightMode['tritones'] ? true : false;
 			var highlightDoubles = highlightMode['doubles'] ? true : false;
+			var highlightRoots = highlightMode['roots'] ? true : false;
 
 			var color = this.defaultHighlightColor;
 			var interval = 0;
@@ -88,24 +89,13 @@ define([
 						}
 					}
 				}
-				
-		//			var root = this.findRoot(notes);		// THERE ARE MUSIC-THEORETICAL PROBLEMS WITH THESE FIVE LINES OF CODE
-		//			var interval = this.semitonalDistance(note,root) % 12;
-		//			if (interval == 1 || interval == 2 || interval == 10 || interval == 11) {
-		//					for (var index in notes) {
-		//						if (index != i && (note % 12 == notes[index] % 12)) color = "orange";
-		//					}
-		//			}
 			}
-			
-	//		if (Piano.getSheetMusicMode() == "thoroughbass" && note != notes[0]) {
-	//			var colorTranslate = {"black": "rgba(0,0,0,0.4)", "orange": "rgba(255,165,0,0.4)", "#d29": "rgba(221,34,153,0.4)",
-	//			"blue": "rgba(0,0,255,0.4)", "green": "rgba(0,255,0,0.4)", "#099": "rgba(0,153,153,0.4)"};
-	//			color = colorTranslate[color];
-	//		}
+
+			if (highlightRoots) {
+				// TODO implement algorithm to identify and highlight roots
+			}
 
 			return color;
-
 		},
 		// Returns a positive integer that is the distance in semitones between
 		// two notes. Expects each note to be expressed as a MIDI note number.
