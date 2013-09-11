@@ -115,7 +115,6 @@ define([
 	// good candidate for memoization. 
 	Analyze.semitonalDistance = _.memoize(Analyze.semitonalDistance, function(note1, note2) {
 		var cacheKey = note1+','+note2;
-		console.log(cacheKey);
 		return cacheKey;
 	});
 
