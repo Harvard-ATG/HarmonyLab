@@ -7,13 +7,14 @@ define([
 	"use strict";
 
 	// constants for piano key states
-	var STATE_KEYUP = 'off', 
-		STATE_KEYDN = 'on';
+	var STATE_KEYUP = 'off';
+	var STATE_KEYDN = 'on';
 
 	// constants for piano key colors
-	var COLOR_KEYUP = '90-#333-#000', 
-		COLOR_KEYDN = '#aaa', 
-		COLOR_KEYSUSTAINED = '#660000';
+	var COLOR_BLACK_KEYUP = '90-hsl(0,0,25)-hsl(0,0,0)';
+	var COLOR_WHITE_KEYUP = '#fffff0';
+	var COLOR_KEYDN = 'hsl(0,0,60)';
+	var COLOR_KEYSUSTAINED = '90-hsla(0, 50, 40)-hsl(0,50,25)';
 
 	/**
 	 * Piano Key Mixin.
@@ -248,14 +249,14 @@ define([
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
-			el.attr({'stroke': '#000', 'fill': '#fffff0'});
+			el.attr({'stroke': '#000', 'fill': COLOR_WHITE_KEYUP});
 			el.toBack();
 			return this;
 		}
 	});
 
-	WhitePianoKey.prototype.keyColorMap[STATE_KEYUP] = '#fffff0';
-	WhitePianoKey.prototype.keyColorMap[STATE_KEYDN] = '#aaa';
+	WhitePianoKey.prototype.keyColorMap[STATE_KEYUP] = COLOR_WHITE_KEYUP;
+	WhitePianoKey.prototype.keyColorMap[STATE_KEYDN] = COLOR_KEYDN;
 	WhitePianoKey.prototype.defaultKeyColorMap = _.clone(WhitePianoKey.prototype.keyColorMap);
 
 	/**
@@ -325,13 +326,13 @@ define([
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
-			el.attr('fill', '90-#333-#000');
+			el.attr('fill', COLOR_BLACK_KEYUP);
 			el.toFront();
 			return this;
 		}
 	});
 
-	BlackPianoKey.prototype.keyColorMap[STATE_KEYUP] = COLOR_KEYUP;
+	BlackPianoKey.prototype.keyColorMap[STATE_KEYUP] = COLOR_BLACK_KEYUP;
 	BlackPianoKey.prototype.keyColorMap[STATE_KEYDN] = COLOR_KEYDN; 
 	BlackPianoKey.prototype.defaultKeyColorMap = _.clone(BlackPianoKey.prototype.keyColorMap);
 
