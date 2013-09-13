@@ -10,122 +10,95 @@
 
 {% block content %}
 <div id="container" class="theme theme-downlights" data-theme="downlights">
-	<div id="staff-wrapper">
-		<div id="header">
-			<h1>Harmony Lab</h1>
-		</div>
-		<div class="left-panel-bed">
-			<div id="tab-nav-1" class="tab-nav">
-			  <ul class="inst-tab">
-				<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
-				  <div class="tab-content-wrapper">
-					  <div class="tab-content-inner">
-						  <div class="tab-row" style="height: 20px">
-							<select style="float: right" id="select_instrument"></select>
-						  </div>
-						  <div class="tab-row">
-							Keyboard size: 
-							<select id="select_keyboard_size" name="keyboard">
-							<option value="25">25</option>
-							<option value="37">37</option>
-							<option value="49" selected="selected">49</option>
-							<option value="88">88</option>
-							</select>
-						  </div>
-						  <div class="tab-row">
-							<label>Keyboard shortcuts:
-								<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
-							</label>
-						  </div>
+
+	<div id="header">
+		<h1>Harmony Lab</h1>
+	</div>
+
+	<div class="left-panel-bed">
+		<div id="tab-nav-1" class="tab-nav">
+		  <ul class="inst-tab">
+			<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
+			  <div class="tab-content-wrapper">
+				  <div class="tab-content-inner">
+					  <div class="tab-row" style="height: 20px">
+						<select style="float: right" id="select_instrument"></select>
+					  </div>
+					  <div class="tab-row">
+						Keyboard size: 
+						<select id="select_keyboard_size" name="keyboard">
+						<option value="25">25</option>
+						<option value="37">37</option>
+						<option value="49" selected="selected">49</option>
+						<option value="88">88</option>
+						</select>
+					  </div>
+					  <div class="tab-row">
+						<label>Keyboard shortcuts:
+							<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
+						</label>
 					  </div>
 				  </div>
-				 </li>
-			  </ul>
+			  </div>
+			 </li>
+		  </ul>
 
-			  <ul class="key-tab">
-				<li><a href="#" class="js-tab js-tab-left">KEY &amp; SIGNATURES</a>
-				  <div class="tab-content-wrapper">
-					<div class="tab-content-inner">
-						<div id="key_signature_widget"></div>
-					</div>
-				   </div>
-				 </li>
-			  </ul>
-			</div><!-- end tab-nav-1 -->
-		</div><!-- end left-panel-bed -->
-
-		<div class="right-panel-bed">
-			<div id="tab-nav-2" class="tab-nav">
-
-			  <ul class="midi-tab">
-				<li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
-				  <div class="tab-content-wrapper">
-					<div class="tab-content-inner">
-						<br />
-						<div class="label">MIDI in:</div>
-						<select id="select_midi_input" name="select_midi_input"></select>
-						<div class="label">MIDI out:</div>
-						<select id="select_midi_output" name="select_midi_output"></select>
-						<br />
-						<button id="refresh_midi_devices">Refresh</button>
-					</div>
-				   </div>
-				 </li>
-			  </ul>
-
-			  <ul class="note-tab">
-				<li><a href="#" class="js-tab js-tab-right">NOTATION</a>
-				  <div class="tab-content-wrapper">
-					<div class="tab-content-inner">
-						<div id="analyze_widget"></div>
-					</div>
-				  </div>
-				 </li>
-			  </ul>
-
-			</div><!-- end #tab-nav-2 -->
-		</div><!-- end .right-panel-bed -->
-		<div id="staff-area">
-			<div id="staff-toolbar">
-				<div class="staff-btn staff-btn-info"></div>
-				<div class="staff-btn staff-btn-open js-toggle-tabs"></div>
-				<div class="staff-btn staff-btn-help hide"></div>
-			</div>
+		  <ul class="key-tab">
+			<li><a href="#" class="js-tab js-tab-left">KEY &amp; SIGNATURES</a>
+			  <div class="tab-content-wrapper">
+				<div class="tab-content-inner">
+					<div id="key_signature_widget"></div>
+				</div>
+			   </div>
+			 </li>
+		  </ul>
 		</div>
-		<br class="clr" style="clear:both;" />
-	</div><!-- end #staff-wrapper -->
-		<div id="kb-wrapper">
-			<div id="controller-wrapper">
-				<div id="metronome-controls">
-					<div style="float:right" class="metronome-icon"> </div>
-					<input name="bpm" type="text" size="3" maxlength="3" class="bpm-input" />
-				</div>
-				<div id="transpose-controls">
-					<div style="float:left" class="transpose-icon"> </div>
-					<select name="tranpose_num">
-						<option value="3">+3</option>
-						<option value="2">+2</option>
-						<option value="1">+1</option>
-						<option value="0" selected>-0-</option>
-						<option value="-1">-1</option>
-						<option value="-2">-2</option>
-						<option value="-3">-3</option>
-					</select>
-				</div>
-			</div><!-- end #controller-wrapper -->
-			<div id="keyboard-area">
-				<div id="piano"></div>
-			</div>
-	</div><!-- end #kb-wrapper -->
-
-	<div id="kb-pedals">
-		<div class="pedal pedal-left"></div>
-		<div class="pedal pedal-center"></div>
-		<div class="pedal pedal-right"></div>
 	</div>
+
+	<div class="right-panel-bed">
+		<div id="tab-nav-2" class="tab-nav">
+
+		  <ul class="midi-tab">
+			<li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
+			  <div class="tab-content-wrapper">
+				<div class="tab-content-inner">
+					<br />
+					<div class="label">MIDI in:</div>
+					<select id="select_midi_input" name="select_midi_input"></select>
+					<div class="label">MIDI out:</div>
+					<select id="select_midi_output" name="select_midi_output"></select>
+					<br />
+					<button id="refresh_midi_devices">Refresh</button>
+				</div>
+			   </div>
+			 </li>
+		  </ul>
+
+		  <ul class="note-tab">
+			<li><a href="#" class="js-tab js-tab-right">NOTATION</a>
+			  <div class="tab-content-wrapper">
+				<div class="tab-content-inner">
+					<div id="analyze_widget"></div>
+				</div>
+			  </div>
+			 </li>
+		  </ul>
+
+		</div>
+	</div>
+
+	<div id="staff-area">
+		<div id="staff-toolbar">
+			<div class="staff-btn staff-btn-info"></div>
+			<div class="staff-btn staff-btn-open js-toggle-tabs"></div>
+			<div class="staff-btn staff-btn-help hide"></div>
+		</div>
+	</div>
+
+	<div id="piano"></div>
 
 	<br class="clr" style="clear:both" />
 
 	<div id="theme-select" data-themes="downlights,concert,smoothblue,speakerwave"></div>
-</div><!-- end #container -->	 
+</div>
 {% endblock %}

@@ -6,7 +6,7 @@ define([
 	'app/model/event_bus',
 	'app/model/key_signature',
 	'app/view/transcript',
-	'app/view/piano_keyboard',
+	'app/view/piano',
 	'app/view/widget/analyze_widget',
 	'app/view/widget/key_signature_widget',
 	'app/presenter/midi_source',
@@ -21,7 +21,7 @@ function(
 	eventBus,
 	KeySignature,
 	Transcript,
-	PianoKeyboard,
+	Piano,
 	AnalyzeWidget,
 	KeySignatureWidget,
 	MidiSource,
@@ -33,8 +33,8 @@ function(
 
 	// TODO: encapsulate each setup method in a presenter object
 	var setup = {
-		initOnScreenPiano: function(keyboard) {
-			$('#piano').append(keyboard.render().el);
+		initOnScreenPiano: function(piano) {
+			$('#piano').append(piano.render().el);
 		},
 		initTranscript: function(transcript) {
 			$('#staff-area').append(transcript.render().el);
@@ -57,54 +57,11 @@ function(
 				eventBus.trigger('instrument', instrument_num);
 			});
 		},
-		initPedals: function() {
-			var pedalNameByIndex = ['soft','sostenuto','sustain'];
-			var pedals = {
-				'soft': {},
-				'sostenuto' : {},
-				'sustain' : {},
-			};
-
-			$('#kb-pedals .pedal').each(function(index, el) {
-				var name = pedalNameByIndex[index];
-				var pedal = pedals[name];
-	
-				pedal.el = el;
-				pedal.state = 'off';
-				pedal.toggle = function(state) { 
-					if(state) {
-						this.state = state;
-					} else {
-						this.state = (this.state === 'on' ? 'off' : 'on');
-					}
-					$(this.el)[this.state=='on'?'addClass':'removeClass']('pedal-active'); 
-				};
-
-				$(el).on('click', function() {
-					pedal.toggle();
-					eventBus.trigger('pedal', name, pedal.state);
-				});
-			});
-
-			eventBus.bind('pedal', function(pedal, state) {
-				pedals[pedal].toggle(state);
-			});
-		},
-		initKeyboardSizes: function(keyboard) {
+		initKeyboardSizes: function(piano) {
 			$('#select_keyboard_size').on('change', function() {
 				var size = parseInt($(this).val(), 10);
-				var new_keyboard = new PianoKeyboard(size);
-				var offset = $('#piano').position();
-				var new_width = new_keyboard.width + (2 * offset.left);
-
-				new_keyboard.render();
-				$('#piano').html('').append(new_keyboard.el);
-				$('#kb-wrapper').width(new_width);
-
-				keyboard.destroy();
-				keyboard = new_keyboard;
+				piano.changeKeyboard(size);
 			});
-
 		},
 		initAnalyzeWidget: function() {
 			var widget = new AnalyzeWidget();
@@ -211,7 +168,7 @@ function(
 			});
 		},
 		init: function() {
-			var keyboard = new PianoKeyboard();
+			var piano = new Piano();
 			var chord = new Chord();
 			var key_signature = new KeySignature();
 			var midi_source = new MidiSource({ chord: chord });
@@ -225,10 +182,9 @@ function(
 			});
 
 			this.initTabs();
-			this.initOnScreenPiano(keyboard);
+			this.initOnScreenPiano(piano);
 			this.initTranscript(transcript);
-			this.initKeyboardSizes(keyboard);
-			this.initPedals();
+			this.initKeyboardSizes(piano);
 			this.initInstruments();
 			this.initAnalyzeWidget();
 			this.initKeyAndSignature(key_signature);

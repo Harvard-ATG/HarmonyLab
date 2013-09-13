@@ -5,8 +5,8 @@ define([
 	'microevent',
 	'raphael',
 	'app/model/event_bus',
-	'app/util/piano_key_generator', 
-	'app/view/piano_key'
+	'app/view/piano/piano_key_generator', 
+	'app/view/piano/piano_key'
 ], function(
 	$, 
 	_, 
@@ -60,13 +60,14 @@ define([
 				this.numberOfKeys = parseInt(numberOfKeys, 10);
 			}
 
-			this.el = $('<div class="keyboard"></div>');
+			this.el = $('<div class="keyboard-area"><div class="keyboard"></div></div>');
+			this.keyboardEl = $('.keyboard', this.el);
 			this.keys = this.getKeys() || [];
 			this.keysByNumber = this.mapKeysByNumber(this.keys);
 
 			this.constrainSize();
 
-			this.paper = Raphael(this.el.get(0), this.width, this.height);
+			this.paper = Raphael(this.keyboardEl.get(0), this.width, this.height);
 
 			_.bindAll(this, ['onNoteChange', 'triggerNoteChange']);
 
@@ -132,6 +133,13 @@ define([
 		},
 
 		/**
+		 * Returns the total number of keys.
+		 */
+		getNumKeys: function() {
+			return this.numberOfKeys;
+		},
+
+		/**
 		 * Returns a key object given a note number.
 		 */
 		getKeyByNumber: function(noteNumber) {
@@ -194,6 +202,7 @@ define([
 				key.destroy();
 			});
 			this.paper.clear();
+			this.keyboardEl.remove();
 			this.el.remove();
 		}
 	});

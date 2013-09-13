@@ -266,7 +266,7 @@ body {
 /*--------------------------------------------------*/
 /* On-screen keyboard */
 
-#kb-wrapper {
+.keyboard-wrapper {
 	width: 888px;
 	margin: 30px auto 0;
 	border: 1px solid #222;
@@ -281,15 +281,14 @@ body {
 	z-index: 10;
 
 }
-#controller-wrapper {
+.keyboard-controls {
 	height: 25px;
 	margin: 0px;
 	padding:5px 0;
 	border-bottom: 1px solid #222;
 
 }
-
-#transpose-controls {
+.transpose-control {
 	width: 150px;
 	margin:2px auto;
 	color:white;
@@ -299,10 +298,14 @@ body {
 	width: 34px;
 	height: 24px;
 }
-#metronome-controls {
+.metronome-control {
 	float:right;
 	color:#fff;
 	margin-right: 25px;
+}
+.metronome-control-input {
+	width: 30px; 
+	margin: 0 5px;
 }
 .metronome-icon {
 	background: transparent url(../img/metronome_sprite.png) no-repeat;
@@ -316,41 +319,32 @@ body {
 .metronome-icon:active, .metronome-icon-active {
 	background-position: -50px -199px;
 }
-.bpm-input {
-	width: 30px; 
-	margin: 0 5px;
-}
-
-#keyboard-area {
+.keyboard-area {
 	margin:0 10px;
 	padding-bottom: 6px;
-	overflow:hidden;
 }
-
-/*--------------------------------------------------*/
-/* Pedals */
-#kb-pedals {
+.keyboard-pedals {
 	margin: 0 auto;
 	width: 172px; 
 }
-#kb-pedals .pedal {
+.keyboard-pedals .pedal {
 	float: left;
 	display: block;
 	background: url(../img/pedal-sprite.png) no-repeat;
 	width: 61px; /* NOTE: center pedal overrides the width */
 	height: 77px;
 }
-#kb-pedals .pedal-left { background-position: -21px -22px; }
-#kb-pedals .pedal-left:hover { background-position: -21px -121px; }
-#kb-pedals .pedal-left:active, #kb-pedals .pedal-left.pedal-active { background-position: -21px -221px; }
+.keyboard-pedals .pedal-left { background-position: -21px -22px; }
+.keyboard-pedals .pedal-left:hover { background-position: -21px -121px; }
+.keyboard-pedals .pedal-left:active, .keyboard-pedals .pedal-left.pedal-active { background-position: -21px -221px; }
 
-#kb-pedals .pedal-center { background-position: -121px -22px; width: 50px; }
-#kb-pedals .pedal-center:hover { background-position: -121px -121px; width: 50px }
-#kb-pedals .pedal-center:active, #kb-pedals .pedal-center.pedal-active { background-position: -121px -221px; width: 50px; }
+.keyboard-pedals .pedal-center { background-position: -121px -22px; width: 50px; }
+.keyboard-pedals .pedal-center:hover { background-position: -121px -121px; width: 50px }
+.keyboard-pedals .pedal-center:active, .keyboard-pedals .pedal-center.pedal-active { background-position: -121px -221px; width: 50px; }
 
-#kb-pedals .pedal-right { background-position: -221px -22px; }
-#kb-pedals .pedal-right:hover { background-position: -221px -121px }
-#kb-pedals .pedal-right:active, #kb-pedals .pedal-right.pedal-active { background-position: -221px -221px }
+.keyboard-pedals .pedal-right { background-position: -221px -22px; }
+.keyboard-pedals .pedal-right:hover { background-position: -221px -121px }
+.keyboard-pedals .pedal-right:active, .keyboard-pedals .pedal-right.pedal-active { background-position: -221px -221px }
 
 /*--------------------------------------------------*/
 /* Background image selection */
