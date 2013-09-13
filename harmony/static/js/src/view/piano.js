@@ -30,7 +30,6 @@ define([
 			this.keyboard = new PianoKeyboard();
 		},
 		initPedals: function() {
-			console.log("initPedals");
 			var eventBus = this.eventBus;
 			var pedalNameByIndex = ['soft','sostenuto','sustain'];
 			var pedals = {
