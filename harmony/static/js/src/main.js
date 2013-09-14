@@ -9,6 +9,7 @@ define([
 	'app/view/piano',
 	'app/view/widget/analyze_widget',
 	'app/view/widget/key_signature_widget',
+	'app/view/widget/theme_selector_widget',
 	'app/presenter/midi_source',
 	'app/presenter/keyboard_shortcuts',
 	'app/presenter/notation_tabs',
@@ -24,6 +25,7 @@ function(
 	Piano,
 	AnalyzeWidget,
 	KeySignatureWidget,
+	ThemeSelectorWidget,
 	MidiSource,
 	KeyboardShortcuts,
 	NotationTabs,
@@ -97,8 +99,7 @@ function(
 					'output': {
 						'selector': '#select_midi_output', 
 						'readonly': true,
-						'options': _.map(outputs, makeOptions)
-					}
+						'options': _.map(outputs, makeOptions) }
 				};
 
 				_.each(devices, function(device, type) {
@@ -142,30 +143,8 @@ function(
 			});
 		},
 		initThemeSelector: function() {
-			var $themeSelect = $('#theme-select');
-			var themes = [];
-			if($themeSelect.data('themes')) {
-				themes = $themeSelect.data('themes').split(',');
-			}
-	
-			_.each(themes, function(themeName) {
-				var el = document.createElement('div');
-				el.className = ['theme-thumbnail','theme-'+themeName].join(' ');
-				el.setAttribute('data-theme', themeName);
-				$themeSelect.append(el);
-			});
-
-			$themeSelect.delegate('.theme-thumbnail', 'click', function(ev) {
-				var prefix = 'theme-';
-				var $el = $(ev.target), $container = $('#container');
-				var new_theme = $el.data('theme'), old_theme = $container.data('theme');
-
-				if(new_theme !== old_theme) {
-					$container.removeClass(prefix + old_theme);
-					$container.addClass(prefix + new_theme);
-					$container.data('theme', new_theme);
-				}
-			});
+			var themeSelector = new ThemeSelectorWidget('#theme-select', '#container');
+			themeSelector.render();
 		},
 		init: function() {
 			var piano = new Piano();
@@ -189,8 +168,8 @@ function(
 			this.initAnalyzeWidget();
 			this.initKeyAndSignature(key_signature);
 			this.initKeyboardShortcuts(shortcuts);
-			this.initThemeSelector();
 			this.initDevices(midi_source);
+			this.initThemeSelector();
 		}
 	};
 

@@ -53,6 +53,14 @@ define([
 
 			$('body').on(this.events);
 		},
+		// remove bindings for events
+		removeListeners: function() {
+			$('body').off(this.events);
+		},
+		// destroy this object
+		destroy: function() {
+			this.removeListeners();
+		},
 		// enables keyboard shortcuts
 		enable: function() {
 			this.enabled = true;
