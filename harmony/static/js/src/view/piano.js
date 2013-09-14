@@ -73,46 +73,61 @@ define([
 			});
 		},
 		initToolbar: function() {
-			var metronome = [
+			var metronome_tpl = _.template([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon"> </div>',
 					'<input name="bpm" type="text" class="metronome-control-input" />',
 				'</div>'
-			].join('');
+			].join(''));
 
-			var transpose = [
+			var transpose_tpl = _.template([
 				'<div class="transpose-control">',
 					'<div style="float:left" class="transpose-icon"> </div>',
 					'<select name="tranpose_num">',
-						'<option value="3">+3</option>',
-						'<option value="2">+2</option>',
-						'<option value="1">+1</option>',
-						'<option value="0" selected>-0-</option>',
-						'<option value="-1">-1</option>',
-						'<option value="-2">-2</option>',
-						'<option value="-3">-3</option>',
+						'<% _.forEach(transposeOpts, function(opt) { %>',
+							'<option value="<%= opt.val %>" <% print(opt.selected ? "selected" : ""); %>><%= opt.name %></option>',
+						'<% }); %>',
 					'</select>',
 				'</div>'
-			].join('');
+			].join(''));
+
+			var transposeOpts =  _.map(_.range(-3, 4), function(n) {
+				return { 
+					val: n, 
+					selected: n === 0, 
+					name: (n > 0 ? '+' : '') + n
+				};
+			});
 
 			this.toolbarEl = $('<div class="keyboard-controls"></div>');
-			this.toolbarEl.append(metronome, transpose);
+			this.toolbarEl.append(metronome_tpl());
+			this.toolbarEl.append(transpose_tpl({ transposeOpts: transposeOpts}));
 		},
 		changeKeyboard: function(size) {
-			var new_keyboard, new_width, offset;
 			if(this.keyboard.getNumKeys() == size) {
 				return;
 			}
 
-			new_keyboard = new PianoKeyboard(size).render();
-			offset = this.keyboard.keyboardEl.position();
-			new_width = new_keyboard.width + (2 * offset.left);
+			var old_keyboard = this.keyboard;
+			var new_keyboard = new PianoKeyboard(size);
+			new_keyboard.render();
 
-			this.keyboard.destroy();
-			this.el.width(new_width);
+			// set the container width to match the size of the new keyboard
+			this.el.width(this.calculateNewWidth(old_keyboard, new_keyboard));
+
+			// destroy the old keyboard and insert the new one
+			old_keyboard.destroy();
 			new_keyboard.el.insertBefore(this.pedalsEl);
 
+			// save a reference to the new keyboard
 			this.keyboard = new_keyboard;
+		},
+		calculateNewWidth: function(old_keyboard, new_keyboard) {
+			// assumes the old keyboard is still part of the DOM and has layout
+			var offset = old_keyboard.keyboardEl.position();
+			var total_margin = 2 * offset.left;
+
+			return new_keyboard.width + total_margin;
 		},
 		render: function() {
 			this.keyboard.render();
