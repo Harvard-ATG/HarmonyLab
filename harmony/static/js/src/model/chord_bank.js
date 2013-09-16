@@ -13,10 +13,10 @@ define([
 	// played. The rest may be accessed for later review, analysis, display,
 	// etc.
 	//
-	// Triggers a "change" event when:
+	// Events:
+	// - Triggers a "change" event when the current chord changes.
+	// - Triggers a "bank" event when the current chord is banked.
 	//
-	// 1) The current chord triggers a change event.
-	// 2) The current chord is banked.
 
 	var ChordBank = function() {
 		this.init();
@@ -40,9 +40,9 @@ define([
 			this._removeListeners(this.current());
 			this._addListeners(chord);
 
-			// add the new chord and trigger a change event
 			this._items.unshift(chord);
-			this.trigger('change');
+
+			this.trigger('bank');
 
 			return this;
 		},

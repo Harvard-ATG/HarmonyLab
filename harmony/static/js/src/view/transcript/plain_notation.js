@@ -47,7 +47,11 @@ define([
 		},
 		initListeners: function() {
 			_.bindAll(this, ['render']);
-			this.chords.bind('change', this.render);
+
+			_.each(['change','bank'], function(eventName) {
+				this.chords.bind(eventName, this.render);
+			}, this);
+
 			this.keySignature.bind('change', this.render);
 		},
 		clear: function() {

@@ -86,6 +86,14 @@ body {
 	margin: 0 0 5px 0;
 }
 
+.transcript-wrapper {
+	position: relative;
+}
+.transcript-wrapper > canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
 
 /*--------------------------------------------------*/
 /* Left side tabs of staff area */
