@@ -44,6 +44,11 @@ define([
 		eventBus: eventBus,
 
 		/**
+		 * Rendering status
+		 */
+		rendered: false,
+
+		/**
 		 * Changes the piano key state to "pressed" (down).
 		 */
 		press: function() {
@@ -86,15 +91,28 @@ define([
 			if(!config.hasOwnProperty('noteNumber')) {
 				throw new Error("Key must have a MIDI note number");
 			}
+
 			this.noteNumber = config.noteNumber;
 			this.noteName = config.noteName || '';
 			this.keyboard = config.keyboard;
-			this.onPress = this.preventDefault(this.onPress);
-			this.onRelease = this.preventDefault(this.onRelease);
 
-			this.eventBus.bind('pedal', _.bind(this.onPedalChange, this));
+			_.bindAll(this, ['onPedalChange', 'onPress', 'onRelease']);
 
-			return this;
+			this.initListeners();
+		},
+
+		/**
+		 * Initializes listeners.
+		 */
+		initListeners: function() {
+			this.eventBus.bind('pedal', this.onPedalChange);
+		},
+
+		/**
+		 * Removes listeners.
+		 */
+		removeListeners: function() {
+			this.eventBus.unbind('pedal', this.onPedalChange);
 		},
 
 		/**
@@ -116,6 +134,7 @@ define([
 			this.el.mousedown(this.onPress);
 			this.el.mouseup(this.onRelease);
 			this.el.mouseout(this.onRelease);
+			this.rendered = true;
 			return this;
 		},
 
@@ -127,6 +146,7 @@ define([
 				this.press();
 				this.keyboard.trigger('key', this.state, this.noteNumber);
 			}
+			return false;
 		},
 
 		/**
@@ -137,6 +157,7 @@ define([
 				this.release();
 				this.keyboard.trigger('key', this.state, this.noteNumber);
 			}
+			return false;
 		},
 
 		/**
@@ -156,18 +177,6 @@ define([
 		},
 
 		/**
-		 * Wrapper for mouse event handlers to prevent default actions.
-		 */
-		preventDefault: function(handler) {
-			var self = this;
-			return function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				return handler.apply(self, arguments);
-			};
-		},
-
-		/**
 		 * Changes the color of the key depending on the state.
 		 */
 		updateColor: function() {
@@ -178,9 +187,12 @@ define([
 		 * Destroys the key.
 		 */
 		destroy: function() {
-			this.el.unmousedown(this.onPress);
-			this.el.unmouseup(this.onRelease);
-			this.el.unmouseout(this.onRelease);
+			if(this.rendered) {
+				this.el.unmousedown(this.onPress);
+				this.el.unmouseup(this.onRelease);
+				this.el.unmouseout(this.onRelease);
+			}
+			this.removeListeners();
 		}
 	};
 
