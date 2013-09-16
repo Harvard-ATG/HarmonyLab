@@ -20,7 +20,7 @@ define([
 			this.initListeners();
 		},
 		initConfig: function() {
-			var required = ['chord', 'keySignature'];
+			var required = ['chords', 'keySignature'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -47,7 +47,7 @@ define([
 		},
 		initListeners: function() {
 			_.bindAll(this, ['render']);
-			this.chord.bind('change', this.render);
+			this.chords.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
 		},
 		clear: function() {
@@ -65,7 +65,7 @@ define([
 			var config = {
 				clef: clef,
 				width: width,
-				chord: this.chord,
+				chords: this.chords,
 				keySignature: this.keySignature,
 				vexRenderer: this.vexRenderer
 			};

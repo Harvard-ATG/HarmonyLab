@@ -56,11 +56,11 @@ define([
 
 		// Initializes the MIDI router to send and receive MIDI messages.
 		init: function() {
-			if(!this.config.hasOwnProperty('chord')) {
+			if(!this.config.hasOwnProperty('chords')) {
 				throw new Error("missing config property");
 			}
 
-			this.chord = this.config.chord;
+			this.chords = this.config.chords;
 
 			_.bindAll(this, [
 				'onMidiMessage',
@@ -151,7 +151,7 @@ define([
 
 		// Toggles a note state.
 		toggleNote: function(noteState, noteNumber) {
-			return this.chord[noteState==='on'?'noteOn':'noteOff'](noteNumber);
+			return this.chords.current()[noteState==='on'?'noteOn':'noteOff'](noteNumber);
 		},
 
 		// Handles a midi message. 
@@ -198,7 +198,7 @@ define([
 				this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
 			}
 			if(pedal === 'sustain') {
-				this.chord[state==='off'?'releaseSustain':'sustainNotes']();
+				this.chords.current()[state==='off'?'releaseSustain':'sustainNotes']();
 			}
 
 			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);

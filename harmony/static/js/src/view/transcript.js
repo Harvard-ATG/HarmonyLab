@@ -30,7 +30,7 @@ define([
 			this.initListeners();
 		},
 		initConfig: function() {
-			var required = ['chord', 'keySignature'];
+			var required = ['chords', 'keySignature'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -41,8 +41,8 @@ define([
 		},
 		initComponents: function() {
 			var config = {
-				'chord': this.chord, 
-				'keySignature': this.keySignature
+				chords: this.chords, 
+				keySignature: this.keySignature
 			};
 			if(this.sheets.length === 0) {
 				this.sheets = [this.sheetFactory('plain')];

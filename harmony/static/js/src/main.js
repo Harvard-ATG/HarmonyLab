@@ -2,7 +2,7 @@
 define([
 	'lodash',
 	'jquery', 
-	'app/model/chord',
+	'app/model/chord_bank',
 	'app/model/event_bus',
 	'app/model/key_signature',
 	'app/view/transcript',
@@ -18,7 +18,7 @@ define([
 function(
 	_,
 	$,
-	Chord,
+	ChordBank,
 	eventBus,
 	KeySignature,
 	Transcript,
@@ -148,11 +148,11 @@ function(
 		},
 		init: function() {
 			var piano = new Piano();
-			var chord = new Chord();
+			var chords = new ChordBank();
 			var key_signature = new KeySignature();
-			var midi_source = new MidiSource({ chord: chord });
+			var midi_source = new MidiSource({ chords: chords });
 			var transcript = new Transcript({ 
-				chord: chord, 
+				chords: chords, 
 				keySignature: key_signature 
 			});
 			var shortcuts = new KeyboardShortcuts({

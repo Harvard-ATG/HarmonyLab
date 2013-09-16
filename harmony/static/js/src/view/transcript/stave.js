@@ -24,13 +24,13 @@ define([
 			this.initConfig();
 
 			this.staveNoteFactory = new StaveNoteFactory({
-				chord: this.chord,
+				chords: this.chords,
 				keySignature: this.keySignature,
 				clef: this.clef
 			});
 		},
 		initConfig: function() {
-			var required = ['clef', 'keySignature', 'chord', 'vexRenderer', 'width'];
+			var required = ['clef', 'keySignature', 'chords', 'vexRenderer', 'width'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName) && this.config[propName]) {
 					this[propName] = this.config[propName];

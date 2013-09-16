@@ -29,7 +29,7 @@ define([
 			this.initListeners();
 		},
 		initConfig: function() {
-			var required = ['chord', 'keySignature', 'clef'];
+			var required = ['chords', 'keySignature', 'clef'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -51,7 +51,7 @@ define([
 		},
 		// returns true if there are any notes 
 		hasStaveNotes: function() {
-			return this.chord.hasNotes(this.clef);
+			return this.chords.current().hasNotes(this.clef);
 		},
 		// returns a list of Vex.Flow stave notes
 		getStaveNotes: function(clef) {
@@ -63,7 +63,7 @@ define([
 		_getNoteKeys: function() {
 			var keySignature = this.keySignature;
 			var clef = this.clef;
-			var pitches = this.chord.getNotePitches(this.clef);
+			var pitches = this.chords.current().getNotePitches(this.clef);
 			var spelling = keySignature.getSpelling();
 			var note, pitchClass, octave;
 			var note_keys = [];
@@ -138,8 +138,8 @@ define([
 		_getNoteKeysAndModifiers: function() {
 			var keys = this._getNoteKeys();
 			var accidentals = this._getAccidentalsOf(keys);
-			var allMidiKeys = this.chord.getNoteNumbers(); // for highlights across stave boundaries
-			var midiKeys = this.chord.getNoteNumbers(this.clef);
+			var allMidiKeys = this.chords.current().getNoteNumbers(); // for highlights across stave boundaries
+			var midiKeys = this.chords.current().getNoteNumbers(this.clef);
 			var modifiers = [];
 
 			for(var i = 0, len = keys.length; i < len; i++) {
