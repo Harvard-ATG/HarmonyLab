@@ -62,7 +62,7 @@ define([
 
 			this.el = $('<div class="keyboard-area"><div class="keyboard"></div></div>');
 			this.keyboardEl = $('.keyboard', this.el);
-			this.keys = this.getKeys() || [];
+			this.keys = this.generateKeys() || [];
 			this.keysByNumber = this.mapKeysByNumber(this.keys);
 
 			this.constrainSize();
@@ -128,7 +128,7 @@ define([
 		/**
 		 * Returns a sequence of piano keys for the current keyboard size.
 		 */
-		getKeys: function() {
+		generateKeys: function() {
 			return PianoKeyGenerator.generateKeys(this.numberOfKeys, this);
 		},
 
