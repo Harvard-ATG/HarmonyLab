@@ -6,10 +6,18 @@ define([
 ], function(_, MicroEvent, Chord) {
 	"use strict";
 
-	// Collection of chords.
+	// Collection of chords (i.e. a chord bank).
 	//
-	// Responsible for knowing how to "bank" chords (keep a history
-	// of chords that can be reviewed, etc). 
+	// Responsible for knowing the current chord and the rest that are in the
+	// bank. The current chord is the one that is currently active or being
+	// played. The rest may be accessed for later review, analysis, display,
+	// etc.
+	//
+	// Triggers a "change" event when:
+	//
+	// 1) The current chord triggers a change event.
+	// 2) The current chord is banked.
+
 	var ChordBank = function() {
 		this.init();
 	};
@@ -32,8 +40,9 @@ define([
 			this._removeListeners(this.current());
 			this._addListeners(chord);
 
-			// add the new chord
+			// add the new chord and trigger a change event
 			this._items.unshift(chord);
+			this.trigger('change');
 
 			return this;
 		},
@@ -63,7 +72,8 @@ define([
 		// event handler that just relays a change event by
 		// triggering the same event on this object
 		onChangeCurrent: function() {
-			var args = Array.prototype.slice(arguments, 0);
+			var args = Array.prototype.slice.call(arguments, 0);
+			args.unshift("change");
 			this.trigger.apply(this, args);
 		}
 	});

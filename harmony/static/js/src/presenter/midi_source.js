@@ -196,9 +196,12 @@ define([
 
 			if(pedal === 'soft') {
 				this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
-			}
-			if(pedal === 'sustain') {
-				this.chords.current()[state==='off'?'releaseSustain':'sustainNotes']();
+			} else if(pedal === 'sustain') {
+				if(state === 'on') {
+					this.chords.current().sustainNotes();
+				} else if(state === 'off') {
+					this.chords.bank();
+				} 
 			}
 
 			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);
