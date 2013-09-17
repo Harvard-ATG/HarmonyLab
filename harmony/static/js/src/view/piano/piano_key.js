@@ -1,20 +1,22 @@
 /* global define: false */
 
-define([
-	'lodash',
-	'app/model/event_bus'
-], function(_, eventBus) {
+define(['lodash'], function(_) {
 	"use strict";
 
 	// constants for piano key states
 	var STATE_KEYUP = 'off';
 	var STATE_KEYDN = 'on';
 
+	// constants for sustain flag
+	var SUSTAIN_ON = 'on';
+	var SUSTAIN_OFF = 'off';
+	var SUSTAIN_NEXT = 'next';
+
 	// constants for piano key colors
 	var COLOR_BLACK_KEYUP = '90-hsl(0,0,25)-hsl(0,0,0)';
 	var COLOR_WHITE_KEYUP = '#fffff0';
 	var COLOR_KEYDN = 'hsl(0,0,60)';
-	var COLOR_KEYSUSTAINED = '90-hsla(0, 50, 40)-hsl(0,50,25)';
+	var COLOR_KEYSUSTAIN = '90-hsla(0, 50, 40)-hsl(0,50,25)';
 
 	/**
 	 * Piano Key Mixin.
@@ -27,26 +29,15 @@ define([
 	 */
 	var PianoKeyMixin = {
 		/**
-		 * Current state of the piano key:
-		 *		up   ---> off
-		 *		down ---> on
+		 * Current state of the piano key (up or down).
 		 */
 		state: STATE_KEYUP,
 
 		/**
-		 * Possible states of the piano key.
+		 * Sustain flag used to change the coloring of the key
+		 * when it is released to indicate that it is being sustained.
 		 */
-		states: [STATE_KEYUP, STATE_KEYDN],
-
-		/**
-		 * Event bus
-		 */
-		eventBus: eventBus,
-
-		/**
-		 * Rendering status
-		 */
-		rendered: false,
+		sustain: SUSTAIN_OFF,
 
 		/**
 		 * Changes the piano key state to "pressed" (down).
@@ -60,8 +51,42 @@ define([
 		 * Changes the piano key state to "released" (up).
 		 */
 		release: function() {
+			switch(this.sustain) {
+				case SUSTAIN_ON: 
+					this.setColor(STATE_KEYUP, COLOR_KEYSUSTAIN);
+					break;
+				case SUSTAIN_NEXT:
+					this.sustain = SUSTAIN_ON;
+					break;
+				case SUSTAIN_OFF:
+				default:
+					this.revertColor(STATE_KEYUP);
+			}
+
 			this.state = STATE_KEYUP;
 			this.updateColor();
+		},
+
+		/**
+		 * Sets the sustain on the key so that when the key is released
+		 * it will know to sustain it. 
+		 *
+		 * Note that when the sustain is turned off, this method automatically
+		 * calls the release() method to revert it back to the normal release
+		 * state.
+		 */
+		setSustain: function(state) {
+			if(state) {
+				this.sustain = SUSTAIN_ON;
+				if(this.isPressed()) {
+					this.sustain = SUSTAIN_NEXT;
+				}
+			} else {
+				this.sustain = SUSTAIN_OFF;
+				if(this.isReleased()) {
+					this.release();
+				}
+			}
 		},
 
 		/**
@@ -96,23 +121,7 @@ define([
 			this.noteName = config.noteName || '';
 			this.keyboard = config.keyboard;
 
-			_.bindAll(this, ['onPedalChange', 'onPress', 'onRelease']);
-
-			this.initListeners();
-		},
-
-		/**
-		 * Initializes listeners.
-		 */
-		initListeners: function() {
-			this.eventBus.bind('pedal', this.onPedalChange);
-		},
-
-		/**
-		 * Removes listeners.
-		 */
-		removeListeners: function() {
-			this.eventBus.unbind('pedal', this.onPedalChange);
+			_.bindAll(this, ['onPress', 'onRelease']);
 		},
 
 		/**
@@ -161,26 +170,24 @@ define([
 		},
 
 		/**
-		 * Modifies keyboard properties when the sutain pedal is changed.
-		 */
-		onPedalChange: function(name, state) {
-			if(name === 'sustain') {
-				if(state === 'on') {
-					// from here on out, when the key is up, it should be colored
-					// to indicate that the key is sustained
-					this.keyColorMap[STATE_KEYUP] = COLOR_KEYSUSTAINED;
-				} else if(state === 'off') {
-					this.keyColorMap[STATE_KEYUP] = this.defaultKeyColorMap[STATE_KEYUP];
-					this.updateColor(); // reset colors 
-				}
-			}
-		},
-
-		/**
-		 * Changes the color of the key depending on the state.
+		 * Update the element color.
 		 */
 		updateColor: function() {
 			this.el.attr('fill', this.keyColorMap[this.state]);
+		},
+
+		/**
+		 * Reverts the color for a particular key state to the default.
+		 */
+		revertColor: function(keyState) {
+			this.keyColorMap[keyState] = this.defaultKeyColorMap[keyState];
+		},
+
+		/**
+		 * Sets the color for a particular key state.
+		 */
+		setColor: function(keyState, color) {
+			this.keyColorMap[keyState] = color;
 		},
 		
 		/**
@@ -192,7 +199,6 @@ define([
 				this.el.unmouseup(this.onRelease);
 				this.el.unmouseout(this.onRelease);
 			}
-			this.removeListeners();
 		}
 	};
 

@@ -69,7 +69,7 @@ define([
 
 			this.paper = Raphael(this.keyboardEl.get(0), this.width, this.height);
 
-			_.bindAll(this, ['onNoteChange', 'triggerNoteChange']);
+			_.bindAll(this, ['onPedalChange', 'onNoteChange', 'triggerNoteChange']);
 
 			this.initListeners();
 		},
@@ -79,6 +79,7 @@ define([
 		 */
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
+			this.eventBus.bind('pedal', this.onPedalChange);
 			this.bind('key', this.triggerNoteChange);
 		},
 
@@ -87,6 +88,7 @@ define([
 		 */
 		removeListeners: function() {
 			this.eventBus.unbind('note', this.onNoteChange);
+			this.eventBus.unbind('pedal', this.onPedalChange);
 			this.unbind('key', this.triggerNoteChange);
 		},
 
@@ -122,6 +124,18 @@ define([
 			var key = this.getKeyByNumber(noteNumber);
 			if(typeof key !== 'undefined') {
 				key[noteState==='on'?'press':'release']();
+			}
+		},
+
+		/*
+		 * Handles pedal changes.
+		 */
+		onPedalChange: function(pedal, state) {
+			if(pedal === 'sustain') { 
+				var is_sustained = (state === 'on');
+				_.each(this.keys, function(key) {
+					key.setSustain(is_sustained);
+				});
 			}
 		},
 
