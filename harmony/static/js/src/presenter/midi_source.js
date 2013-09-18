@@ -205,8 +205,6 @@ define([
 
 			this.toggleNote(noteState, transposedNoteNumber);
 			this.sendMIDIMessage(command, transposedNoteNumber, this.noteVelocity);
-
-			console.log("note change", noteNumber, "transposed to", transposedNoteNumber, "with transpose", this.transpose);
 		},
 
 		// Handles sustain, sostenuto, soft pedal events.
