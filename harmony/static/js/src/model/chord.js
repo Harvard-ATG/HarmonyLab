@@ -78,7 +78,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				delete _notes[number];
 			});
 
-			this.trigger('change', 'off', notes);
+			this.trigger('change', 'notes:off', notes);
 		},
 		// Returns a list of notes for the given clef.
 		getNotes: function(clef) {
