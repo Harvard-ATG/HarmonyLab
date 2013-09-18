@@ -73,6 +73,8 @@ define([
 			});
 		},
 		initToolbar: function() {
+			var eventBus = this.eventBus;
+
 			var metronome_tpl = _.template([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon"> </div>',
@@ -83,7 +85,7 @@ define([
 			var transpose_tpl = _.template([
 				'<div class="transpose-control">',
 					'<div style="float:left" class="transpose-icon"> </div>',
-					'<select name="tranpose_num">',
+					'<select name="tranpose_num" class="js-transpose">',
 						'<% _.forEach(transposeOpts, function(opt) { %>',
 							'<option value="<%= opt.val %>" <% print(opt.selected ? "selected" : ""); %>><%= opt.name %></option>',
 						'<% }); %>',
@@ -91,7 +93,7 @@ define([
 				'</div>'
 			].join(''));
 
-			var transposeOpts =  _.map(_.range(-3, 4), function(n) {
+			var transposeOpts =  _.map(_.range(-12, 13), function(n) {
 				return { 
 					val: n, 
 					selected: n === 0, 
@@ -102,6 +104,11 @@ define([
 			this.toolbarEl = $('<div class="keyboard-controls"></div>');
 			this.toolbarEl.append(metronome_tpl());
 			this.toolbarEl.append(transpose_tpl({ transposeOpts: transposeOpts}));
+
+			this.toolbarEl.on('change', '.js-transpose', null, function(ev) {
+				var transpose = parseInt($(ev.target).val(), 10);
+				eventBus.trigger('transpose', transpose);
+			});
 		},
 		changeKeyboard: function(size) {
 			if(this.keyboard.getNumKeys() == size) {

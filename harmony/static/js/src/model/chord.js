@@ -9,11 +9,20 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	// turned on or off.
 	
 	var Chord = function() {
-		this._notes = {};
-		this._sustained = {};
+		this.init();
 	};
 
 	_.extend(Chord.prototype, {
+		init: function() {
+			this._notes = {};
+			this._sustained = {};
+		},
+		// Clears all notes and triggers a change event.
+		clear: function() {
+			this._notes = {};
+			this._sustained = {};
+			this.trigger('change', 'notes:clear');
+		},
 		// Command to turn on a note. Fires a change event if the note status has changed.
 		// Returns true if the note status was changed, false otherwise.
 		noteOn: function(number) {
@@ -23,7 +32,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				this._sustained[number] = true;
 			}
 			if(changed) {
-				this.trigger('change', 'on', number);
+				this.trigger('change', 'note:on', number);
 			}
 			return changed;
 		},
@@ -40,7 +49,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			changed = (this._notes[number] === true);
 			delete this._notes[number];
 			if(changed) {
-				this.trigger('change', 'off', number);
+				this.trigger('change', 'note:off', number);
 			}
 
 			return changed;

@@ -23,19 +23,27 @@ define([
 	};
 
 	_.extend(MidiSource.prototype, {
+		// global event bus
 		eventBus: eventBus,
 
-		// jazzmidibridge api for midi input/output
+		// api for midi access via jazz midi bridge
 		midiAccess: null, 
 
-		channel: 0, // default midi channel
+		// midi channel settings
+		channel: 0, 
+
+		// transposition settings
+		transpose: 0,
+
+		// midi instruments
 		defaultInstrumentNum: 0, // default instrument
 
-		// apply uniform note velocity (volume is too low otherwise)
-		noteVelocity: 127, // current value: 0-127
+		// midi note velocity settings
+		noteVelocity: 127, // range: 0-127
 		defaultNoteVelocity: 127,
 		reducedNoteVelocity: 84,
 
+		// midi device settings
 		outputDevices: [], // list of available outputs
 		inputDevices: [], // list of available inputs
 		output: null, // selected output device
@@ -66,7 +74,8 @@ define([
 				'onMidiMessage',
 				'onNoteChange',
 				'onPedalChange',
-				'onChangeInstrument'
+				'onInstrumentChange',
+				'onTransposeChange'
 			]);
 
 			this.onJMBInit = this.execAfter(this.onJMBInit, this.initListeners);
@@ -142,7 +151,8 @@ define([
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
 			this.eventBus.bind('pedal', this.onPedalChange);
-			this.eventBus.bind('instrument', this.onChangeInstrument);
+			this.eventBus.bind('instrument', this.onInstrumentChange);
+			this.eventBus.bind('transpose', this.onTransposeChange);
 
 			if(this.input) {
 				this.input.addEventListener('midimessage', this.onMidiMessage);
@@ -154,9 +164,15 @@ define([
 			return this.chords.current()[noteState==='on'?'noteOn':'noteOff'](noteNumber);
 		},
 
+		// Clears all notes.
+		clearNotes: function() {
+			this.chords.current().clear();
+		},
+
 		// Handles a midi message. 
 		onMidiMessage: function(msg) {
 			var command = msg.command;
+			var noteNum;
 
 			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
 			if(command === JMB.NOTE_ON && !msg.data2) {
@@ -165,10 +181,12 @@ define([
 
 			switch(command) {
 				case JMB.NOTE_ON:
-					this.eventBus.trigger('note', 'on', msg.data1, this.noteVelocity || msg.data2);
+					noteNum = msg.data1;
+					this.eventBus.trigger('note', 'on', noteNum, this.noteVelocity || msg.data2);
 					break;
 				case JMB.NOTE_OFF:
-					this.eventBus.trigger('note', 'off', msg.data1, this.noteVelocity || msg.data2);
+					noteNum = msg.data1;
+					this.eventBus.trigger('note', 'off', noteNum, this.noteVelocity || msg.data2);
 					break;
 				case JMB.CONTROL_CHANGE:
 					if(this.midiControlMap.pedal.hasOwnProperty(msg.data1)) {
@@ -182,10 +200,13 @@ define([
 
 		// Handles note output (not from an external device). 
 		onNoteChange: function(noteState, noteNumber) {
-			this.toggleNote(noteState, noteNumber);
-
+			var transposedNoteNumber = noteNumber + this.transpose;;
 			var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-			this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
+
+			this.toggleNote(noteState, transposedNoteNumber);
+			this.sendMIDIMessage(command, transposedNoteNumber, this.noteVelocity);
+
+			console.log("note change", noteNumber, "transposed to", transposedNoteNumber, "with transpose", this.transpose);
 		},
 
 		// Handles sustain, sostenuto, soft pedal events.
@@ -208,11 +229,22 @@ define([
 		},
 
 		// Handles change of instrument.
-		onChangeInstrument: function(instrumentNum) {
+		onInstrumentChange: function(instrumentNum) {
 			var command = JMB.PROGRAM_CHANGE;
 			instrumentNum = instrumentNum < 0 ? this.defaultInstrumentNum : instrumentNum;
 
 			this.sendMIDIMessage(command, instrumentNum, 0, this.channel);
+		},
+
+		// Handles transpose events.
+		onTransposeChange: function(value) {
+			var TRANSPOSE_MIN = -12, TRANSPOSE_MAX = 12;
+
+			if(value >= TRANSPOSE_MIN && value <= TRANSPOSE_MAX) {
+				this.transpose = value;
+			} else {
+				this.transpose = 0;
+			}
 		},
 
 		// Outputs a MIDI message via the Jazz MIDI bridge
