@@ -2,34 +2,21 @@
 define([
 	'lodash', 
 	'vexflow',
-	'app/model/event_bus',
 	'app/util/analyze',
-], function(_, Vex, eventBus, Analyze) {
+], function(_, Vex, Analyze) {
 	"use strict";
 
-	var StaveNoteFactory = function(config) {
+	var StaveNotater = function(config) {
 		this.init(config);
 	};
 
-	_.extend(StaveNoteFactory.prototype, {
-		// tracks options to highlight notes based on certain musical phenomena
-		highlights: {
-			enabled: false,
-			mode: {
-				roots: false,
-				doubles: false,
-				tritones: false,
-				octaves: false
-			}
-		},
-		eventBus:eventBus,
+	_.extend(StaveNotater.prototype, {
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
-			this.initListeners();
 		},
 		initConfig: function() {
-			var required = ['chords', 'keySignature', 'clef'];
+			var required = ['chord', 'keySignature', 'clef', 'highlights'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -38,23 +25,12 @@ define([
 				}
 			}, this);
 		},
-		initListeners: function() {
-			var highlights = this.highlights;
-
-			this.eventBus.bind("highlightNotes", function(enabled) {
-				highlights.enabled = enabled ? true : false;
-			});
-
-			this.eventBus.bind("highlightNotesMode", function(mode, enabled) {
-				highlights.mode[mode] = enabled ? true : false;
-			});
-		},
 		// returns true if there are any notes 
 		hasStaveNotes: function() {
-			return this.chords.current().hasNotes(this.clef);
+			return this.chord.hasNotes(this.clef);
 		},
 		// returns a list of Vex.Flow stave notes
-		getStaveNotes: function(clef) {
+		getStaveNotes: function() {
 			var note_struct = this._getNoteKeysAndModifiers();
 			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
@@ -63,7 +39,7 @@ define([
 		_getNoteKeys: function() {
 			var keySignature = this.keySignature;
 			var clef = this.clef;
-			var pitches = this.chords.current().getNotePitches(this.clef);
+			var pitches = this.chord.getNotePitches(this.clef);
 			var spelling = keySignature.getSpelling();
 			var note, pitchClass, octave;
 			var note_keys = [];
@@ -138,8 +114,8 @@ define([
 		_getNoteKeysAndModifiers: function() {
 			var keys = this._getNoteKeys();
 			var accidentals = this._getAccidentalsOf(keys);
-			var allMidiKeys = this.chords.current().getNoteNumbers(); // for highlights across stave boundaries
-			var midiKeys = this.chords.current().getNoteNumbers(this.clef);
+			var allMidiKeys = this.chord.getNoteNumbers(); // for highlights across stave boundaries
+			var midiKeys = this.chord.getNoteNumbers(this.clef);
 			var modifiers = [];
 
 			for(var i = 0, len = keys.length; i < len; i++) {
@@ -190,5 +166,5 @@ define([
 		}
 	});
 
-	return StaveNoteFactory;
+	return StaveNotater;
 });

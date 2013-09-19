@@ -2,8 +2,7 @@
 define([
 	'lodash', 
 	'vexflow',
-	'app/view/transcript/stave_note_factory'
-], function(_, Vex, StaveNoteFactory) {
+], function(_, Vex, StaveNotater) {
 	"use strict";
 
 	// Knows how to render and manipulate a staff/stave.
@@ -12,7 +11,6 @@ define([
 	};
 
 	_.extend(Stave.prototype, {
-		width: 450,
 		marginLeft: 40,
 		clefs: {
 			'treble': { 'index': 1 },
@@ -20,19 +18,14 @@ define([
 		},
 		// initialization
 		init: function(config) {
+			this.width = 120;
 			this.config = config;
 			this.initConfig();
-
-			this.staveNoteFactory = new StaveNoteFactory({
-				chords: this.chords,
-				keySignature: this.keySignature,
-				clef: this.clef
-			});
 		},
 		initConfig: function() {
-			var required = ['clef', 'keySignature', 'chords', 'vexRenderer', 'width'];
+			var required = ['clef', 'barIndex', 'staveNotater', 'vexRenderer', 'keySignature'];
 			_.each(required, function(propName) {
-				if(this.config.hasOwnProperty(propName) && this.config[propName]) {
+				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
 				} else {
 					throw new Error("missing required config property: "+propName);
@@ -43,53 +36,81 @@ define([
 		},
 		// renders the stave along with its notes 
 		render: function() {
-			var x = this.marginLeft; 
-			var y = 75 * this.clefConfig.index; 
-			var ctx = this.vexRenderer.getContext();
-			var vexKey = this.keySignature.getVexKey();
-			var stave, voice, formatter, notes;
+			this.createStaveVoice();
+			this.createStaveBar();
 
-			stave = new Vex.Flow.Stave(x, y, this.width);
-			stave.addClef(this.clef);
-			stave.addKeySignature(vexKey);
-			stave.setContext(ctx);
-			stave.draw();
-
-			if(this.hasStaveNotes()) {
-				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-				voice.addTickables(this.getStaveNotes());
-				formatter = new Vex.Flow.Formatter();
-				formatter.joinVoices([voice]).format([voice], this.width);
-				voice.draw(ctx, stave);
+			if(this.staveVoice) {
+				this.staveVoice.draw(this.getContext(), this.staveBar);
+				this.staveBar.draw(this.getContext());
+			} else {
+				this.staveBar.draw(this.getContext());
 			}
-
-			this.vexStave = stave; // save reference to stave
-
 			return this;
+		},
+		createStaveBar: function() {
+			var x = this.marginLeft + (this.barIndex * this.width); 
+			var y = 75 * this.clefConfig.index; 
+			var width = this.width;
+			var staveBar;
+
+			staveBar = new Vex.Flow.Stave(x, y, width);
+			if(this.barIndex === 0) {
+				staveBar.addClef(this.clef);
+				staveBar.addKeySignature(this.keySignature.getVexKey());
+			} else {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
+			}
+			staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
+			staveBar.setContext(this.getContext());
+
+			this.staveBar = staveBar; // save reference
+		},
+		// renders one stave note
+		createStaveVoice: function() {
+			var voice, formatter;
+			if(this.hasStaveNotes()) {
+				formatter = new Vex.Flow.Formatter();
+				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
+
+				voice.addTickables(this.getStaveNotes());
+				formatter.joinVoices([voice]).format([voice], this.width);
+			}
+			this.staveVoice = voice;
 		},
 		// connects two staves together to form a grand staff
 		connectWith: function(stave) {
 			// This method should only be called *after* the stave has been rendered
 			if(stave) {
 				var BRACE = Vex.Flow.StaveConnector.type.BRACE;
-				var ctx = this.vexRenderer.getContext();
-				var connector = new Vex.Flow.StaveConnector(this.getVexStave(), stave.getVexStave());
-		
+				var ctx = this.getContext();
+				var connector = new Vex.Flow.StaveConnector(this.getStaveBar(), stave.getStaveBar());
 				connector.setType(BRACE).setContext(ctx).draw();
 			}
 			return this;
 		},
 		// returns a reference to the Vex.Flow stave
-		getVexStave: function() {
-			return this.vexStave;
+		getStaveBar: function() {
+			return this.staveBar;
+		},
+		getBarIndex: function() {
+			return this.barIndex;
+		},
+		getWidth: function() {
+			return this.width;
+		},
+		getHeight: function() {
+			return this.height;
 		},
 		// returns a list of tickables (i.e. notes) to render
 		getStaveNotes: function() {
-			return this.staveNoteFactory.getStaveNotes();
+			return this.staveNotater.getStaveNotes();
+		},
+		getContext: function() {
+			return this.vexRenderer.getContext();
 		},
 		// returns true if there are tickables 
 		hasStaveNotes: function() {
-			return this.staveNoteFactory.hasStaveNotes();
+			return this.staveNotater.hasStaveNotes();
 		}
 	});
 

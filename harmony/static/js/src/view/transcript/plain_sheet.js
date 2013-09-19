@@ -3,8 +3,10 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow',
-	'app/view/transcript/stave'
-], function($, _, Vex, Stave) {
+	'app/model/event_bus',
+	'app/view/transcript/stave',
+	'app/view/transcript/stave_notater'
+], function($, _, Vex, eventBus, Stave, StaveNotater) {
 	"use strict";
 
 	// Plain Sheet Music Notation
@@ -13,6 +15,11 @@ define([
 	};
 
 	_.extend(PlainSheet.prototype, {
+		eventBus: eventBus,
+		highlights: {
+			enabled: false,
+			mode: {roots: false, doubles: false, tritones: false, octaves: false}
+		},
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
@@ -34,26 +41,37 @@ define([
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
 			this.el = $('<canvas></canvas>');
-			this.el[0].width = this.transcript.getWidth();
-			this.el[0].height = this.transcript.getHeight();
+			this.el[0].width = this.getWidth();
+			this.el[0].height = this.getHeight();
 
 			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], CANVAS);
 
 			this.transcript.el.append(this.el);
 		},
 		initStaves: function() {
-			this.staves = [];
-			this.addStave('treble'); 
-			this.addStave('bass');
+			this.updateStaves();
 		},
 		initListeners: function() {
+			var highlights = this.highlights;
+
 			_.bindAll(this, ['render']);
 
-			_.each(['change','bank'], function(eventName) {
-				this.chords.bind(eventName, this.render);
-			}, this);
+			this.chords.bind('change', this.render);
+
+			this.chords.bind('bank', _.bind(function() {
+				this.updateStaves();
+				this.render();
+			}, this));
 
 			this.keySignature.bind('change', this.render);
+
+			this.eventBus.bind("highlightNotes", function(enabled) {
+				highlights.enabled = enabled ? true : false;
+			});
+
+			this.eventBus.bind("highlightNotesMode", function(mode, enabled) {
+				highlights.mode[mode] = enabled ? true : false;
+			});
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -65,21 +83,18 @@ define([
 			this.renderAnnotations();
 			return this;
 		},
-		addStave: function(clef) {
-			var width = 0.8 * this.transcript.getWidth();
-			var config = {
-				clef: clef,
-				width: width,
-				chords: this.chords,
-				keySignature: this.keySignature,
-				vexRenderer: this.vexRenderer
-			};
-			this.staves.push(new Stave(config));
-		},
 		renderStaves: function() {
-			var i, len;
+			var i, len, stave; 
+			var totalWidth = 0; 
+			var maxWidth = this.getWidth();
+	
 			for(i = 0, len = this.staves.length; i < len; i++) {
-				this.staves[i].render();
+				stave = this.staves[i];
+				if(totalWidth + stave.getWidth() > maxWidth) {
+					break;
+				} 
+				totalWidth += (stave.getBarIndex() % 2 == 0 ? stave.getWidth() : 0);
+				stave.render();
 			}
 		},
 		connectStaves: function() {
@@ -87,15 +102,44 @@ define([
 				this.staves[0].connectWith(this.staves[1]);
 			}
 		},
+		updateStaves: function() {
+			this.staves = [];
+			_.each(this.chords.items(), function(chord, index) {
+				this.addStave('treble', index, chord);
+				this.addStave('bass', index, chord);
+			}, this);
+			return this;
+		},
+		addStave: function(clef, barIndex, chord) {
+			var config = {};
+			config.clef = clef;
+			config.barIndex = barIndex;
+			config.vexRenderer = this.vexRenderer;
+			config.keySignature = this.keySignature;
+			config.staveNotater = new StaveNotater({
+				clef: clef,
+				chord: chord,
+				keySignature: this.keySignature,
+				highlights: this.highlights
+			});
+
+			this.staves.push(new Stave(config));
+		},
+		getWidth: function() {
+			return this.transcript.getWidth();
+		},
+		getHeight: function() {
+			return this.transcript.getHeight();
+		},
 		getBottomStaveY: function() {
 			if(this.staves.length > 0) {
-				return this.staves[this.staves.length-1].getVexStave().getBottomY();
+				return this.staves[1].getStaveBar().getBottomY();
 			}
 			return 0;
 		},
 		getBottomStaveX: function() {
 			if(this.staves.length > 0) {
-				return this.staves[this.staves.length-1].getVexStave().x;
+				return this.staves[0].getStaveBar().x;
 			}
 			return 0;
 		},

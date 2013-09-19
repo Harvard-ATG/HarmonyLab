@@ -30,6 +30,8 @@ define([
 			_.bindAll(this, ['onChangeCurrent']);
 
 			this._addListeners(chord);
+
+			this._limit = 10; // limit number of chords in the bank
 			this._items = [chord];
 		},
 		// banks the current chord and replaces it with a new one
@@ -39,12 +41,15 @@ define([
 			// re-wire listeners because we only care about changes to the current chord
 			this._removeListeners(this.current());
 			this._addListeners(chord);
-
-			this._items.unshift(chord);
+			this._add(chord);
 
 			this.trigger('bank');
 
 			return this;
+		},
+		// returns all items in the chord bank
+		items: function() {
+			return this._items;
 		},
 		// returns the first chord - aliased to current()
 		first: function() {
@@ -54,27 +59,30 @@ define([
 		rest: function() {
 			return this._items.slice(1);
 		},
-		// iterates over the chords
-		eachBanked: function(callback) {
-			_.each(this.rest(), callback);
-			return this;
-		},
-		// maps over the chords
-		mapBanked: function(callback) {
-			return _.map(this.rest(), callback);
-		},
-		_addListeners: function(chord) {
-			chord.bind('change', this.onChangeCurrent);
-		},
-		_removeListeners: function(chord) {
-			chord.unbind('change', this.onChangeCurrent);
-		},
-		// event handler that just relays a change event by
-		// triggering the same event on this object
+		// event handler that relays a change event from
+		// a source object to this object
 		onChangeCurrent: function() {
 			var args = Array.prototype.slice.call(arguments, 0);
 			args.unshift("change");
 			this.trigger.apply(this, args);
+		},
+
+		//--------------------------------------------------
+		// Private methods
+		_add: function(chord) {
+			if(this._limit !== null && this._items.length > this._limit) {
+				this._items.pop();
+			}
+			this._items.unshift(chord);
+			return this;
+		},
+		_addListeners: function(chord) {
+			chord.bind('change', this.onChangeCurrent);
+			return this;
+		},
+		_removeListeners: function(chord) {
+			chord.unbind('change', this.onChangeCurrent);
+			return this;
 		}
 	});
 
