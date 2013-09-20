@@ -303,8 +303,8 @@ body {
 }
 .transpose-icon {
 	background: transparent url(../img/transpose-arrows.png) no-repeat;
-	width: 34px;
-	height: 24px;
+	width: 28px;
+	height: 20px;
 }
 .metronome-control {
 	float:right;
