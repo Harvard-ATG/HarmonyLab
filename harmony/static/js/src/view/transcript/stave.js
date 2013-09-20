@@ -21,9 +21,19 @@ define([
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
+
+			this.clefConfig = this.clefs[this.clef];
+			this.maxWidth = this.width;
 		},
 		initConfig: function() {
-			var required = ['clef', 'barIndex', 'staveNotater', 'vexRenderer', 'keySignature'];
+			var required = [
+				'clef', 
+				'barIndex', 
+				'barCount', 
+				'staveNotater', 
+				'vexRenderer', 
+				'keySignature'
+			];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -31,8 +41,6 @@ define([
 					throw new Error("missing required config property: "+propName);
 				}
 			}, this);
-
-			this.clefConfig = this.clefs[this.clef];
 		},
 		// renders the stave along with its notes 
 		render: function() {
@@ -48,18 +56,21 @@ define([
 			return this;
 		},
 		createStaveBar: function() {
-			var x = this.marginLeft + (this.barIndex * this.width); 
-			var y = 75 * this.clefConfig.index; 
-			var width = this.width;
-			var staveBar;
+			var x, y, width, staveBar;
+
+			x = this.marginLeft + (this.barIndex * this.width);
+			width = this.maxWidth;
+			y = 75 * this.clefConfig.index;
 
 			staveBar = new Vex.Flow.Stave(x, y, width);
+
 			if(this.barIndex === 0) {
 				staveBar.addClef(this.clef);
 				staveBar.addKeySignature(this.keySignature.getVexKey());
 			} else {
 				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
 			}
+
 			staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
 			staveBar.setContext(this.getContext());
 
@@ -87,6 +98,10 @@ define([
 				connector.setType(BRACE).setContext(ctx).draw();
 			}
 			return this;
+		},
+		setMaxWidth: function(w) {
+			var margin = 25;
+			this.maxWidth = w - margin;
 		},
 		// returns a reference to the Vex.Flow stave
 		getStaveBar: function() {

@@ -95,7 +95,8 @@ define([
 	
 			for(i = 0, len = this.staves.length; i < len; i++) {
 				stave = this.staves[i];
-				if(stave.clef === 'treble') {
+				stave.setMaxWidth(maxWidth - totalWidth);
+				if(stave.clef === 'bass') {
 					if(totalWidth + stave.getWidth() > maxWidth) {
 						break;
 					} 
@@ -111,16 +112,18 @@ define([
 		},
 		updateStaves: function() {
 			this.staves = [];
-			_.each(this.chords.items(), function(chord, index) {
-				this.addStave('treble', index, chord);
-				this.addStave('bass', index, chord);
+			_.each(this.chords.items(), function(chord, index, chords) {
+				var barIndex = index, barCount = chords.length;
+				this.addStave('treble', barIndex, barCount, chord);
+				this.addStave('bass', barIndex, barCount, chord);
 			}, this);
 			return this;
 		},
-		addStave: function(clef, barIndex, chord) {
+		addStave: function(clef, barIndex, barCount, chord) {
 			var config = {};
 			config.clef = clef;
 			config.barIndex = barIndex;
+			config.barCount = barCount;
 			config.vexRenderer = this.vexRenderer;
 			config.keySignature = this.keySignature;
 			config.staveNotater = new StaveNotater({
