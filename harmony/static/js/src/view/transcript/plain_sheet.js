@@ -15,10 +15,18 @@ define([
 	};
 
 	_.extend(PlainSheet.prototype, {
+		// global event bus 
 		eventBus: eventBus,
+
+		// controls highlighting of stave notes
 		highlights: {
 			enabled: false,
-			mode: {roots: false, doubles: false, tritones: false, octaves: false}
+			mode: {
+				roots: false, 
+				doubles: false, 
+				tritones: false, 
+				octaves: false
+			}
 		},
 		init: function(config) {
 			this.config = config;
@@ -54,7 +62,7 @@ define([
 		initListeners: function() {
 			var highlights = this.highlights;
 
-			_.bindAll(this, ['render']);
+			_.bindAll(this, ['render', 'onHighlightChange']);
 
 			this.chords.bind('change', this.render);
 
@@ -65,13 +73,10 @@ define([
 
 			this.keySignature.bind('change', this.render);
 
-			this.eventBus.bind("highlightNotes", function(enabled) {
-				highlights.enabled = enabled ? true : false;
-			});
-
-			this.eventBus.bind("highlightNotesMode", function(mode, enabled) {
-				highlights.mode[mode] = enabled ? true : false;
-			});
+			this.eventBus.bind("highlight", _.bind(function() {
+				this.onHighlightChange.apply(this, arguments);
+				this.render();
+			}, this));
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -90,15 +95,17 @@ define([
 	
 			for(i = 0, len = this.staves.length; i < len; i++) {
 				stave = this.staves[i];
-				if(totalWidth + stave.getWidth() > maxWidth) {
-					break;
-				} 
-				totalWidth += (stave.getBarIndex() % 2 == 0 ? stave.getWidth() : 0);
+				if(stave.clef === 'treble') {
+					if(totalWidth + stave.getWidth() > maxWidth) {
+						break;
+					} 
+					totalWidth += stave.getWidth();
+				}
 				stave.render();
 			}
 		},
 		connectStaves: function() {
-			if(this.staves.length === 2) { 
+			if(this.staves.length >= 2) { 
 				this.staves[0].connectWith(this.staves[1]);
 			}
 		},
@@ -150,6 +157,18 @@ define([
 
 			ctx.font = font;
 			ctx.fillText(this.convertSymbols(key), this.getBottomStaveX(), this.getBottomStaveY());
+		},
+		onHighlightChange: function(o) {
+			switch(o.key) {
+				case "enabled":
+					this.highlights.enabled = o.value; 
+					break;
+				case "mode":
+					_.assign(this.highlights.mode, o.value);	
+					break;
+				default:
+					throw new Error("Invalid highlight key: " + hl.key);
+			}
 		},
 		convertSymbols: function(text) {
 			var rules = [

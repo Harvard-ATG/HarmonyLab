@@ -52,12 +52,8 @@ define([
 			return this._items;
 		},
 		// returns the first chord - aliased to current()
-		first: function() {
+		current: function() {
 			return this._items[0];
-		},
-		// returns the rest of the chords
-		rest: function() {
-			return this._items.slice(1);
 		},
 		// event handler that relays a change event from
 		// a source object to this object
@@ -85,9 +81,6 @@ define([
 			return this;
 		}
 	});
-
-	// Alias
-	ChordBank.prototype.current = ChordBank.prototype.first;
 
 	MicroEvent.mixin(ChordBank); // make object observable
 	

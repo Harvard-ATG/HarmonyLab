@@ -71,13 +71,15 @@ function(
 
 			widget.bind('changeCategory', function(category, enabled) {
 				if(category === 'highlight') {
-					eventBus.trigger("highlightNotes", enabled);
+					eventBus.trigger("highlight", {key: "enabled", value: enabled});
 				}
 			});
 
 			widget.bind('changeOption', function(category, mode, enabled) {
+				var value = {};
 				if(category === 'highlight') {
-					eventBus.trigger("highlightNotesMode", mode, enabled);
+					value[mode] = enabled;
+					eventBus.trigger("highlight", {key: "mode", value: value});
 				}
 			});
 		},

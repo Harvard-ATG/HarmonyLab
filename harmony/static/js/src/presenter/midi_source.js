@@ -210,6 +210,7 @@ define([
 				if(state === 'on') {
 					this.chords.current().sustainNotes();
 				} else if(state === 'off') {
+					//this.chords.current().releaseSustain();
 					this.chords.bank();
 				} 
 			}

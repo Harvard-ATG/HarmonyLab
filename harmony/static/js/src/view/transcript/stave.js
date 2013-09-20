@@ -11,14 +11,14 @@ define([
 	};
 
 	_.extend(Stave.prototype, {
-		marginLeft: 40,
+		width: 125,
+		marginLeft: 18,
 		clefs: {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
 		},
 		// initialization
 		init: function(config) {
-			this.width = 120;
 			this.config = config;
 			this.initConfig();
 		},
