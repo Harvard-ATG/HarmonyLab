@@ -42,17 +42,14 @@ define([
 				}
 			}, this);
 		},
-		// renders the stave along with its notes 
 		render: function() {
+			var ctx = this.getContext();
 			this.createStaveVoice();
 			this.createStaveBar();
-
 			if(this.staveVoice) {
-				this.staveVoice.draw(this.getContext(), this.staveBar);
-				this.staveBar.draw(this.getContext());
-			} else {
-				this.staveBar.draw(this.getContext());
+				this.staveVoice.draw(ctx, this.staveBar);
 			}
+			this.staveBar.draw(ctx);
 			return this;
 		},
 		createStaveBar: function() {
@@ -76,7 +73,6 @@ define([
 
 			this.staveBar = staveBar; // save reference
 		},
-		// renders one stave note
 		createStaveVoice: function() {
 			var voice, formatter;
 			if(this.hasStaveNotes()) {
@@ -103,7 +99,6 @@ define([
 			var margin = 25;
 			this.maxWidth = w - margin;
 		},
-		// returns a reference to the Vex.Flow stave
 		getStaveBar: function() {
 			return this.staveBar;
 		},
@@ -116,14 +111,12 @@ define([
 		getHeight: function() {
 			return this.height;
 		},
-		// returns a list of tickables (i.e. notes) to render
 		getStaveNotes: function() {
 			return this.staveNotater.getStaveNotes();
 		},
 		getContext: function() {
 			return this.vexRenderer.getContext();
 		},
-		// returns true if there are tickables 
 		hasStaveNotes: function() {
 			return this.staveNotater.hasStaveNotes();
 		}

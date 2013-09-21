@@ -60,23 +60,12 @@ define([
 			this.updateStaves();
 		},
 		initListeners: function() {
-			var highlights = this.highlights;
-
-			_.bindAll(this, ['render', 'onHighlightChange']);
-
-			this.chords.bind('change', this.render);
-
-			this.chords.bind('bank', _.bind(function() {
-				this.updateStaves();
-				this.render();
-			}, this));
+			_.bindAll(this, ['render', 'onHighlightChange', 'onChordsBank']);
 
 			this.keySignature.bind('change', this.render);
-
-			this.eventBus.bind("highlight", _.bind(function() {
-				this.onHighlightChange.apply(this, arguments);
-				this.render();
-			}, this));
+			this.chords.bind('change', this.render);
+			this.chords.bind('bank', this.onChordsBank);
+			this.eventBus.bind("highlight", this.onHighlightChange);
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -92,17 +81,24 @@ define([
 			var i, len, stave; 
 			var totalWidth = 0; 
 			var maxWidth = this.getWidth();
+			var stop_rendering = false;
 	
 			for(i = 0, len = this.staves.length; i < len; i++) {
 				stave = this.staves[i];
 				stave.setMaxWidth(maxWidth - totalWidth);
 				if(stave.clef === 'bass') {
 					if(totalWidth + stave.getWidth() > maxWidth) {
-						break;
+						stop_rendering = true;
 					} 
+					if(stave.maxWidth < stave.width) {
+						stop_rendering = true;
+					}
 					totalWidth += stave.getWidth();
 				}
 				stave.render();
+				if(stop_rendering) {
+					break;
+				}
 			}
 		},
 		connectStaves: function() {
@@ -160,18 +156,21 @@ define([
 
 			ctx.font = font;
 			ctx.fillText(this.convertSymbols(key), this.getBottomStaveX(), this.getBottomStaveY());
+
+			return this;
 		},
-		onHighlightChange: function(o) {
-			switch(o.key) {
+		updateHighlight: function(highlight) {
+			switch(highlight.key) {
 				case "enabled":
-					this.highlights.enabled = o.value; 
+					this.highlights.enabled = highlight.value; 
 					break;
 				case "mode":
-					_.assign(this.highlights.mode, o.value);	
+					_.assign(this.highlights.mode, highlight.value);	
 					break;
 				default:
-					throw new Error("Invalid highlight key: " + hl.key);
+					throw new Error("Invalid highlight key");
 			}
+			return this;
 		},
 		convertSymbols: function(text) {
 			var rules = [
@@ -212,7 +211,15 @@ define([
 			}
 
 			return text;
-		}
+		},
+		onChordsBank: function() {
+			this.updateStaves();
+			this.render();
+		},
+		onHighlightChange: function() {
+			this.updateHighlight.apply(this, arguments);
+			this.render();
+		},
 	});
 
 	return PlainSheet;
