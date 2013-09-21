@@ -90,7 +90,7 @@ define([
 					if(totalWidth + stave.getWidth() > maxWidth) {
 						stop_rendering = true;
 					} 
-					if(stave.maxWidth < stave.width) {
+					if(!stave.checkWidth()) {
 						stop_rendering = true;
 					}
 					totalWidth += stave.getWidth();

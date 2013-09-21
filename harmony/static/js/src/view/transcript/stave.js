@@ -11,8 +11,8 @@ define([
 	};
 
 	_.extend(Stave.prototype, {
-		width: 125,
-		marginLeft: 18,
+		defaultWidth: 125,
+		margin: 18,
 		clefs: {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
@@ -23,7 +23,10 @@ define([
 			this.initConfig();
 
 			this.clefConfig = this.clefs[this.clef];
-			this.maxWidth = this.width;
+			this.width = this.defaultWidth;
+			this.minWidth = this.defaultWidth;
+			this.maxWidth = this.defaultWidth;
+			this.start_x = null;
 		},
 		initConfig: function() {
 			var required = [
@@ -43,22 +46,22 @@ define([
 			}, this);
 		},
 		render: function() {
-			var ctx = this.getContext();
-			this.createStaveVoice();
-			this.createStaveBar();
-			if(this.staveVoice) {
-				this.staveVoice.draw(ctx, this.staveBar);
+			if(!this.start_x) {
+				this.start_x = this.margin + (this.barIndex * this.defaultWidth);
 			}
-			this.staveBar.draw(ctx);
+			this.createStaveBar();
+			this.createStaveVoice();
+			this.formatStaveVoice();
+			this.drawStaveVoice();
+			this.drawStaveBar();
 			return this;
 		},
 		createStaveBar: function() {
 			var x, y, width, staveBar;
 
-			x = this.marginLeft + (this.barIndex * this.width);
-			width = this.maxWidth;
+			x = this.start_x;
 			y = 75 * this.clefConfig.index;
-
+			width = this.maxWidth;
 			staveBar = new Vex.Flow.Stave(x, y, width);
 
 			if(this.barIndex === 0) {
@@ -76,13 +79,26 @@ define([
 		createStaveVoice: function() {
 			var voice, formatter;
 			if(this.hasStaveNotes()) {
-				formatter = new Vex.Flow.Formatter();
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-
 				voice.addTickables(this.getStaveNotes());
-				formatter.joinVoices([voice]).format([voice], this.width);
 			}
 			this.staveVoice = voice;
+		},
+		formatStaveVoice: function() {
+			var formatter, voice = this.staveVoice;
+			if(voice) {
+				formatter = new Vex.Flow.Formatter();
+				formatter.joinVoices([voice]).formatToStave([voice], this.staveBar);
+			}
+		},
+		drawStaveVoice: function() {
+			if(this.staveVoice) {
+				this.staveVoice.draw(this.getContext(), this.staveBar);
+			}
+		},
+		drawStaveBar: function() {
+			var ctx = this.getContext();
+			this.staveBar.draw(ctx);
 		},
 		// connects two staves together to form a grand staff
 		connectWith: function(stave) {
@@ -94,6 +110,10 @@ define([
 				connector.setType(BRACE).setContext(ctx).draw();
 			}
 			return this;
+		},
+		// returns true if the width is in bounds, false otherwise 
+		checkWidth: function() {
+			return (this.width > this.maxWidth || this.width < this.minWidth) ? false : true;
 		},
 		setMaxWidth: function(w) {
 			var margin = 25;
