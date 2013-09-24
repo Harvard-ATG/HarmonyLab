@@ -26,7 +26,7 @@ define([
 			this.width = this.defaultWidth;
 			this.minWidth = this.defaultWidth;
 			this.maxWidth = this.defaultWidth;
-			this.start_x = null;
+			this.start_x = this.margin + (this.barIndex * this.defaultWidth);
 		},
 		initConfig: function() {
 			var required = [
@@ -46,9 +46,6 @@ define([
 			}, this);
 		},
 		render: function() {
-			if(!this.start_x) {
-				this.start_x = this.margin + (this.barIndex * this.defaultWidth);
-			}
 			this.createStaveBar();
 			this.createStaveVoice();
 			this.formatStaveVoice();
@@ -124,6 +121,9 @@ define([
 		},
 		getBarIndex: function() {
 			return this.barIndex;
+		},
+		getStartX: function() {
+			return this.start_x;
 		},
 		getWidth: function() {
 			return this.width;

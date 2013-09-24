@@ -28,6 +28,7 @@ define([
 				octaves: false
 			}
 		},
+
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
@@ -78,27 +79,24 @@ define([
 			return this;
 		},
 		renderStaves: function() {
-			var i, len, stave; 
-			var totalWidth = 0; 
-			var maxWidth = this.getWidth();
-			var stop_rendering = false;
+			var i, len, treble, bass, width; 
+			var start_x = 0, max_width = this.getWidth();
 	
-			for(i = 0, len = this.staves.length; i < len; i++) {
-				stave = this.staves[i];
-				stave.setMaxWidth(maxWidth - totalWidth);
-				if(stave.clef === 'bass') {
-					if(totalWidth + stave.getWidth() > maxWidth) {
-						stop_rendering = true;
-					} 
-					if(!stave.checkWidth()) {
-						stop_rendering = true;
-					}
-					totalWidth += stave.getWidth();
-				}
-				stave.render();
-				if(stop_rendering) {
+			for(i = 0, len = this.staves.length; i < len; i+=2) {
+				treble = this.staves[i];
+				bass = this.staves[i+1];
+				start_x = Math.max(treble.getStartX(), bass.getStartX());
+				width = Math.max(treble.getWidth(), bass.getWidth());
+
+				if(start_x + width > max_width) {
 					break;
 				}
+
+				treble.setMaxWidth(max_width - start_x);
+				bass.setMaxWidth(max_width - start_x);
+
+				treble.render();
+				bass.render();
 			}
 		},
 		connectStaves: function() {
