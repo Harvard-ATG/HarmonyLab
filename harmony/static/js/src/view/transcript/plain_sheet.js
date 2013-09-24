@@ -81,6 +81,7 @@ define([
 		renderStaves: function() {
 			var i, len, treble, bass, width; 
 			var start_x = 0, max_width = this.getWidth();
+			var offset = 15;
 	
 			for(i = 0, len = this.staves.length; i < len; i+=2) {
 				treble = this.staves[i];
@@ -92,8 +93,8 @@ define([
 					break;
 				}
 
-				treble.setMaxWidth(max_width - start_x);
-				bass.setMaxWidth(max_width - start_x);
+				treble.setWidth(max_width - start_x - offset);
+				bass.setWidth(max_width - start_x - offset);
 
 				treble.render();
 				bass.render();

@@ -11,7 +11,7 @@ define([
 	};
 
 	_.extend(Stave.prototype, {
-		defaultWidth: 125,
+		defaultWidth: 100,
 		margin: 18,
 		clefs: {
 			'treble': { 'index': 1 },
@@ -27,6 +27,11 @@ define([
 			this.minWidth = this.defaultWidth;
 			this.maxWidth = this.defaultWidth;
 			this.start_x = this.margin + (this.barIndex * this.defaultWidth);
+			if(this.barIndex === 0) {
+				this.width += 70;
+			} else {
+				this.start_x += 70;
+			}
 		},
 		initConfig: function() {
 			var required = [
@@ -58,7 +63,7 @@ define([
 
 			x = this.start_x;
 			y = 75 * this.clefConfig.index;
-			width = this.maxWidth;
+			width = this.width;
 			staveBar = new Vex.Flow.Stave(x, y, width);
 
 			if(this.barIndex === 0) {
@@ -108,13 +113,8 @@ define([
 			}
 			return this;
 		},
-		// returns true if the width is in bounds, false otherwise 
-		checkWidth: function() {
-			return (this.width > this.maxWidth || this.width < this.minWidth) ? false : true;
-		},
-		setMaxWidth: function(w) {
-			var margin = 25;
-			this.maxWidth = w - margin;
+		setWidth: function(w) {
+			this.width = w;
 		},
 		getStaveBar: function() {
 			return this.staveBar;
