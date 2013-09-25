@@ -74,35 +74,24 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
-			this.connectStaves();
 			this.renderAnnotations();
 			return this;
 		},
 		renderStaves: function() {
-			var i, len, treble, bass, width; 
-			var start_x = 0, max_width = this.getWidth();
-			var offset = 15;
+			var i, len, treble, bass; 
+			var max_width = this.getWidth();
 	
 			for(i = 0, len = this.staves.length; i < len; i+=2) {
 				treble = this.staves[i];
 				bass = this.staves[i+1];
-				start_x = Math.max(treble.getStartX(), bass.getStartX());
-				width = Math.max(treble.getWidth(), bass.getWidth());
 
-				if(start_x + width > max_width) {
+				treble.connect(bass);
+				treble.fitToWidth(max_width);
+				if(treble.canRender()) {
+					treble.render();
+				} else {
 					break;
 				}
-
-				treble.setWidth(max_width - start_x - offset);
-				bass.setWidth(max_width - start_x - offset);
-
-				treble.render();
-				bass.render();
-			}
-		},
-		connectStaves: function() {
-			if(this.staves.length >= 2) { 
-				this.staves[0].connectWith(this.staves[1]);
 			}
 		},
 		updateStaves: function() {

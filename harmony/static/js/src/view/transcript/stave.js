@@ -10,9 +10,19 @@ define([
 		this.init(config);
 	};
 
+	Stave.margin = 20;
+	Stave.defaultWidth = 120;
+	Stave.closestWidth = function(maxWidth, start_x) {
+		start_x = start_x || 0;
+		maxWidth = maxWidth - start_x - Stave.margin;
+
+		var index = Math.floor(maxWidth / Stave.defaultWidth);
+		var width = (index * Stave.defaultWidth);
+
+		return width;
+	};
+
 	_.extend(Stave.prototype, {
-		defaultWidth: 100,
-		margin: 18,
 		clefs: {
 			'treble': { 'index': 1 },
 			'bass':   { 'index': 2 }
@@ -23,15 +33,10 @@ define([
 			this.initConfig();
 
 			this.clefConfig = this.clefs[this.clef];
-			this.width = this.defaultWidth;
-			this.minWidth = this.defaultWidth;
-			this.maxWidth = this.defaultWidth;
-			this.start_x = this.margin + (this.barIndex * this.defaultWidth);
-			if(this.barIndex === 0) {
-				this.width += 70;
-			} else {
-				this.start_x += 70;
-			}
+
+			this.minWidth = Stave.defaultWidth;
+			this.width = Stave.defaultWidth;
+			this.start_x = Stave.margin + (this.barIndex * Stave.defaultWidth);
 		},
 		initConfig: function() {
 			var required = [
@@ -54,9 +59,43 @@ define([
 			this.createStaveBar();
 			this.createStaveVoice();
 			this.formatStaveVoice();
+
 			this.drawStaveVoice();
 			this.drawStaveBar();
+
+			if(this.isConnected()) {
+				this.renderConnected();
+			}
+
+			if(this.isFirstBar()) {
+				this.createStaveConnector();
+			}
+			this.drawStaveConnector();
+
 			return this;
+		},
+		renderConnected: function() {
+			this.connectedStave.render();
+		},
+		canRender: function() {
+			if(typeof this.max_x !== 'undefined') {
+				return this.start_x + Stave.defaultWidth < this.max_x;
+			}
+			return true;
+		},
+		createStaveConnector: function() {
+			// This method should only be called *after* the stave has been rendered
+			if(this.isConnected()) {
+				var connector = new Vex.Flow.StaveConnector(this.getStaveBar(), this.connectedStave.getStaveBar());
+				connector.setType(Vex.Flow.StaveConnector.type.BRACE);
+				this.staveConnector = connector;
+			}
+		},
+		drawStaveConnector: function() {
+			var ctx = this.getContext();
+			if(this.staveConnector) {
+				this.staveConnector.setContext(ctx).draw();
+			}
 		},
 		createStaveBar: function() {
 			var x, y, width, staveBar;
@@ -102,19 +141,30 @@ define([
 			var ctx = this.getContext();
 			this.staveBar.draw(ctx);
 		},
-		// connects two staves together to form a grand staff
-		connectWith: function(stave) {
-			// This method should only be called *after* the stave has been rendered
-			if(stave) {
-				var BRACE = Vex.Flow.StaveConnector.type.BRACE;
-				var ctx = this.getContext();
-				var connector = new Vex.Flow.StaveConnector(this.getStaveBar(), stave.getStaveBar());
-				connector.setType(BRACE).setContext(ctx).draw();
-			}
-			return this;
+		connect: function(stave) {
+			this.connectedStave = stave;
+		},
+		isConnected: function() {
+			return this.connectedStave ? true : false;
 		},
 		setWidth: function(w) {
 			this.width = w;
+		},
+		fitToWidth: function(max) {
+			var is_last_bar = (this.barIndex === this.barCount - 1);
+			var new_width;
+
+			if(is_last_bar) {
+				new_width = Stave.closestWidth(max, this.start_x);
+				if(new_width > this.minWidth) {
+					this.setWidth(new_width);
+					if(this.isConnected()) {
+						this.connectedStave.setWidth(new_width);
+					}
+				}
+			}
+
+			this.max_x = max;
 		},
 		getStaveBar: function() {
 			return this.staveBar;
@@ -139,6 +189,9 @@ define([
 		},
 		hasStaveNotes: function() {
 			return this.staveNotater.hasStaveNotes();
+		},
+		isFirstBar: function() {
+			return this.barIndex === 0;
 		}
 	});
 
