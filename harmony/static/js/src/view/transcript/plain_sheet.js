@@ -80,18 +80,22 @@ define([
 		renderStaves: function() {
 			var i, len, treble, bass; 
 			var max_width = this.getWidth();
+			var next_start_x;
 	
 			for(i = 0, len = this.staves.length; i < len; i+=2) {
 				treble = this.staves[i];
 				bass = this.staves[i+1];
 
 				treble.connect(bass);
-				treble.fitToWidth(max_width);
+				treble.setStartX(next_start_x);
+				treble.setMaxX(max_width);
+				treble.fitToWidth();
 				if(treble.canRender()) {
 					treble.render();
 				} else {
 					break;
 				}
+				next_start_x = (treble.getStartX() + treble.getWidth());
 			}
 		},
 		updateStaves: function() {
