@@ -139,7 +139,7 @@ define([
 			var new_width;
 			if(scale) {
 				new_width = scale * this.defaultWidth;
-				if(new_width + this.start_x <= this.max_x) {
+				if(new_width > this.width && this.start_x + new_width <= this.max_x) {
 					this.setWidth(new_width);
 					if(this.staveBar) {
 						this.staveBar.setWidth(this.width);
