@@ -173,18 +173,12 @@ define([
 		isConnected: function() {
 			return this.connectedStave ? true : false;
 		},
-		setWidth: function(w) {
-			this.width = w;
-		},
 		fitToWidth: function() {
 			var new_width;
 			if(this.isLastBar()) {
 				new_width = this.closestWidth(this.max_x, this.start_x);
 				if(new_width > this.minWidth) {
 					this.setWidth(new_width);
-					if(this.isConnected()) {
-						this.connectedStave.setWidth(new_width);
-					}
 				}
 			}
 		},
@@ -219,6 +213,14 @@ define([
 				this.max_x = x;
 				if(this.connectedStave) {
 					this.connectedStave.setMaxX(x);
+				}
+			}
+		},
+		setWidth: function(w) {
+			if(typeof w !== 'undefined') {
+				this.width = w;
+				if(this.isConnected()) {
+					this.connectedStave.setWidth(w);
 				}
 			}
 		},
