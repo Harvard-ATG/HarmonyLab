@@ -15,7 +15,6 @@ define([
 	};
 
 	_.extend(KeyboardShortcuts.prototype, {
-		midiNote: 48, // anchor for MIDI note offsets
 
 		eventBus: eventBus, // reference to the global event bus
 
@@ -122,7 +121,7 @@ define([
 		},
 		// calculates the MIDI note given an offset 
 		calculateNote: function(noteOffset) {
-			return this.midiNote + noteOffset;
+			return SHORTS.noteAnchor + noteOffset;
 		},
 
 		//--------------------------------------------------

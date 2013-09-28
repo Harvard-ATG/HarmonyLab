@@ -84,7 +84,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			this._sustained = {}; 
 			this._sustain = false; 
-			this.trigger('change', 'notes:off', notes);
+			this.trigger('change', 'notes:off');
 		},
 		// Returns true if the notes are being sustained, false otherwise.
 		isSustained: function() {

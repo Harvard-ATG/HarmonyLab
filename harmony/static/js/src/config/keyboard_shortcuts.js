@@ -1,9 +1,14 @@
 define({
 	// Application note on/off keyboard shortcuts.
-	// Maps a key to an integer relative to the C *one octave below* 
-	// middle C.
 	//
-	// Note: unused letters to avoid mishaps: 3, 6, and g.
+	// Maps a key to an integer relative to the C *one octave below* 
+	// middle C (MIDI note number 48).
+	//
+	// To find the MIDI note number that will be output when a key is pressed,
+	// add the relative offset from the note mapping section to this note anchor.
+	"noteAnchor": 48,
+	
+	// Uused letters to avoid mishaps: 3, 6, and g.
 	"note": {
 		"1": -4, // GA
 		"q": -3, // A
