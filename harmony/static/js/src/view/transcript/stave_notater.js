@@ -138,8 +138,8 @@ define([
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
 			var color = Analyze.highlightNote(this.highlights.mode, this.keySignature, allNotes, noteToHighlight);
 			var keyStyleOpts = {
-				shadowColor: color,
-				shadowBlur: 15,
+				//shadowColor: color,
+				//shadowBlur: 15,
 				fillStyle: color,
 				strokeStyle: color
 			};
