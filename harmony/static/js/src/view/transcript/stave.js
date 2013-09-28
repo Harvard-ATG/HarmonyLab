@@ -5,48 +5,37 @@ define([
 ], function(_, Vex, StaveNotater) {
 	"use strict";
 
-	// Knows how to render and manipulate a staff/stave.
-	var Stave = function(config) {
-		this.init(config);
+	// Knows how to render a single bar of a staff.
+	var Stave = function(clef, barIndex) {
+		this.init(clef, barIndex);
 	};
 
 	_.extend(Stave.prototype, {
-		margin: 20,
-		defaultWidth: 120,
-		clefs: {
-			'treble': { 'index': 1 },
-			'bass':   { 'index': 2 }
-		},
-		// initialization
-		init: function(config) {
-			this.config = config;
-			this.initConfig();
+		margin: 30,
+		firstBarWidth: 90,
+		defaultWidth: 123,
+		init: function(clef, barIndex) {
+			this.clef = clef;
+			this.barIndex = barIndex;
 
-			this.clefConfig = this.clefs[this.clef];
-
-			this.minWidth = this.defaultWidth;
-			this.width = this.defaultWidth;
-			this.max_x = null;
-			if(!this.start_x) {
-				this.start_x = this.margin + (this.barIndex * this.defaultWidth);
+			if(this.barIndex === 0) {
+				this.start_x = this.margin;
+				this.width = this.firstBarWidth;
+				this.minWidth = this.firstBarWidth;
+			} else {
+				this.start_x = this.margin + this.firstBarWidth + ((this.barIndex - 1) * this.defaultWidth);
+				this.minWidth = this.defaultWidth;
+				this.width = this.defaultWidth;
 			}
-		},
-		initConfig: function() {
-			var required = [
-				'clef', 
-				'barIndex', 
-				'barCount', 
-				'staveNotater', 
-				'vexRenderer', 
-				'keySignature'
-			];
-			_.each(required, function(propName) {
-				if(this.config.hasOwnProperty(propName)) {
-					this[propName] = this.config[propName];
-				} else {
-					throw new Error("missing required config property: "+propName);
-				}
-			}, this);
+
+			this.start_y = 75 * (clef === 'treble' ? 1 : 2);
+			this.max_x = null;
+
+			this.displayConfig = {
+				clef: false,
+				keySignature: false,
+				staveConnector: false
+			};
 		},
 		render: function() {
 			this.createStaveBar();
@@ -54,27 +43,23 @@ define([
 			this.formatStaveVoice();
 
 			this.drawStaveVoice();
-			this.updateStaveBarWidth();
 			this.drawStaveBar();
 
 			if(this.isConnected()) {
 				this.renderConnected();
-				if(this.isFirstBar()) {
-					this.createStaveConnector();
-					this.drawStaveConnector();
-				}
+				this.renderStaveConnector();
 			}
 
 			return this;
 		},
 		renderConnected: function() {
-			this.connectedStave.render();
+			this.doConnected('render');
 		},
-		canRender: function() {
-			if(this.max_x !== null) {
-				return this.start_x + this.defaultWidth < this.max_x;
+		renderStaveConnector: function() {
+			if(this.displayConfig.staveConnector) {
+				this.createStaveConnector();
+				this.drawStaveConnector();
 			}
-			return true;
 		},
 		createStaveConnector: function() {
 			var connector = new Vex.Flow.StaveConnector(this.getStaveBar(), this.connectedStave.getStaveBar());
@@ -88,24 +73,23 @@ define([
 			}
 		},
 		createStaveBar: function() {
-			var x, y, width, staveBar;
+			var x = this.start_x;
+			var y = this.start_y; 
+			var width = this.width;
+			var staveBar = new Vex.Flow.Stave(x, y, width);
 
-			x = this.start_x;
-			y = 75 * this.clefConfig.index;
-			width = this.width;
-			staveBar = new Vex.Flow.Stave(x, y, width);
-
-			if(this.isFirstBar()) {
-				staveBar.addClef(this.clef);
-				staveBar.addKeySignature(this.keySignature.getVexKey());
-			} else {
-				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
-			}
-
+			staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
 			staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
 			staveBar.setContext(this.getContext());
 
-			this.staveBar = staveBar; // save reference
+			if(this.displayConfig.clef) {
+				staveBar.addClef(this.clef);
+			}
+			if(this.displayConfig.keySignature) {
+				staveBar.addKeySignature(this.keySignature.getVexKey());
+			} 
+
+			this.staveBar = staveBar;
 		},
 		createStaveVoice: function() {
 			var voice, formatter;
@@ -122,42 +106,6 @@ define([
 				formatter.joinVoices([voice]).formatToStave([voice], this.staveBar);
 			}
 		},
-		voiceTooBig: function() {
-			var voice = this.staveVoice;
-			if(!voice) {
-				return false;
-			}
-
-			var fudge_factor = 15;
-			var bb = voice.getBoundingBox();
-			var offset = this.staveBar.getNoteStartX() - this.staveBar.getX();
-			var width = bb.w + offset + fudge_factor;
-
-			return width > this.defaultWidth;
-		},
-		updateStaveBarWidth: function(scale) {
-			var new_width;
-			if(scale) {
-				new_width = scale * this.defaultWidth;
-				if(new_width > this.width && this.start_x + new_width <= this.max_x) {
-					this.setWidth(new_width);
-					if(this.staveBar) {
-						this.staveBar.setWidth(this.width);
-					}
-				}
-			} else {
-				scale = Math.max(
-					(this.voiceTooBig() ? 2 : 0),
-					(this.connectedStave && this.connectedStave.voiceTooBig() ? 2 : 0)
-				);
-				if(scale) {
-					this.updateStaveBarWidth(scale);
-					if(this.connectedStave) {
-						this.connectedStave.updateStaveBarWidth(scale);
-					}
-				}
-			}
-		},
 		drawStaveVoice: function() {
 			if(this.staveVoice) {
 				this.staveVoice.draw(this.getContext(), this.staveBar);
@@ -167,68 +115,56 @@ define([
 			var ctx = this.getContext();
 			this.staveBar.draw(ctx);
 		},
+		fitToWidth: function() {
+			var new_width = this.closestWidth(this.max_x, this.start_x);
+			if(new_width > this.minWidth) {
+				this.setWidth(new_width);
+			}
+		},
+		closestWidth: function(maxWidth, start_x) {
+			return maxWidth - start_x - this.margin;
+		},
+		setStartX: function(x) {
+			this.start_x = x;
+			this.doConnected('setStartX', x);
+		},
+		setMaxX: function(x) {
+			this.max_x = x;
+			this.doConnected('setMaxX', x);
+		},
+		setWidth: function(w) {
+			this.width = w;
+			this.doConnected('setWidth', w);
+		},
+		setNotater: function(notater) {
+			this.staveNotater = notater;
+		},
 		connect: function(stave) {
 			this.connectedStave = stave;
 		},
 		isConnected: function() {
 			return this.connectedStave ? true : false;
 		},
-		fitToWidth: function() {
-			var new_width;
-			if(this.isLastBar()) {
-				new_width = this.closestWidth(this.max_x, this.start_x);
-				if(new_width > this.minWidth) {
-					this.setWidth(new_width);
-				}
+		doConnected: function(method) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			if(this.isConnected()) {
+				this.connectedStave[method].apply(this.connectedStave, args);
 			}
 		},
-		closestWidth: function(maxWidth, start_x) {
-			start_x = start_x || 0;
-			maxWidth = maxWidth - start_x - this.margin;
-
-			var index = Math.floor(maxWidth / this.defaultWidth);
-			var width = (index * this.defaultWidth);
-
-			return width;
-		},
-		getStaveBar: function() {
-			return this.staveBar;
-		},
-		getBarIndex: function() {
-			return this.barIndex;
-		},
-		getStartX: function() {
-			return this.start_x;
-		},
-		setStartX: function(x) {
-			if(typeof x !== 'undefined') {
-				if(this.connectedStave) {
-					this.connectedStave.setStartX(x);
-				}
-				this.start_x = x;
-			}
-		},
-		setMaxX: function(x) {
-			if(typeof x !== 'undefined') {
-				this.max_x = x;
-				if(this.connectedStave) {
-					this.connectedStave.setMaxX(x);
-				}
-			}
-		},
-		setWidth: function(w) {
-			if(typeof w !== 'undefined') {
-				this.width = w;
-				if(this.isConnected()) {
-					this.connectedStave.setWidth(w);
-				}
-			}
+		getConnected: function() {
+			return this.connectedStave;
 		},
 		getWidth: function() {
 			return this.width;
 		},
 		getHeight: function() {
 			return this.height;
+		},
+		getStaveBar: function() {
+			return this.staveBar;
+		},
+		getStartX: function() {
+			return this.start_x;
 		},
 		getStaveNotes: function() {
 			return this.staveNotater.getStaveNotes();
@@ -237,13 +173,26 @@ define([
 			return this.vexRenderer.getContext();
 		},
 		hasStaveNotes: function() {
-			return this.staveNotater.hasStaveNotes();
+			if(this.staveNotater) {
+				return this.staveNotater.hasStaveNotes();
+			}
+			return false;
 		},
-		isFirstBar: function() {
-			return this.barIndex === 0;
+		setKeySignature: function(keySignature) {
+			this.keySignature = keySignature;
 		},
-		isLastBar: function() {
-			return this.barIndex === this.barCount - 1;
+		setRenderer: function(renderer) {
+			this.vexRenderer = renderer;
+		},
+		setDisplayOptions: function(opts) {
+			opts = opts || {};
+			this.displayConfig = this.displayConfig || {};
+			_.extend(this.displayConfig, opts);
+		},
+		enableDisplayOptions: function(opts) {
+			var trueVal = function() { return true; };
+			var displayConfig = _.zipObject(opts, _.map(opts, trueVal));
+			this.setDisplayOptions(displayConfig);
 		}
 	});
 

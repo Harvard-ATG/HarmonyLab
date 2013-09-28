@@ -48,8 +48,16 @@ define([
 			return this;
 		},
 		// returns all items in the chord bank
-		items: function() {
-			return this._items;
+		items: function(config) {
+			config = config || {};
+			var items;
+			if(config.limit) {
+				items = this._items.slice(0, config.limit);
+			}
+			if(config.reverse) {
+				items.reverse();
+			}
+			return items;
 		},
 		// returns the first chord - aliased to current()
 		current: function() {

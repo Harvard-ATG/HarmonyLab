@@ -78,47 +78,76 @@ define([
 			return this;
 		},
 		renderStaves: function() {
-			var i, len, treble, bass; 
+			var i, len, stave, _staves = this.staves;
 			var max_width = this.getWidth();
-	
-			for(i = 0, len = this.staves.length; i < len; i+=2) {
-				treble = this.staves[i];
-				bass = this.staves[i+1];
+			for(i = 0, len = _staves.length; i < len; i++) {
+				stave = _staves[i];
 
-				treble.connect(bass);
-				treble.setMaxX(max_width);
-				treble.fitToWidth();
-				if(treble.canRender()) {
-					treble.render();
-				} else {
-					break;
+				stave.setMaxX(max_width);
+				if(i === len - 1) {
+					stave.fitToWidth();
 				}
+	
+				stave.render();
 			}
 		},
-		updateStaves: function() {
+		resetStaves: function() {
 			this.staves = [];
-			_.each(this.chords.items(), function(chord, index, chords) {
-				var barIndex = index, barCount = chords.length;
-				this.addStave('treble', barIndex, barCount, chord);
-				this.addStave('bass', barIndex, barCount, chord);
-			}, this);
 			return this;
 		},
-		addStave: function(clef, barIndex, barCount, chord) {
-			var config = {};
-			config.clef = clef;
-			config.barIndex = barIndex;
-			config.barCount = barCount;
-			config.vexRenderer = this.vexRenderer;
-			config.keySignature = this.keySignature;
-			config.staveNotater = new StaveNotater({
+		addStaves: function(staves) {
+			this.staves = this.staves.concat(staves);
+			return this;
+		},
+		updateStaves: function() {
+			var chord, treble, bass;
+			var items = this.chords.items({limit: 3, reverse: true});
+			var staves = [];
+			var index = 0;
+
+			// the first stave bar is a special case: it's reserved to show the
+			// clef and key signature and nothing else
+			treble = this.createDisplayStave('treble', index);
+			bass = this.createDisplayStave('bass', index);
+			index = index + 1;
+			treble.connect(bass);
+			staves.push(treble);
+
+			// now add the staves for showing the notes
+			for(var i = 0, len = items.length; i < len; i++) {
+				chord = items[i];
+				treble = this.createNoteStave('treble', index, chord);
+				bass = this.createNoteStave('bass', index, chord);
+				index = index + 1;
+				treble.connect(bass);
+				staves.push(treble);
+			}
+
+			this.resetStaves();
+			this.addStaves(staves);
+
+			return this;
+		},
+		createDisplayStave: function(clef, index) {
+			var stave = new Stave(clef, index);
+			stave.setRenderer(this.vexRenderer);
+			stave.setKeySignature(this.keySignature);
+			stave.enableDisplayOptions(['clef', 'keySignature', 'staveConnector']);
+			return stave;
+		},
+		createNoteStave: function(clef, index, chord) {
+			var stave = new Stave(clef, index);
+
+			stave.setRenderer(this.vexRenderer);
+			stave.setKeySignature(this.keySignature);
+			stave.setNotater(new StaveNotater({
 				clef: clef,
 				chord: chord,
 				keySignature: this.keySignature,
 				highlights: this.highlights
-			});
+			}));
 
-			this.staves.push(new Stave(config));
+			return stave;
 		},
 		getWidth: function() {
 			return this.transcript.getWidth();
@@ -126,15 +155,15 @@ define([
 		getHeight: function() {
 			return this.transcript.getHeight();
 		},
-		getBottomStaveY: function() {
-			if(this.staves.length > 0) {
-				return this.staves[1].getStaveBar().getBottomY();
-			}
-			return 0;
-		},
 		getBottomStaveX: function() {
 			if(this.staves.length > 0) {
 				return this.staves[0].getStaveBar().x;
+			}
+			return 0;
+		},
+		getBottomStaveY: function() {
+			if(this.staves.length > 0) {
+				return this.staves[0].getConnected().getStaveBar().getBottomY();
 			}
 			return 0;
 		},
