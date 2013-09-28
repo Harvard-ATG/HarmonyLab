@@ -35,7 +35,7 @@ define({
 	// Maps a key to function name.
 	"control": {
 		"ESC":    "toggleMode",
-		"RETURN": "clearNotes", // TODO
+		"ENTER":  "clearNotes",
 		"'":      "depressSustain",
 		";":      "retakeSustain",
 		".":      "releaseSustain",

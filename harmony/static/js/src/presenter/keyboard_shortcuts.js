@@ -104,6 +104,10 @@ define([
 			this.releaseSustain();
 			this.depressSustain();
 		},
+		// clears the notes 
+		clearNotes: function() {
+			this.eventBus.trigger('clearnotes');
+		},
 
 		//--------------------------------------------------
 		// Note on/off functions

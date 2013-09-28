@@ -68,6 +68,15 @@ define(['lodash'], function(_) {
 		},
 
 		/**
+		 * Clears the key.
+		 */
+		clear: function() {
+			this.revertColor(STATE_KEYUP);
+			this.state = STATE_KEYUP;
+			this.updateColor();
+		},
+
+		/**
 		 * Sets the sustain on the key so that when the key is released
 		 * it will know to sustain it. 
 		 *

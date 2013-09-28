@@ -32,9 +32,6 @@ define([
 		// midi channel settings
 		channel: 0, 
 
-		// transposition settings
-		transpose: 0,
-
 		// midi instrument settings
 		defaultInstrumentNum: 0, // piano
 
@@ -73,6 +70,7 @@ define([
 			_.bindAll(this, [
 				'onMidiMessage',
 				'onNoteChange',
+				'onClearNotes',
 				'onPedalChange',
 				'onInstrumentChange',
 				'onTransposeChange'
@@ -150,6 +148,7 @@ define([
 		// Initializes listeners.
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
+			this.eventBus.bind('clearnotes', this.onClearNotes);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.eventBus.bind('instrument', this.onInstrumentChange);
 			this.eventBus.bind('transpose', this.onTransposeChange);
@@ -191,31 +190,49 @@ define([
 
 		// Handles note output (not from an external device). 
 		onNoteChange: function(noteState, noteNumber) {
-			noteNumber = this.transposeNote(noteNumber);
 			var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-
 			this.toggleNote(noteState, noteNumber);
 			this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
 		},
 
-		// Handles sustain, sostenuto, soft pedal events.
-		onPedalChange: function(pedal, state) {
-			var command = JMB.CONTROL_CHANGE;
-			var controlNumber = this.midiControlMap.pedal[pedal];
-			var controlValue = (state === 'off' ? 0 : 127);
+		// Clears the current chord notes.
+		onClearNotes: function() {
+			var chord = this.chords.current();
+			var notes = chord.getNotes();
 
-			if(pedal === 'soft') {
-				this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
-			} else if(pedal === 'sustain') {
-				if(state === 'on') {
-					this.chords.current().sustainNotes();
-				} else if(state === 'off') {
-					//this.chords.current().releaseSustain();
-					this.chords.bank();
-				} 
+			// turn off all notes
+			_.each(notes, function(noteNumber) {
+				this.sendMIDIMessage(JMB.NOTE_OFF, chord.untranspose(noteNumber), this.noteVelocity);
+			}, this);
+
+			// retake the sustain to clear any sustained notes
+			if(chord.isSustained()) {
+				this.sendMIDIPedalMessage('sustain', 'off');
+				this.sendMIDIPedalMessage('sustain', 'on');
 			}
 
-			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);
+			// clear the chord notes
+			chord.clear();
+		},
+
+		// Handles sustain, sostenuto, soft pedal events.
+		onPedalChange: function(pedal, state) {
+			switch(pedal) {
+				case 'soft':
+					this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
+					break;
+				case 'sustain':
+					if(state === 'on') {
+						this.chords.current().sustainNotes();
+					} else if(state === 'off') {
+						//this.chords.current().releaseSustain();
+						this.chords.bank();
+					} 
+					this.sendMIDIPedalMessage(pedal, state);
+					break;
+				default:
+					return;
+			}
 		},
 
 		// Handles change of instrument.
@@ -227,14 +244,9 @@ define([
 		},
 
 		// Handles transpose events.
-		onTransposeChange: function(value) {
-			var TRANSPOSE_MIN = -12, TRANSPOSE_MAX = 12;
-
-			if(value >= TRANSPOSE_MIN && value <= TRANSPOSE_MAX) {
-				this.transpose = value;
-			} else {
-				this.transpose = 0;
-			}
+		onTransposeChange: function(transpose) {
+			var chord = this.chords.current();
+			chord.setTranspose(transpose);
 		},
 
 		// Toggles a note state.
@@ -250,13 +262,6 @@ define([
 			chord.clear();
 		},
 
-		// Transposes the note up, down using a relative offset.
-		// When transpose is 0 (default), this is an identity function.
-		transposeNote: function(noteNumber) {
-			var relativeOffset = this.transpose || 0;
-			return noteNumber + relativeOffset;
-		},
-
 		// Outputs a MIDI message via the Jazz MIDI bridge
 		sendMIDIMessage: function() {
 			var msg, output = this.output, midiAccess = this.midiAccess;
@@ -266,6 +271,14 @@ define([
 					output.sendMIDIMessage(msg);
 				} 
 			}
+		},
+
+		// Output a MIDI message to turn a pedal on/off
+		sendMIDIPedalMessage: function(pedal, state) {
+			var command = JMB.CONTROL_CHANGE;
+			var controlNumber = this.midiControlMap.pedal[pedal];
+			var controlValue = (state === 'off' ? 0 : 127);
+			this.sendMIDIMessage(command, controlNumber, controlValue, this.channel);
 		},
 
 		// Execute the second fn after the first one, returning the result of the first

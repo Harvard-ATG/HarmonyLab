@@ -69,7 +69,12 @@ define([
 
 			this.paper = Raphael(this.keyboardEl.get(0), this.width, this.height);
 
-			_.bindAll(this, ['onPedalChange', 'onNoteChange', 'triggerNoteChange']);
+			_.bindAll(this, [
+				'onPedalChange', 
+				'onNoteChange', 
+				'onClearNotes',
+				'triggerNoteChange'
+			]);
 
 			this.initListeners();
 		},
@@ -79,6 +84,7 @@ define([
 		 */
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
+			this.eventBus.bind('clearnotes', this.onClearNotes);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.bind('key', this.triggerNoteChange);
 		},
@@ -88,6 +94,7 @@ define([
 		 */
 		removeListeners: function() {
 			this.eventBus.unbind('note', this.onNoteChange);
+			this.eventBus.unbind('clearnotes', this.onClearNotes);
 			this.eventBus.unbind('pedal', this.onPedalChange);
 			this.unbind('key', this.triggerNoteChange);
 		},
@@ -125,6 +132,15 @@ define([
 			if(typeof key !== 'undefined') {
 				key[noteState==='on'?'press':'release']();
 			}
+		},
+
+		/**
+		 * Resets all keys to their default state when the notes are cleared.
+		 */
+		onClearNotes: function() {
+			_.each(this.keys, function(key) {
+				key.clear();
+			});
 		},
 
 		/*

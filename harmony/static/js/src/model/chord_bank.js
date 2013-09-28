@@ -37,9 +37,11 @@ define([
 		// banks the current chord and replaces it with a new one
 		bank: function() {
 			var chord = new Chord();
+			var current = this.current();
+			chord.copyTranspose(current);
 
 			// re-wire listeners because we only care about changes to the current chord
-			this._removeListeners(this.current());
+			this._removeListeners(current);
 			this._addListeners(chord);
 			this._add(chord);
 
