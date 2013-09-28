@@ -21,8 +21,8 @@
 			<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
 			  <div class="tab-content-wrapper">
 				  <div class="tab-content-inner">
-					  <div class="tab-row" style="height: 20px">
-						<select style="float: right" id="select_instrument"></select>
+					  <div class="tab-row">
+						<select id="select_instrument"></select>
 					  </div>
 					  <div class="tab-row">
 						Keyboard size: 
@@ -47,7 +47,9 @@
 			<li><a href="#" class="js-tab js-tab-left">KEY &amp; SIGNATURES</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
+				  <div class="tab-row">
 					<div id="key_signature_widget"></div>
+				  </div>
 				</div>
 			   </div>
 			 </li>
@@ -62,12 +64,14 @@
 			<li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
-					<div class="label">MIDI in:</div>
-					<select id="select_midi_input" name="select_midi_input"></select>
-					<div class="label">MIDI out:</div>
-					<select id="select_midi_output" name="select_midi_output"></select>
-					<br />
-					<button id="refresh_midi_devices">Refresh</button>
+					<div class="tab-row">
+						<div class="label">MIDI in:</div>
+						<select id="select_midi_input" name="select_midi_input"></select>
+						<div class="label">MIDI out:</div>
+						<select id="select_midi_output" name="select_midi_output"></select>
+						<br />
+						<button id="refresh_midi_devices">Refresh</button>
+					</div>
 				</div>
 			   </div>
 			 </li>
@@ -77,7 +81,9 @@
 			<li><a href="#" class="js-tab js-tab-right">NOTATION</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
-					<div id="analyze_widget"></div>
+					<div class="tab-row">
+						<div id="analyze_widget"></div>
+					</div>
 				</div>
 			  </div>
 			 </li>
