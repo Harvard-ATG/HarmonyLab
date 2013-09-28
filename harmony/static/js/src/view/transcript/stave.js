@@ -11,19 +11,19 @@ define([
 	};
 
 	_.extend(Stave.prototype, {
-		margin: 30,
+		margin: { left: 30, right: 4 },
 		firstBarWidth: 90,
-		defaultWidth: 123,
+		defaultWidth: 132,
 		init: function(clef, barIndex) {
 			this.clef = clef;
 			this.barIndex = barIndex;
 
 			if(this.barIndex === 0) {
-				this.start_x = this.margin;
+				this.start_x = this.margin.left;
 				this.width = this.firstBarWidth;
 				this.minWidth = this.firstBarWidth;
 			} else {
-				this.start_x = this.margin + this.firstBarWidth + ((this.barIndex - 1) * this.defaultWidth);
+				this.start_x = this.margin.left + this.firstBarWidth + ((this.barIndex - 1) * this.defaultWidth);
 				this.minWidth = this.defaultWidth;
 				this.width = this.defaultWidth;
 			}
@@ -122,7 +122,7 @@ define([
 			}
 		},
 		closestWidth: function(maxWidth, start_x) {
-			return maxWidth - start_x - this.margin;
+			return maxWidth - start_x - this.margin.right;
 		},
 		setStartX: function(x) {
 			this.start_x = x;
