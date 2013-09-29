@@ -46,9 +46,6 @@ body {
 	padding:0;
 }
 #staff-toolbar {
-	position: absolute;
-	top: 0;
-	left: 0;
 	height: 35px;
 	padding: 5px 0px;
 }

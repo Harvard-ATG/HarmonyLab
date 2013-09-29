@@ -15,6 +15,8 @@ define(['jquery', 'lodash'], function($, _) {
 			$('.js-toggle-tabs')
 				.on('mousedown', this.cancelEvent) // fixes issue with unwated text selections on click
 				.on('click', this.onClickToggleTabs) // handles the expand/collapse behavior we want
+			
+			$('.js-screenshot').on('mousedown', this.onClickScreenshot);
 		},
 		// initializes each tab so it can expand/collapse
 		initTab: function(index, el) {
@@ -60,6 +62,15 @@ define(['jquery', 'lodash'], function($, _) {
 			this.tabsExpanded = !tabsExpanded;
 
 			return false;
+		},
+		// Generate a screenshot/image of the staff area.
+		onClickScreenshot: function(e) {
+			var $canvas = $('#staff-area canvas');
+			var $target = $(e.target);
+			var data_url = $canvas[0].toDataURL();
+			$target[0].href = data_url;
+			$target[0].target = '_blank';
+			return true;
 		},
 		// function to expand or collapse a tab
 		makeExpander: function(tab, dir, expand) {
