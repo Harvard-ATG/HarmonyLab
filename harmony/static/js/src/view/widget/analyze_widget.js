@@ -4,13 +4,7 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 
 	var ITEMS = [{
 		'label': 'Analyze', 
-		'value': 'analyze',
-		'items': [
-			{'label': 'Roman Numerals', 'value': 'analyze.roman_numerals'},
-			{'label': 'Intervals', 'value': 'analyze.intervals'},
-			{'label': 'Scale Degrees', 'value': 'analyze.scale_degrees'},
-			{'label': 'Note Names', 'value': 'analyze.note_names'}
-		]
+		'value': 'analyze'
 	},{
 		'label': 'Highlight', 
 		'value': 'highlight',
@@ -41,7 +35,7 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 				var valDot, valCat, valOpt;
 
 				if($children.length > 0) {
-					$children.toggle();
+					$children.find('input').attr('disabled', (checked ? null : 'disabled'));
 					that.trigger('changeCategory', val, checked);
 				} else {
 					valDot = val.indexOf('.');
@@ -64,7 +58,7 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 			this.el.find('ul').each(function(index, el) {
 				var $parents = $(el).parents('ul');
 				if($parents.length > 0) {
-					$(el).hide();
+					$(el).find('input').attr('disabled', 'disabled');
 				}
 			});
 			this.initListeners();
