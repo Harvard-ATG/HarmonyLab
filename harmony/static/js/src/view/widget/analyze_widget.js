@@ -1,6 +1,14 @@
 /* global define:false */
-define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
+define([
+	'lodash', 
+	'jquery', 
+	'microevent',
+	'app/config',
+	'app/util/analyze'
+], function(_, $, MicroEvent, Config, Analyze) {
 	"use strict";
+
+	var HIGHLIGHT_COLORS = Config.get('highlight.colors');
 
 	var ITEMS = [{
 		'label': 'Analyze', 
@@ -9,10 +17,29 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 		'label': 'Highlight', 
 		'value': 'highlight',
 		'items': [
-			{'label': 'Roots', 'value': 'highlight.roots'},
-			{'label': 'Tritones', 'value': 'highlight.tritones'},
-			{'label': 'Awk. Doublings', 'value': 'highlight.doubles'},
-			{'label': '8ves &amp; 5ths', 'value': 'highlight.octaves'}
+			{
+				'label': 'Roots', 
+				'value': 'highlight.roots',
+				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.root)]
+			},
+			{
+				'label': 'Tritones', 
+				'value': 'highlight.tritones',
+				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.tritone)]
+			},
+			{
+				'label': 'Awk. Doublings', 
+				'value': 'highlight.doubles',
+				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.double)]
+			},
+			{
+				'label': '8ves &amp; 5ths', 
+				'value': 'highlight.octaves',
+				'colors': [
+					Analyze.toHSLString(HIGHLIGHT_COLORS.octave), 
+					Analyze.toHSLString(HIGHLIGHT_COLORS.perfectfifth)
+				]
+			}
 		]
 	}];
 
@@ -23,7 +50,8 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 
 	_.extend(AnalyzeWidget.prototype, {
 		listTpl: _.template('<ul class="notation-checkboxes"><%= items %></ul>'),
-		itemTpl: _.template('<li><label><input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> /><%= label %></label><%= itemlist %></li>'),
+		itemTpl: _.template('<li><label><input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> /><%= label %><%= extra %></label><%= itemlist %></li>'),
+		colorTpl: _.template('<span style="margin-left: 5px; color: <%= color %>">&#9834;</span>'),
 		initListeners: function() {
 			var that = this;
 			this.el.on('change', 'li', null, function(e) {
@@ -67,8 +95,16 @@ define(['lodash', 'jquery', 'microevent'], function(_, $, MicroEvent) {
 		renderItems: function(items) {
 			return _.map(items, function(item) {
 				var itemlist = item.items ? this.listTpl({ items: this.renderItems(item.items) }) : ""; 
+				var label = item.label;
+				var extra = '';
+				if(item.colors) {
+					extra = _.map(item.colors, function(color) {
+						return this.colorTpl({ color: color });
+					}, this).join("");
+				}
 				return this.itemTpl({
 					label: item.label,
+					extra: extra,
 					value: item.value,
 					checked: item.checked || "",
 					itemlist: itemlist

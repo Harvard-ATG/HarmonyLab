@@ -7,11 +7,13 @@
 define([
 	'lodash', 
 	'app/config/general',
+	'app/config/highlight',
 	'app/config/instruments',
 	'app/config/keyboard_shortcuts'
 ], function(
 	_, 
 	ConfigGeneral, 
+	ConfigHighlight,
 	ConfigInstruments,
 	ConfigKeyboardShortcuts) {
 	"use strict";
@@ -21,6 +23,7 @@ define([
 		// private cache of config data
 		__config: {
 			'general': ConfigGeneral,
+			'highlight': ConfigHighlight,
 			'instruments': ConfigInstruments,
 			'keyboardShortcuts': ConfigKeyboardShortcuts
 		},
