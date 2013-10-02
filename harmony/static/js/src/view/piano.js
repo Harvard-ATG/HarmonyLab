@@ -112,7 +112,7 @@ define([
 			var metronome_tpl = _.template([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
-					'<input name="bpm" type="text" class="metronome-control-input js-metronome-input" />',
+					'<input name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
 				'</div>'
 			].join(''));
 

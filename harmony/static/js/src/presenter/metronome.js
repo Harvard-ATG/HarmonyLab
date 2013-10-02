@@ -3,7 +3,7 @@ define(['jquery','lodash'], function($, _) {
 
 	var MS_PER_MIN = 60 * 1000; // milliseconds per minute
 	var MIN_TEMPO = 1;
-	var MAX_TEMPO = 300;
+	var MAX_TEMPO = 600;
 
 	var Metronome = function(el, tempo) {
 		this.init(el, tempo);
@@ -50,6 +50,10 @@ define(['jquery','lodash'], function($, _) {
 				this.tempo = tempo;
 				this.delay = this._calculateDelay(tempo);
 			}
+		},
+		// returns the current tempo
+		getTempo: function() {
+			return this.tempo;
 		},
 		_isValidTempo: function(tempo) {
 			return /^\d+$/.test(tempo) && tempo >= MIN_TEMPO && tempo <= MAX_TEMPO;
