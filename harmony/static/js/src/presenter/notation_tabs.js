@@ -88,7 +88,10 @@ define([
 		},
 		// Show info modal.
 		onClickInfo: function(e) {
-			Modal.msg(APP_INFO_TITLE, APP_INFO_CONTENT);
+			if(!this.modal) {
+				this.modal = Modal.msg(APP_INFO_TITLE, APP_INFO_CONTENT);
+			}
+			this.modal.open();
 			return false;
 		},
 		// function to expand or collapse a tab

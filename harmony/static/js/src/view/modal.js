@@ -13,8 +13,20 @@ define(['lodash', 'jquery'], function(_, $) {
 	// Simple modal dialog to display a message to the user.
 	// If something more complex is needed, get a plugin for jQuery
 	// or another off-the-shelf component.
+	//
+	// This only permits one modal to be active at a time.
 	var Modal = function(config) {
 		this.init(config);	
+	};
+
+	Modal.add = function(modal) {
+		this.modals.push(modal);
+	};
+	Modal.destroyAll = function() {
+		_.each(this.modals, function(modal) {
+			modal.destroy();
+		});
+		this.modals = [];
 	};
 
 	_.extend(Modal.prototype, {
@@ -23,6 +35,7 @@ define(['lodash', 'jquery'], function(_, $) {
 			this.msg = config.msg;
 			this.el = $('<div class="modal close"></div>');
 			this.initListeners();
+			Modal.add(this);
 		},
 		render: function() {
 			var html = tpl({ title: this.title, msg: this.msg });
@@ -60,8 +73,9 @@ define(['lodash', 'jquery'], function(_, $) {
 		}
 	});
 
-	// static shortcut method to display message
+	// shortcut method to display simple modal dialog
 	Modal.msg  = function(title, msg) {
+		Modal.destroyAll();
 		return new Modal({ title: title, msg: msg }).open();
 	};
 
