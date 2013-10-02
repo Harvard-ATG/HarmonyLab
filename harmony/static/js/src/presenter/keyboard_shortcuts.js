@@ -165,9 +165,12 @@ define([
 		overrideKey: function(callback) {
 			return function(e) {
 				var keyCode = e.keyCode;
+				var target = e.target;
 
-				if(e.altKey || e.ctrlKey || e.metaKey) {
+				if(this.isModifierKey(e)) {
 					return true; // skip alt/ctrl/meta key combos
+				} else if(this.isInputElement(target)) {
+					return true; // skip if the target of the key event is an input 
 				} else if(!this.existsKeyCode(keyCode)) {
 					return true; // skip if not supported
 				} else if(!this.modeEnabled(keyCode)) {
@@ -178,6 +181,16 @@ define([
 
 				return callback.apply(this, arguments);
 			};
+		},
+		// returns true if the passed dom node is an input element, false
+		// otherwise.
+		isInputElement: function(node) {
+			return node.nodeName === 'INPUT';
+		},
+		// returns true if the event indicates that the key is an alt, ctrl, or
+		// meta key (i.e. "modifier" key), otherwise false.
+		isModifierKey: function(keyEvent) {
+			return (keyEvent.altKey || keyEvent.ctrlKey || keyEvent.metaKey) ? true : false;
 		},
 		// returns true if the key code exists in the shortcuts table,
 		// false otherwise
