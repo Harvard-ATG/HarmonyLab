@@ -24,7 +24,7 @@ body {
 	margin-bottom: 20px;
 	padding: 10px 0px 10px 70px;
 }
-h1.header, h2.header {
+.header > h1, .header > h2 {
 	color: white;
 	font-family: Helvetica, "Trebuchet MS", Arial,sans-serif; 
 	font-weight:normal; 
