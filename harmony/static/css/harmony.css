@@ -19,15 +19,13 @@ body {
 	text-align:left;
 	position:relative;
 }
-
-#header {
-	margin-bottom: 20px;
-	padding: 10px 70px;
+.header {
 	background:#000 url(../img/harmony-logo.jpg) no-repeat;
-	color:white;
+	margin-bottom: 20px;
+	padding: 10px 0px 10px 70px;
 }
-
-#header h1, h2 {
+.header h1, h2 {
+	color: white;
 	font-family: Helvetica, "Trebuchet MS", Arial,sans-serif; 
 	font-weight:normal; 
 	xpadding-top: 5px;
@@ -45,34 +43,36 @@ body {
 	z-index:10;
 	padding:0;
 }
-#staff-toolbar {
-	height: 35px;
-	padding: 5px 0px;
-}
-#staff-toolbar .staff-btn {
-	float: left;
-	background: url(../img/staff-btn-sprite.png) no-repeat;
-	height: 25px;
-	margin: 4px 0 0 4px;
-}
-#staff-toolbar .staff-btn:first-child  {
-	margin-left: 8px;
-}
-#staff-toolbar .staff-btn-open { background-position: -10px -50px; width: 50px; }
-#staff-toolbar .staff-btn-open:hover { background-position: -10px -150px; width: 50px; }
-#staff-toolbar .staff-btn-close { background-position: -110px -50px; width: 50px; }
-#staff-toolbar .staff-btn-close:hover { background-position: -110px -150px; width: 50px; }
-#staff-toolbar .staff-btn-info { background-position: -210px -50px; width: 25px; }
-#staff-toolbar .staff-btn-info:hover { background-position: -210px -150px; width: 25px; }
-#staff-toolbar .staff-btn-help { background-position: -310px -50px; width: 25px; }
-#staff-toolbar .staff-btn-help:hover { background-position: -310px -150px; width: 25px; }
-#staff-toolbar .staff-btn-camera { background-position: -410px -50px; width: 50px; }
-#staff-toolbar .staff-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 #staff-area canvas {
 	position: absolute;
 	top: 35px;
 	left: 0;
 }
+#staff-toolbar {
+	height: 35px;
+	padding: 5px 0px;
+}
+.icon-btn {
+	background: url(../img/icon-btn-sprite.png) no-repeat;
+	height: 25px;
+	margin: 4px 0 0 8px;
+}
+.icon-btn-left {
+	float: left;
+}
+.icon-btn-right {
+	float: right;
+}
+.icon-btn-open { background-position: -10px -50px; width: 50px; }
+.icon-btn-open:hover { background-position: -10px -150px; width: 50px; }
+.icon-btn-close { background-position: -110px -50px; width: 50px; }
+.icon-btn-close:hover { background-position: -110px -150px; width: 50px; }
+.icon-btn-info { background-position: -210px -50px; width: 25px; }
+.icon-btn-info:hover { background-position: -210px -150px; width: 25px; }
+.icon-btn-help { background-position: -310px -50px; width: 25px; }
+.icon-btn-help:hover { background-position: -310px -150px; width: 25px; }
+.icon-btn-camera { background-position: -410px -50px; width: 50px; }
+.icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 
 .tab-nav {
   margin-top: 0px;
