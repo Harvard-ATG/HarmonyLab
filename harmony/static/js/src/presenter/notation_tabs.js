@@ -60,10 +60,10 @@ define([
 		// expands or collapses *all* tabs
 		onClickToggleTabs: function(ev) {
 			var el = ev.target;
-			var cls = ['staff-btn-open','staff-btn-close'];
+			var cls = ['icon-btn-open','icon-btn-close'];
 			var tabsExpanded = this.tabsExpanded;
 
-			if($(el).hasClass('staff-btn-close')) {
+			if($(el).hasClass('icon-btn-close')) {
 				cls.reverse();
 			}
 
