@@ -66,6 +66,8 @@ body {
 #staff-toolbar .staff-btn-info:hover { background-position: -210px -150px; width: 25px; }
 #staff-toolbar .staff-btn-help { background-position: -310px -50px; width: 25px; }
 #staff-toolbar .staff-btn-help:hover { background-position: -310px -150px; width: 25px; }
+#staff-toolbar .staff-btn-camera { background-position: -410px -50px; width: 50px; }
+#staff-toolbar .staff-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 #staff-area canvas {
 	position: absolute;
 	top: 35px;
@@ -80,6 +82,7 @@ body {
 }
 .tab-content-wrapper {
 	position: relative;
+	font-size:.9em;
 }
 .tab-content-inner {
 	position: absolute;
