@@ -322,6 +322,9 @@ body {
 .metronome-icon:active, .metronome-icon-active {
 	background-position: -50px -199px;
 }
+#metronome-audio {
+	display: hidden;
+}
 .keyboard-area {
 	margin:0 10px;
 	padding-bottom: 6px;

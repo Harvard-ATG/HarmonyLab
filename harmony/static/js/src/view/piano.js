@@ -2,11 +2,13 @@ define([
 	'jquery', 
 	'lodash',
 	'app/model/event_bus',
+	'app/presenter/metronome',
 	'app/view/piano/piano_keyboard'
 ], function(
 	$,
 	_,
 	eventBus,
+	Metronome,
 	PianoKeyboard
 ) {
 	"use strict";
@@ -73,14 +75,13 @@ define([
 			});
 		},
 		initToolbar: function() {
+			this.toolbarEl = $('<div class="keyboard-controls"></div>');
+			this.initMetronomeControl();
+			this.initTransposeControl();
+		},
+		initTransposeControl: function() {
+			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
-
-			var metronome_tpl = _.template([
-				'<div class="metronome-control">',
-					'<div style="float:right" class="metronome-icon"> </div>',
-					'<input name="bpm" type="text" class="metronome-control-input" />',
-				'</div>'
-			].join(''));
 
 			var transpose_tpl = _.template([
 				'<div class="transpose-control">',
@@ -94,20 +95,44 @@ define([
 			].join(''));
 
 			var transposeOpts =  _.map(_.range(-12, 13), function(n) {
-				return { 
-					val: n, 
-					selected: n === 0, 
-					name: (n > 0 ? '+' : '') + n
-				};
+				return { val: n, selected: n === 0, name: (n > 0 ? '+' : '') + n };
 			});
 
-			this.toolbarEl = $('<div class="keyboard-controls"></div>');
-			this.toolbarEl.append(metronome_tpl());
-			this.toolbarEl.append(transpose_tpl({ transposeOpts: transposeOpts}));
+			var html = transpose_tpl({ transposeOpts: transposeOpts});
 
-			this.toolbarEl.on('change', '.js-transpose', null, function(ev) {
+			toolbarEl.append(html);
+			toolbarEl.on('change', '.js-transpose', null, function(ev) {
 				var transpose = parseInt($(ev.target).val(), 10);
 				eventBus.trigger('transpose', transpose);
+			});
+		},
+		initMetronomeControl: function() {
+			var toolbarEl = this.toolbarEl;
+
+			var metronome_tpl = _.template([
+				'<div class="metronome-control">',
+					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
+					'<input name="bpm" type="text" class="metronome-control-input js-metronome-input" />',
+				'</div>'
+			].join(''));
+
+			var html = metronome_tpl();
+			var audio_el = $('#metronome-audio')[0];
+			var metronome = new Metronome(audio_el);
+
+			toolbarEl.append(html);
+
+			toolbarEl.on('click', '.js-metronome-btn', null, function(ev) {
+				var active_cls = 'metronome-icon-active';
+				var is_playing = metronome.isPlaying();
+				var $btn = $(ev.target);
+				metronome[is_playing?'stop':'start']();
+				$btn[is_playing?'removeClass':'addClass'](active_cls);
+			});
+
+			toolbarEl.on('change', '.js-metronome-input', null, function(ev) {
+				var tempo = parseInt($(ev.target).val(), 10);
+				metronome.changeTempo(tempo);
 			});
 		},
 		changeKeyboard: function(size) {
