@@ -5,20 +5,29 @@ define([
 	'vexflow',
 	'app/model/event_bus',
 	'app/view/transcript/stave',
-	'app/view/transcript/stave_notater'
-], function($, _, Vex, eventBus, Stave, StaveNotater) {
+	'app/view/transcript/stave_note_factory'
+], function(
+	$,
+	_, 
+	Vex, 
+	eventBus, 
+	Stave, 
+	StaveNoteFactory
+) {
 	"use strict";
 
-	// Plain Sheet Music Notation
+	// Plain Sheet Music Notation.
+	// 
+	// This object knows how to display plain sheet music notation.
+	//
 	var PlainSheet = function(config) {
 		this.init(config);
 	};
 
 	_.extend(PlainSheet.prototype, {
 		// global event bus 
-		eventBus: eventBus,
-
-		// controls highlighting of stave notes
+		eventBus: eventBus, 
+		// configures highlighting of notes
 		highlights: {
 			enabled: false,
 			mode: {
@@ -28,7 +37,6 @@ define([
 				octaves: false
 			}
 		},
-
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
@@ -140,7 +148,7 @@ define([
 
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
-			stave.setNotater(new StaveNotater({
+			stave.setNoteFactory(new StaveNoteFactory({
 				clef: clef,
 				chord: chord,
 				keySignature: this.keySignature,

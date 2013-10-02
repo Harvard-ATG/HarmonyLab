@@ -2,7 +2,7 @@
 define([
 	'lodash', 
 	'vexflow',
-], function(_, Vex, StaveNotater) {
+], function(_, Vex, StaveNoteFactory) {
 	"use strict";
 
 	// Knows how to render a single bar of a staff.
@@ -95,7 +95,7 @@ define([
 			var voice, formatter;
 			if(this.hasStaveNotes()) {
 				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
-				voice.addTickables(this.getStaveNotes());
+				voice.addTickables(this.createStaveNotes());
 			}
 			this.staveVoice = voice;
 		},
@@ -136,8 +136,8 @@ define([
 			this.width = w;
 			this.doConnected('setWidth', w);
 		},
-		setNotater: function(notater) {
-			this.staveNotater = notater;
+		setNoteFactory: function(noteFactory) {
+			this.noteFactory = noteFactory;
 		},
 		connect: function(stave) {
 			this.connectedStave = stave;
@@ -166,15 +166,15 @@ define([
 		getStartX: function() {
 			return this.start_x;
 		},
-		getStaveNotes: function() {
-			return this.staveNotater.getStaveNotes();
-		},
 		getContext: function() {
 			return this.vexRenderer.getContext();
 		},
+		createStaveNotes: function() {
+			return this.noteFactory.createStaveNotes();
+		},
 		hasStaveNotes: function() {
-			if(this.staveNotater) {
-				return this.staveNotater.hasStaveNotes();
+			if(this.noteFactory) {
+				return this.noteFactory.hasStaveNotes();
 			}
 			return false;
 		},
