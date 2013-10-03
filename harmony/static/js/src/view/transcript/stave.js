@@ -176,6 +176,15 @@ define([
 		getStartX: function() {
 			return this.start_x;
 		},
+		getClef: function() {
+			return this.clef;
+		},
+		getTopY: function() {
+			return this.staveBar.getYForTopText();
+		},
+		getBottomY: function() {
+			return this.staveBar.getBottomY();
+		},
 		getContext: function() {
 			return this.vexRenderer.getContext();
 		},

@@ -24,11 +24,8 @@ define([
 	// added and then call the notate() method to render those things on the
 	// stave.
 	//
-	var StaveNotater = function(config) {
-		this.init(config);
-	};
-
-	_.extend(StaveNotater.prototype, {
+	var AbstractStaveNotater = function() {};
+	_.extend(AbstractStaveNotater.prototype, {
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
@@ -43,18 +40,86 @@ define([
 				}
 			}, this);
 		},
-
-		//--------------------------------------------------
-		// Public methods
-		
 		notate: function() {
-			// notate the stave.
-			//console.log('notate', this.stave.clef, this.stave.getStartX());
+			if(this.isEnabled()) {
+				this.getContext().save();
+				this.notateStave();
+				this.getContext().restore();
+			}
 		},
-
-		//--------------------------------------------------
-		// Private methods
+		getContext: function() {
+			return this.stave.getContext();
+		},
+		getFont: function() {
+			return "12px Georgia, serif";
+		},
+		getX: function() {
+			return this.stave.getStartX() + 10;
+		},
+		getY: function() {
+			throw new Error("subclass responsibility");
+		},
+		isEnabled: function() {
+			return this.analyze.enabled;
+		}
 	});
 
-	return StaveNotater;
+	//------------------------------------------------------------
+
+	var TrebleStaveNotater = function(config) {
+		this.init(config);
+	};
+
+	TrebleStaveNotater.prototype = new AbstractStaveNotater();
+
+	_.extend(TrebleStaveNotater.prototype, {
+		getY: function() {
+			return this.stave.getTopY();
+		},
+		notateStave: function() {
+			var x = this.getX();
+			var y = this.getY();
+			var ctx = this.getContext();
+
+			ctx.font = this.getFont();
+			ctx.fillText('treble test', x, y);
+		}
+	});
+
+	//------------------------------------------------------------
+
+	var BassStaveNotater = function(config) {
+		this.init(config);
+	};
+
+	BassStaveNotater.prototype = new AbstractStaveNotater();
+
+	_.extend(BassStaveNotater.prototype, {
+		getY: function() {
+			return this.stave.getBottomY();
+		},
+		notateStave: function() {
+			var x = this.getX();
+			var y = this.getY(); 
+			var ctx = this.getContext();
+
+			ctx.font = this.getFont(); 
+			ctx.fillText('bass test', x, y);
+		}
+	});
+
+	//------------------------------------------------------------
+
+	var factory = function(clef, config) {
+		switch(clef) {
+			case 'treble':
+				return new TrebleStaveNotater(config);
+			case 'bass':
+				return new BassStaveNotater(config);
+			default:
+				throw new Error("no such notater for clef: " + clef);
+		}
+	};
+
+	return {'create':factory};
 });

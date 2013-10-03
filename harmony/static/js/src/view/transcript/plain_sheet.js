@@ -161,7 +161,7 @@ define([
 				keySignature: this.keySignature,
 				highlights: this.highlights
 			}));
-			stave.setNotater(new StaveNotater({
+			stave.setNotater(StaveNotater.create(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
@@ -184,7 +184,7 @@ define([
 		},
 		getBottomStaveY: function() {
 			if(this.staves.length > 0) {
-				return this.staves[0].getConnected().getStaveBar().getBottomY();
+				return this.staves[0].getConnected().getBottomY();
 			}
 			return 0;
 		},
@@ -209,7 +209,6 @@ define([
 				default:
 					throw new Error("Invalid key");
 			}
-			console.log("update settings", prop, setting, this);
 			return this;
 		},
 		convertSymbols: function(text) {
