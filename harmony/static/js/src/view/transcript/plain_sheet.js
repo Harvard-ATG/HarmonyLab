@@ -199,8 +199,8 @@ define([
 			ctx.save();
 			ctx.font = font;
 			if(this.tempo) {
-				var note_symbol = "\u2669";
-				ctx.fillText("("+note_symbol+" = "+this.tempo+")", x, this.getTopStaveY() - 15);
+				// M.M. is an abbrev for metronome marking or "metronom maelzel"
+				ctx.fillText(""+this.tempo+" M.M.", x, this.getTopStaveY() - 15);
 			}
 			ctx.fillText(this.convertSymbols(key), x, this.getBottomStaveY());
 			ctx.restore();
