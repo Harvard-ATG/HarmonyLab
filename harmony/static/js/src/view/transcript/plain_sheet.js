@@ -75,13 +75,14 @@ define([
 			this.updateStaves();
 		},
 		initListeners: function() {
-			_.bindAll(this, ['render', 'onHighlightChange', 'onAnalyzeChange', 'onChordsBank']);
+			_.bindAll(this, ['render', 'onHighlightChange', 'onAnalyzeChange', 'onMetronomeChange', 'onChordsBank']);
 
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
 			this.chords.bind('bank', this.onChordsBank);
 			this.eventBus.bind("notation:highlight", this.onHighlightChange);
 			this.eventBus.bind("notation:analyze", this.onAnalyzeChange);
+			this.eventBus.bind("metronome", this.onMetronomeChange);
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -178,7 +179,7 @@ define([
 		},
 		getBottomStaveX: function() {
 			if(this.staves.length > 0) {
-				return this.staves[0].getStaveBar().x;
+				return this.staves[0].getStartX();
 			}
 			return 0;
 		},
@@ -188,13 +189,26 @@ define([
 			}
 			return 0;
 		},
+		getTopStaveY: function() {
+			if(this.staves.length > 0) {
+				return this.staves[0].getTopY();
+			}
+			return 0;
+		},
 		renderAnnotations: function() {
 			var ctx = this.vexRenderer.getContext();
 			var key = this.keySignature.getKeyShortName() + ':';
 			var font = "14px serif";
+			var x = this.getBottomStaveX();
 
+			ctx.save();
 			ctx.font = font;
-			ctx.fillText(this.convertSymbols(key), this.getBottomStaveX(), this.getBottomStaveY());
+			if(this.tempo) {
+				var note_symbol = "\u2669";
+				ctx.fillText("("+note_symbol+" = "+this.tempo+")", x, this.getTopStaveY() - 15);
+			}
+			ctx.fillText(this.convertSymbols(key), x, this.getBottomStaveY());
+			ctx.restore();
 
 			return this;
 		},
@@ -261,6 +275,14 @@ define([
 		},
 		onAnalyzeChange: function(settings) {
 			this.updateSettings('analyze', settings);
+			this.render();
+		},
+		onMetronomeChange: function(metronome) {
+			if(metronome.isPlaying()) {
+				this.tempo = metronome.getTempo();
+			} else {
+				this.tempo = false;
+			}
 			this.render();
 		}
 	});

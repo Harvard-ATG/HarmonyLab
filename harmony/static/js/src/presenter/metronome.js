@@ -49,7 +49,9 @@ define(['jquery','lodash'], function($, _) {
 			if(this._isValidTempo(tempo)) {
 				this.tempo = tempo;
 				this.delay = this._calculateDelay(tempo);
+				return true;
 			}
+			return false;
 		},
 		// returns the current tempo
 		getTempo: function() {

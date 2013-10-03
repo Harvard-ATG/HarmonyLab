@@ -108,6 +108,7 @@ define([
 		},
 		initMetronomeControl: function() {
 			var toolbarEl = this.toolbarEl;
+			var eventBus = this.eventBus;
 
 			var metronome_tpl = _.template([
 				'<div class="metronome-control">',
@@ -128,11 +129,14 @@ define([
 				var $btn = $(ev.target);
 				metronome[is_playing?'stop':'start']();
 				$btn[is_playing?'removeClass':'addClass'](active_cls);
+				eventBus.trigger("metronome", metronome);
 			});
 
 			toolbarEl.on('change', '.js-metronome-input', null, function(ev) {
 				var tempo = parseInt($(ev.target).val(), 10);
-				metronome.changeTempo(tempo);
+				if(metronome.changeTempo(tempo)) {
+					eventBus.trigger("metronome", metronome);
+				}
 			});
 		},
 		changeKeyboard: function(size) {
