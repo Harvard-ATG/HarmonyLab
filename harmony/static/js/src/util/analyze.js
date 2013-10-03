@@ -1,4 +1,4 @@
-define(['lodash'], function(_) {
+define(['lodash','vexflow'], function(_, Vex) {
 
 var analyzing = {
 	keynotePC: {
@@ -742,6 +742,45 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 
 	isDiminishedTetrad: function (notes, steps) {
 		//REDO
+	},
+
+	generateDiatonicNotes: function(key) {
+		var keyName = key.slice(1).replace('_','').toLowerCase();
+		var roots = Vex.Flow.Music.roots;
+		var mus = new Vex.Flow.Music();
+		var diatonicNotes = Array(7);
+		var i, keyValue, scaleTones, intervals, startingNote;
+
+		if (keyName == "h") { 
+			keyName = "c";
+		}
+
+		try {
+			keyValue = mus.getNoteValue(keyName);
+		} catch(e) {
+			keyName = "c";
+			keyValue = mus.getNoteValue("c");
+		}
+
+		if (key.indexOf('j') != -1) {
+			intervals = [2, 2, 1, 2, 2, 2, 1];	// major diatonic
+		}
+		if (key.indexOf('i') != -1) {
+			intervals = [2, 1, 2, 2, 1, 2, 2];	// minor diatonic
+		}
+		
+		scaleTones = mus.getScaleTones(keyValue, intervals)
+		startingNote = roots.indexOf(keyName[0]);
+
+		for(i = 0; i < 7; i++) {
+			diatonicNotes[i] = roots[(i + startingNote) % 7];
+		}
+		
+		for(i in scaleTones) {
+			diatonicNotes[i] = mus.getRelativeNoteName(diatonicNotes[i],scaleTones[i]);
+		}
+
+		return diatonicNotes;
 	}
 };
 
@@ -753,6 +792,7 @@ var Analyze = function(keySignature, options) {
 	this.Piano = {
 		key: key,
 		keynotePC: keynotePC,
+		diatonicNotes: this.generateDiatonicNotes(key),
 		highlightMode: {
 			octaveshighlight: false,
 			doublinghighlight: false,
