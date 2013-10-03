@@ -19,22 +19,22 @@ define([
 		'items': [
 			{
 				'label': 'Roots', 
-				'value': 'highlight.roots',
+				'value': 'highlight.roothighlight',
 				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.root)]
 			},
 			{
 				'label': 'Tritones', 
-				'value': 'highlight.tritones',
+				'value': 'highlight.tritonehighlight',
 				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.tritone)]
 			},
 			{
 				'label': 'Awk. Doublings', 
-				'value': 'highlight.doubles',
+				'value': 'highlight.doublinghighlight',
 				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.double)]
 			},
 			{
 				'label': '8ves &amp; 5ths', 
-				'value': 'highlight.octaves',
+				'value': 'highlight.octaveshighlight',
 				'colors': [
 					Analyze.toHSLString(HIGHLIGHT_COLORS.octave), 
 					Analyze.toHSLString(HIGHLIGHT_COLORS.perfectfifth)

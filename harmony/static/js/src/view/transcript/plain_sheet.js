@@ -32,12 +32,7 @@ define([
 		// configures highlighting of notes
 		highlights: {
 			enabled: false,
-			mode: {
-				roots: false, 
-				doubles: false, 
-				tritones: false, 
-				octaves: false
-			}
+			mode: {}
 		},
 		// configures analysis of notes
 		analyze: {
