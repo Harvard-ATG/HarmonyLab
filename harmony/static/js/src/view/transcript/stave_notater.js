@@ -82,7 +82,7 @@ define([
 			var ctx = this.getContext();
 
 			ctx.font = this.getFont();
-			ctx.fillText('treble test', x, y);
+			ctx.fillText('top text', x, y);
 		}
 	});
 
@@ -104,7 +104,7 @@ define([
 			var ctx = this.getContext();
 
 			ctx.font = this.getFont(); 
-			ctx.fillText('bass test', x, y);
+			ctx.fillText('bottom text', x, y);
 		}
 	});
 
