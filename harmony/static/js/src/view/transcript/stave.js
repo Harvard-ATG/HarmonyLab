@@ -50,6 +50,8 @@ define([
 				this.renderStaveConnector();
 			}
 
+			this.notate();
+
 			return this;
 		},
 		renderConnected: function() {
@@ -115,6 +117,11 @@ define([
 			var ctx = this.getContext();
 			this.staveBar.draw(ctx);
 		},
+		notate: function() {
+			if(this.notater) {
+				this.notater.notate();
+			}
+		},
 		fitToWidth: function() {
 			var new_width = this.closestWidth(this.max_x, this.start_x);
 			if(new_width > this.minWidth) {
@@ -138,6 +145,9 @@ define([
 		},
 		setNoteFactory: function(noteFactory) {
 			this.noteFactory = noteFactory;
+		},
+		setNotater: function(notater) {
+			this.notater = notater;
 		},
 		connect: function(stave) {
 			this.connectedStave = stave;

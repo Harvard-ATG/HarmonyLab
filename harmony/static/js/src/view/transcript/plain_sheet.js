@@ -5,6 +5,7 @@ define([
 	'vexflow',
 	'app/model/event_bus',
 	'app/view/transcript/stave',
+	'app/view/transcript/stave_notater',
 	'app/view/transcript/stave_note_factory'
 ], function(
 	$,
@@ -12,6 +13,7 @@ define([
 	Vex, 
 	eventBus, 
 	Stave, 
+	StaveNotater,
 	StaveNoteFactory
 ) {
 	"use strict";
@@ -36,6 +38,10 @@ define([
 				tritones: false, 
 				octaves: false
 			}
+		},
+		// configures analysis of notes
+		analyze: {
+			enabled: false,
 		},
 		init: function(config) {
 			this.config = config;
@@ -69,12 +75,13 @@ define([
 			this.updateStaves();
 		},
 		initListeners: function() {
-			_.bindAll(this, ['render', 'onHighlightChange', 'onChordsBank']);
+			_.bindAll(this, ['render', 'onHighlightChange', 'onAnalyzeChange', 'onChordsBank']);
 
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
 			this.chords.bind('bank', this.onChordsBank);
-			this.eventBus.bind("highlight", this.onHighlightChange);
+			this.eventBus.bind("notation:highlight", this.onHighlightChange);
+			this.eventBus.bind("notation:analyze", this.onAnalyzeChange);
 		},
 		clear: function() {
 			this.vexRenderer.getContext().clear();
@@ -154,6 +161,12 @@ define([
 				keySignature: this.keySignature,
 				highlights: this.highlights
 			}));
+			stave.setNotater(new StaveNotater({
+				stave: stave,
+				chord: chord,
+				keySignature: this.keySignature,
+				analyze: this.analyze
+			}));
 
 			return stave;
 		},
@@ -185,17 +198,18 @@ define([
 
 			return this;
 		},
-		updateHighlight: function(highlight) {
-			switch(highlight.key) {
+		updateSettings: function(prop, setting) {
+			switch(setting.key) {
 				case "enabled":
-					this.highlights.enabled = highlight.value; 
+					this[prop].enabled = setting.value; 
 					break;
 				case "mode":
-					_.assign(this.highlights.mode, highlight.value);	
+					_.assign(this[prop].mode, setting.value);	
 					break;
 				default:
-					throw new Error("Invalid highlight key");
+					throw new Error("Invalid key");
 			}
+			console.log("update settings", prop, setting, this);
 			return this;
 		},
 		convertSymbols: function(text) {
@@ -242,10 +256,14 @@ define([
 			this.updateStaves();
 			this.render();
 		},
-		onHighlightChange: function() {
-			this.updateHighlight.apply(this, arguments);
+		onHighlightChange: function(settings) {
+			this.updateSettings('highlights', settings);
 			this.render();
 		},
+		onAnalyzeChange: function(settings) {
+			this.updateSettings('analyze', settings);
+			this.render();
+		}
 	});
 
 	return PlainSheet;

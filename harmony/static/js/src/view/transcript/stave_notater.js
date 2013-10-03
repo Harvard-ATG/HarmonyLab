@@ -34,7 +34,7 @@ define([
 			this.initConfig();
 		},
 		initConfig: function() {
-			var required = ['stave', 'chord', 'keySignature'];
+			var required = ['stave', 'chord', 'keySignature', 'analyze'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -49,6 +49,7 @@ define([
 		
 		notate: function() {
 			// notate the stave.
+			//console.log('notate', this.stave.clef, this.stave.getStartX());
 		},
 
 		//--------------------------------------------------

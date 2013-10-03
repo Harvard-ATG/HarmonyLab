@@ -7,7 +7,7 @@ define([
 	'app/model/key_signature',
 	'app/view/transcript',
 	'app/view/piano',
-	'app/view/widget/analyze_widget',
+	'app/view/widget/notation_widget',
 	'app/view/widget/key_signature_widget',
 	'app/view/widget/theme_selector_widget',
 	'app/presenter/midi_source',
@@ -23,7 +23,7 @@ function(
 	KeySignature,
 	Transcript,
 	Piano,
-	AnalyzeWidget,
+	NotationWidget,
 	KeySignatureWidget,
 	ThemeSelectorWidget,
 	MidiSource,
@@ -65,21 +65,26 @@ function(
 				piano.changeKeyboard(size);
 			});
 		},
-		initAnalyzeWidget: function() {
-			var widget = new AnalyzeWidget();
-			$('#analyze_widget').append(widget.render().el);
+		initNotationWidget: function() {
+			var widget = new NotationWidget();
+			$('#notation_widget').append(widget.render().el);
+
+			var event_for = {
+				highlight:'notation:highlight',
+				analyze:'notation:analyze'
+			};
 
 			widget.bind('changeCategory', function(category, enabled) {
-				if(category === 'highlight') {
-					eventBus.trigger("highlight", {key: "enabled", value: enabled});
+				if(event_for[category]) {
+					eventBus.trigger(event_for[category], {key: "enabled", value: enabled});
 				}
 			});
 
 			widget.bind('changeOption', function(category, mode, enabled) {
 				var value = {};
-				if(category === 'highlight') {
+				if(event_for[category]) {
 					value[mode] = enabled;
-					eventBus.trigger("highlight", {key: "mode", value: value});
+					eventBus.trigger(event_for[category], {key: "mode", value: value});
 				}
 			});
 		},
@@ -167,7 +172,7 @@ function(
 			this.initTranscript(transcript);
 			this.initKeyboardSizes(piano);
 			this.initInstruments();
-			this.initAnalyzeWidget();
+			this.initNotationWidget();
 			this.initKeyAndSignature(key_signature);
 			this.initKeyboardShortcuts(shortcuts);
 			this.initDevices(midi_source);
