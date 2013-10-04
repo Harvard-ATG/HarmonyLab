@@ -117,28 +117,38 @@ define([
 			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
 
+			var $metronomeInputEl; 
+			var $metronomeLedEl; 
+			var metronome;
+			var metronomeLedCls = 'metronome-led-on';
 			var metronome_tpl = _.template([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
-					'<input name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
+					'<input style="float:right" name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
+					'<div style="margin-top: 5px; float:right" class="metronome-led"></div>',
 				'</div>'
 			].join(''));
 
-			var html = metronome_tpl();
-			var audio_el = $('#metronome-audio')[0];
-			var metronome = new Metronome(audio_el);
+			toolbarEl.append(metronome_tpl());
 
-			toolbarEl.append(html);
+			$metronomeInputEl = $('.js-metronome-input', toolbarEl);
+			$metronomeLedEl = $('.metronome-led', toolbarEl);
+
+			metronome = new Metronome($('#metronome-audio')[0]);
+			metronome.bind('tick', function() {
+				$metronomeLedEl.toggleClass(metronomeLedCls);
+			});
+
 
 			toolbarEl.on('click', '.js-metronome-btn', null, function(ev) {
 				var active_cls = 'metronome-icon-active';
 				var is_playing = metronome.isPlaying();
 				var $btn = $(ev.target);
-				var $metronomeInputEl = $('.js-metronome-input', toolbarEl);
 
 				if(is_playing) {
 					metronome.stop();
 					$btn.removeClass(active_cls);
+					$metronomeLedEl.removeClass(metronomeLedCls);
 				} else {
 					metronome.start();
 					$btn.addClass(active_cls);

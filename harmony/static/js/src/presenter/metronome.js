@@ -1,4 +1,4 @@
-define(['jquery','lodash'], function($, _) {
+define(['jquery','lodash','microevent'], function($, _, MicroEvent) {
 	"use strict";
 
 	var MS_PER_MIN = 60 * 1000; // milliseconds per minute
@@ -29,6 +29,7 @@ define(['jquery','lodash'], function($, _) {
 			if(this.repeat) {
 				this._scheduleNextPlay();
 			}
+			this.trigger("tick");
 		},
 		// starts the metronome
 		start: function() {
@@ -72,6 +73,8 @@ define(['jquery','lodash'], function($, _) {
 			}
 		}
 	});
+
+	MicroEvent.mixin(Metronome);
 
 	return Metronome;
 });
