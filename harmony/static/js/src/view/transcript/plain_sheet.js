@@ -3,6 +3,7 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow',
+	'app/config',
 	'app/model/event_bus',
 	'app/view/transcript/stave',
 	'app/view/transcript/stave_notater',
@@ -12,6 +13,7 @@ define([
 	$,
 	_, 
 	Vex, 
+	Config,
 	eventBus, 
 	Stave, 
 	StaveNotater,
@@ -19,6 +21,8 @@ define([
 	util
 ) {
 	"use strict";
+
+	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
 
 	// Plain Sheet Music Notation.
 	// 
@@ -92,15 +96,8 @@ define([
 		},
 		renderStaves: function() {
 			var i, len, stave, _staves = this.staves;
-			var max_width = this.getWidth();
 			for(i = 0, len = _staves.length; i < len; i++) {
 				stave = _staves[i];
-
-				stave.setMaxX(max_width);
-				if(i === len - 1) {
-					stave.fitToWidth();
-				}
-	
 				stave.render();
 			}
 		},
@@ -114,24 +111,27 @@ define([
 		},
 		updateStaves: function() {
 			var chord, treble, bass;
-			var items = this.chords.items({limit: 3, reverse: true});
+			var limit = CHORD_BANK_SIZE;
+			var items = this.chords.items({limit: limit, reverse: true});
 			var staves = [];
 			var index = 0;
+			var count = items.length;
+			var position = {index:index,count:count,maxCount:limit};
 
 			// the first stave bar is a special case: it's reserved to show the
 			// clef and key signature and nothing else
-			treble = this.createDisplayStave('treble', index);
-			bass = this.createDisplayStave('bass', index);
-			index = index + 1;
+			treble = this.createDisplayStave('treble', _.clone(position));
+			bass = this.createDisplayStave('bass', _.clone(position));
+			position.index += 1;
 			treble.connect(bass);
 			staves.push(treble);
 
 			// now add the staves for showing the notes
 			for(var i = 0, len = items.length; i < len; i++) {
 				chord = items[i];
-				treble = this.createNoteStave('treble', index, chord);
-				bass = this.createNoteStave('bass', index, chord);
-				index = index + 1;
+				treble = this.createNoteStave('treble', _.clone(position), chord);
+				bass = this.createNoteStave('bass', _.clone(position), chord);
+				position.index += 1;
 				treble.connect(bass);
 				staves.push(treble);
 			}
@@ -141,15 +141,17 @@ define([
 
 			return this;
 		},
-		createDisplayStave: function(clef, index) {
-			var stave = new Stave(clef, index);
+		createDisplayStave: function(clef, position) {
+			var stave = new Stave(clef, position);
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
 			stave.enableDisplayOptions(['clef', 'keySignature', 'staveConnector']);
+			stave.setMaxWidth(this.getWidth());
+			stave.updatePosition();
 			return stave;
 		},
-		createNoteStave: function(clef, index, chord) {
-			var stave = new Stave(clef, index);
+		createNoteStave: function(clef, position, chord) {
+			var stave = new Stave(clef, position);
 
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
@@ -165,6 +167,8 @@ define([
 				keySignature: this.keySignature,
 				analyze: this.analyze
 			}));
+			stave.setMaxWidth(this.getWidth());
+			stave.updatePosition();
 
 			return stave;
 		},

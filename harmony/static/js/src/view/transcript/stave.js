@@ -5,37 +5,65 @@ define([
 ], function(_, Vex, StaveNoteFactory) {
 	"use strict";
 
+	var MAX_STAVE_BARS = 5;
+
 	// Knows how to render a single bar of a staff.
-	var Stave = function(clef, barIndex) {
-		this.init(clef, barIndex);
+	var Stave = function(clef, position) {
+		this.init(clef, position);
 	};
 
 	_.extend(Stave.prototype, {
-		margin: { left: 30, right: 4 },
+		clef: '',
+		start_x: 0,
+		start_y: 0,
+		maxWidth: null,
+		maxBarCount: 4,
 		firstBarWidth: 90,
-		defaultWidth: 132,
-		init: function(clef, barIndex) {
-			this.clef = clef;
-			this.barIndex = barIndex;
-
-			if(this.barIndex === 0) {
-				this.start_x = this.margin.left;
-				this.width = this.firstBarWidth;
-				this.minWidth = this.firstBarWidth;
-			} else {
-				this.start_x = this.margin.left + this.firstBarWidth + ((this.barIndex - 1) * this.defaultWidth);
-				this.minWidth = this.defaultWidth;
-				this.width = this.defaultWidth;
+		defaultWidth: 120,
+		margin: { 
+			left: 30, 
+			right: 4 
+		},
+		position: {
+			index: 0,
+			count: 0
+		},
+		displayConfig: {
+			clef: false,
+			keySignature: false,
+			staveConnector: false
+		},
+		init: function(clef, position) {
+			if(!clef || !position) {
+				throw new Error("missing stave clef or position");
+			}
+			if(!this.validatePosition(position)) {
+				throw new Error("missing or invalid stave position");
 			}
 
-			this.start_y = 75 * (clef === 'treble' ? 1 : 2);
-			this.max_x = null;
+			this.clef = clef;
+			this.position = position;
+		},
+		validatePosition: function(position) {
+			var numRe = /^\d+$/;
 
-			this.displayConfig = {
-				clef: false,
-				keySignature: false,
-				staveConnector: false
-			};
+			// check that all the required position properties
+			// are present and are positive integers
+			if(!position.hasOwnProperty('index')
+				|| !position.hasOwnProperty('count')
+				|| !position.hasOwnProperty('maxCount')
+				|| !numRe.test(position.index)
+				|| !numRe.test(position.count)
+				|| !numRe.test(position.maxCount)) {
+				return false;
+			}
+
+			// ensure the maximum count (number of bars) is nonzero
+			if(position.maxCount === 0) {
+				return false;
+			}
+
+			return true;
 		},
 		render: function() {
 			this.createStaveBar();
@@ -122,22 +150,16 @@ define([
 				this.notater.notate();
 			}
 		},
-		fitToWidth: function() {
-			var new_width = this.closestWidth(this.max_x, this.start_x);
-			if(new_width > this.minWidth) {
-				this.setWidth(new_width);
-			}
-		},
-		closestWidth: function(maxWidth, start_x) {
-			return maxWidth - start_x - this.margin.right;
+		setMaxBars: function(n) {
+			this.maxBars = n;
 		},
 		setStartX: function(x) {
 			this.start_x = x;
 			this.doConnected('setStartX', x);
 		},
-		setMaxX: function(x) {
-			this.max_x = x;
-			this.doConnected('setMaxX', x);
+		setMaxWidth: function(w) {
+			this.maxWidth = w;
+			this.doConnected('setMaxWidth', w);
 		},
 		setWidth: function(w) {
 			this.width = w;
@@ -205,13 +227,42 @@ define([
 		},
 		setDisplayOptions: function(opts) {
 			opts = opts || {};
-			this.displayConfig = this.displayConfig || {};
+			this.displayConfig = _.cloneDeep(this.displayConfig || {});
 			_.extend(this.displayConfig, opts);
 		},
 		enableDisplayOptions: function(opts) {
 			var trueVal = function() { return true; };
 			var displayConfig = _.zipObject(opts, _.map(opts, trueVal));
 			this.setDisplayOptions(displayConfig);
+		},
+		updatePosition: function() {
+			var start_x, width;
+
+			if(this.isFirstBar()) {
+				this.start_x = this.margin.left;
+				this.width = this.firstBarWidth;
+			} else {
+				start_x = (this.margin.left + this.firstBarWidth);
+				width = Math.floor((this.maxWidth - start_x) / this.position.maxCount);
+				start_x += ((this.position.index - 1) * width);
+
+				this.start_x = start_x;
+
+				if(this.isLastBar()) {
+					// stretch to fill remaining area
+					this.width = this.maxWidth - this.start_x - this.margin.right;
+				} else {
+					this.width = width;
+				}
+			}
+
+			this.start_y = 75 * (this.clef === 'treble' ? 1 : 2);
+		},
+		isFirstBar: function() {
+			return this.position.index === 0;
+		},
+		isLastBar: function() {
+			return this.position.index === this.position.count;
 		}
 	});
 
