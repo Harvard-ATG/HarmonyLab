@@ -6,7 +6,8 @@ define([
 	'app/model/event_bus',
 	'app/view/transcript/stave',
 	'app/view/transcript/stave_notater',
-	'app/view/transcript/stave_note_factory'
+	'app/view/transcript/stave_note_factory',
+	'app/util'
 ], function(
 	$,
 	_, 
@@ -14,7 +15,8 @@ define([
 	eventBus, 
 	Stave, 
 	StaveNotater,
-	StaveNoteFactory
+	StaveNoteFactory,
+	util
 ) {
 	"use strict";
 
@@ -198,12 +200,20 @@ define([
 
 			ctx.save();
 			ctx.font = font;
-			if(this.tempo) {
-				// M.M. is an abbrev for metronome marking or "metronom maelzel"
-				ctx.fillText(""+this.tempo+" M.M.", x, this.getTopStaveY() - 15);
-			}
 			ctx.fillText(this.convertSymbols(key), x, this.getBottomStaveY());
 			ctx.restore();
+
+			if(this.tempo) {
+				var metronome_img = new Image();
+				metronome_img.src = util.staticUrl('img/metronome-black.png');
+				metronome_img.onload = _.bind(function() { 
+					ctx.save();
+					ctx.font = font;
+					ctx.fillText(this.tempo, x + 20, this.getTopStaveY() - 10);
+					ctx.drawImage(metronome_img, x, this.getTopStaveY() - 25);
+					ctx.restore();
+				},this);
+			}
 
 			return this;
 		},

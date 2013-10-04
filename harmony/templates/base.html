@@ -12,10 +12,9 @@
 {% autoescape off %}
 <script src="{{ STATIC_URL }}js/lib/require.js"></script>
 <script>requirejs.config({{ REQUIREJS_CONFIG }});</script>
+<script>window.appStaticUrl = '{{ STATIC_URL }}';</script>
 
-{% if REQUIREJS_DEBUG %}
-<script>requirejs.config({'urlArgs': 't='+(new Date().getTime())});</script>
-{% endif %}
+{% if REQUIREJS_DEBUG %}<script>requirejs.config({'urlArgs': 't='+(new Date().getTime())});</script>{% endif %}
 
 {% endautoescape %}
 

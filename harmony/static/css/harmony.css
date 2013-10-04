@@ -32,9 +32,9 @@ body {
 }
 
 .qwerty-keyboard-legend {
-	background: url(../img/keyboard-shortcut-legend.png) no-repeat;
-	width: 540px;
-	height: 551px;
+	background: url(../img/keyboard-shortcut-legend3.png) no-repeat;
+	width: 881px;
+	height: 404px;
 }
 
 #staff-area { 
@@ -413,7 +413,7 @@ body {
 }
 .modal > div {
 	min-width: 400px;
-	max-width: 800px;
+	max-width: 900px;
 	position: relative;
 	margin: 50px auto;
 	padding: 5px 20px 13px 20px;
