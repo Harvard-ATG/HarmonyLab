@@ -52,7 +52,7 @@ define([
 		// returns all items in the chord bank
 		items: function(config) {
 			config = config || {};
-			var items;
+			var items = this._items;
 			if(config.limit) {
 				items = this._items.slice(0, config.limit);
 			}
@@ -60,6 +60,10 @@ define([
 				items.reverse();
 			}
 			return items;
+		},
+		// returns the number of items in the chord bank
+		size: function() {
+			return this._items.length;
 		},
 		// returns the first chord - aliased to current()
 		current: function() {
