@@ -76,7 +76,14 @@ define([
 			this.updateStaves();
 		},
 		initListeners: function() {
-			_.bindAll(this, ['render', 'onHighlightChange', 'onAnalyzeChange', 'onMetronomeChange', 'onChordsBank']);
+			_.bindAll(this, [
+				'render',
+				'renderMetronomeMark',
+				'onHighlightChange',
+				'onAnalyzeChange',
+				'onMetronomeChange',
+				'onChordsBank'
+			]);
 
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
@@ -201,25 +208,35 @@ define([
 			var key = this.keySignature.getKeyShortName() + ':';
 			var font = "14px serif";
 			var x = this.getBottomStaveX();
+			var metronome_img;
 
 			ctx.save();
 			ctx.font = font;
 			ctx.fillText(this.convertSymbols(key), x, this.getBottomStaveY());
 			ctx.restore();
 
-			if(this.tempo) {
-				var metronome_img = new Image();
-				metronome_img.src = util.staticUrl('img/metronome-black.png');
-				metronome_img.onload = _.bind(function() { 
-					ctx.save();
-					ctx.font = font;
-					ctx.fillText(this.tempo, x + 20, this.getTopStaveY() - 10);
-					ctx.drawImage(metronome_img, x, this.getTopStaveY() - 25);
-					ctx.restore();
-				},this);
-			}
+			this.renderMetronomeMark();
 
 			return this;
+		},
+		renderMetronomeMark: function() {
+			if(!this.tempo) {
+				return;
+			}
+			if(this.metronomeImg) {
+				var ctx = this.vexRenderer.getContext();
+				var x= this.getBottomStaveX();
+				var y = this.getTopStaveY();
+				ctx.save();
+				ctx.font = "14px serif";
+				ctx.drawImage(this.metronomeImg, x, y - 25);
+				ctx.fillText(this.tempo, x + 20, y - 10);
+				ctx.restore();
+			} else {
+				this.metronomeImg = new Image();
+				this.metronomeImg.src = util.staticUrl('img/metronome-black.png');
+				this.metronomeImg.onload = this.renderMetronomeMark;
+			}
 		},
 		updateSettings: function(prop, setting) {
 			switch(setting.key) {
