@@ -26,13 +26,15 @@ define([
 				'label': 'Tritones', 
 				'value': 'highlight.tritonehighlight',
 				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.tritone)]
-			},
-			{
+			}
+			/* Removing the following highlight options per Rowland's
+			   instructions 10/4/13. Implement at a later time.
+			,{
 				'label': 'Awk. Doublings', 
 				'value': 'highlight.doublinghighlight',
 				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.double)]
-			},
-			{
+			}
+			,{
 				'label': '8ves &amp; 5ths', 
 				'value': 'highlight.octaveshighlight',
 				'colors': [
@@ -40,6 +42,7 @@ define([
 					Analyze.toHSLString(HIGHLIGHT_COLORS.perfectfifth)
 				]
 			}
+			*/
 		]
 	}];
 
