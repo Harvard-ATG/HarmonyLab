@@ -134,8 +134,17 @@ define([
 				var active_cls = 'metronome-icon-active';
 				var is_playing = metronome.isPlaying();
 				var $btn = $(ev.target);
-				metronome[is_playing?'stop':'start']();
-				$btn[is_playing?'removeClass':'addClass'](active_cls);
+				var $metronomeInputEl = $('.js-metronome-input', toolbarEl);
+
+				if(is_playing) {
+					metronome.stop();
+					$btn.removeClass(active_cls);
+				} else {
+					metronome.start();
+					$btn.addClass(active_cls);
+					$metronomeInputEl.val(metronome.getTempo());
+				}
+
 				eventBus.trigger("metronome", metronome);
 			});
 
