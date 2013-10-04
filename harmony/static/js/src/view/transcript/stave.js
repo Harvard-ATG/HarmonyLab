@@ -108,8 +108,17 @@ define([
 			var width = this.width;
 			var staveBar = new Vex.Flow.Stave(x, y, width);
 
-			staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
-			staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
+			if(this.isFirstBar()) {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.NONE);
+			} else if(this.isLastBar()) {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.NONE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
+			} else {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.NONE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.NONE);
+			}
+
 			staveBar.setContext(this.getContext());
 
 			if(this.displayConfig.clef) {
