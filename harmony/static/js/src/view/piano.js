@@ -21,6 +21,8 @@ define([
 	};
 
 	_.extend(Piano.prototype, {
+		metronomeEnabled: true,
+		transposeEnabled: false,
 		eventBus: eventBus,
 		init: function() {
 			this.el = $('<div class="keyboard-wrapper"></div>');
@@ -76,8 +78,13 @@ define([
 		},
 		initToolbar: function() {
 			this.toolbarEl = $('<div class="keyboard-controls"></div>');
-			this.initMetronomeControl();
-			this.initTransposeControl();
+
+			if(this.metronomeEnabled) {
+				this.initMetronomeControl();
+			}
+			if(this.transposeEnabled) {
+				this.initTransposeControl();
+			}
 		},
 		initTransposeControl: function() {
 			var toolbarEl = this.toolbarEl;
