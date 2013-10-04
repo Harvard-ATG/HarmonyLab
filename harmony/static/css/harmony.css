@@ -308,7 +308,7 @@ body {
 }
 .metronome-control-input {
 	width: 30px; 
-	margin: 0 5px;
+	margin: 0 10px;
 }
 .metronome-icon {
 	background: transparent url(../img/metronome_sprite.png) no-repeat;
@@ -327,6 +327,7 @@ body {
 	background-position: 0 0;
 	width: 8px;
 	height: 8px;
+	margin-top: 6px;
 }
 .metronome-led-on {
 	background-position: -100px 0px;
@@ -422,7 +423,7 @@ body {
 }
 .modal > div {
 	min-width: 400px;
-	max-width: 900px;
+	max-width: 820px;
 	position: relative;
 	margin: 50px auto;
 	padding: 5px 20px 13px 20px;

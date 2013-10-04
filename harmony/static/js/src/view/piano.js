@@ -125,7 +125,7 @@ define([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
 					'<input style="float:right" name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
-					'<div style="margin-top: 5px; float:right" class="metronome-led"></div>',
+					'<div style="float:right" class="metronome-led"></div>',
 				'</div>'
 			].join(''));
 
