@@ -10,14 +10,29 @@ define([
 	'app/config/help_text',
 	'app/config/highlight',
 	'app/config/instruments',
-	'app/config/keyboard_shortcuts'
+	'app/config/keyboard_shortcuts',
+	'app/config/analysis/hChords',
+	'app/config/analysis/hIntervals',
+	'app/config/analysis/iChords',
+	'app/config/analysis/iDegrees',
+	'app/config/analysis/ijIntervals',
+	'app/config/analysis/jChords',
+	'app/config/analysis/jDegrees',
 ], function(
 	_, 
 	ConfigGeneral, 
 	ConfigHelpText,
 	ConfigHighlight,
 	ConfigInstruments,
-	ConfigKeyboardShortcuts) {
+	ConfigKeyboardShortcuts,
+	ConfigAnalysis_hChords,
+	ConfigAnalysis_hIntervals,
+	ConfigAnalysis_iChords,
+	ConfigAnalysis_iDegrees,
+	ConfigAnalysis_ijIntervals,
+	ConfigAnalysis_jChords,
+	ConfigAnalysis_jDegrees
+) {
 	"use strict";
 
 	var Config = {
@@ -28,7 +43,16 @@ define([
 			'helpText': ConfigHelpText,
 			'highlight': ConfigHighlight,
 			'instruments': ConfigInstruments,
-			'keyboardShortcuts': ConfigKeyboardShortcuts
+			'keyboardShortcuts': ConfigKeyboardShortcuts,
+			'analysis': {
+				'hChords': ConfigAnalysis_hChords,		
+				'hIntervals': ConfigAnalysis_hIntervals,		
+				'iChords': ConfigAnalysis_iChords,
+				'iDegrees': ConfigAnalysis_iDegrees,
+				'ijIntervals': ConfigAnalysis_ijIntervals,
+				'jChords': ConfigAnalysis_jChords,
+				'jDegrees': ConfigAnalysis_jDegrees
+			}
 		},
 
 		// public method that returns the value of a key.

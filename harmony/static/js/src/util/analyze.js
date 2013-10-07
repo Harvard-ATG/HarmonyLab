@@ -1,4 +1,29 @@
-define(['lodash','vexflow'], function(_, Vex) {
+// Analysis functions
+//
+// Ported from the old harmony prototype with minimal changes.
+
+/* global define: false */
+define([
+	'lodash',
+	'vexflow',
+	'app/config'
+], function(
+	_, 
+	Vex, 
+	Config
+) {
+
+
+var ANALYSIS_CONFIG = Config.get('analysis');
+var PITCH_CLASSES = Config.get('general.pitchClasses');
+var NOTE_NAMES = Config.get('general.noteNames');
+var KEY_MAP = Config.get('general.keyMap');
+var SPELLING_TABLE = _.reduce(KEY_MAP, function(result, value, key) {
+	result[key] = value.spelling;
+	return result;
+}, {});
+
+
 
 var analyzing = {
 	keynotePC: {
@@ -784,20 +809,32 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	}
 };
 
-// Object to wrap the old analyzing object functions
+// Constructor for an object that wrap all the analysis methods and
+// configuration data.
 var Analyze = function(keySignature, options) {
+	if(!keySignature) {
+		throw new Erorr("missing key signature");
+	}
+
 	var keynotePC = keySignature.getKeyPitchClass();
 	var key = keySignature.getKey();
+
+	// There used to be a global variable "Piano" in the old harmony prototype
+	// that contained various properties and global settings. In order to keep
+	// the analysis methods relatively intact when porting from the old
+	// prototype app to the new one, a decision was made to provide a local object to 
+	// stand in for the old one. Eventually, this should be completely
+	// refactored.
 
 	this.Piano = {
 		key: key,
 		keynotePC: keynotePC,
 		diatonicNotes: this.generateDiatonicNotes(key),
 		highlightMode: {
-			octaveshighlight: false,
-			doublinghighlight: false,
-			tritonehighlight: false,
-			octaveshighlight: false
+			"octaveshighlight": false,
+			"doublinghighlight": false,
+			"tritonehighlight": false,
+			"octaveshighlight": false
 		},
 		analysisMode: {
 			"none": false, 
@@ -813,11 +850,23 @@ var Analyze = function(keySignature, options) {
 	}
 };
 
+
+// Augment prototype with methods and configuration data shared by all instances
+_.extend(Analyze.prototype, {
+	noteNames: NOTE_NAMES,
+	pitchClasses: PITCH_CLASSES,
+	spelling: SPELLING_TABLE
+});
+_.extend(Analyze.prototype, ANALYSIS_CONFIG);
+_.extend(Analyze.prototype, analyzing);
+
+
+
+// Static utility method
 Analyze.toHSLString = function(color) {
 	return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
 };
 
-Analyze.prototype = analyzing;
 
 return Analyze;
 });
