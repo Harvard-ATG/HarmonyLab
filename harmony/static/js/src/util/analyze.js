@@ -237,6 +237,15 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 //					}
 //			}
 		}
+
+
+		if (this.Piano.highlightMode["roothighlight"]) {
+			var root = this.findRoot(notes);
+			if(note === root) {
+				color = "red";
+			}
+		}
+
 		
 //		if (this.Piano.getSheetMusicMode() == "thoroughbass" && note != notes[0]) {
 //			var colorTranslate = {"black": "rgba(0,0,0,0.4)", "orange": "rgba(255,165,0,0.4)", "#d29": "rgba(221,34,153,0.4)",
