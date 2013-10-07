@@ -36,7 +36,6 @@ define([
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
-			this.analyzer = this.createAnalyzer();
 		},
 		initConfig: function() {
 			var required = ['stave', 'chord', 'keySignature', 'analyzeConfig'];
@@ -50,16 +49,20 @@ define([
 		},
 		notate: function() {
 			if(this.isEnabled()) {
+				this.updateAnalyzer();
 				this.getContext().save();
 				this.notateStave();
 				this.getContext().restore();
 			}
 		},
 		createAnalyzer: function() {
-			var mode = this.analyzeConfig.mode;
-			return new Analyze(this.keySignature, {
-				'analysisMode': {"note names": true}
-			}); 
+			return new Analyze(this.keySignature); 
+		},
+		updateAnalyzer: function() {
+			this.analyzer = this.createAnalyzer();
+		},
+		getAnalyzer: function() {
+			return this.analyzer;
 		},
 		getContext: function() {
 			return this.stave.getContext();
@@ -79,34 +82,40 @@ define([
 		drawNoteName: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var result = this.analyzer.ijNameDegree(notes);
-			var note_name = result.name;
-			ctx.fillText(note_name, x, y);
+			var note_name = this.getAnalyzer().getNameOfNote(notes);
+
+			if(note_name !== '') {
+				ctx.fillText(note_name, x, y);
+			}
 		},
 		drawHelmholtz: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var note_name = this.analyzer.getNoteName(notes[0],notes);
-			var helmholtz = this.analyzer.toHelmholtzNotation(note_name);
+			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
+			var helmholtz = this.getAnalyzer().toHelmholtzNotation(note_name);
 
-			ctx.fillText(helmholtz, x, y);
+			if(helmholtz !== '') {
+				ctx.fillText(helmholtz, x, y);
+			}
 		},
 		drawSolfege: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var solfege = this.analyzer.getSolfege(notes);
+			var solfege = this.getAnalyzer().getSolfege(notes);
 
 			solfege = util.convertSymbols(solfege);
 			if (solfege.indexOf("<br>") !== -1) {
 				solfege = solfege.split("<br>")[0];
 			}
 
-			ctx.fillText(solfege, x, y);
+			if(solfege !== '') {
+				ctx.fillText(solfege, x, y);
+			}
 		},
 		drawScaleDegree: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var numeral = this.analyzer.getScaleDegree(notes);
+			var numeral = this.getAnalyzer().getScaleDegree(notes);
 			var width = 0, caret_offset = 0, caret_x = x;
 
 			numeral = util.convertSymbols(numeral);
@@ -121,13 +130,15 @@ define([
 		drawRoman: function(x, y) {
 			var notes = this.chord.getNoteNumbers();
 			var ctx = this.getContext();
-			var chord_entry = this.analyzer.ijFindChord(notes);
+			var chord_entry = this.getAnalyzer().ijFindChord(notes);
 			var label = '';
 
 			if(chord_entry && notes.length > 2) {
 				label = chord_entry.label;
 				label = util.convertSymbols(label);
-				ctx.fillText(label, x, y);
+				if(label !== '') {
+					ctx.fillText(label, x, y);
+				}
 			}
 		}
 	});

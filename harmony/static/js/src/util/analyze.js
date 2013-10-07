@@ -530,6 +530,12 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		}
 		return numeral;
 	},
+	getNameOfNote: function(notes) {
+		if(this.Piano.key!=='h') {
+			return this.spelling[this.Piano.key][notes[0] % 12];
+		}
+		return this.nameNotes(notes.length > 1 ? notes : notes[0]);
+	},
 
 
 // The scripts "ijNameDegree," "ijFindChord," and "hFindChord" return the analysis of scale degrees and chords.
@@ -537,18 +543,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // They also draw on many scripts here and in "\this.Piano."
 
 	ijNameDegree: function (notes) {
-		if (notes.length == 1) {
-			if (this.Piano.analysisMode["note names"] && this.Piano.key != "h") {
-				return {"name": this.spelling[this.Piano.key][notes[0] % 12] };
-			}
-			else if (this.Piano.analysisMode["note names"] && this.Piano.key == "h") {
-				return {"name": this.nameNotes(notes) };
-			}
-			else {
-				return this.nameNotes(notes[0]);
-			}
-		}
-		else if (notes.length == 2) {
+		if (notes.length == 2) {
 			var i =  this.distance(notes);
 			if (this.ijIntervals[i]) return {"name": this.ijIntervals[i], "numeral": null };
 			else return {"name": "", "numeral": null};
@@ -854,23 +849,17 @@ var Analyze = function(keySignature, options) {
 			"doublinghighlight": false,
 			"tritonehighlight": false,
 			"octaveshighlight": false
-		},
-		analysisMode: {
-			"none": false, 
-			"note names": false, 
-			"scale degrees": false, 
-			"roman numerals": false, 
-			"thoroughbass": false
 		}
 	};
 
-	_.each(['highlightsMode','analysisMode'], function(key) {
+	_.each(['highlightsMode'], function(key) {
 		if(Piano[key] && options[key]) {
 			_.extend(Piano[key], options[key]);
 		}
 	});
 
 	this.Piano = Piano;
+
 };
 
 
@@ -882,8 +871,6 @@ _.extend(Analyze.prototype, {
 });
 _.extend(Analyze.prototype, ANALYSIS_CONFIG);
 _.extend(Analyze.prototype, analyzing);
-
-
 
 // Static utility method
 Analyze.toHSLString = function(color) {
