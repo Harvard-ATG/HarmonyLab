@@ -133,11 +133,24 @@ define([
 			var chord_entry = this.getAnalyzer().ijFindChord(notes);
 			var label = '';
 
-			if(chord_entry && notes.length > 2) {
+			if(chord_entry) {
 				label = chord_entry.label;
 				label = util.convertSymbols(label);
 				if(label !== '') {
 					ctx.fillText(label, x, y);
+				}
+			}
+		},
+		drawInterval: function(x, y) {
+			var notes = this.chord.getNoteNumbers();
+			var ctx = this.getContext();
+			var interval = this.getAnalyzer().ijNameDegree(notes);
+			var name = '';
+			
+			if(interval) {
+				name = interval.name;
+				if(name !== '') {
+					ctx.fillText(name, x, y);
 				}
 			}
 		}
@@ -189,9 +202,16 @@ define([
 			var x = this.getX();
 			var y = this.getY(); 
 			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var num_notes = notes.length;
+
 			ctx.font = this.getFont(); 
 
-			this.drawRoman(x, y);
+			if(num_notes == 2) {
+				this.drawInterval(x, y);
+			} else if(num_notes > 2) {
+				this.drawRoman(x, y);
+			}
 		}
 	});
 
