@@ -201,6 +201,11 @@ body {
   padding-left: 0;
   list-style-type: none;
 }
+
+#tab-nav-2.tab-nav ul.notation-checkboxes {
+	float: none;
+	display: block;
+}
 #tab-nav-2 .tab-content-inner ul.notation-checkboxes ul {
 	margin-left: 25px;
 }

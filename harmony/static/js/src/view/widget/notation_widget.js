@@ -12,7 +12,25 @@ define([
 
 	var ITEMS = [{
 		'label': 'Analyze', 
-		'value': 'analyze'
+		'value': 'analyze',
+		'items': [
+			{
+				'label': 'Note names',
+				'value': 'analyze.note_names',
+			},
+			{
+				'label': 'Helmholtz',
+				'value': 'analyze.helmholtz',
+			},
+			{
+				'label': 'Scale degrees',
+				'value': 'analyze.scale_degrees',
+			},
+			{
+				'label': 'Solfege',
+				'value': 'analyze.solfege',
+			},
+		]
 	},{
 		'label': 'Highlight', 
 		'value': 'highlight',

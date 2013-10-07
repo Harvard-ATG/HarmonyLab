@@ -363,8 +363,9 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	getOrderedPitchClasses: function (notes) {
 		var uniquePitches = this.stripRepeatedPitchClasses(notes);
 		var intervals = [];
+		var keynotePC = this.Piano.keynotePC;
 		
-		uniquePitches = uniquePitches.map(function (x) { return (12 + x - this.Piano.keynotePC) % 12;});
+		uniquePitches = _.map(uniquePitches, function (x) { return (12 + x - keynotePC) % 12;});
 		var bass = this.pitchClasses[uniquePitches[0]];
 		uniquePitches = uniquePitches.slice(1);
 		uniquePitches.sort(function (a,b) { return a-b;});
@@ -495,6 +496,41 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			}
 			return semitones.toString() + '/' + steps.toString();
 	},
+	// Returns the solfege notation for a note.
+	//
+	// Note: pulled out from the ijNameDegree function
+	getSolfege: function(notes) {
+		var i;
+		if(notes.length == 1) {
+			i = this.distance([this.Piano.keynotePC,notes[0] % 12]);
+			return this.jDegrees[i]["solfege"];
+		}
+		return "";
+	},
+
+	// Returns the scale degree for a note.
+	//
+	// Note: pulled out from the ijNameDegree function
+	getScaleDegree: function(notes) {
+		var i, numeral = '';
+		if(notes.length == 1) {
+			i = this.distance([this.Piano.keynotePC,notes[0] % 12]);
+			if (this.jDegrees[i] !== undefined) {
+				numeral = this.jDegrees[i]["numeral"];
+				if (this.Piano.key.indexOf("i") != -1) {	// minor key variations; index changed to i from m -Rowland
+					if (numeral == "b3") numeral = '3';
+					else if (numeral == "3") numeral = '#3';
+					else if (numeral == "b6") numeral = '6'
+					else if (numeral == "6") numeral = '#6'
+					else if (numeral == "b7") numeral = '7';
+					else if (numeral == "7") numeral = '#7';
+				}
+				return numeral;
+			}
+		}
+		return numeral;
+	},
+
 
 // The scripts "ijNameDegree," "ijFindChord," and "hFindChord" return the analysis of scale degrees and chords.
 // They draw on the customizable listings of "jDegrees," (not "iDegrees" currently), "iChords," and "jChords."
@@ -502,24 +538,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 
 	ijNameDegree: function (notes) {
 		if (notes.length == 1) {
-			if (this.Piano.key != "h" && !this.Piano.analysisMode["note names"]) {
-				var i = this.distance([this.Piano.keynotePC,notes[0] % 12]);
-//				var name = this.toHelmholtzNotation(this.getNoteName(notes[0],notes))+"<br><br>";
-				var numeral = ""
-				if (this.jDegrees[i] != undefined) {
-					numeral = this.jDegrees[i]["numeral"];
-					if (this.Piano.key.indexOf("i") != -1) {	// minor key variations; index changed to i from m -Rowland
-						if (numeral == "b3") numeral = '3';
-						else if (numeral == "3") numeral = '#3';
-						else if (numeral == "b6") numeral = '6'
-						else if (numeral == "6") numeral = '#6'
-						else if (numeral == "b7") numeral = '7';
-						else if (numeral == "7") numeral = '#7';
-					}
-					return { "name": this.jDegrees[i]["solfege"], "numeral": numeral };
-				}
-			}
-			else if (this.Piano.analysisMode["note names"] && this.Piano.key != "h") {
+			if (this.Piano.analysisMode["note names"] && this.Piano.key != "h") {
 				return {"name": this.spelling[this.Piano.key][notes[0] % 12] };
 			}
 			else if (this.Piano.analysisMode["note names"] && this.Piano.key == "h") {
@@ -826,7 +845,7 @@ var Analyze = function(keySignature, options) {
 	// stand in for the old one. Eventually, this should be completely
 	// refactored.
 
-	this.Piano = {
+	var Piano = {
 		key: key,
 		keynotePC: keynotePC,
 		diatonicNotes: this.generateDiatonicNotes(key),
@@ -845,9 +864,13 @@ var Analyze = function(keySignature, options) {
 		}
 	};
 
-	if(options.highlightMode) {
-		_.extend(this.Piano.highlightMode, options.highlightMode);
-	}
+	_.each(['highlightsMode','analysisMode'], function(key) {
+		if(Piano[key] && options[key]) {
+			_.extend(Piano[key], options[key]);
+		}
+	});
+
+	this.Piano = Piano;
 };
 
 

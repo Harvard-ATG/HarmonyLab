@@ -2,8 +2,14 @@
 define([
 	'lodash', 
 	'vexflow',
+	'app/util',
 	'app/util/analyze',
-], function(_, Vex, Analyze) {
+], function(
+	_, 
+	Vex, 
+	util, 
+	Analyze
+) {
 	"use strict";
 
 	// This object is responsible for notating and annotating a stave
@@ -14,24 +20,26 @@ define([
 	// - Solfege pitch notation
 	// - Helmholtz pitch notation
 	// - Scale degrees
-	// - Roman numerals
-	// - Textual notes (i.e. intervals)
+	// - Intervals
+	// - Roman numeral analysis
 	//
 	// It collaborates directly with the stave to add, layout, and render the
 	// information.
 	//
 	// The stave may instruct this object about what kinds of things may be
-	// added and then call the notate() method to render those things on the
+	// displayed and then call the notate() method to render those things on the
 	// stave.
 	//
 	var AbstractStaveNotater = function() {};
 	_.extend(AbstractStaveNotater.prototype, {
+		margin: {'top': 25, 'bottom': 25},
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
+			this.analyzer = this.createAnalyzer();
 		},
 		initConfig: function() {
-			var required = ['stave', 'chord', 'keySignature', 'analyze'];
+			var required = ['stave', 'chord', 'keySignature', 'analyzeConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -47,6 +55,12 @@ define([
 				this.getContext().restore();
 			}
 		},
+		createAnalyzer: function() {
+			var mode = this.analyzeConfig.mode;
+			return new Analyze(this.keySignature, {
+				'analysisMode': {"note names": true}
+			}); 
+		},
 		getContext: function() {
 			return this.stave.getContext();
 		},
@@ -60,7 +74,61 @@ define([
 			throw new Error("subclass responsibility");
 		},
 		isEnabled: function() {
-			return this.analyze.enabled;
+			return this.analyzeConfig.enabled;
+		},
+		drawNoteName: function(x, y) {
+			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var result = this.analyzer.ijNameDegree(notes);
+			var note_name = result.name;
+			ctx.fillText(note_name, x, y);
+		},
+		drawHelmholtz: function(x, y) {
+			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var note_name = this.analyzer.getNoteName(notes[0],notes);
+			var helmholtz = this.analyzer.toHelmholtzNotation(note_name);
+
+			ctx.fillText(helmholtz, x, y);
+		},
+		drawSolfege: function(x, y) {
+			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var solfege = this.analyzer.getSolfege(notes);
+
+			solfege = util.convertSymbols(solfege);
+			if (solfege.indexOf("<br>") !== -1) {
+				solfege = solfege.split("<br>")[0];
+			}
+
+			ctx.fillText(solfege, x, y);
+		},
+		drawScaleDegree: function(x, y) {
+			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var numeral = this.analyzer.getScaleDegree(notes);
+			var width = 0, caret_offset = 0, caret_x = x;
+
+			numeral = util.convertSymbols(numeral);
+			width = ctx.measureText(numeral).width;
+			//x = x + 8 + Math.floor(width/2);
+			caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
+			caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
+
+			ctx.fillText(numeral, x, y);
+			ctx.fillText("^", caret_x, y - 10);
+		},
+		drawRoman: function(x, y) {
+			var notes = this.chord.getNoteNumbers();
+			var ctx = this.getContext();
+			var chord_entry = this.analyzer.ijFindChord(notes);
+			var label = '';
+
+			if(chord_entry && notes.length > 2) {
+				label = chord_entry.label;
+				label = util.convertSymbols(label);
+				ctx.fillText(label, x, y);
+			}
 		}
 	});
 
@@ -74,15 +142,23 @@ define([
 
 	_.extend(TrebleStaveNotater.prototype, {
 		getY: function() {
-			return this.stave.getTopY();
+			return this.stave.getTopY() - this.margin.top;
 		},
 		notateStave: function() {
 			var x = this.getX();
 			var y = this.getY();
 			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var first_row = y, second_row = y + 25;
 
 			ctx.font = this.getFont();
-			ctx.fillText('top text', x, y);
+
+			if(notes.length === 1) {
+				this.drawScaleDegree(x, first_row);
+				this.drawSolfege(x + 25, first_row); 
+				this.drawNoteName(x, second_row);
+				this.drawHelmholtz(x + 25, second_row);
+			}
 		}
 	});
 
@@ -96,15 +172,15 @@ define([
 
 	_.extend(BassStaveNotater.prototype, {
 		getY: function() {
-			return this.stave.getBottomY();
+			return this.stave.getBottomY() + this.margin.bottom;
 		},
 		notateStave: function() {
 			var x = this.getX();
 			var y = this.getY(); 
 			var ctx = this.getContext();
-
 			ctx.font = this.getFont(); 
-			ctx.fillText('bottom text', x, y);
+
+			this.drawRoman(x, y);
 		}
 	});
 
