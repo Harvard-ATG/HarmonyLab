@@ -203,7 +203,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		}
 		
 		if (this.Piano.highlightMode["tritonehighlight"]) {
-		for (var j = 1; j < notes.length; j++) {
+		for (var j = 1, len = notes.length - i; j < len; j++) {
 			interval_up = this.knowSemitonalDistance(notes[i],notes[i + j]) % 12;
 			if (interval_up == 6) color = "#d29"; // tritone
 		}
@@ -826,6 +826,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // Constructor for an object that wrap all the analysis methods and
 // configuration data.
 var Analyze = function(keySignature, options) {
+	options = options || {};
 	if(!keySignature) {
 		throw new Erorr("missing key signature");
 	}
@@ -852,14 +853,11 @@ var Analyze = function(keySignature, options) {
 		}
 	};
 
-	_.each(['highlightsMode'], function(key) {
-		if(Piano[key] && options[key]) {
-			_.extend(Piano[key], options[key]);
-		}
-	});
+	if(options.highlightMode) {
+		_.extend(Piano.highlightMode, options.highlightMode);
+	}
 
 	this.Piano = Piano;
-
 };
 
 

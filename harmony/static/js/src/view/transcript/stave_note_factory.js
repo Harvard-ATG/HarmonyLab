@@ -152,10 +152,10 @@ define([
 			};
 		},
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var analyze = new Analyze(this.keySignature, {
+			var analyzer = new Analyze(this.keySignature, {
 				highlightMode: this.highlightsConfig.mode
 			});
-			var color = analyze.ColorSpectacular(noteToHighlight, allNotes);
+			var color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
 			var keyStyleOpts = {
 				//shadowColor: color,
 				//shadowBlur: 15,
