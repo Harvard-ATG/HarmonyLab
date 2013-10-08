@@ -2,7 +2,7 @@
 define([
 	'lodash', 
 	'vexflow',
-	'app/util/analyze',
+	'app/util/analyze'
 ], function(_, Vex, Analyze) {
 	"use strict";
 

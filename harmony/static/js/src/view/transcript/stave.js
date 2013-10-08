@@ -1,7 +1,7 @@
 /* global define: false */ 
 define([
 	'lodash', 
-	'vexflow',
+	'vexflow'
 ], function(_, Vex) {
 	"use strict";
 
@@ -47,12 +47,12 @@ define([
 
 			// check that all the required position properties
 			// are present and are positive integers
-			if(!position.hasOwnProperty('index')
-				|| !position.hasOwnProperty('count')
-				|| !position.hasOwnProperty('maxCount')
-				|| !numRe.test(position.index)
-				|| !numRe.test(position.count)
-				|| !numRe.test(position.maxCount)) {
+			if(!position.hasOwnProperty('index') ||
+				!position.hasOwnProperty('count') ||
+				!position.hasOwnProperty('maxCount') || 
+				!numRe.test(position.index) || 
+				!numRe.test(position.count) || 
+				!numRe.test(position.maxCount)) {
 				return false;
 			}
 
