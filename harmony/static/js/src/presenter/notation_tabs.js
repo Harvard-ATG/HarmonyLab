@@ -27,7 +27,7 @@ define([
 			$('.js-tab').each(this.initTab);
 			$('.js-toggle-tabs')
 				.on('mousedown', this.cancelEvent) // fixes issue with unwated text selections on click
-				.on('click', this.onClickToggleTabs) // handles the expand/collapse behavior we want
+				.on('click', this.onClickToggleTabs); // handles the expand/collapse behavior we want
 			
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);

@@ -94,11 +94,11 @@ define([
 		// Handles error on Jazz Midi Bridge error
 		onJMBError: function() {
 			var title = 'Jazz MIDI Plugin Required';
-			var msg = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. '
-				+ 'This browser plugin is required to produce sound with the on-screen keyboard or to '
-				+ 'connect and use your own MIDI keyboard.</p>'
-				+ '<p>Please download and install the Jazz MIDI plugin here: <br/>'
-				+ '<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
+			var msg = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. ' +
+				'This browser plugin is required to produce sound with the on-screen keyboard or to ' + 
+				'connect and use your own MIDI keyboard.</p>' +
+				'<p>Please download and install the Jazz MIDI plugin here: <br/>' + 
+				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
 			Modal.msg(title, msg);
 		},

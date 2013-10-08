@@ -14,7 +14,7 @@ define([
 	'app/presenter/midi_source',
 	'app/presenter/keyboard_shortcuts',
 	'app/presenter/notation_tabs',
-	'app/util/instruments',
+	'app/util/instruments'
 ], 
 function(
 	_,
@@ -111,7 +111,7 @@ function(
 				var devices = {
 					'input': {
 						'selector': '#select_midi_input',
-						'options': _.map(inputs, makeOptions),
+						'options': _.map(inputs, makeOptions)
 					},
 					'output': {
 						'selector': '#select_midi_output', 

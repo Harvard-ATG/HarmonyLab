@@ -59,7 +59,7 @@ define(['jquery','lodash','microevent'], function($, _, MicroEvent) {
 			return this.tempo;
 		},
 		_isValidTempo: function(tempo) {
-			return /^\d+$/.test(tempo) && tempo >= MIN_TEMPO && tempo <= MAX_TEMPO;
+			return (/^\d+$/).test(tempo) && tempo >= MIN_TEMPO && tempo <= MAX_TEMPO;
 		},
 		_calculateDelay: function(beatsPerMinute) {
 			return Math.floor(MS_PER_MIN / beatsPerMinute);

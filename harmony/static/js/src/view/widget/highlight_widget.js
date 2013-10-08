@@ -24,8 +24,7 @@ define([
 				'value': 'highlight.tritonehighlight',
 				'colors': [util.toHSLString(HIGHLIGHT_COLORS.tritone)]
 			}
-			/* Removing the following highlight options per Rowland's
-			   instructions 10/4/13. Implement at a later time.
+			/* Removing the following highlight options per Rowland's instructions 10/4/13
 			,{
 				'label': 'Awk. Doublings', 
 				'value': 'highlight.doublinghighlight',
@@ -83,7 +82,7 @@ define([
 			return this;
 		},
 		render: function() {
-			var content = this.listTpl({ items: this.renderItems(this.items) })
+			var content = this.listTpl({ items: this.renderItems(this.items) });
 			this.el.remove();
 			this.el.append(content);
 			this.el.find('ul').each(function(index, el) {

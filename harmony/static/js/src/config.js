@@ -17,7 +17,7 @@ define([
 	'app/config/analysis/iDegrees',
 	'app/config/analysis/ijIntervals',
 	'app/config/analysis/jChords',
-	'app/config/analysis/jDegrees',
+	'app/config/analysis/jDegrees'
 ], function(
 	_, 
 	ConfigGeneral, 

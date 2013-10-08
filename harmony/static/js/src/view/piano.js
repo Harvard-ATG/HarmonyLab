@@ -39,7 +39,7 @@ define([
 			var pedals = {
 				'soft': {},
 				'sostenuto' : {},
-				'sustain' : {},
+				'sustain' : {}
 			};
 
 			this.pedalsEl = $([

@@ -18,7 +18,7 @@ define([
 				'checked': 'checked'
 			},{
 				'label': 'Helmholtz',
-				'value': 'analyze.helmholtz',
+				'value': 'analyze.helmholtz'
 			}],
 			[{
 				'label': 'Scale degrees',
@@ -26,7 +26,7 @@ define([
 				'checked': 'checked'
 			},{
 				'label': 'Solfege',
-				'value': 'analyze.solfege',
+				'value': 'analyze.solfege'
 			}]
 		]
 	}];
@@ -102,7 +102,7 @@ define([
 			}, this);
 		},
 		render: function() {
-			var content = this.listTpl({ items: this.renderItems(this.items) })
+			var content = this.listTpl({ items: this.renderItems(this.items) });
 			this.el.remove();
 			this.el.append(content);
 			this.el.find('ul').each(function(index, el) {
