@@ -274,7 +274,8 @@ define([
 				}
 			}
 
-			this.start_y = 75 * (this.clef === 'treble' ? 1 : 2);
+			this.start_y = 65;
+			this.start_y += (this.clef === 'treble' ? 0 : 75);
 		},
 		isFirstBar: function() {
 			return this.position.index === 0;
