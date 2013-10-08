@@ -41,7 +41,12 @@ define([
 		},
 		analyzeConfig: {
 			enabled: false,
-			mode: {}
+			mode: {
+				'note_names': true,
+				'helmholtz': false,
+				'scale_degrees': true,
+				'solfege': false
+			}
 		},
 		init: function(config) {
 			this.config = config;

@@ -51,6 +51,12 @@ define(['lodash'], function(_) {
 
 			return text;
 		},
+
+		// Takes a triplet of hue, saturation, and color [H,S,L] and returns a
+		// color string suitable for CSS or Canvas.
+		toHSLString: function(color) {
+			return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
+		}
 	};
 	return util;
 });

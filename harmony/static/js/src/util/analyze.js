@@ -879,11 +879,5 @@ _.extend(Analyze.prototype, {
 _.extend(Analyze.prototype, ANALYSIS_CONFIG);
 _.extend(Analyze.prototype, analyzing);
 
-// Static utility method
-Analyze.toHSLString = function(color) {
-	return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
-};
-
-
 return Analyze;
 });
