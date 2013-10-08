@@ -8,38 +8,26 @@ define([
 ], function(_, $, MicroEvent, Config, Analyze) {
 	"use strict";
 
-	var HIGHLIGHT_COLORS = Config.get('highlight.colors');
-
 	var ITEMS = [{
 		'label': 'Analyze', 
-		'value': 'analyze'
-	},{
-		'label': 'Highlight', 
-		'value': 'highlight',
+		'value': 'analyze',
 		'items': [
-			{
-				'label': 'Roots', 
-				'value': 'highlight.roots',
-				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.root)]
-			},
-			{
-				'label': 'Tritones', 
-				'value': 'highlight.tritones',
-				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.tritone)]
-			},
-			{
-				'label': 'Awk. Doublings', 
-				'value': 'highlight.doubles',
-				'colors': [Analyze.toHSLString(HIGHLIGHT_COLORS.double)]
-			},
-			{
-				'label': '8ves &amp; 5ths', 
-				'value': 'highlight.octaves',
-				'colors': [
-					Analyze.toHSLString(HIGHLIGHT_COLORS.octave), 
-					Analyze.toHSLString(HIGHLIGHT_COLORS.perfectfifth)
-				]
-			}
+			[{
+				'label': 'Note names',
+				'value': 'analyze.note_names',
+				'checked': 'checked'
+			},{
+				'label': 'Helmholtz',
+				'value': 'analyze.helmholtz'
+			}],
+			[{
+				'label': 'Scale degrees',
+				'value': 'analyze.scale_degrees',
+				'checked': 'checked'
+			},{
+				'label': 'Solfege',
+				'value': 'analyze.solfege'
+			}]
 		]
 	}];
 
@@ -50,7 +38,7 @@ define([
 
 	_.extend(AnalyzeWidget.prototype, {
 		listTpl: _.template('<ul class="notation-checkboxes"><%= items %></ul>'),
-		itemTpl: _.template('<li><label><input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> /><%= label %><%= extra %></label><%= itemlist %></li>'),
+		itemTpl: _.template('<li><label><input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> /><%= label %></label><%= itemlist %></li>'),
 		colorTpl: _.template('<span style="margin-left: 5px; color: <%= color %>">&#9834;</span>'),
 		initListeners: function() {
 			var that = this;
@@ -60,7 +48,7 @@ define([
 				var $children = $(currentTarget).children('ul');
 				var val = $(target).val();
 				var checked = $(target).is(':checked');
-				var valDot, valCat, valOpt;
+				var parsed_val;
 
 				if($children.length > 0) {
 					$children.find('input').attr('disabled', (checked ? null : 'disabled'));
@@ -69,10 +57,9 @@ define([
 				if(val.indexOf('.') === -1) {
 					that.trigger('changeCategory', val, checked);
 				} else {
-					valDot = val.indexOf('.');
-					valCat = val.substr(0, valDot);
-					valOpt = val.substr(valDot + 1);
-					that.trigger('changeOption', valCat, valOpt, checked);
+					parsed_val = that.parseValue(val);
+					that.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
+					that.uncheckRelated(target);
 				}
 
 				e.stopPropagation();
@@ -82,8 +69,40 @@ define([
 			});
 			return this;
 		},
+		parseValue: function(val) {
+			var valDot = val.indexOf('.');
+			var valCat = val.substr(0, valDot);
+			var valOpt = val.substr(valDot + 1);
+			return {category: valCat, option: valOpt};
+		},
+		uncheckRelated: function(target) {
+			var $target = $(target);
+			var value = $(target).val();
+			var items = ITEMS[0].items;
+			var group = [];
+			var i, j, len, len2;
+
+			for(i = 0, len = items.length; i < len; i++) {
+				for(j = 0, len2 = items[i].length; j < len; j++) {
+					if(items[i][j].value === value) {
+						group = items[i];
+						break;
+					}
+				}
+			}
+
+			_.each(group, function(related) {
+				var selector, parsed_val, checked = false;
+				if(related.value !== value) {
+					selector = 'input[value="'+related.value+'"]';
+					parsed_val = this.parseValue(related.value);
+					$(selector, this.el).attr('checked', checked);
+					this.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
+				}
+			}, this);
+		},
 		render: function() {
-			var content = this.listTpl({ items: this.renderItems(this.items) })
+			var content = this.listTpl({ items: this.renderItems(this.items) });
 			this.el.remove();
 			this.el.append(content);
 			this.el.find('ul').each(function(index, el) {
@@ -96,18 +115,10 @@ define([
 			return this;
 		},
 		renderItems: function(items) {
-			return _.map(items, function(item) {
+			return _.map(_.flatten(items), function(item) {
 				var itemlist = item.items ? this.listTpl({ items: this.renderItems(item.items) }) : ""; 
-				var label = item.label;
-				var extra = '';
-				if(item.colors) {
-					extra = _.map(item.colors, function(color) {
-						return this.colorTpl({ color: color });
-					}, this).join("");
-				}
 				return this.itemTpl({
 					label: item.label,
-					extra: extra,
 					value: item.value,
 					checked: item.checked || "",
 					itemlist: itemlist

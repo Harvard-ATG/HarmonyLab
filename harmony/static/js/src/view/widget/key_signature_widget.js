@@ -3,7 +3,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 	"use strict";
 
 	var KEY_MAP = Config.get('general.keyMap');
-	var KEY_DISPLAY_GROUPS = Config.get('general.keyDisplayGroups')	
+	var KEY_DISPLAY_GROUPS = Config.get('general.keyDisplayGroups');
 	var KEY_SIGNATURE_MAP = Config.get('general.keySignatureMap');
 
 	var KeySignatureWidget = function(keySignature) {

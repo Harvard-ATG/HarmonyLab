@@ -2,7 +2,7 @@
 define([
 	'lodash', 
 	'vexflow',
-	'app/util/analyze',
+	'app/util/analyze'
 ], function(_, Vex, Analyze) {
 	"use strict";
 
@@ -23,7 +23,7 @@ define([
 			this.initConfig();
 		},
 		initConfig: function() {
-			var required = ['chord', 'keySignature', 'clef', 'highlights'];
+			var required = ['chord', 'keySignature', 'clef', 'highlightsConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -130,7 +130,7 @@ define([
 		_getNoteKeysAndModifiers: function() {
 			var keys = this._getNoteKeys();
 			var accidentals = this._getAccidentalsOf(keys);
-			var allMidiKeys = this.chord.getNoteNumbers(); // for highlights across stave boundaries
+			var allMidiKeys = this.chord.getNoteNumbers(); // for highlightsConfig across stave boundaries
 			var midiKeys = this.chord.getNoteNumbers(this.clef);
 			var modifiers = [];
 
@@ -138,7 +138,7 @@ define([
 				if(accidentals[i]) {
 					modifiers.push(this._makeAccidentalModifier(i, accidentals[i]));
 				}
-				if(this.highlights.enabled) {
+				if(this.highlightsConfig.enabled) {
 					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
 				}
 			}
@@ -152,7 +152,10 @@ define([
 			};
 		},
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var color = Analyze.highlightNote(this.highlights.mode, this.keySignature, allNotes, noteToHighlight);
+			var analyzer = new Analyze(this.keySignature, {
+				highlightMode: this.highlightsConfig.mode
+			});
+			var color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
 			var keyStyleOpts = {
 				//shadowColor: color,
 				//shadowBlur: 15,

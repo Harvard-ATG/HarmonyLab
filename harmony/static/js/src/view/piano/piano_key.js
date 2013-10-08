@@ -58,7 +58,9 @@ define(['lodash'], function(_) {
 				case SUSTAIN_NEXT:
 					this.sustain = SUSTAIN_ON;
 					break;
-				case SUSTAIN_OFF:
+				case SUSTAIN_OFF: 
+					this.revertColor(STATE_KEYUP);
+					break;
 				default:
 					this.revertColor(STATE_KEYUP);
 			}
