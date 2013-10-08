@@ -2,10 +2,8 @@
 define([
 	'lodash', 
 	'vexflow',
-], function(_, Vex, StaveNoteFactory) {
+], function(_, Vex) {
 	"use strict";
-
-	var MAX_STAVE_BARS = 5;
 
 	// Knows how to render a single bar of a staff.
 	var Stave = function(clef, position) {
