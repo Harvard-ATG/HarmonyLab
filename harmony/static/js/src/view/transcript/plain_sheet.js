@@ -41,6 +41,7 @@ define([
 		},
 		analyzeConfig: {
 			enabled: false,
+			tempo: false,
 			mode: {
 				'note_names': true,
 				'helmholtz': false,
@@ -82,7 +83,6 @@ define([
 		initListeners: function() {
 			_.bindAll(this, [
 				'render',
-				'renderMetronomeMark',
 				'onHighlightChange',
 				'onAnalyzeChange',
 				'onMetronomeChange',
@@ -102,7 +102,6 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
-			this.renderAnnotations();
 			return this;
 		},
 		renderStaves: function() {
@@ -154,11 +153,18 @@ define([
 		},
 		createDisplayStave: function(clef, position) {
 			var stave = new Stave(clef, position);
+
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
+			stave.setNotater(StaveNotater.create(clef, {
+				stave: stave,
+				keySignature: this.keySignature,
+				analyzeConfig: this.analyzeConfig
+			}));
 			stave.enableDisplayOptions(['clef', 'keySignature', 'staveConnector']);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
+
 			return stave;
 		},
 		createNoteStave: function(clef, position, chord) {
@@ -207,41 +213,6 @@ define([
 			}
 			return 0;
 		},
-		renderAnnotations: function() {
-			var ctx = this.vexRenderer.getContext();
-			var key = this.keySignature.getKeyShortName() + ':';
-			var font = "14px serif";
-			var x = this.getBottomStaveX();
-			var metronome_img;
-
-			ctx.save();
-			ctx.font = font;
-			ctx.fillText(util.convertSymbols(key), x, this.getBottomStaveY());
-			ctx.restore();
-
-			this.renderMetronomeMark();
-
-			return this;
-		},
-		renderMetronomeMark: function() {
-			if(!this.tempo) {
-				return;
-			}
-			if(this.metronomeImg) {
-				var ctx = this.vexRenderer.getContext();
-				var x= this.getBottomStaveX();
-				var y = this.getTopStaveY();
-				ctx.save();
-				ctx.font = "14px serif";
-				ctx.drawImage(this.metronomeImg, x, y - 25);
-				ctx.fillText(this.tempo, x + 20, y - 10);
-				ctx.restore();
-			} else {
-				this.metronomeImg = new Image();
-				this.metronomeImg.src = util.staticUrl('img/metronome-black.png');
-				this.metronomeImg.onload = this.renderMetronomeMark;
-			}
-		},
 		updateSettings: function(prop, setting) {
 			switch(setting.key) {
 				case "enabled":
@@ -269,9 +240,9 @@ define([
 		},
 		onMetronomeChange: function(metronome) {
 			if(metronome.isPlaying()) {
-				this.tempo = metronome.getTempo();
+				this.analyzeConfig.tempo = metronome.getTempo();
 			} else {
-				this.tempo = false;
+				this.analyzeConfig.tempo = false;
 			}
 			this.render();
 		}

@@ -12,6 +12,9 @@ define([
 ) {
 	"use strict";
 
+	var METRONOME_IMG = new Image();
+	METRONOME_IMG.src = util.staticUrl('img/metronome-black.png');
+
 	// This object is responsible for notating and annotating a stave
 	// bar with information about what is being played. In particular, 
 	// it should know how and where to display the following information:
@@ -36,9 +39,10 @@ define([
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
+			_.bindAll(this, 'drawMetronomeMark');
 		},
 		initConfig: function() {
-			var required = ['stave', 'chord', 'keySignature', 'analyzeConfig'];
+			var required = ['stave', 'keySignature', 'analyzeConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -46,14 +50,28 @@ define([
 					throw new Error("missing required config property: "+propName);
 				}
 			}, this);
+
+			// optional
+			if(this.config.hasOwnProperty('chord')) {
+				this.chord = this.config.chord;
+			}
 		},
 		notate: function() {
+			var ctx = this.getContext();
+
+			ctx.save();
+			ctx.font = this.getFont();
+
+			this.notateStave();
+
 			if(this.isEnabled()) {
 				this.updateAnalyzer();
-				this.getContext().save();
-				this.notateStave();
-				this.getContext().restore();
+				if(this.chord) {
+					this.notateChord();
+				}
 			}
+
+			ctx.restore();
 		},
 		createAnalyzer: function() {
 			return new Analyze(this.keySignature); 
@@ -75,6 +93,9 @@ define([
 		},
 		getY: function() {
 			throw new Error("subclass responsibility");
+		},
+		getTempo: function() {
+			return this.analyzeConfig.tempo;
 		},
 		isEnabled: function() {
 			return this.analyzeConfig.enabled;
@@ -153,6 +174,25 @@ define([
 					ctx.fillText(name, x, y);
 				}
 			}
+		},
+		drawMetronomeMark: function(x, y) {
+			var ctx = this.getContext();
+			var tempo = this.getTempo();
+			var metronomeImg = METRONOME_IMG;
+
+			if(tempo) {
+				if(metronomeImg && metronomeImg.complete) {
+					ctx.drawImage(metronomeImg, x, y - 28);
+					ctx.fillText(tempo, x, y);
+				} else {
+					metronomeImg.onload = _.partial(this.drawMetronomeMark, x, y);
+				}
+			}
+		},
+		drawKeyName: function(x, y) {
+			var ctx = this.getContext();
+			var key = this.keySignature.getKeyShortName();
+			ctx.fillText(util.convertSymbols(key) + ':', x, y);
 		}
 	});
 
@@ -168,15 +208,12 @@ define([
 		getY: function() {
 			return this.stave.getTopY() - this.margin.top;
 		},
-		notateStave: function() {
+		notateChord: function() {
 			var x = this.getX();
 			var y = this.getY();
-			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var first_row = y, second_row = y + 25;
 			var mode = this.analyzeConfig.mode;
-
-			ctx.font = this.getFont();
 
 			if(notes.length === 1) {
 				// first row of mutually exclusive options
@@ -193,6 +230,14 @@ define([
 					this.drawHelmholtz(x, second_row);
 				}
 			}
+		},
+		notateStave: function() {
+			var x = this.getX();
+			var y = this.getY();
+
+			if(this.stave.isFirstBar()) {
+				this.drawMetronomeMark(x, y);
+			}
 		}
 	});
 
@@ -208,19 +253,24 @@ define([
 		getY: function() {
 			return this.stave.getBottomY() + this.margin.bottom;
 		},
-		notateStave: function() {
+		notateChord: function() {
 			var x = this.getX();
 			var y = this.getY(); 
-			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var num_notes = notes.length;
-
-			ctx.font = this.getFont(); 
 
 			if(num_notes == 2) {
 				this.drawInterval(x, y);
 			} else if(num_notes > 2) {
 				this.drawRoman(x, y);
+			}
+		},
+		notateStave: function() {
+			var x = this.getX();
+			var y = this.getY();
+
+			if(this.stave.isFirstBar()) {
+				this.drawKeyName(x, y);
 			}
 		}
 	});
