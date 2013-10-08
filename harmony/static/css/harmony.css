@@ -32,9 +32,9 @@ body {
 }
 
 .qwerty-keyboard-legend {
-	background: url(../img/keyboard-shortcut-legend.png) no-repeat;
-	width: 540px;
-	height: 551px;
+	background: url(../img/keyboard-shortcut-legend3.png) no-repeat;
+	width: 881px;
+	height: 404px;
 }
 
 #staff-area { 
@@ -201,6 +201,11 @@ body {
   padding-left: 0;
   list-style-type: none;
 }
+
+#tab-nav-2.tab-nav ul.notation-checkboxes {
+	float: none;
+	display: block;
+}
 #tab-nav-2 .tab-content-inner ul.notation-checkboxes ul {
 	margin-left: 25px;
 }
@@ -308,7 +313,7 @@ body {
 }
 .metronome-control-input {
 	width: 30px; 
-	margin: 0 5px;
+	margin: 0 10px;
 }
 .metronome-icon {
 	background: transparent url(../img/metronome_sprite.png) no-repeat;
@@ -321,6 +326,16 @@ body {
 }
 .metronome-icon:active, .metronome-icon-active {
 	background-position: -50px -199px;
+}
+.metronome-led {
+	background: transparent url(../img/metronome-led.png) no-repeat;
+	background-position: 0 0;
+	width: 8px;
+	height: 8px;
+	margin-top: 6px;
+}
+.metronome-led-on {
+	background-position: -100px 0px;
 }
 #metronome-audio {
 	display: hidden;
@@ -413,7 +428,7 @@ body {
 }
 .modal > div {
 	min-width: 400px;
-	max-width: 800px;
+	max-width: 820px;
 	position: relative;
 	margin: 50px auto;
 	padding: 5px 20px 13px 20px;

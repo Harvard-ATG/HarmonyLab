@@ -3,20 +3,26 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow',
+	'app/config',
 	'app/model/event_bus',
 	'app/view/transcript/stave',
 	'app/view/transcript/stave_notater',
-	'app/view/transcript/stave_note_factory'
+	'app/view/transcript/stave_note_factory',
+	'app/util'
 ], function(
 	$,
 	_, 
 	Vex, 
+	Config,
 	eventBus, 
 	Stave, 
 	StaveNotater,
-	StaveNoteFactory
+	StaveNoteFactory,
+	util
 ) {
 	"use strict";
+
+	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
 
 	// Plain Sheet Music Notation.
 	// 
@@ -29,19 +35,18 @@ define([
 	_.extend(PlainSheet.prototype, {
 		// global event bus 
 		eventBus: eventBus, 
-		// configures highlighting of notes
-		highlights: {
+		highlightsConfig: {
+			enabled: false,
+			mode: {}
+		},
+		analyzeConfig: {
 			enabled: false,
 			mode: {
-				roots: false, 
-				doubles: false, 
-				tritones: false, 
-				octaves: false
+				'note_names': true,
+				'helmholtz': false,
+				'scale_degrees': true,
+				'solfege': false
 			}
-		},
-		// configures analysis of notes
-		analyze: {
-			enabled: false,
 		},
 		init: function(config) {
 			this.config = config;
@@ -75,7 +80,14 @@ define([
 			this.updateStaves();
 		},
 		initListeners: function() {
-			_.bindAll(this, ['render', 'onHighlightChange', 'onAnalyzeChange', 'onMetronomeChange', 'onChordsBank']);
+			_.bindAll(this, [
+				'render',
+				'renderMetronomeMark',
+				'onHighlightChange',
+				'onAnalyzeChange',
+				'onMetronomeChange',
+				'onChordsBank'
+			]);
 
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
@@ -95,15 +107,8 @@ define([
 		},
 		renderStaves: function() {
 			var i, len, stave, _staves = this.staves;
-			var max_width = this.getWidth();
 			for(i = 0, len = _staves.length; i < len; i++) {
 				stave = _staves[i];
-
-				stave.setMaxX(max_width);
-				if(i === len - 1) {
-					stave.fitToWidth();
-				}
-	
 				stave.render();
 			}
 		},
@@ -117,24 +122,27 @@ define([
 		},
 		updateStaves: function() {
 			var chord, treble, bass;
-			var items = this.chords.items({limit: 3, reverse: true});
+			var limit = CHORD_BANK_SIZE;
+			var items = this.chords.items({limit: limit, reverse: true});
 			var staves = [];
 			var index = 0;
+			var count = items.length;
+			var position = {index:index,count:count,maxCount:limit};
 
 			// the first stave bar is a special case: it's reserved to show the
 			// clef and key signature and nothing else
-			treble = this.createDisplayStave('treble', index);
-			bass = this.createDisplayStave('bass', index);
-			index = index + 1;
+			treble = this.createDisplayStave('treble', _.clone(position));
+			bass = this.createDisplayStave('bass', _.clone(position));
+			position.index += 1;
 			treble.connect(bass);
 			staves.push(treble);
 
 			// now add the staves for showing the notes
 			for(var i = 0, len = items.length; i < len; i++) {
 				chord = items[i];
-				treble = this.createNoteStave('treble', index, chord);
-				bass = this.createNoteStave('bass', index, chord);
-				index = index + 1;
+				treble = this.createNoteStave('treble', _.clone(position), chord);
+				bass = this.createNoteStave('bass', _.clone(position), chord);
+				position.index += 1;
 				treble.connect(bass);
 				staves.push(treble);
 			}
@@ -144,15 +152,17 @@ define([
 
 			return this;
 		},
-		createDisplayStave: function(clef, index) {
-			var stave = new Stave(clef, index);
+		createDisplayStave: function(clef, position) {
+			var stave = new Stave(clef, position);
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
 			stave.enableDisplayOptions(['clef', 'keySignature', 'staveConnector']);
+			stave.setMaxWidth(this.getWidth());
+			stave.updatePosition();
 			return stave;
 		},
-		createNoteStave: function(clef, index, chord) {
-			var stave = new Stave(clef, index);
+		createNoteStave: function(clef, position, chord) {
+			var stave = new Stave(clef, position);
 
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
@@ -160,14 +170,16 @@ define([
 				clef: clef,
 				chord: chord,
 				keySignature: this.keySignature,
-				highlights: this.highlights
+				highlightsConfig: this.highlightsConfig
 			}));
 			stave.setNotater(StaveNotater.create(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
-				analyze: this.analyze
+				analyzeConfig: this.analyzeConfig
 			}));
+			stave.setMaxWidth(this.getWidth());
+			stave.updatePosition();
 
 			return stave;
 		},
@@ -200,17 +212,35 @@ define([
 			var key = this.keySignature.getKeyShortName() + ':';
 			var font = "14px serif";
 			var x = this.getBottomStaveX();
+			var metronome_img;
 
 			ctx.save();
 			ctx.font = font;
-			if(this.tempo) {
-				var note_symbol = "\u2669";
-				ctx.fillText("("+note_symbol+" = "+this.tempo+")", x, this.getTopStaveY() - 15);
-			}
-			ctx.fillText(this.convertSymbols(key), x, this.getBottomStaveY());
+			ctx.fillText(util.convertSymbols(key), x, this.getBottomStaveY());
 			ctx.restore();
 
+			this.renderMetronomeMark();
+
 			return this;
+		},
+		renderMetronomeMark: function() {
+			if(!this.tempo) {
+				return;
+			}
+			if(this.metronomeImg) {
+				var ctx = this.vexRenderer.getContext();
+				var x= this.getBottomStaveX();
+				var y = this.getTopStaveY();
+				ctx.save();
+				ctx.font = "14px serif";
+				ctx.drawImage(this.metronomeImg, x, y - 25);
+				ctx.fillText(this.tempo, x + 20, y - 10);
+				ctx.restore();
+			} else {
+				this.metronomeImg = new Image();
+				this.metronomeImg.src = util.staticUrl('img/metronome-black.png');
+				this.metronomeImg.onload = this.renderMetronomeMark;
+			}
 		},
 		updateSettings: function(prop, setting) {
 			switch(setting.key) {
@@ -225,56 +255,16 @@ define([
 			}
 			return this;
 		},
-		convertSymbols: function(text) {
-			var rules = [
-				[/&dim;/g,"\u00b0"], //	diminished and half-diminished signs
-				[/&hdim;/g,"\u2300"],
-				[/&3;/g,"\u00b3"],//	figured bass
-				[/&6;/g,"\u2076"],
-				[/&7;/g,"\u2077"],
-				[/&42;/g,"\u2074\u2082"],
-				[/&43;/g,"\u2074\u2083"],
-				[/&52;/g,"\u2075\u2082"],
-				[/&53;/g,"\u2075\u2083"],
-				[/&54;/g,"\u2075\u2084"],
-				[/&64;/g,"\u2076\u2084"],
-				[/&65;/g,"\u2076\u2085"],
-				[/&73;/g,"\u2077\u2083"],
-				[/&75;/g,"\u2077\u2085"],
-				//[/&d5;/g,"5\u0337"],			figured bass chord of the false fifth
-				//[/&d7;/g,"7\u0337"],			figured bass diminished seveth
-				[/&b;/g,"\u266d"],		//	flat
-				//[/&#;/g,"\u266f"],			sharp
-				//[/&n;/g,"\u266e"],			natural
-				//[/&bb;/g,"\ud834\udd2b"],		double flat
-				//[/&##;/g,"\ud834\udd2A"],		double sharp
-				["&#x131;","\u0131"],		//	i for fake "Fi" ligature
-				[/([cdefgab])b([ :])/i,"$1\u266d$2"],	//	necessary for key labels but could be changed
-				[/b([0-9])/,"\u266d$1"],			//	necessary for figured bass and scale degrees but could be changed
-				[/^([cdefgab])n /i,"$1\u266e "],
-				[/^n([0-9])$/i,"\u266e$1"],
-				[/^n$/i,"\u266e"],
-				['&nbsp;', '']
-			];
-			var i, rule, len;
-
-			for(i = 0, len = rules.length; i < len; i++) {
-				rule = rules[i];
-				text = text.replace(rule[0], rule[1]);
-			}
-
-			return text;
-		},
 		onChordsBank: function() {
 			this.updateStaves();
 			this.render();
 		},
 		onHighlightChange: function(settings) {
-			this.updateSettings('highlights', settings);
+			this.updateSettings('highlightsConfig', settings);
 			this.render();
 		},
 		onAnalyzeChange: function(settings) {
-			this.updateSettings('analyze', settings);
+			this.updateSettings('analyzeConfig', settings);
 			this.render();
 		},
 		onMetronomeChange: function(metronome) {

@@ -1,41 +1,78 @@
 /* global define: false */ 
 define([
 	'lodash', 
-	'vexflow',
-], function(_, Vex, StaveNoteFactory) {
+	'vexflow'
+], function(_, Vex) {
 	"use strict";
 
-	// Knows how to render a single bar of a staff.
-	var Stave = function(clef, barIndex) {
-		this.init(clef, barIndex);
+	// Knows how to render a single bar of a treble or bass staff.
+	// 
+	// A treble stave bar is typically connected to a "bass" stave and
+	// so a stave also knows how to render the stave it is connected to.
+	//
+	// This object typically collaborates with KeySignature, StaveNotater, and
+	// StaveNoteFactory.
+	//
+	var Stave = function(clef, position) {
+		this.init(clef, position);
 	};
 
 	_.extend(Stave.prototype, {
-		margin: { left: 30, right: 4 },
+		clef: '',
+		start_x: 0,
+		start_y: 0,
+		maxWidth: null,
+		maxBarCount: 4,
 		firstBarWidth: 90,
-		defaultWidth: 132,
-		init: function(clef, barIndex) {
-			this.clef = clef;
-			this.barIndex = barIndex;
-
-			if(this.barIndex === 0) {
-				this.start_x = this.margin.left;
-				this.width = this.firstBarWidth;
-				this.minWidth = this.firstBarWidth;
-			} else {
-				this.start_x = this.margin.left + this.firstBarWidth + ((this.barIndex - 1) * this.defaultWidth);
-				this.minWidth = this.defaultWidth;
-				this.width = this.defaultWidth;
+		defaultWidth: 120,
+		margin: { 
+			left: 30, 
+			right: 4 
+		},
+		position: {
+			index: 0,
+			count: 0
+		},
+		displayConfig: {
+			clef: false,
+			keySignature: false,
+			staveConnector: false
+		},
+		init: function(clef, position) {
+			if(!clef || !position) {
+				throw new Error("missing stave clef or position");
+			}
+			if(!this.validatePosition(position)) {
+				throw new Error("missing or invalid stave position");
 			}
 
-			this.start_y = 75 * (clef === 'treble' ? 1 : 2);
-			this.max_x = null;
+			this.clef = clef;
+			this.position = position;
+		},
+		validatePosition: function(position) {
+			var numRe = /^\d+$/;
 
-			this.displayConfig = {
-				clef: false,
-				keySignature: false,
-				staveConnector: false
-			};
+			// Note: 
+			// - position.index is the index of this stave in the collection 
+			// - position.count is the size of the collection
+			// - position.maxCount is the maximum number of stave bars that may
+			//    be displayed
+			if(!position.hasOwnProperty('index') ||
+				!position.hasOwnProperty('count') ||
+				!position.hasOwnProperty('maxCount') || 
+				!numRe.test(position.index) || 
+				!numRe.test(position.count) || 
+				!numRe.test(position.maxCount)) {
+				return false;
+			}
+
+			// ensure the maximum number of bars is nonzero
+			// since we must display at least one stave bar
+			if(position.maxCount === 0) {
+				return false;
+			}
+
+			return true;
 		},
 		render: function() {
 			this.createStaveBar();
@@ -80,8 +117,17 @@ define([
 			var width = this.width;
 			var staveBar = new Vex.Flow.Stave(x, y, width);
 
-			staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
-			staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
+			if(this.isFirstBar()) {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.NONE);
+			} else if(this.isLastBar()) {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.NONE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.SINGLE);
+			} else {
+				staveBar.setBegBarType(Vex.Flow.Barline.type.NONE);
+				staveBar.setEndBarType(Vex.Flow.Barline.type.NONE);
+			}
+
 			staveBar.setContext(this.getContext());
 
 			if(this.displayConfig.clef) {
@@ -122,22 +168,16 @@ define([
 				this.notater.notate();
 			}
 		},
-		fitToWidth: function() {
-			var new_width = this.closestWidth(this.max_x, this.start_x);
-			if(new_width > this.minWidth) {
-				this.setWidth(new_width);
-			}
-		},
-		closestWidth: function(maxWidth, start_x) {
-			return maxWidth - start_x - this.margin.right;
+		setMaxBars: function(n) {
+			this.maxBars = n;
 		},
 		setStartX: function(x) {
 			this.start_x = x;
 			this.doConnected('setStartX', x);
 		},
-		setMaxX: function(x) {
-			this.max_x = x;
-			this.doConnected('setMaxX', x);
+		setMaxWidth: function(w) {
+			this.maxWidth = w;
+			this.doConnected('setMaxWidth', w);
 		},
 		setWidth: function(w) {
 			this.width = w;
@@ -205,13 +245,42 @@ define([
 		},
 		setDisplayOptions: function(opts) {
 			opts = opts || {};
-			this.displayConfig = this.displayConfig || {};
+			this.displayConfig = _.cloneDeep(this.displayConfig || {});
 			_.extend(this.displayConfig, opts);
 		},
 		enableDisplayOptions: function(opts) {
 			var trueVal = function() { return true; };
 			var displayConfig = _.zipObject(opts, _.map(opts, trueVal));
 			this.setDisplayOptions(displayConfig);
+		},
+		updatePosition: function() {
+			var start_x, width;
+
+			if(this.isFirstBar()) {
+				this.start_x = this.margin.left;
+				this.width = this.firstBarWidth;
+			} else {
+				start_x = (this.margin.left + this.firstBarWidth);
+				width = Math.floor((this.maxWidth - start_x) / this.position.maxCount);
+				start_x += ((this.position.index - 1) * width);
+
+				this.start_x = start_x;
+
+				if(this.isLastBar()) {
+					// stretch to fill remaining area
+					this.width = this.maxWidth - this.start_x - this.margin.right;
+				} else {
+					this.width = width;
+				}
+			}
+
+			this.start_y = 75 * (this.clef === 'treble' ? 1 : 2);
+		},
+		isFirstBar: function() {
+			return this.position.index === 0;
+		},
+		isLastBar: function() {
+			return this.position.index === this.position.count;
 		}
 	});
 

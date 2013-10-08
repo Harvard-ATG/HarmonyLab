@@ -286,4 +286,15 @@ define({
 	// Default key and signature to use for notation. This should be
 	// automatically selected on the UI.
 	defaultKeyAndSignature: "iD_", // D minor
+
+	// Defines settings for the chord bank.
+	chordBank: {
+
+		 // This defines the number of chords that can be displayed
+		 // on the sheet music at one time. It should be a positive
+		 // integer in the range of 1-7. Chords are displayed
+		 // in fixed-width areas spread across the sheet music,
+		 // so generally numbers in the range of 3-5 work best.
+		displaySize: 4, 
+	}
 });
