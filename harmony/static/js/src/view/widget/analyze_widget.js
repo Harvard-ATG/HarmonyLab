@@ -38,7 +38,15 @@ define([
 
 	_.extend(AnalyzeWidget.prototype, {
 		listTpl: _.template('<ul class="notation-checkboxes"><%= items %></ul>'),
-		itemTpl: _.template('<li><label><input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> /><%= label %></label><%= itemlist %></li>'),
+		itemTpl: _.template(
+			'<li class="<%= cls %>">'+
+				'<label>'+
+					'<input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> />'+
+					'<%= label %>'+
+				'</label>'+
+				'<%= itemlist %>'+
+			'</li>'
+		),
 		colorTpl: _.template('<span style="margin-left: 5px; color: <%= color %>">&#9834;</span>'),
 		initListeners: function() {
 			var that = this;
@@ -114,15 +122,23 @@ define([
 			this.initListeners();
 			return this;
 		},
-		renderItems: function(items) {
-			return _.map(_.flatten(items), function(item) {
-				var itemlist = item.items ? this.listTpl({ items: this.renderItems(item.items) }) : ""; 
-				return this.itemTpl({
+		renderGroups: function(groups) {
+			return _.map(groups, function(group, index) {
+				var separator = index > 0 ? true : false;
+				return this.renderItems(group, separator);
+			}, this).join('');
+		},
+		renderItems: function(items, separator) {
+			return _.map(items, function(item, index) {
+				var itemlist = item.items ? this.listTpl({ items: this.renderGroups(item.items) }) : ""; 
+				var html = this.itemTpl({
+					cls: (index === 0 && separator ? 'separator' : ''),
 					label: item.label,
 					value: item.value,
 					checked: item.checked || "",
 					itemlist: itemlist
 				});
+				return html;
 			}, this).join('');
 		}
 	});

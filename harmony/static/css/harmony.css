@@ -209,6 +209,10 @@ body {
 #tab-nav-2 .tab-content-inner ul.notation-checkboxes ul {
 	margin-left: 25px;
 }
+#tab-nav-2 .tab-content-inner ul.notation-checkboxes li.separator {
+	border-top: 1px solid #999;
+	padding-top: 2px;
+}
 
 #tab-nav-2.tab-nav a {
 	display: block;
