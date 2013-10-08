@@ -5,7 +5,14 @@ define([
 ], function(_, Vex) {
 	"use strict";
 
-	// Knows how to render a single bar of a staff.
+	// Knows how to render a single bar of a treble or bass staff.
+	// 
+	// A treble stave bar is typically connected to a "bass" stave and
+	// so a stave also knows how to render the stave it is connected to.
+	//
+	// This object typically collaborates with KeySignature, StaveNotater, and
+	// StaveNoteFactory.
+	//
 	var Stave = function(clef, position) {
 		this.init(clef, position);
 	};
@@ -45,8 +52,11 @@ define([
 		validatePosition: function(position) {
 			var numRe = /^\d+$/;
 
-			// check that all the required position properties
-			// are present and are positive integers
+			// Note: 
+			// - position.index is the index of this stave in the collection 
+			// - position.count is the size of the collection
+			// - position.maxCount is the maximum number of stave bars that may
+			//    be displayed
 			if(!position.hasOwnProperty('index') ||
 				!position.hasOwnProperty('count') ||
 				!position.hasOwnProperty('maxCount') || 
@@ -56,7 +66,8 @@ define([
 				return false;
 			}
 
-			// ensure the maximum count (number of bars) is nonzero
+			// ensure the maximum number of bars is nonzero
+			// since we must display at least one stave bar
 			if(position.maxCount === 0) {
 				return false;
 			}
