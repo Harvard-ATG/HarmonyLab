@@ -250,10 +250,11 @@ define([
 					break;
 				case 'sustain':
 					if(state === 'on') {
+						this.chords.bank();
 						this.chords.current().sustainNotes();
 					} else if(state === 'off') {
-						//this.chords.current().releaseSustain();
-						this.chords.bank();
+						this.chords.current().releaseSustain();
+						//this.chords.bank();
 					} 
 					this.sendMIDIPedalMessage(pedal, state);
 					break;
