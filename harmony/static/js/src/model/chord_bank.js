@@ -65,6 +65,11 @@ define([
 		size: function() {
 			return this._items.length;
 		},
+		// clears the chord bank
+		clear: function() {
+			this._removeListeners(this.current());
+			this._resetItems();
+		},
 		// returns the first chord - aliased to current()
 		current: function() {
 			return this._items[0];
@@ -93,6 +98,9 @@ define([
 		_removeListeners: function(chord) {
 			chord.unbind('change', this.onChangeCurrent);
 			return this;
+		},
+		_resetItems: function() {
+			this._items = [];
 		}
 	});
 

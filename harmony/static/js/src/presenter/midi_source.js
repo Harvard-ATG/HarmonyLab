@@ -161,8 +161,6 @@ define([
 		// Handles a midi message. 
 		onMidiMessage: function(msg) {
 			var command = msg.command;
-			var noteVelocity = this.noteVelocity;
-			var noteNum;
 
 			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
 			if(command === JMB.NOTE_ON && !msg.data2) {
@@ -171,21 +169,50 @@ define([
 
 			switch(command) {
 				case JMB.NOTE_ON:
-					noteNum = msg.data1;
-					this.eventBus.trigger('note', 'on', noteNum, noteVelocity || msg.data2);
+					this.triggerNoteOn(msg.data1, msg.data2);
 					break;
 				case JMB.NOTE_OFF:
-					noteNum = msg.data1;
-					this.eventBus.trigger('note', 'off', noteNum, noteVelocity || msg.data2);
+					this.triggerNoteOff(msg.data1, msg.data2);
 					break;
 				case JMB.CONTROL_CHANGE:
-					if(this.midiControlMap.pedal.hasOwnProperty(msg.data1)) {
-						this.eventBus.trigger('pedal', this.midiControlMap.pedal[msg.data1], msg.data2 === 0 ? 'off' : 'on');
+					if(this.isPedalControlChange(msg.data1)) {
+						this.triggerPedalChange(msg.data1, msg.data2);
 					}
 					break;
 				default:
 					console.log("midi message not handled: ", msg);
 			}
+		},
+
+		// Returns true if the control is for a pedal.
+		isPedalControlChange: function(controlNum) {
+			return this.midiControlMap.pedal.hasOwnProperty(controlNum);
+		},
+
+		// Broadcasts a pedal change event
+		triggerPedalChange: function(controlNum, controlVal) {
+			var pedal_name = this.midiControlMap.pedal[controlNum];
+			var pedal_state = 'off';
+
+			if(controlVal >= 0 && controlVal <= 63) {
+				pedal_state = 'off';
+			} else if(controlVal > 63) {
+				pedal_state = 'on';
+			} 
+
+			this.eventBus.trigger('pedal', pedal_name, pedal_state);
+		},
+
+		// Broadcasts a note "on" event.
+		triggerNoteOn: function(noteNum, noteVelocity) {
+			noteVelocity = this.noteVelocity || noteVelocity;
+			this.eventBus.trigger('note', 'on', noteNum, noteVelocity);
+		},
+
+		// Broadcasts a note "off" event.
+		triggerNoteOff: function(noteNum, noteVelocity) {
+			noteVelocity = this.noteVelocity || noteVelocity;
+			this.eventBus.trigger('note', 'off', noteNum, noteVelocity);
 		},
 
 		// Handles note output (not from an external device). 
