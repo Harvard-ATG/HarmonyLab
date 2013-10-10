@@ -70,10 +70,19 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			return changed;
 		},
-		// All subsequent notes that are turned on should be sustained until
+		// All notes that are turned on should be sustained until
 		// such time as they are released. Should be used in conjunction with
-		// releaseSustain().
-		sustainNotes: function() {
+		// releaseSustain(). If immediate=true, all current notes are sustained,
+		// if immediate=false, all *subsequent* notes are sustained.
+		sustainNotes: function(immediate) {
+			if(typeof immediate === 'undefined') {
+				immediate = true;
+			}
+
+			if(immediate) {
+				this._sustained = _.cloneDeep(this._notes);
+			}
+
 			this._sustain = true;
 		},
 		// Releases all sustained notes (turns them off) and triggers a change event.

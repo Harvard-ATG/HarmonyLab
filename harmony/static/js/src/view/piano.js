@@ -16,19 +16,31 @@ define([
 	// Responsible for displaying the on-screen piano and reacting to
 	// user-input. Should know how to display different sizes of keyboards,
 	// pedals, and keyboard controls.
-	var Piano = function() {
-		this.init();
+	var Piano = function(config) {
+		this.init(config);
 	};
 
 	_.extend(Piano.prototype, {
 		metronomeEnabled: true,
 		transposeEnabled: false,
 		eventBus: eventBus,
-		init: function() {
+		init: function(config) {
 			this.el = $('<div class="keyboard-wrapper"></div>');
+			this.config = config;
+			this.initConfig();
 			this.initKeyboard();
 			this.initPedals();
 			this.initToolbar();
+		},
+		initConfig: function() {
+			var required = ['chords'];
+			_.each(required, function(propName) {
+				if(this.config.hasOwnProperty(propName)) {
+					this[propName] = this.config[propName];
+				} else {
+					throw new Error("missing required config property: "+propName);
+				}
+			}, this);
 		},
 		initKeyboard: function() {
 			this.keyboard = new PianoKeyboard();
@@ -116,6 +128,7 @@ define([
 		initMetronomeControl: function() {
 			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
+			var chords = this.chords;
 
 			var $metronomeInputEl; 
 			var $metronomeLedEl; 
@@ -137,6 +150,9 @@ define([
 			metronome = new Metronome($('#metronome-audio')[0]);
 			metronome.bind('tick', function() {
 				$metronomeLedEl.toggleClass(metronomeLedCls);
+				if($metronomeLedEl.hasClass(metronomeLedCls)) {
+					chords.bank();
+				}
 			});
 
 

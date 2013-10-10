@@ -244,18 +244,13 @@ define([
 
 		// Handles sustain, sostenuto, soft pedal events.
 		onPedalChange: function(pedal, state) {
+			var chord = this.chords.current();
 			switch(pedal) {
 				case 'soft':
 					this.noteVelocity = (state === 'off' ? this.defaultNoteVelocity : this.reducedNoteVelocity);
 					break;
 				case 'sustain':
-					if(state === 'on') {
-						this.chords.bank();
-						this.chords.current().sustainNotes();
-					} else if(state === 'off') {
-						this.chords.current().releaseSustain();
-						//this.chords.bank();
-					} 
+					chord[state==='on'?'sustainNotes':'releaseSustain']();
 					this.sendMIDIPedalMessage(pedal, state);
 					break;
 				default:
