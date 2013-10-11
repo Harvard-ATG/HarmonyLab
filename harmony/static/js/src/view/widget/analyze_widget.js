@@ -29,9 +29,13 @@ define([
 				'value': 'analyze.solfege'
 			}],
 			[{
+				'label': 'Intervals',
+				'value': 'analyze.intervals'
+			}],
+			[{
 				'label': 'Roman numerals',
 				'value': 'analyze.roman_numerals'
-			}]
+			}],
 		]
 	}];
 
