@@ -39,6 +39,7 @@ define([
 			var chord = new Chord();
 			var current = this.current();
 			chord.copyTranspose(current);
+			chord.copySustain(current);
 
 			// re-wire listeners because we only care about changes to the current chord
 			this._removeListeners(current);

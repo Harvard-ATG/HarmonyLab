@@ -134,6 +134,10 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		copyTranspose: function(chord) {
 			this.setTranspose(chord.getTranspose());
 		},
+		// Copies the sustain setting from another chord.
+		copySustain: function(chord) {
+			this._sustain = chord.isSustained();
+		},
 		// Checks if the transpose value is valid or not.
 		isValidTranspose: function(value) {
 			var TRANSPOSE_MIN = -12, TRANSPOSE_MAX = 12;
