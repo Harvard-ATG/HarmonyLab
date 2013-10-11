@@ -86,7 +86,7 @@ define([
 			return this.stave.getContext();
 		},
 		getFont: function() {
-			return "12px Georgia, serif";
+			return "14px Georgia, serif";
 		},
 		getX: function() {
 			return this.stave.getStartX() + 10;
