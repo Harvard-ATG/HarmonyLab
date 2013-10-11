@@ -68,7 +68,9 @@ define([
 		},
 		// clears the chord bank
 		clear: function() {
-			this._removeListeners(this.current());
+			if(this.current()) {
+				this._removeListeners(this.current());
+			}
 			this._resetItems();
 		},
 		// returns the first chord - aliased to current()

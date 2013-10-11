@@ -18,12 +18,10 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			this._transpose = 0;   // integer used for transposing notes 
 	
 			this._notes = {};     // holds notes that are playing
-			this._sustained = {}; // holds notes that are sustained
 		},
 		// Clears all notes and triggers a change event.
 		clear: function() {
 			this._notes = {};
-			this._sustained = {};
 			this.trigger('change', 'notes:clear');
 		},
 		// Command to turn on a note. Fires a change event if the note status has changed.
@@ -37,9 +35,6 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			changed = (this._notes[number] !== true); 
 			this._notes[number] = true;
-			if(this.isSustained()) {
-				this._sustained[number] = true;
-			}
 
 			if(changed) {
 				this.trigger('change', 'note:on', number);
@@ -54,12 +49,12 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		noteOff: function(number) {
 			var changed;
 
+			if(this.isSustained()) {
+				return false;
+			} 
 			if(this._transpose) {
 				number = this.transpose(number);
 			}
-			if(this._sustained[number]) {
-				return false;
-			} 
 
 			changed = (this._notes[number] === true);
 			delete this._notes[number];
@@ -72,26 +67,13 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		},
 		// All notes that are turned on should be sustained until
 		// such time as they are released. Should be used in conjunction with
-		// releaseSustain(). If immediate=true, all current notes are sustained,
-		// if immediate=false, all *subsequent* notes are sustained.
-		sustainNotes: function(immediate) {
-			if(typeof immediate === 'undefined') {
-				immediate = true;
-			}
-
-			if(immediate) {
-				this._sustained = _.cloneDeep(this._notes);
-			}
-
+		// releaseSustain(). 
+		sustainNotes: function() {
 			this._sustain = true;
 		},
 		// Releases all sustained notes (turns them off) and triggers a change event.
 		releaseSustain: function() {
-			_.each(this._sustained, function(state, number) {
-				delete this._notes[number];
-			}, this);
-
-			this._sustained = {}; 
+			this._notes = {}; 
 			this._sustain = false; 
 			this.trigger('change', 'notes:off');
 		},
@@ -118,11 +100,9 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			};
 
 			var trans_notes = _.map(this._notes, transposeNote);
-			var trans_sustained = _.map(this._sustained, transposeNote);
 			var trans_values = _.map(trans_notes, trueValue);
 
 			this._notes = _.zipObject(trans_notes, trans_values);
-			this._sustained = _.zipObject(trans_sustained, trans_values);
 			this._transpose = new_transpose;
 			this.trigger('change', 'notes:transpose');
 		},
@@ -136,7 +116,20 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		},
 		// Copies the sustain setting from another chord.
 		copySustain: function(chord) {
-			this._sustain = chord.isSustained();
+			var is_sustained = chord.isSustained();
+			if(is_sustained) {
+				this._sustain = true;
+				this.copyNotes(chord);
+			} else {
+				this._sustain = false;
+			}
+		},
+		// Copies the notes setting from another chord
+		copyNotes: function(chord) {
+			this._notes = _.reduce(chord.getNoteNumbers(), function(result, noteNum) {
+				result[noteNum] = true;
+				return result;
+			}, {});
 		},
 		// Checks if the transpose value is valid or not.
 		isValidTranspose: function(value) {
