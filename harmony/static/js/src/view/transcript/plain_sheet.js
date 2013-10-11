@@ -161,7 +161,6 @@ define([
 				keySignature: this.keySignature,
 				analyzeConfig: this.analyzeConfig
 			}));
-			stave.enableDisplayOptions(['clef', 'keySignature', 'staveConnector']);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
 
