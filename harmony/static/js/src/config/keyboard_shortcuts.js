@@ -41,6 +41,7 @@ define({
 	"control": {
 		"ESC":    "toggleMode",
 		"ENTER":  "clearNotes",
+		"SPACE":  "bankChord",
 		"'":      "depressSustain",
 		";":      "retakeSustain",
 		".":      "releaseSustain",
@@ -54,6 +55,7 @@ define({
 	"keyCode": {
 		"13": "ENTER",
 		"27": "ESC",
+		"32": "SPACE",
 		"48": "0",
 		"49": "1",
 		"50": "2",
