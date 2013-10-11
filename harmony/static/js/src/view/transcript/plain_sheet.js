@@ -23,6 +23,7 @@ define([
 	"use strict";
 
 	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
+	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
 
 	// Plain Sheet Music Notation.
 	// 
@@ -41,13 +42,8 @@ define([
 		},
 		analyzeConfig: {
 			enabled: false,
+			mode: ANALYZE_DEFAULT_MODE,
 			tempo: false,
-			mode: {
-				'note_names': true,
-				'helmholtz': false,
-				'scale_degrees': true,
-				'solfege': false
-			}
 		},
 		init: function(config) {
 			this.config = config;
@@ -213,12 +209,14 @@ define([
 			return 0;
 		},
 		updateSettings: function(prop, setting) {
+			var mode = _.cloneDeep(this[prop].mode);
 			switch(setting.key) {
 				case "enabled":
 					this[prop].enabled = setting.value; 
 					break;
 				case "mode":
-					_.assign(this[prop].mode, setting.value);	
+					_.assign(mode, setting.value);	
+					this[prop].mode = mode;
 					break;
 				default:
 					throw new Error("Invalid key");

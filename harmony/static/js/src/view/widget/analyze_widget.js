@@ -8,6 +8,8 @@ define([
 ], function(_, $, MicroEvent, Config, Analyze) {
 	"use strict";
 
+	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
+
 	var ITEMS = [{
 		'label': 'Analyze', 
 		'value': 'analyze',
@@ -15,7 +17,6 @@ define([
 			[{
 				'label': 'Note names',
 				'value': 'analyze.note_names',
-				'checked': 'checked'
 			},{
 				'label': 'Helmholtz',
 				'value': 'analyze.helmholtz'
@@ -23,10 +24,13 @@ define([
 			[{
 				'label': 'Scale degrees',
 				'value': 'analyze.scale_degrees',
-				'checked': 'checked'
 			},{
 				'label': 'Solfege',
 				'value': 'analyze.solfege'
+			}],
+			[{
+				'label': 'Roman numerals',
+				'value': 'analyze.roman_numerals'
 			}]
 		]
 	}];
@@ -91,7 +95,7 @@ define([
 			var i, j, len, len2;
 
 			for(i = 0, len = items.length; i < len; i++) {
-				for(j = 0, len2 = items[i].length; j < len; j++) {
+				for(j = 0, len2 = items[i].length; j < len2; j++) {
 					if(items[i][j].value === value) {
 						group = items[i];
 						break;
@@ -130,12 +134,15 @@ define([
 		},
 		renderItems: function(items, separator) {
 			return _.map(items, function(item, index) {
+				var prop = item.value.replace('analyze.','');
+				var checked = ANALYZE_DEFAULT_MODE[prop] ? 'checked' : '';
 				var itemlist = item.items ? this.listTpl({ items: this.renderGroups(item.items) }) : ""; 
+
 				var html = this.itemTpl({
 					cls: (index === 0 && separator ? 'separator' : ''),
 					label: item.label,
 					value: item.value,
-					checked: item.checked || "",
+					checked: item.checked || checked,
 					itemlist: itemlist
 				});
 				return html;
