@@ -150,7 +150,7 @@ define([
 			metronome = new Metronome($('#metronome-audio')[0]);
 			metronome.bind('tick', function() {
 				$metronomeLedEl.toggleClass(metronomeLedCls);
-				if($metronomeLedEl.hasClass(metronomeLedCls)) {
+				if(!$metronomeLedEl.hasClass(metronomeLedCls)) {
 					chords.bank();
 				}
 			});
