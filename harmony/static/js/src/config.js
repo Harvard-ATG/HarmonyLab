@@ -44,11 +44,11 @@ define([
 	ConfigError.prototype.constructor = ConfigError;
 	ConfigError.prototype.name = 'ConfigError';
 
-    /**
+	/**
 	 * Defines an interface to retrieve config values.
 	 *
-     * @namespace Config
-     */
+	 * @namespace Config
+	 */
 	var Config = {
 		
 		/**
@@ -74,17 +74,17 @@ define([
 			}
 		},
 
-        /**
-         * Retrieves a config value.
+		/**
+		 * Retrieves a config value.
 		 *
 		 * Use dot notation in the key string to retrieve nested config values. 
 		 * For example, specifying key "x.y.z" will return the value of "z"
 		 * nested under "x" and "y."
-         *
-         * @param {string} key The dot-separated config value to retrieve.
-         * @return The configuration value.
+		 *
+		 * @param {string} key The dot-separated config value to retrieve.
+		 * @return The configuration value.
 		 * @throws {ConfigError} Will throw an error if the key is invalid.
-         */
+		 */
 		get: function(key) {
 			if(typeof key !== 'string') {
 				throw new ConfigError("Invalid parameter. Config key must be a string.");
