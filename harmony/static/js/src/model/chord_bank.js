@@ -134,7 +134,11 @@ define([
 			this.trigger.apply(this, args);
 		},
 
-		// returns a flat list of all note numbers in the bank
+		/**
+		 * Returns *all* distinct notes in the chord bank.
+		 *
+		 * @return {Array} An array of note numbers.
+		 */
 		getAllNotes: function() {
 			var note_map = _.reduce(this._items, function(result, chord) {
 				var i, len, note_num, note_nums = chord.getNoteNumbers();
@@ -150,7 +154,11 @@ define([
 			return note_nums;
 		},
 
-		// returns true if any chords are sustained
+		/**
+		 * Returns true if any chords in the bank are sustained.
+		 *
+		 * @return {boolean} True if any chords are sustained, false otherwise.
+		 */
 		anySustained: function() {
 			return _.any(this._items, function(chord) {
 				return chord.isSustained();
