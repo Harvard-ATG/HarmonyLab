@@ -296,5 +296,18 @@ define({
 		 // in fixed-width areas spread across the sheet music,
 		 // so generally numbers in the range of 3-5 work best.
 		displaySize: 4, 
+	},
+
+	// Defines the default analysis settings (i.e. what's enabled/disabled by
+	// default)
+	analyzeSettings: {
+		defaultMode: {
+			note_names: true,
+			helmholtz: false,
+			scale_degrees: true,
+			solfege: false,
+			roman_numerals: true,
+			intervals: true
+		}
 	}
 });

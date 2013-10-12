@@ -33,11 +33,6 @@ define([
 			index: 0,
 			count: 0
 		},
-		displayConfig: {
-			clef: false,
-			keySignature: false,
-			staveConnector: false
-		},
 		init: function(clef, position) {
 			if(!clef || !position) {
 				throw new Error("missing stave clef or position");
@@ -95,27 +90,44 @@ define([
 			this.doConnected('render');
 		},
 		renderStaveConnector: function() {
-			if(this.displayConfig.staveConnector) {
-				this.createStaveConnector();
-				this.drawStaveConnector();
+			if(this.isFirstBar()) {
+				this.drawBeginStaveConnector();
+			} else if(this.isLastBar()) {
+				this.drawEndStaveConnector();
 			}
 		},
-		createStaveConnector: function() {
-			var connector = new Vex.Flow.StaveConnector(this.getStaveBar(), this.connectedStave.getStaveBar());
-			connector.setType(Vex.Flow.StaveConnector.type.BRACE);
-			this.staveConnector = connector;
+		drawBeginStaveConnector: function() {
+			var SINGLE = Vex.Flow.StaveConnector.type.SINGLE;
+			var BRACE = Vex.Flow.StaveConnector.type.BRACE;
+			var bar1 = this.getStaveBar();
+			var bar2 = this.connectedStave.getStaveBar();
+			this.drawStaveConnector(bar1, bar2, SINGLE); 
+			this.drawStaveConnector(bar1, bar2, BRACE); 
 		},
-		drawStaveConnector: function() {
+		drawEndStaveConnector: function() {
+			var SINGLE = Vex.Flow.StaveConnector.type.SINGLE;
 			var ctx = this.getContext();
-			if(this.staveConnector) {
-				this.staveConnector.setContext(ctx).draw();
-			}
+			var next_x = this.start_x + this.width;
+			var width = 3; // width of stave connector
+			var bar1 = new Vex.Flow.Stave(next_x, this.getYForClef('treble'), width);
+			var bar2 = new Vex.Flow.Stave(next_x, this.getYForClef('bass'), width);
+
+			bar1.setContext(ctx);
+			bar2.setContext(ctx);
+
+			this.drawStaveConnector(bar1, bar2, SINGLE);
+		},
+		drawStaveConnector: function(bar1, bar2, connectorType) {
+			var ctx = this.getContext();
+			var connector = new Vex.Flow.StaveConnector(bar1, bar2);
+			connector.setContext(ctx).setType(connectorType).draw();
 		},
 		createStaveBar: function() {
 			var x = this.start_x;
 			var y = this.start_y; 
 			var width = this.width;
 			var staveBar = new Vex.Flow.Stave(x, y, width);
+			staveBar.clef = this.clef;
 
 			if(this.isFirstBar()) {
 				staveBar.setBegBarType(Vex.Flow.Barline.type.SINGLE);
@@ -130,10 +142,8 @@ define([
 
 			staveBar.setContext(this.getContext());
 
-			if(this.displayConfig.clef) {
+			if(this.isFirstBar()) {
 				staveBar.addClef(this.clef);
-			}
-			if(this.displayConfig.keySignature) {
 				staveBar.addKeySignature(this.keySignature.getVexKey());
 			} 
 
@@ -243,16 +253,6 @@ define([
 		setRenderer: function(renderer) {
 			this.vexRenderer = renderer;
 		},
-		setDisplayOptions: function(opts) {
-			opts = opts || {};
-			this.displayConfig = _.cloneDeep(this.displayConfig || {});
-			_.extend(this.displayConfig, opts);
-		},
-		enableDisplayOptions: function(opts) {
-			var trueVal = function() { return true; };
-			var displayConfig = _.zipObject(opts, _.map(opts, trueVal));
-			this.setDisplayOptions(displayConfig);
-		},
 		updatePosition: function() {
 			var start_x, width;
 
@@ -274,8 +274,12 @@ define([
 				}
 			}
 
-			this.start_y = 65;
-			this.start_y += (this.clef === 'treble' ? 0 : 75);
+			this.start_y = this.getYForClef(this.clef);
+		},
+		getYForClef: function(clef) {
+			var y = 64;
+			y += (clef === 'treble' ? 0 : 75);
+			return y;
 		},
 		isFirstBar: function() {
 			return this.position.index === 0;

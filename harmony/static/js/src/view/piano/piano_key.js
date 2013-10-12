@@ -10,13 +10,12 @@ define(['lodash'], function(_) {
 	// constants for sustain flag
 	var SUSTAIN_ON = 'on';
 	var SUSTAIN_OFF = 'off';
-	var SUSTAIN_NEXT = 'next';
 
 	// constants for piano key colors
 	var COLOR_BLACK_KEYUP = '90-hsl(0,0,25)-hsl(0,0,0)';
 	var COLOR_WHITE_KEYUP = '#fffff0';
 	var COLOR_KEYDN = 'hsl(0,0,60)';
-	var COLOR_KEYSUSTAIN = '90-hsla(0, 50, 40)-hsl(0,50,25)';
+	var COLOR_KEYSUSTAIN = '90-hsla(0, 30, 40)-hsl(0,45,20)';
 
 	/**
 	 * Piano Key Mixin.
@@ -55,9 +54,6 @@ define(['lodash'], function(_) {
 				case SUSTAIN_ON: 
 					this.setColor(STATE_KEYUP, COLOR_KEYSUSTAIN);
 					break;
-				case SUSTAIN_NEXT:
-					this.sustain = SUSTAIN_ON;
-					break;
 				case SUSTAIN_OFF: 
 					this.revertColor(STATE_KEYUP);
 					break;
@@ -90,7 +86,7 @@ define(['lodash'], function(_) {
 			if(state) {
 				this.sustain = SUSTAIN_ON;
 				if(this.isPressed()) {
-					this.sustain = SUSTAIN_NEXT;
+					this.sustain = SUSTAIN_ON;
 				}
 			} else {
 				this.sustain = SUSTAIN_OFF;

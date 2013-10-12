@@ -164,7 +164,6 @@ function(
 			themeSelector.render();
 		},
 		init: function() {
-			var piano = new Piano();
 			var chords = new ChordBank();
 			var key_signature = new KeySignature();
 			var midi_source = new MidiSource({ chords: chords });
@@ -174,7 +173,11 @@ function(
 			});
 			var shortcuts = new KeyboardShortcuts({
 				enabled: false, 
-				keySignature: key_signature 
+				keySignature: key_signature,
+				chords: chords
+			});
+			var piano = new Piano({
+				chords: chords	
 			});
 
 			this.initTabs();

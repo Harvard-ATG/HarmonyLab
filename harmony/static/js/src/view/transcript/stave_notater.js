@@ -86,7 +86,7 @@ define([
 			return this.stave.getContext();
 		},
 		getFont: function() {
-			return "12px Georgia, serif";
+			return "14px Georgia, serif";
 		},
 		getX: function() {
 			return this.stave.getStartX() + 10;
@@ -258,11 +258,16 @@ define([
 			var y = this.getY(); 
 			var notes = this.chord.getNoteNumbers();
 			var num_notes = notes.length;
+			var mode = this.analyzeConfig.mode;
 
 			if(num_notes == 2) {
-				this.drawInterval(x, y);
+				if(mode.intervals) {
+					this.drawInterval(x, y);
+				}
 			} else if(num_notes > 2) {
-				this.drawRoman(x, y);
+				if(mode.roman_numerals) {
+					this.drawRoman(x, y);
+				}
 			}
 		},
 		notateStave: function() {

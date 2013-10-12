@@ -39,6 +39,7 @@ define([
 			var chord = new Chord();
 			var current = this.current();
 			chord.copyTranspose(current);
+			chord.copySustain(current);
 
 			// re-wire listeners because we only care about changes to the current chord
 			this._removeListeners(current);
@@ -67,7 +68,9 @@ define([
 		},
 		// clears the chord bank
 		clear: function() {
-			this._removeListeners(this.current());
+			if(this.current()) {
+				this._removeListeners(this.current());
+			}
 			this._resetItems();
 		},
 		// returns the first chord - aliased to current()
