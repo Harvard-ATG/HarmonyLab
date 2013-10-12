@@ -82,12 +82,13 @@ define([
 				'onHighlightChange',
 				'onAnalyzeChange',
 				'onMetronomeChange',
-				'onChordsBank'
+				'onChordsUpdate'
 			]);
 
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
-			this.chords.bind('bank', this.onChordsBank);
+			this.chords.bind('clear', this.onChordsUpdate);
+			this.chords.bind('bank', this.onChordsUpdate);
 			this.eventBus.bind("notation:highlight", this.onHighlightChange);
 			this.eventBus.bind("notation:analyze", this.onAnalyzeChange);
 			this.eventBus.bind("metronome", this.onMetronomeChange);
@@ -223,7 +224,7 @@ define([
 			}
 			return this;
 		},
-		onChordsBank: function() {
+		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
 		},
