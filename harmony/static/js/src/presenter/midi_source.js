@@ -71,6 +71,7 @@ define([
 				'onMidiMessage',
 				'onNoteChange',
 				'onClearNotes',
+				'onBankNotes',
 				'onPedalChange',
 				'onInstrumentChange',
 				'onTransposeChange'
@@ -149,6 +150,7 @@ define([
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
 			this.eventBus.bind('clearnotes', this.onClearNotes);
+			this.eventBus.bind('banknotes', this.onBankNotes);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.eventBus.bind('instrument', this.onInstrumentChange);
 			this.eventBus.bind('transpose', this.onTransposeChange);
@@ -240,6 +242,11 @@ define([
 
 			// clear the chord notes
 			chord.clear();
+		},
+
+		// Banks the current chord notes.
+		onBankNotes: function() {
+			this.chords.bank();
 		},
 
 		// Handles sustain, sostenuto, soft pedal events.

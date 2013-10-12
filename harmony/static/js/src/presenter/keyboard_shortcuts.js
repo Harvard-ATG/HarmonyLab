@@ -29,11 +29,6 @@ define([
 			} else {
 				throw new Error("missing key signature");
 			}
-			if(config.hasOwnProperty('chords')) {
-				this.chords = config.chords;
-			} else {
-				throw new Error("miss chords");
-			}
 
 			if(config.hasOwnProperty('enabled')) {
 				this.enabled = config.enabled;
@@ -111,11 +106,11 @@ define([
 		},
 		// clears the notes 
 		clearNotes: function() {
-			this.chords.current().clear();
+			this.eventBus.trigger('clearnotes');
 		},
 		// banks a chord
 		bankChord: function() {
-			this.chords.bank();
+			this.eventBus.trigger('banknotes');
 		},
 
 		//--------------------------------------------------
