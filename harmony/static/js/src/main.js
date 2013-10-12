@@ -173,12 +173,9 @@ function(
 			});
 			var shortcuts = new KeyboardShortcuts({
 				enabled: false, 
-				keySignature: key_signature,
-				chords: chords
+				keySignature: key_signature
 			});
-			var piano = new Piano({
-				chords: chords	
-			});
+			var piano = new Piano();
 
 			this.initTabs();
 			this.initOnScreenPiano(piano);

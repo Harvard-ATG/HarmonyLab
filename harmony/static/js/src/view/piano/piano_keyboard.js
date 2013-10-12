@@ -120,8 +120,10 @@ define([
 		/**
 		 * Triggers a note change event to the event bus.
 		 */
-		triggerNoteChange: function(noteState, noteNumber, noteVelocity) {
-			this.eventBus.trigger('note', noteState, noteNumber, noteVelocity);
+		triggerNoteChange: function() {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift('note');
+			this.eventBus.trigger.apply(this.eventBus, args);
 		},
 
 		/**
@@ -138,9 +140,7 @@ define([
 		 * Resets all keys to their default state when the notes are cleared.
 		 */
 		onClearNotes: function() {
-			_.each(this.keys, function(key) {
-				key.clear();
-			});
+			this.clearKeys();
 		},
 
 		/*
@@ -160,6 +160,13 @@ define([
 		 */
 		generateKeys: function() {
 			return PianoKeyGenerator.generateKeys(this.numberOfKeys, this);
+		},
+
+		/**
+		 * Clears each key.
+		 */
+		clearKeys: function() {
+			_.invoke(this.keys, 'clear');
 		},
 
 		/**
