@@ -68,10 +68,8 @@ define([
 		},
 		// clears the chord bank
 		clear: function() {
-			if(this.current()) {
-				this._removeListeners(this.current());
-			}
 			this._resetItems();
+			this.trigger("clear");
 		},
 		// returns the first chord - aliased to current()
 		current: function() {
@@ -83,6 +81,29 @@ define([
 			var args = Array.prototype.slice.call(arguments, 0);
 			args.unshift("change");
 			this.trigger.apply(this, args);
+		},
+
+		// returns a flat list of all note numbers in the bank
+		getAllNotes: function() {
+			var note_map = _.reduce(this._items, function(result, chord) {
+				var i, len, note_num, note_nums = chord.getNoteNumbers();
+				for(i = 0, len = note_nums.length; i < len; i++) {
+					note_num = chord.untranspose(note_nums[i]);
+					result[note_num] = true;
+				}
+				return result;
+			}, {});
+
+			var note_nums = _.keys(note_map);
+
+			return note_nums;
+		},
+
+		// returns true if any chords are sustained
+		anySustained: function() {
+			return _.any(this._items, function(chord) {
+				return chord.isSustained();
+			});
 		},
 
 		//--------------------------------------------------
@@ -103,7 +124,17 @@ define([
 			return this;
 		},
 		_resetItems: function() {
-			this._items = [];
+			var chord = new Chord();
+			var current = this.current();
+			if(current) {
+				this._removeListeners(current);
+				chord.copyTranspose(current);
+				if(current.isSustained()) {
+					chord.sustainNotes();
+				}
+			}
+			this._addListeners(chord);
+			this._items = [chord];
 		}
 	});
 

@@ -224,24 +224,23 @@ define([
 			this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
 		},
 
-		// Clears the current chord notes.
+		// Clears all notes.
 		onClearNotes: function() {
-			var chord = this.chords.current();
-			var notes = chord.getNotes();
+			var notes = this.chords.getAllNotes();
 
 			// turn off all notes
 			_.each(notes, function(noteNumber) {
-				this.sendMIDIMessage(JMB.NOTE_OFF, chord.untranspose(noteNumber), this.noteVelocity);
+				this.sendMIDIMessage(JMB.NOTE_OFF, noteNumber, this.noteVelocity);
 			}, this);
 
 			// retake the sustain to clear any sustained notes
-			if(chord.isSustained()) {
+			if(this.chords.anySustained()) {
 				this.sendMIDIPedalMessage('sustain', 'off');
 				this.sendMIDIPedalMessage('sustain', 'on');
 			}
 
-			// clear the chord notes
-			chord.clear();
+			// clear the chords
+			this.chords.clear();
 		},
 
 		// Banks the current chord notes.
