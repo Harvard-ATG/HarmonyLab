@@ -10,16 +10,16 @@ define(['lodash'], function(_) {
 	 */
 	var util = {
 
-        /**
-         * Returns the application-specific static URL for a given path.
+		/**
+		 * Returns the application-specific static URL for a given path.
 		 *
 		 * Note, this function depends on the global window.appStaticUrl
 		 * property. The application must initialize this value, otherwise
 		 * it will return the path appended to the default static URL.
-         *
-         * @param {string} path
-         * @return {string} The static URL.
-         */
+		 *
+		 * @param {string} path
+		 * @return {string} The static URL.
+		 */
 		staticUrl: function(path) {
 			var defaultStaticUrl = '/static/';
 			var staticUrl = window.appStaticUrl || defaultStaticUrl;
@@ -76,13 +76,13 @@ define(['lodash'], function(_) {
 			return text;
 		},
 
-        /**
-         * Takes an HSL triplet (hue, saturation, color) and returns the
+		/**
+		 * Takes an HSL triplet (hue, saturation, color) and returns the
 		 * equivalent color string suitable for CSS/Canvas.
 		 *
-         * @param {Array} color The [H,S,L] triplet.
-         * @return {string}
-         */
+		 * @param {Array} color The [H,S,L] triplet.
+		 * @return {string}
+		 */
 		toHSLString: function(color) {
 			return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
 		}
