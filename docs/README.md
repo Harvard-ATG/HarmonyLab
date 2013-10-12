@@ -20,8 +20,11 @@ The type should be one of: {string|number|boolean|function|object|array|undefine
 
 If the method throws an exception it must include the **@throws** tag
 
-Use the **@todo** tag to document outstanding tasks.
-
 #### Classes
 
 To document a class, use the **constructor** tag on the javascript constructor function that is intended to be used with the *new* keyword.
+
+
+### Miscellaneous
+
+Use the **@todo** tag on methods and classes for tasks that need to be done.
