@@ -8,12 +8,12 @@ define([
 	'app/config/highlight',
 	'app/config/instruments',
 	'app/config/keyboard_shortcuts',
-	'app/config/analysis/hChorks',
+	'app/config/analysis/hChords',
 	'app/config/analysis/hIntervals',
-	'app/config/analysis/iChorks',
+	'app/config/analysis/iChords',
 	'app/config/analysis/iDegrees',
 	'app/config/analysis/ijIntervals',
-	'app/config/analysis/jChorks',
+	'app/config/analysis/jChords',
 	'app/config/analysis/jDegrees'
 ], function(
 	_, 
@@ -22,12 +22,12 @@ define([
 	ConfigHighlight,
 	ConfigInstruments,
 	ConfigKeyboardShortcuts,
-	ConfigAnalysis_hChorks,
+	ConfigAnalysis_hChords,
 	ConfigAnalysis_hIntervals,
-	ConfigAnalysis_iChorks,
+	ConfigAnalysis_iChords,
 	ConfigAnalysis_iDegrees,
 	ConfigAnalysis_ijIntervals,
-	ConfigAnalysis_jChorks,
+	ConfigAnalysis_jChords,
 	ConfigAnalysis_jDegrees
 ) {
 	"use strict";
@@ -64,12 +64,12 @@ define([
 			'instruments': ConfigInstruments,
 			'keyboardShortcuts': ConfigKeyboardShortcuts,
 			'analysis': {
-				'hChorks': ConfigAnalysis_hChorks,		
+				'hChords': ConfigAnalysis_hChords,		
 				'hIntervals': ConfigAnalysis_hIntervals,		
-				'iChorks': ConfigAnalysis_iChorks,
+				'iChords': ConfigAnalysis_iChords,
 				'iDegrees': ConfigAnalysis_iDegrees,
 				'ijIntervals': ConfigAnalysis_ijIntervals,
-				'jChorks': ConfigAnalysis_jChorks,
+				'jChords': ConfigAnalysis_jChords,
 				'jDegrees': ConfigAnalysis_jDegrees
 			}
 		},
