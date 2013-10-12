@@ -1,9 +1,6 @@
-// Configuration reader. 
-//
-// Configuration data should only be read using the
-// interface provided by this module.
-
-/* global define: false */
+/**
+ * @fileoverview Defines an interface for reading app configuration values. 
+ */
 define([
 	'lodash', 
 	'app/config/general',
@@ -11,12 +8,12 @@ define([
 	'app/config/highlight',
 	'app/config/instruments',
 	'app/config/keyboard_shortcuts',
-	'app/config/analysis/hChords',
+	'app/config/analysis/hChorks',
 	'app/config/analysis/hIntervals',
-	'app/config/analysis/iChords',
+	'app/config/analysis/iChorks',
 	'app/config/analysis/iDegrees',
 	'app/config/analysis/ijIntervals',
-	'app/config/analysis/jChords',
+	'app/config/analysis/jChorks',
 	'app/config/analysis/jDegrees'
 ], function(
 	_, 
@@ -25,19 +22,41 @@ define([
 	ConfigHighlight,
 	ConfigInstruments,
 	ConfigKeyboardShortcuts,
-	ConfigAnalysis_hChords,
+	ConfigAnalysis_hChorks,
 	ConfigAnalysis_hIntervals,
-	ConfigAnalysis_iChords,
+	ConfigAnalysis_iChorks,
 	ConfigAnalysis_iDegrees,
 	ConfigAnalysis_ijIntervals,
-	ConfigAnalysis_jChords,
+	ConfigAnalysis_jChorks,
 	ConfigAnalysis_jDegrees
 ) {
 	"use strict";
 
-	var Config = {
+	/**
+	 * Creates an instance of a ConfigError exception.
+	 *
+	 * @constructor
+	 */
+	var ConfigError = function() {
+		Error.apply(this, arguments);
+	};
+	ConfigError.prototype = new Error();
+	ConfigError.prototype.constructor = ConfigError;
+	ConfigError.prototype.name = 'ConfigError';
 
-		// private cache of config data
+    /**
+	 * Defines an interface to retrieve config values.
+	 *
+     * @namespace Config
+     */
+	var Config = {
+		
+		/**
+		 * Key separator for specifying nested values. Defaults to period.
+		 */
+		keySeparator: '.',
+
+		/** @private **/
 		__config: {
 			'general': ConfigGeneral,
 			'helpText': ConfigHelpText,
@@ -45,40 +64,52 @@ define([
 			'instruments': ConfigInstruments,
 			'keyboardShortcuts': ConfigKeyboardShortcuts,
 			'analysis': {
-				'hChords': ConfigAnalysis_hChords,		
+				'hChorks': ConfigAnalysis_hChorks,		
 				'hIntervals': ConfigAnalysis_hIntervals,		
-				'iChords': ConfigAnalysis_iChords,
+				'iChorks': ConfigAnalysis_iChorks,
 				'iDegrees': ConfigAnalysis_iDegrees,
 				'ijIntervals': ConfigAnalysis_ijIntervals,
-				'jChords': ConfigAnalysis_jChords,
+				'jChorks': ConfigAnalysis_jChorks,
 				'jDegrees': ConfigAnalysis_jDegrees
 			}
 		},
 
-		// public method that returns the value of a key.
-		//
-		// For convenience, nested values may be retrieved 
-		// using dot notation: get("x.y.z") => value of z.
-		//
+        /**
+         * Retrieves a config value.
+		 *
+		 * Use dot notation in the key string to retrieve nested config values. 
+		 * For example, specifying key "x.y.z" will return the value of "z"
+		 * nested under "x" and "y."
+         *
+         * @param {string} key The dot-separated config value to retrieve.
+         * @return The configuration value.
+		 * @throws {ConfigError} Will throw an error if the key is invalid.
+         */
 		get: function(key) {
 			if(typeof key !== 'string') {
-				throw new Error("Config key must be a string: " + key);
+				throw new ConfigError("Invalid parameter. Config key must be a string.");
 			}
 
 			var config = this.__config;
+			var ks = this.keySeparator;
+			var result, value;
 
-			_.each(key.split('.'), function(value) {
-				if(config.hasOwnProperty(value)) {
-					config = config[value];
+			// lookup the key value
+			result = _.reduce(key.split(ks), function(o, key) {
+				if(o.value.hasOwnProperty(key)) {
+					o.value = o.value[key];
+					o.path.push(key);
 				} else {
-					throw new Error("Key not found: " + key);
+					throw new ConfigError("Invalid config key. No such config value at: " + o.path.join(ks));
 				}
-			});
+				return o;
+			}, {value: config, path: []});
 
-			return config;
-		},
-		set: function(key, value) {
-			throw new Error("config is read-only");
+			// this copies the value to prevent or at least localize issues
+			// that might occur if the config reference is modified by accident
+			value = _.cloneDeep(result.value);
+
+			return value;
 		}
 	};
 
