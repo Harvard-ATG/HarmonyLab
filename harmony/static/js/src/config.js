@@ -33,18 +33,6 @@ define([
 	"use strict";
 
 	/**
-	 * Creates an instance of a ConfigError exception.
-	 *
-	 * @constructor
-	 */
-	var ConfigError = function() {
-		Error.apply(this, arguments);
-	};
-	ConfigError.prototype = new Error();
-	ConfigError.prototype.constructor = ConfigError;
-	ConfigError.prototype.name = 'ConfigError';
-
-	/**
 	 * Defines an interface to retrieve config values.
 	 *
 	 * @namespace Config
@@ -83,11 +71,11 @@ define([
 		 *
 		 * @param {string} key The dot-separated config value to retrieve.
 		 * @return The configuration value.
-		 * @throws {ConfigError} Will throw an error if the key is invalid.
+		 * @throws {Error} Will throw an error if the key is invalid.
 		 */
 		get: function(key) {
 			if(typeof key !== 'string') {
-				throw new ConfigError("Invalid parameter. Config key must be a string.");
+				throw new Error("Invalid parameter. Config key must be a string.");
 			}
 
 			var config = this.__config;
@@ -95,12 +83,12 @@ define([
 			var result, value;
 
 			// lookup the key value
-			result = _.reduce(key.split(ks), function(o, key) {
-				if(o.value.hasOwnProperty(key)) {
-					o.value = o.value[key];
-					o.path.push(key);
+			result = _.reduce(key.split(ks), function(o, k) {
+				o.path.push(k);
+				if(o.value.hasOwnProperty(k)) {
+					o.value = o.value[k];
 				} else {
-					throw new ConfigError("Invalid config key. No such config value at: " + o.path.join(ks));
+					throw new Error("Invalid config key: ["+key+"] No such config value at: ["+o.path.join(ks)+"]");
 				}
 				return o;
 			}, {value: config, path: []});
