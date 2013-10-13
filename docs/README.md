@@ -6,7 +6,17 @@ High-level project documentation should be in the [wiki](http://github.com/Harva
 
 ### Code 
 
-Javascript code should be documented using [JSDoc](http://usejsdoc.org/) syntax. There are a lot of tags that are available, but here's the basic set of tags that should be used in this project:
+Python code should be documented using standard documentation strings described in [PEP8](http://www.python.org/dev/peps/pep-0008/#documentation-strings).
+
+Javascript code should be documented using [JSDoc](http://usejsdoc.org/) syntax. 
+
+To generate javascript docs from jsdoc blocks:
+
+```sh
+npm install -g git://github.com/jsdoc3/jsdoc.git
+cd harmony
+jsdoc -c docs/jsdoc/conf.json
+```
 
 #### Methods
 
