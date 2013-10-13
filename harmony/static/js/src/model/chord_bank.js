@@ -4,11 +4,13 @@
 define([
 	'lodash', 
 	'microevent',
-	'app/model/chord'
+	'app/model/chord',
+	'app/util'
 ], function(
 	_, 
 	MicroEvent, 
-	Chord
+	Chord,
+	util
 ) {
 	"use strict";
 
@@ -27,12 +29,14 @@ define([
 	 * is responsible for rendering all or part of the chord bank and analyzing
 	 * its contents.
 	 *
-	 * Change events from the current chord are relayed to any listeners on the
+	 * Change and clear events from the current chord are relayed to any listeners on the
 	 * chord bank itself. When a chord is banked, it also fires a bank event.
 	 *
 	 * @constructor
+	 * @mixes MicroEvent
 	 * @fires change
 	 * @fires bank
+	 * @fires clear
 	 */
 	var ChordBank = function() {
 		this.init();
@@ -42,32 +46,33 @@ define([
 		/**
 		 * Initializes the object
 		 *
-		 * @return 
+		 * @return undefined
 		 */
 		init: function() {
 			var chord = new Chord();
 
-			_.bindAll(this, ['onChangeCurrent']);
-
-			this._addListeners(chord);
-
+			this._relayEvents = {};
 			this._limit = 10; // limit number of chords in the bank
 			this._items = [chord];
+
+			this._addListeners(chord);
 		},
 		/**
 		 * Banks the current chord and generates a new chord that becomes the
 		 * active chord.
 		 *
 		 * @fires bank
-		 * @return
+		 * @return undefined
 		 */
 		bank: function() {
 			var chord = new Chord();
 			var current = this.current();
+
+			// copies settings from the current chord
 			chord.copyTranspose(current);
 			chord.copySustain(current);
 
-			// re-wire listeners because we only care about changes to the current chord
+			// re-wires listeners to the current chord
 			this._removeListeners(current);
 			this._addListeners(chord);
 			this._add(chord);
@@ -81,7 +86,7 @@ define([
 		 * @param {number} config.limit Will return items up to the limit.
 		 * @param {boolean} config.reverse Will reverse the order of items after
 		 * retrieving them up to the limit.
-		 * @return
+		 * @return undefined
 		 */
 		items: function(config) {
 			config = config || {};
@@ -105,7 +110,8 @@ define([
 		/**
 		 * Clears the chord bank.
 		 *
-		 * @return
+		 * @fires clear
+		 * @return undefined
 		 */
 		clear: function() {
 			this._resetItems();
@@ -119,21 +125,6 @@ define([
 		current: function() {
 			return this._items[0];
 		},
-		/**
-		 * Handles change events from the currently active chord
-		 * and relays them to the chord bank. 
-		 *
-		 * Listeners who want to be notified when the active chord changes
-		 * should listen to the chord bank, *not* the active chord itself.
-		 *
-		 * @return
-		 */
-		onChangeCurrent: function() {
-			var args = Array.prototype.slice.call(arguments, 0);
-			args.unshift("change");
-			this.trigger.apply(this, args);
-		},
-
 		/**
 		 * Returns *all* distinct notes in the chord bank.
 		 *
@@ -153,7 +144,6 @@ define([
 
 			return note_nums;
 		},
-
 		/**
 		 * Returns true if any chords in the bank are sustained.
 		 *
@@ -184,10 +174,10 @@ define([
 		 *
 		 * @private
 		 * @param chord
-		 * @return
+		 * @return undefined
 		 */
 		_addListeners: function(chord) {
-			chord.bind('change', this.onChangeCurrent);
+			this._relayEvents = util.relayEvents(['change','clear'], chord, this);
 		},
 		/**
 		 * Removes listeners from a chord.
@@ -195,17 +185,18 @@ define([
 		 *
 		 * @private
 		 * @param chord
-		 * @return
+		 * @return undefined
 		 */
 		_removeListeners: function(chord) {
-			chord.unbind('change', this.onChangeCurrent);
+			util.unrelayEvents(this._relayEvents, chord);
+			this._relayEvents = {};
 		},
 		/**
 		 * Resets the items.
 		 * Used when clearing the bank.
 		 *
 		 * @private
-		 * @return
+		 * @return undefined
 		 */
 		_resetItems: function() {
 			var chord = new Chord();
@@ -222,10 +213,7 @@ define([
 		}
 	});
 
-	/**
-	 * The chord bank is observable.
-	 */
-	MicroEvent.mixin(ChordBank); 
+	MicroEvent.mixin(ChordBank);  // make observable
 	
 	return ChordBank;
 });

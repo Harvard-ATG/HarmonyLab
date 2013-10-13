@@ -1,31 +1,60 @@
-/* global define: false */
-define(['lodash', 'microevent'], function(_, MicroEvent) {
+define([
+	'lodash', 
+	'microevent'
+], function(
+	_, 
+	MicroEvent
+) {
 	"use strict";
 
-	// This object is responsible for knowing which MIDI notes are active at one time
-	// and how to manipulate their representation and select them by clef.
-	//
-	// This object is observable and fires "change" events when a note is
-	// turned on or off.
-	
+	/**
+	 * Creates an instance of a chord.
+	 *
+	 * A chord represents a collection of notes that are sounding at a
+	 * given point in time (the precise point in time is not our concern).
+	 *
+	 * It collaborates closely with objects that interface with MIDI NOTE ON/OFF 
+	 * messages. 
+	 *
+	 * @mixes MicroEvent
+	 * @fires change
+	 * @fires clear
+	 * @constructor 
+	 */
 	var Chord = function() {
 		this.init();
 	};
 
 	_.extend(Chord.prototype, {
+		/**
+		 * Initializes the object.
+		 *
+		 * @return undefined
+		 */
 		init: function() {
 			this._sustain = false; // flag to indicate if notes are sustained or not
 			this._transpose = 0;   // integer used for transposing notes 
-	
 			this._notes = {};     // holds notes that are playing
 		},
-		// Clears all notes and triggers a change event.
+		/**
+		 * Clears all the notes in the chord.
+		 *
+		 * @fires clear
+		 * @return undefined
+		 */
 		clear: function() {
 			this._notes = {};
-			this.trigger('change', 'notes:clear');
+			this.trigger('clear');
 		},
-		// Command to turn on a note. Fires a change event if the note status has changed.
-		// Returns true if the note status was changed, false otherwise.
+		/**
+		 * Command to turn on a note. 
+		 *
+		 * If the status of the note has changed, it will fire a change event.
+		 *
+		 * @fires change
+		 * @param number
+		 * @return {boolean} True if the note status changed, false otherwise.
+		 */
 		noteOn: function(number) {
 			var changed;
 
@@ -42,10 +71,18 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			return changed;
 		},
-		// Command to turn off a note. Fires a change event if the note status has changed.
-		// Returns true if the note status was changed, false otherwise.
-		//
-		// NOTE: this command is ignored as long as the note has been sustained.
+		/**
+		 * Command to turn off a note. 
+		 *
+		 * If the status of the note has changed, it will fire a change event.
+		 *
+		 * Note: this command will be ignored if the chord is sustaining notes
+		 * and this method will return false.
+		 *
+		 * @fires change
+		 * @param number
+		 * @return {boolean} True if the note status changed, false otherwise.
+		 */
 		noteOff: function(number) {
 			var changed;
 
@@ -65,27 +102,51 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			return changed;
 		},
-		// All notes that are turned on should be sustained until
-		// such time as they are released. Should be used in conjunction with
-		// releaseSustain(). 
+		/**
+		 * Commands the chord to sustain all notes that are turned on (i.e.
+		 * ignore "noteOff" messages).
+		 *
+		 * This should be used in conjunction with the releaseSustain() method.
+		 *
+		 * @return undefined
+		 */
 		sustainNotes: function() {
 			this._sustain = true;
 		},
-		// Releases all sustained notes (turns them off) and triggers a change event.
+		/**
+		 * Releases all sustained notes (turns them off), turns off the sustain,
+		 * and triggers a change event.
+		 *
+		 * @fires change
+		 * @return undefined
+		 */
 		releaseSustain: function() {
 			this._notes = {}; 
 			this._sustain = false; 
 			this.trigger('change', 'notes:off');
 		},
-		// Returns true if the notes are being sustained, false otherwise.
+		/**
+		 * Returns true if notes are being sustianed, false otherwise.
+		 *
+		 * @return {boolean} 
+		 */
 		isSustained: function() {
 			return this._sustain ? true : false;
 		},
-		// Sets the transpose for the chord and returns true if it succeeds,
-		// false otherwise.
+		/**
+		 * Sets the transpose for the chord and returns true if successful,
+		 * false otherwise. 
+		 * 
+		 * Transposing the chord will raise or lower the notes by a number
+		 * of semitones into different key. Setting the transpose to zero
+		 * will return the chord to its original key.
+		 *
+		 * @param {number} value A number of semitones.
+		 * @return {boolean} True if the transpose succeeded, false otherwise.
+		 */
 		setTranspose: function(value) {
 			if(!this.isValidTranspose(value)) {
-				return;
+				return false;
 			}
 
 			var old_transpose = this._transpose;
@@ -105,16 +166,32 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			this._notes = _.zipObject(trans_notes, trans_values);
 			this._transpose = new_transpose;
 			this.trigger('change', 'notes:transpose');
+
+			return true;
 		},
-		// Returns the current transpose value.
+		/**
+		 * Returns the current transpose value.
+		 *
+		 * @return {number}
+		 */
 		getTranspose: function() {
 			return this._transpose;
 		},
-		// Copies the transpose from another chord.
+		/**
+		 * Copies the transpose to another chord.
+		 *
+		 * @param {Chord} chord
+		 * @return undefined
+		 */
 		copyTranspose: function(chord) {
 			this.setTranspose(chord.getTranspose());
 		},
-		// Copies the sustain setting from another chord.
+		/**
+		 * Copies the sustain to another chord.
+		 *
+		 * @param {Chord} chord
+		 * @return undefined
+		 */
 		copySustain: function(chord) {
 			var is_sustained = chord.isSustained();
 			if(is_sustained) {
@@ -124,14 +201,24 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				this._sustain = false;
 			}
 		},
-		// Copies the notes setting from another chord
+		/**
+		 * Copies the notes to another chord.
+		 *
+		 * @param {Chord} chord
+		 * @return undefined
+		 */
 		copyNotes: function(chord) {
 			this._notes = _.reduce(chord.getNoteNumbers(), function(result, noteNum) {
 				result[noteNum] = true;
 				return result;
 			}, {});
 		},
-		// Checks if the transpose value is valid or not.
+		/**
+		 * Returns true if the transpose value is valid, false otherwise.
+		 *
+		 * @param {number} value
+		 * @return {boolean}
+		 */
 		isValidTranspose: function(value) {
 			var TRANSPOSE_MIN = -12, TRANSPOSE_MAX = 12;
 			if(!/^-?\d+$/.test(value)) {
@@ -139,7 +226,14 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			}
 			return (value >= TRANSPOSE_MIN && value <= TRANSPOSE_MAX);
 		},
-		// Returns a transposed note number using the current transpose value.
+		/**
+		 * Transposes the given note number using the current transpose setting.
+		 *
+		 * When transpose is set to zero, this is just the identity function.
+		 *
+		 * @param {number} noteNumber
+		 * @return {number}
+		 */
 		transpose: function(noteNumber) {
 			var transposed = this._transpose + noteNumber;
 			if(transposed >= 0 && transposed <= 127) {
@@ -147,7 +241,14 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			}
 			return noteNumber;
 		},
-		// Reversed the transpose function.
+		/**
+		 * Reverses a transpose operation.
+		 *
+		 * Note: noteNumber should equal untranspose(transpose(noteNumber)) 
+		 * 
+		 * @param {number} noteNumber
+		 * @return {number}
+		 */
 		untranspose: function(noteNumber) {
 			var untransposed = noteNumber - this._transpose;
 			if(untransposed >= 0 && untransposed <= 127) {
@@ -155,15 +256,20 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			}
 			return noteNumber;
 		},
-		// Maps over each note in the chord.
-		//
-		// Optionally accepts a clef to filter the notes that are mapped and a 
-		// callback to execute on each note. 
-		//
-		//	- If no clef is specified (falsy), all notes are mapped.
-		//	- If no callback is specified (falsy), the note number is 
-		//	returned by default.
-		//
+		/**
+		 * This is a combined map/filter over the notes in the collection
+		 * that returns a list of notes.
+		 * 
+		 * Optionally accepts a clef to filter the notes.
+		 * Optionally accepts a callback function to execute on the notes.
+		 * 
+		 * - If no clef is given, all notes will be mapped over.
+		 * - If no callback is given, the note number is returned.
+		 *
+		 * @param {string} clef treble|bass
+		 * @param {function} callback
+		 * @return {array} 
+		 */
 		mapNotes: function(clef, callback) {
 			var mapped_notes = [], notes = this.getSortedNotes();
 			var wanted = true, note_num, i, len;
@@ -184,8 +290,14 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 
 			return mapped_notes;
 		},
-		// Returns true if the clef has any notes, or if no clef is specified,
-		// if any notes exist on any clefs.
+		/**
+		 * Returns true if the given clef has any notes.
+		 *
+		 * If no clef is given, returns true if any clef has notes.
+		 *
+		 * @param {string} clef treble|bass
+		 * @return {boolean}
+		 */
 		hasNotes: function(clef) {
 			var notes = this.getSortedNotes();
 			var note_num, i, len;
@@ -202,12 +314,21 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				
 			return false;
 		},
-		// Returns all note numbers on the given clef.
+		/**
+		 * Returns all note numbers on the given clef.
+		 *
+		 * @param {string} clef treble|bass
+		 * @return {array}
+		 */
 		getNoteNumbers: function(clef) {
 			var callback = false; // so we just get the raw note numbers
 			return this.mapNotes(clef, callback);
 		},
-		// Returns a list of note numbers in sorted order.
+		/**
+		 * Returns a list of note numbers in sorted order.
+		 *
+		 * @return {array}
+		 */
 		getSortedNotes: function() {
 			var _notes = this._notes;
 			var notes = [];
@@ -219,7 +340,12 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 			notes.sort();
 			return notes;
 		},
-		// Returns all note pitches and octaves on the given clef.
+		/**
+		 * Returns all note pitches and octaves on the given clef.
+		 *
+		 * @param {string} clef treble|bass
+		 * @return {array}
+		 */
 		getNotePitches: function(clef) {
 			return this.mapNotes(clef, function(noteNum) {
 				return {
@@ -228,16 +354,22 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 				};
 			});
 		},
-		// Returns true if the note belongs to the clef, false otherwise.
-		noteNumBelongsToClef: function(noteNum, clef) {
+		/**
+		 * Returns true if the ntoe belongs to the given clef, false otherwise.
+		 *
+		 * @param {number} noteNum
+		 * @param {string} clef treble|bass
+		 * @return {boolean}
+		 */
+		noteNumBelongsToClef: function(noteNumber, clef) {
 			switch(clef) {
 				case 'treble':
-					if(noteNum >= 60) {
+					if(noteNumber >= 60) {
 						return true;
 					}
 					break;
 				case 'bass':
-					if(noteNum < 60) {
+					if(noteNumber < 60) {
 						return true;
 					}
 					break;
@@ -248,6 +380,12 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		}
 	});
 
+	/**
+	 * The method getNotes() is aliased to getNoteNumbers().
+	 *
+	 * @param {string} clef treble|bass
+	 * @return {array}
+	 */
 	Chord.prototype.getNotes = Chord.prototype.getNoteNumbers;
 
 	MicroEvent.mixin(Chord); // make object observable
