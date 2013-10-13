@@ -25,7 +25,6 @@ define(['lodash'], function(_) {
 			var staticUrl = window.appStaticUrl || defaultStaticUrl;
 			return staticUrl + path;
 		},
-
 		/**
 		 * Converts or maps symbols in a text string to unicode characters.
 		 *
@@ -75,7 +74,6 @@ define(['lodash'], function(_) {
 
 			return text;
 		},
-
 		/**
 		 * Takes an HSL triplet (hue, saturation, color) and returns the
 		 * equivalent color string suitable for CSS/Canvas.
@@ -85,6 +83,44 @@ define(['lodash'], function(_) {
 		 */
 		toHSLString: function(color) {
 			return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
+		},
+		/**
+		 * Relays event(s) from a source to a destination object.
+		 *
+		 * @param {array} events A list of event names to relay.
+		 * @param {object} src A source of the events to relay.
+		 * @param {object} dest A dstination object to fire the events.
+		 * @return {object} A mapping of event names to callbacks used to relay events.
+		 */
+		relayEvents: function(events, src, dest) {
+			var __slice = Array.prototype.slice;
+
+			var relay_map = _.reduce(events, function(map, eventName) {
+				map[eventName] = function() {
+					var args = __slice.call(arguments, 0);
+					args.unshift(eventName);
+					dest.trigger.apply(dest, args);
+				};
+				return map;
+			}, {});
+
+			_.each(relay_map, function(callback, eventName) {
+				src.bind(eventName, callback);
+			});
+
+			return relay_map;
+		},
+		/**
+		 * Unrelays event(s) from a source object.
+		 *
+		 * @param {object} relayMap A mapping of events to callbacks.
+		 * @param {object} src A source of the events to relay.
+		 * @return undefined;
+		 */
+		unrelayEvents: function(relayMap, src) {
+			_.each(relayMap, function(callback, eventName) {
+				src.unbind(eventName, callback);
+			});
 		}
 	};
 
