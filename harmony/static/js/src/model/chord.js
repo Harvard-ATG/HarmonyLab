@@ -32,9 +32,24 @@ define([
 		 * @return undefined
 		 */
 		init: function() {
-			this._sustain = false; // flag to indicate if notes are sustained or not
-			this._transpose = 0;   // integer used for transposing notes 
-			this._notes = {};     // holds notes that are playing
+			/**
+			 * Sustain flag. When true means notes should be sustained.
+			 * @type {boolean}
+			 * @protected
+			 */
+			this._sustain = false; 
+			/**
+			 * Transpose value expressed as the number of semitones.
+			 * @type {number}
+			 * @protected
+			 */
+			this._transpose = 0;   
+			/**
+			 * Container for the notes that are active.
+			 * @type {object}
+			 * @protected
+			 */
+			this._notes = {};  
 		},
 		/**
 		 * Clears all the notes in the chord.

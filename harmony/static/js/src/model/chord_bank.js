@@ -51,8 +51,24 @@ define([
 		init: function() {
 			var chord = new Chord();
 
+			/**
+			 * Holds a mapping of events to callback functions.
+			 * Used to relay events from the active chord.
+			 * @type {object}
+			 * @protected
+			 */
 			this._relayEvents = {};
+			/**
+			 * Limit the number of chords that can be in the bank.
+			 * @type {number}
+			 * @protected
+			 */
 			this._limit = 10; // limit number of chords in the bank
+			/**
+			 * Contains the items in the bank.
+			 * @type {array}
+			 * @protected
+			 */
 			this._items = [chord];
 
 			this._addListeners(chord);

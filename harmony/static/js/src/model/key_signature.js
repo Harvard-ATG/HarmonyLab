@@ -1,44 +1,136 @@
 /* global define: false */
-define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
+define([
+	'lodash', 
+	'microevent', 
+	'app/config'
+], function(
+	_,
+	MicroEvent, 
+	Config
+) {
 	"use strict";
 
+	/**
+	 * Defines the default key.
+	 * @type {string}
+	 * @const
+	 */
 	var DEFAULT_KEY = Config.get('general.defaultKeyAndSignature');
+	/**
+	 * Defines a mapping of signatures to keys.
+	 * @type {object}
+	 * @const
+	 */
 	var KEY_SIGNATURE_MAP = Config.get('general.keySignatureMap');
+	/**
+	 * Defines a mapping of keys to information related to the key such as
+	 * spellings, etc.
+	 * @type {object}
+	 * @const
+	 */
 	var KEY_MAP = Config.get('general.keyMap');
+	/**
+	 * Defines an array of key strings that form a "wheel" that may be rotated
+	 * left or right (think circle of fifths). 
+	 * @type {array}
+	 * @const
+	 */
 	var KEY_WHEEL = Config.get('general.keyWheel');
+	/**
+	 * Defines the order of sharps.
+	 * @type {array}
+	 * @const
+	 */
+	var ORDER_OF_SHARPS = Config.get('general.orderOfSharps'); 
 
-	// The KeySignature object is responsible for knowing the current key and
-	// signature and how to manipulate them.
-	//
-	// It collaborates with the global configuration object that holds the 
-	// mapping for keys and signatures as well as other relevant information. 
-	//
-	// This object is observable and Fires "change" events when the key or 
-	// signature are changed using the change methods.
-	//
-	// Note
-	// ----
-	// From the user's point of view, there is only one "key," but in order
-	// to notate the pitches with Vex.Flow, we must track the _keyOfSignature_
-	// property. The _key_ property does not need to match _keyOfSignature_, 
-	// although most of the time it will.
-	//
-	// The _key_ property should be considered a public, displayable property,
-	// while the _keyOfSignature_ property is private.
-	
+	/**
+	 * Creates an instance of a key signature.
+	 *
+	 * The key signature object is responsible for knowing the current key and
+	 * signature and how to manipulate both together and separately. It depends 
+	 * on configuration data to define both the keys and signatures.
+	 *
+	 * Note that there are two "keys" that are tracked by this object, which may be
+	 * "locked" together and change in tandem, or unlocked and change
+	 * independently. The key generally determines the signature, although this
+	 * is not always the case. The signature does *not* determine the key,
+	 * because a signature can be mapped to two keys, major or minor. In order
+	 * to notate the signature with Vex.Flow, we must map the signature to a
+	 * key. This arbitrary mapping is defined in the config.
+	 *
+	 * Usage is confined to these public methods:
+	 *	- changeKey()
+	 *	- changeSignatureKey()
+	 *	- locked()
+	 * 
+	 * @mixes MicroEvent
+	 * @fires change
+	 * @constructor
+	 */
 	var KeySignature = function(key) {
-		key = key || DEFAULT_KEY;
+		/**
+		 * Lock flag. When true, locks the key to the signature.
+		 * @type {boolean}
+		 * @default true
+		 * @protected
+		 */
 		this.lock = true;
-		this.setKey(key);
-		this.setKeyOfSignature(key);
-		this.setSignature(this.keyToSignature(key));
+		/**
+		 * Defines the key.
+		 * @type {string}
+		 * @protected
+		 */
+		this.key = '';
+		/**
+		 * Specification for the signature. A string with a number of #'s that
+		 * represent the number of sharps, or a string with a number of b's that
+		 * represent the number of flats (it can only be sharps or flats, not
+		 * both).
+		 * @type {string}
+		 * @protected
+		 */
+		this.signatureSpec  = '';
+		/** 
+		 * Defines the signature, which is a sequence of notes with accidentals 
+		 * that should be sharped or flatted. 
+		 * @type {array}
+		 * @protected
+		 */
+		this.signature = [];
+		/**
+		 * Defines the key that the signature is mapped to (arbitrary mapping
+		 * since the signature doesn't map 1:1 to a key).
+		 * @type {string}
+		 * @protected
+		 */
+		this.keyOfSignature = null;
+
+		this.init(key);
 	};
 
 	_.extend(KeySignature.prototype, {
-		//--------------------------------------------------
-		// Public methods for changing/locking the key and signature
-
-		// change the key value, optionally locking the signature to it
+		/**
+		 * Initializes the key signature.
+		 *
+		 * @param {string} key
+		 * @return undefined
+		 */
+		init: function(key) {
+			key = key || DEFAULT_KEY;
+			this.setKey(key);
+			this.setKeyOfSignature(key);
+			this.setSignature(this.keyToSignature(key));
+		},
+		/**
+		 * Change the key value. When lock is true, sets the signature to match
+		 * the key.
+		 *
+		 * @param {string} key
+		 * @param {boolean} lock
+		 * @return undefined
+		 * @fires change
+		 * @public
+		 */
 		changeKey: function(key, lock) {
 			this.setKey(key);
 			if(lock) {
@@ -48,7 +140,16 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 			this.lock = lock;
 			this.trigger('change');
 		},
-		// change the signature key value, optionally locking the key to it
+		/**
+		 * Change the signature key value. When lock is true, sets the key to
+		 * match the signature.
+		 *
+		 * @param {string} keyOfSignature
+		 * @param {boolean} lock
+		 * @return undefined
+		 * @fires change
+		 * @public
+		 */
 		changeSignatureKey: function(keyOfSignature, lock) {
 			this.setKeyOfSignature(keyOfSignature);
 			this.setSignature(this.keyToSignature(keyOfSignature));
@@ -58,7 +159,13 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 			this.lock = lock;
 			this.trigger('change');
 		},
-		// returns true if the key and signature are locked, false otherwise 
+		/**
+		 * Returns true if the key and signature are locked together, false
+		 * otherwise.
+		 *
+		 * @return {boolean}
+		 * @public
+		 */
 		locked: function() {
 			return this.lock ? true : false;
 		},
@@ -66,19 +173,36 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		//--------------------------------------------------
 		// Setters
 
-		// sets the key 
+		/**
+		 * Sets the key. 
+		 *
+		 * @param key
+		 * @throws {Error} Will throw an error if the key is not
+		 * valid/supported.
+		 * @return undefined
+		 */
 		setKey: function(key) {
 			if(!KEY_MAP.hasOwnProperty(key)) {
 				throw new Error("invalid key");
 			}
 			this.key = key;
 		},
-		// set the signature
+		/**
+		 * Sets the signature given a specification.
+		 *
+		 * @param {string} signatureSpec Sequence of #'s or b's.
+		 * @return undefined
+		 */
 		setSignature: function(signatureSpec) {
 			this.signatureSpec = signatureSpec;
 			this.signature = this.specToSignature(signatureSpec);
 		},
-		// sets the key associated with the signature
+		/**
+		 * Sets the key of the signature given a key.
+		 *
+		 * @param {string} key
+		 * @return undefined
+		 */
 		setKeyOfSignature: function(key) {
 			this.keyOfSignature = key;
 		},
@@ -86,23 +210,44 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		//--------------------------------------------------
 		// Getters
 
-		// returns the current key value
+		/**
+		 * Returns the current key value.
+		 *
+		 * @return {string} 
+		 */
 		getKey: function() {
 			return this.key;
 		},
-		// returns the current key name
+		/**
+		 * Returns the current key name.
+		 *
+		 * @return {string}
+		 */
 		getKeyName: function() {
 			return this.keyToName(this.key);
 		},
-		// returns the current key short name
+		/**
+		 * Returns the current key short name.
+		 *
+		 * @return {string}
+		 */
 		getKeyShortName: function() {
 			return this.keyToShortName(this.key);
 		},
+		/**
+		 * Returns the current key pitch class.
+		 *
+		 * @return {number}
+		 */
 		getKeyPitchClass: function() {
 			return this.keyToPitchClass(this.key);
 		},
-		// Translates the signature key name to one that is understandable by
-		// the Vex.Flow key signature object. 
+		/**
+		 * Returns the current key name as a key spec understood by
+		 * a Vex.Flow.KeySignature object.
+		 *
+		 * @return {string}
+		 */
 		getVexKey: function() {
 			var key = this.keyOfSignature;
 			var vexKey = key.slice(1).replace('_', '');
@@ -122,27 +267,52 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 
 			return vexKey;
 		},
-		// returns the signature (ist of accidentals)
+		/**
+		 * Returns the signature, an array of notes with accidentals.
+		 *
+		 * @return {array}
+		 */
 		getSignature: function() {
 			return this.signature;
 		},
-		// returns the signature specification (string of sharps or flats)
+		/**
+		 * Returns the signature specification.
+		 *
+		 * @return {string}
+		 */
 		getSignatureSpec: function() {
 			return this.signatureSpec;
 		},
-		// returns the key associated with the signature 
+		/**
+		 * Returns the key of the associated signature.
+		 *
+		 * @return {string}
+		 */
 		getKeyOfSignature: function() {
 			return this.keyOfSignature;
 		},
-		// Returns the current note spelling 
+		/**
+		 * Returns the spelling for the current signature. The spelling is a
+		 * sequence of notes and accidentals. 
+		 *
+		 * @return {array}
+		 */
 		getSpelling: function() {
 			return this.keyToSpelling(this.keyOfSignature);
 		},
-		// Returns true if the key is minor, false otherwise.
+		/**
+		 * Returns true if the current key is minor, false otherwise
+		 *
+		 * @return {boolean}
+		 */
 		isMinorKey: function() {
 			return this.keyIsMinor(this.key);
 		},
-		// Returns true if the key is major, false otherwise.
+		/**
+		 * Returns true if the current key is major, false otherwise.
+		 *
+		 * @return {boolean}
+		 */
 		isMajorKey: function() {
 			return this.keyIsMajor(this.key); 
 		},
@@ -150,8 +320,13 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		//--------------------------------------------------
 		// Note spelling functions
 		
-		// returns true if the note needs a "natural" accidental
-		// as a result of the current key signature, false otherwise
+		/**
+		 * Returns true if the given note needs a "natural" accidental as a
+		 * result of the current key signature, false otherwise.
+		 *
+		 * @param {string} note
+		 * @return {boolean}
+		 */
 		needsNatural: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {
@@ -161,8 +336,13 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 			}
 			return false;
 		},
-		// returns true if the note is contained in the key signature, false
-		// otherwise
+		/**
+		 * Returns true if the note is contained in the key signature, false
+		 * otherwise.
+		 *
+		 * @param {string} note
+		 * @return {boolean}
+		 */
 		signatureContains: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {
@@ -176,19 +356,30 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		//--------------------------------------------------
 		// Key manipulation functions
 
-		// Changes the key to one that is sharper.
+		/**
+		 * Sharpens the key using the current key wheel.
+		 *
+		 * @return undefined
+		 */
 		rotateSharpward: function() {
 			this.rotateKey(1);
 		},
-
-		// Changes the key to one that is flatter.
+		/**
+		 * Flattens the key using the current key wheel.
+		 *
+		 * @return undefined
+		 */
 		rotateFlatward: function() {
 			this.rotateKey(-1);
 		},
 
-		// Rotates the key by moving left or right around the key wheel. 
-		// Direction should be a positive integer to rotate to a sharper key,
-		// or negative to rotate to a flatter key.
+		/**
+		 * Rotates the key in the specified direction using the current key
+		 * wheel. The direction should be a positive or negative integer. 
+		 *
+		 * @param {number} direction Positive or negative integer.
+		 * @return undefined
+		 */
 		rotateKey: function(direction) {
 			var wheel = KEY_WHEEL.slice(0);
 			var index = wheel.indexOf(this.getKey());
@@ -202,12 +393,23 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 		//--------------------------------------------------
 		// Utility functions
 
-		// returns true if the signature is valid, false otherwise
+		/**
+		 * Returns true if the signature specification is valid, false
+		 * otherwise.
+		 *
+		 * @param {string} spec
+		 * @return {boolean}
+		 */
 		isSignatureSpec: function(spec) {
 			var re = /^(?:b|#){0,7}$/; // string of sharp or flat symbols
 			return re.test(spec); 
 		},
-		// return list of accidentals for the signature spec
+		/**
+		 * Return list of accidentals for the signature spec.
+		 *
+		 * @param {string} signatureSpec
+		 * @return {array}
+		 */
 		specToSignature: function(signatureSpec) {
 			if(!this.isSignatureSpec(signatureSpec)) {
 				throw new Error("invalid signature");
@@ -221,42 +423,83 @@ define(['lodash', 'microevent', 'app/config'], function(_, MicroEvent, Config) {
 				return note + accidental;
 			});
 		},
-		// returns the signature for a key
+		/**
+		 * Returns the signature for a key.
+		 *
+		 * @param {string} key
+		 * @return {array}
+		 */
 		keyToSignature: function(key) {
 			return KEY_MAP[key].signature;
 		},
-		// returns the name for a key
+		/**
+		 * Returns the key name.
+		 *
+		 * @param {string} key
+		 * @return {string}
+		 */
 		keyToName: function(key) {
 			return KEY_MAP[key].name;
 		},
-		// returns the pitch class for a key
-		keyToPitchClass: function(key) {
-			return KEY_MAP[key].pitchClass;
-		},
-		// returns the short name for a key
+		/**
+		 * Returns the short name for a key.
+		 *
+		 * @param {string} key
+		 * @return {string}
+		 */
 		keyToShortName: function(key) {
 			return KEY_MAP[key].shortName;
 		},
-		// returns the note spelling based on the current key signature
+		/**
+		 * Returns the pitch class for a key.
+		 *
+		 * @param {string} key
+		 * @return {number}
+		 */
+		keyToPitchClass: function(key) {
+			return KEY_MAP[key].pitchClass;
+		},
+		/**
+		 * Returns the note spelling based on the current key signature.
+		 *
+		 * @param {string} key
+		 * @return {array}
+		 */
 		keyToSpelling: function(key) {
 			return KEY_MAP[key].spelling;
 		},
-		// returns true if the key is major, false otherwise.
+		/**
+		 * Returns true if the key is major, false otherwise.
+		 *
+		 * @param {string} key
+		 * @return {boolean}
+		 */
 		keyIsMajor: function(key) {
 			 return key.indexOf('j') === 0;
 		},
-		// returns true if the key is minor, false otherwise.
+		/**
+		 * Returns true if the key is minor, false otherwise.
+		 *
+		 * @param {string} key
+		 * @return {boolean}
+		 */
 		keyIsMinor: function(key) {
 			 return key.indexOf('i') === 0;
 		},
-		// returns list of note accidentals in the correct order to notate 
-		// the signature for sharps or flats
-		orderOfAccidentals: function(accidental, num_accidentals) {
-			var order = ["F","C","G","D","A","E","B"]; // order of sharps
+		/**
+		 * Returns list of note accidentals in the correct order to notate 
+		 * the signature for sharps or flats.
+		 *
+		 * @param {string} accidental
+		 * @param {number} numAccidentals
+		 * @return {array}
+		 */
+		orderOfAccidentals: function(accidental, numAccidentals) {
+			var order = _.cloneDeep(ORDER_OF_SHARPS);
 			if(accidental === 'b') {
 				order = order.reverse(); // reverse to notate flats 
 			}
-			return order.slice(0, num_accidentals);
+			return order.slice(0, numAccidentals);
 		}
 	});
 
