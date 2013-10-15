@@ -13,26 +13,62 @@ define([
 ) {
 	"use strict";
 
-	// Responsible for displaying the on-screen piano and reacting to
-	// user-input. Should know how to display different sizes of keyboards,
-	// pedals, and keyboard controls.
+	/**
+	 * Creates an instance of a Piano.
+	 *
+	 * The Piano object is responsible for displaying the on-screen piano and
+	 * its subcomponents such as the keyboard, pedals, and controls (metronome,
+	 * etc) and react to input events.
+	 *
+	 * @constructor
+	 */
 	var Piano = function() {
 		this.init();
 	};
 
 	_.extend(Piano.prototype, {
+		/**
+		 * Flag to indicate if the metronome control is enabled.
+		 * @type {boolean} 
+		 * @default true
+		 */
 		metronomeEnabled: true,
+		/**
+		 * Flag to indicate if the transpose control is enabled.
+		 * @type {boolean}
+		 * @default false
+		 */
 		transposeEnabled: false,
+		/**
+		 * Global event bus.
+		 * @type {object}
+		 */
 		eventBus: eventBus,
+		/**
+		 * Initializes the piano.
+		 *
+		 * @return undefined
+		 */
 		init: function() {
 			this.el = $('<div class="keyboard-wrapper"></div>');
 			this.initKeyboard();
 			this.initPedals();
 			this.initToolbar();
 		},
+		/**
+		 * Initializes the keyboard UI.
+		 *
+		 * @return undefined
+		 */
 		initKeyboard: function() {
 			this.keyboard = new PianoKeyboard();
 		},
+		/**
+		 * Initializes the pedals UI.
+		 *
+		 * @todo Refactor into a sub-component like PianoKeyboard.
+		 * @return undefined
+		 */
 		initPedals: function() {
 			var eventBus = this.eventBus;
 			var pedalNameByIndex = ['soft','sostenuto','sustain'];
@@ -76,6 +112,11 @@ define([
 				pedals[pedal].toggle(state);
 			});
 		},
+		/**
+		 * Initializes the piano toolbar that contains the controls.
+		 *
+		 * @return undefined
+		 */
 		initToolbar: function() {
 			this.toolbarEl = $('<div class="keyboard-controls"></div>');
 
@@ -86,6 +127,11 @@ define([
 				this.initTransposeControl();
 			}
 		},
+		/**
+		 * Initializes the transpose control.
+		 *
+		 * @return undefined
+		 */
 		initTransposeControl: function() {
 			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
@@ -113,6 +159,11 @@ define([
 				eventBus.trigger('transpose', transpose);
 			});
 		},
+		/**
+		 * Initializes the metronome control
+		 *
+		 * @return undefined
+		 */
 		initMetronomeControl: function() {
 			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
@@ -168,6 +219,12 @@ define([
 				}
 			});
 		},
+		/**
+		 * Changes the keyboard size.
+		 *
+		 * @param {number} size The number of keys the keyboard should have.
+		 * @return undefined
+		 */
 		changeKeyboard: function(size) {
 			if(this.keyboard.getNumKeys() == size) {
 				return;
@@ -187,6 +244,13 @@ define([
 			// save a reference to the new keyboard
 			this.keyboard = new_keyboard;
 		},
+		/**
+		 * Calculates the width of the new keyboard.
+		 *
+		 * @param {PianoKeyboard} old_keyboard
+		 * @param {PianoKeyboard} new_keyboard
+		 * @return {number}
+		 */
 		calculateNewWidth: function(old_keyboard, new_keyboard) {
 			// assumes the old keyboard is still part of the DOM and has layout
 			var offset = old_keyboard.keyboardEl.position();
@@ -194,6 +258,11 @@ define([
 
 			return new_keyboard.width + total_margin;
 		},
+		/**
+		 * Renders the piano.
+		 *
+		 * @return this
+		 */
 		render: function() {
 			this.keyboard.render();
 			this.el.append(this.toolbarEl);
