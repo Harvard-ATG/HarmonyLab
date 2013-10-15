@@ -26,6 +26,6 @@ Every method should have a free-form description of the purpose of the method an
 
 The *type* should be one of the basic javascript types. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return undefined**.
 
-Use the **constructor** tag to document javascript functions that should be used with the *new* keyword. 
+Use the **@constructor** tag to document javascript functions that should be used with the *new* keyword. 
 
 Use the **@todo** tag on methods and classes for tasks that need to be done.
