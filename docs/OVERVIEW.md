@@ -37,6 +37,6 @@ Here's what you need to know to get started:
 - Within the `js/src` directory you will find a `main.js`. This file is the only script that is explicitly loaded from `harmony/templates/piano.html`. It initializes the user interface and automatically loads all of its dependencies via [requirejs](http://requirejs.org/).
 - Requirejs configuration is defined in `harmony/settings/common.py` under the name `REQUIREJS_CONFIG`. This config is passed into the `harmony/templates/base.html` template to configure requirejs. Note that this configuration can be modified on a per-environment basis. So for example, in development you want each file to be loaded separately for debugging purposes, however in production, you would prefer for a single minified and compressed file to be loaded. That can all be defined in the settings.py files.
  
-## Build
+## Build & Deploy
 
 - To build the javascript, run `build-requirejs.py`. This script will run the requirejs optimizer and build the javascript into a single, versioned file that can be sent to the client instead of loading each module separately.
