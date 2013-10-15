@@ -1,6 +1,6 @@
 # Developer Documentation 
 
-See the [project overview](OVERVIEW.md) for a quick overview of the project layout and structure. Additional high-level project documentation should be added to the [wiki](http://github.com/Harvard-ATG/HarmonyLab/wiki). 
+See the [developer overview](OVERVIEW.md) for a quick overview of the project layout and structure. Additional high-level project documentation should be added to the [wiki](http://github.com/Harvard-ATG/HarmonyLab/wiki). 
 
 ### Python Code
 
