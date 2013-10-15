@@ -4,7 +4,7 @@ Here's what you need to know to get started:
 
 ## Tech
 
-- The app is Written in Python and Javascript. Python on the backend (Django) and Javascript on the frontend (RequireJS).
+- The app is written in Python and Javascript. Python on the backend (Django) and Javascript on the frontend (RequireJS).
 - The javascript is loosely organized into modules using [requirejs](http://requirejs.org/). 
 - The [Vex Flow](http://www.vexflow.com/) javascript library is used *extensively* to render musical notation. You should know that this library has been forked and modified for this project in order to implement a number of features, but most importantly, the ability to set the color of individual notes and accidentals. 
 
