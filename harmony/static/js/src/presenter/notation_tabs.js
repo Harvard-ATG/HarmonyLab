@@ -105,7 +105,7 @@ define([
 			var tabsExpanded = this.tabsExpanded;
 
 			if($(el).hasClass('icon-btn-close')) {
-				cls.revterse();
+				cls.reverse();
 			}
 
 			$(el).removeClass(cls[0]).addClass(cls[1]);
