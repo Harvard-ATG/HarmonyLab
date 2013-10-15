@@ -1,29 +1,96 @@
-define(['jquery','lodash','microevent'], function($, _, MicroEvent) {
+define([
+	'jquery',
+	'lodash',
+	'microevent'
+], function(
+	$, 
+	_, 
+	MicroEvent
+) {
 	"use strict";
 
-	var MS_PER_MIN = 60 * 1000; // milliseconds per minute
+	/**
+	 * Number of milliseconds per minute.
+	 * @type {number}
+	 * @const
+	 */
+	var MS_PER_MIN = 60 * 1000;
+	/**
+	 * Minimum tempo.
+	 * @type {number}
+	 * @const
+	 */
 	var MIN_TEMPO = 1;
+	/**
+	 * Maximum tempo.
+	 * @type {number}
+	 * @const
+	 */
 	var MAX_TEMPO = 600;
+	/**
+	 * Defines the default tempo.
+	 * @type {number}
+	 * @const
+	 */
+	var DEFAULT_TEMPO = 90;
 
+	/**
+	 * Creates an instance of a metronome. 
+	 *
+	 * @constructor
+	 * @param {Audio} el A reference to an audio element. 
+	 * @param {number} tempo The tempo.
+	 * @mixes MicroEvent
+	 * @fires tick
+	 */
 	var Metronome = function(el, tempo) {
 		this.init(el, tempo);
 	};
 
 	_.extend(Metronome.prototype, {
-		// default tempo of the metronome, expressed in beats per minute (bpm)
-		defaultTempo: 90, 
-
-		// initializes the metronome
+		/**
+		 * Initializes the metronome.
+		 *
+		 * @param {Audio} el
+		 * @param {number} tempo
+		 * @return undefined
+		 */
 		init: function(el, tempo) {
+			/**
+			 * Audio element.
+			 * @type {Audio}
+			 * @protected
+			 */
 			this.audio = el;
-			this.tempo = this._isValidTempo(tempo) ? tempo : this.defaultTempo;
-			this.delay = this._calculateDelay(this.tempo);
+			/**
+			 * Tempo expressed in beats per minute (bpm).
+			 * @type {number}
+			 * @protected
+			 */
+			this.tempo = this.isValidTempo(tempo) ? tempo : DEFAULT_TEMPO;
+			/**
+			 * The delay between each tick of the metronome expressed in
+			 * milliseconds. This value depends on the tempo.
+			 * @type {number}
+			 * @protected
+			 */
+			this.delay = this.calculateDelay(this.tempo);
+			/**
+			 * Repeat flag. When true, schedules the next tick of the metronome.
+			 * @type {boolean}
+			 * @protected
+			 */
 			this.repeat = false;
 			this.timeoutID = null;
 
 			_.bindAll(this, ['play']);
 		},
-		// plays the audio "tick" sound
+		/**
+		 * Plays the audio tick sound.
+		 *
+		 * @return undefined
+		 * @fires tick
+		 */
 		play: function() {
 			this.audio.play();
 			if(this.repeat) {
@@ -31,42 +98,87 @@ define(['jquery','lodash','microevent'], function($, _, MicroEvent) {
 			}
 			this.trigger("tick");
 		},
-		// starts the metronome
+		/**
+		 * Starts the metronome.
+		 *
+		 * @return undefined
+		 */
 		start: function() {
 			this.repeat = true;
 			this._scheduleNextPlay();
 		},
-		// stops the metronome
+		/**
+		 * Stops the metronome
+		 *
+		 * @return
+		 */
 		stop: function() {
 			this.repeat = false;
 			this._unscheduleNextPlay();
 		},
-		// returns true if the metronome is playing, false otherwise
+		/**
+		 * Returns true if the metronome is playing, false otherwise.
+		 *
+		 * @return {boolean}
+		 */
 		isPlaying: function() {
 			return this.repeat;
 		},
-		// changes the current tempo (expressed in beats per minute)
+		/**
+		 * Changes the current tempo. 
+		 *
+		 * @param {number} tempo Tempo in beats per minute.
+		 * @return {boolean} True if the tempo was changed, false otherwise.
+		 */
 		changeTempo: function(tempo) {
-			if(this._isValidTempo(tempo)) {
+			if(this.isValidTempo(tempo)) {
 				this.tempo = tempo;
-				this.delay = this._calculateDelay(tempo);
+				this.delay = this.calculateDelay(tempo);
 				return true;
 			}
 			return false;
 		},
-		// returns the current tempo
+		/**
+		 * Returns the current tempo.
+		 *
+		 * @return {number}
+		 */
 		getTempo: function() {
 			return this.tempo;
 		},
-		_isValidTempo: function(tempo) {
+		/**
+		 * Returns true if the tempo is valid, false otherwise.
+		 *
+		 * @param {number} tempo
+		 * @return {boolean}
+		 */
+		isValidTempo: function(tempo) {
 			return (/^\d+$/).test(tempo) && tempo >= MIN_TEMPO && tempo <= MAX_TEMPO;
 		},
-		_calculateDelay: function(beatsPerMinute) {
-			return Math.floor(MS_PER_MIN / beatsPerMinute);
+		/**
+		 * Given beats per minute, returns the number of milliseconds.
+		 *
+		 * @param {number} tempo Tempo in beats per minute.
+		 * @return {number}
+		 */
+		calculateDelay: function(tempo) {
+			return Math.floor(MS_PER_MIN / tempo);
 		},
+		/**
+		 * Schedules the next tick of the metronome.
+		 * 
+		 * @return undefined
+		 * @private
+		 */
 		_scheduleNextPlay: function() {
 			this.timeoutID = window.setTimeout(this.play, this.delay);
 		},
+		/**
+		 * Unschedules the next tick of the metronome
+		 *
+		 * @return undefined
+		 * @private
+		 */
 		_unscheduleNextPlay: function() {
 			if(this.timeoutID !== null) {
 				window.clearTimeout(this.timeoutID);

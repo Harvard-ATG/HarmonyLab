@@ -5,24 +5,66 @@ define([
 	'microevent',
 	'app/model/event_bus', 
 	'app/config'
-], function(_, $, MicroEvent, eventBus, Config) {
+], function(
+	_, 
+	$, 
+	MicroEvent, 
+	eventBus, 
+	Config
+) {
 	"use strict";
 
+	/**
+	 * Defines the keyboard shortcuts.
+	 * @type {object}
+	 * @const
+	 */
 	var SHORTS = Config.get('keyboardShortcuts');
 
+	/**
+	 * Creates an instance of KeyboardShortcuts.
+	 *
+	 * @constructor
+	 * @param {object} config
+	 * @param {object} config.keySignature Requires the KeySignature object.
+	 * @param {object} config.enabled Optionally set enabled.
+	 * @mixes MicroEvent
+	 * @fires toggle
+	 */
 	var KeyboardShortcuts = function(config) {
+		/**
+		 * Reference to the event bus.
+		 * @type {object} 
+		 * @protected
+		 */
+		this.eventBus = eventBus;
+		/**
+		 * Enables keyboard shortcuts when true.
+		 * @type {boolean}
+		 * @default false
+		 * @protected
+		 */
+		this.enabled = false;
+		/**
+		 * Maps a keyCode to true|false. When true, the key is down, otherwise
+		 * the key is up.
+		 * @type {object}
+		 * @protected
+		 */
+		this.keyState = {};
+
 		this.init(config);
 	};
 
 	_.extend(KeyboardShortcuts.prototype, {
-
-		eventBus: eventBus, // reference to the global event bus
-
-		enabled: false, // shortcuts mode disabled by default
-
-		keyState: {}, // maps keyCode -> true|false (true=down, false=up)
-
-		// intialization
+		/**
+		 * Initializes the shortcuts.
+		 *
+		 * @param {object} config
+		 * @return undefined
+		 * @throws {Error} Will throw an error if keySignature is missing from
+		 * the config.
+		 */
 		init: function(config) {
 			if(config.hasOwnProperty('keySignature')) {
 				this.keySignature = config.keySignature;
@@ -39,7 +81,11 @@ define([
 
 			this.initListeners();
 		},
-		// setup bindings for events
+		/**
+		 * Initializes listeners for key up/down events.
+		 *
+		 * @return undefined
+		 */
 		initListeners: function() {
 			this.onKeyDown = this.overrideKey(this.onKeyDown);
 			this.onKeyUp = this.overrideKey(this.onKeyUp);
@@ -53,23 +99,43 @@ define([
 
 			$('body').on(this.events);
 		},
-		// remove bindings for events
+		/**
+		 * Removes listeners for key up/down events.
+		 *
+		 * @return undefined
+		 */
 		removeListeners: function() {
 			$('body').off(this.events);
 		},
-		// destroy this object
+		/**
+		 * Destroys this object.
+		 *
+		 * @return undefined
+		 */
 		destroy: function() {
 			this.removeListeners();
 		},
-		// enables keyboard shortcuts
+		/**
+		 * Enables keyboard shortcuts.
+		 *
+		 * @return undefined
+		 */
 		enable: function() {
 			this.enabled = true;
 		},
-		// disables keyboard shortcuts
+		/**
+		 * Disables keyboard shortcuts.
+		 *
+		 * @return undefined
+		 */
 		disable: function() {
 			this.enabled = false;
 		},
-		// returns true if shortcuts are enabled, false otherwise
+		/**
+		 * Returns true when shortcuts are enabled, false otherwise.
+		 *
+		 * @return {boolean}
+		 */
 		isEnabled: function() {
 			return this.enabled;
 		},
@@ -77,38 +143,78 @@ define([
 		//--------------------------------------------------
 		// Control shortcut functions
 
-		// toggles shortcuts on/off
+		/**
+		 * Toggles shortcuts on/off.
+		 *
+		 * @return undefined
+		 * @fires toggle
+		 */
 		toggleMode: function() {
 			this.enabled = !this.enabled;
 			this.trigger('toggle', this.enabled);
 		},
-		// rotates the key to one with more flats
+		/**
+		 * Flattens the key.
+		 *
+		 * @return undefined
+		 */
 		rotateKeyFlatward: function() {
 			this.keySignature.rotateFlatward();
 		},
-		// rotates the key to one with more sharps
+		/**
+		 * Sharpens the key.
+		 *
+		 * @return undefined
+		 */
 		rotateKeySharpward: function() {
 			this.keySignature.rotateSharpward();
 		},
-		// changes the key to "none"
+		/**
+		 * Sets the key to none.
+		 *
+		 * @return undefined
+		 */
 		setKeyToNone: function() {
 			this.keySignature.changeKey('jC_', true);	
 		},
+		/**
+		 * Depresses the sustain pedal.
+		 *
+		 * @return undefined
+		 */
 		depressSustain: function() {
 			this.eventBus.trigger('pedal', 'sustain', 'on');
 		},
+		/**
+		 * Releases the sustain pedal.
+		 *
+		 * @return undefined
+		 */
 		releaseSustain: function() {
 			this.eventBus.trigger('pedal', 'sustain', 'off');
 		},
+		/**
+		 * Retakes the sustain pedal.
+		 *
+		 * @return undefined
+		 */
 		retakeSustain: function() {
 			this.releaseSustain();
 			this.depressSustain();
 		},
-		// clears the notes 
+		/**
+		 * Clears all the notes.
+		 *
+		 * @return undefined
+		 */
 		clearNotes: function() {
 			this.eventBus.trigger('clearnotes');
 		},
-		// banks a chord
+		/**
+		 * Banks a chord.
+		 *
+		 * @return undefined
+		 */
 		bankChord: function() {
 			this.eventBus.trigger('banknotes');
 		},
@@ -116,15 +222,30 @@ define([
 		//--------------------------------------------------
 		// Note on/off functions
 
-		// activate a note
+		/**
+		 * Turns a note on.
+		 *
+		 * @param {number} noteOffset
+		 * @return undefined
+		 */
 		noteOn: function(noteOffset) {
 			this.eventBus.trigger('note', 'on', this.calculateNote(noteOffset));
 		},
-		// deactivate a note
+		/**
+		 * Truns a note off
+		 *
+		 * @param {number} noteOffset
+		 * @return undefined
+		 */
 		noteOff: function(noteOffset) {
 			this.eventBus.trigger('note', 'off', this.calculateNote(noteOffset));
 		},
-		// calculates the MIDI note given an offset 
+		/**
+		 * Calculates the MIDI note number given a relative offset.
+		 *
+		 * @param {number} noteOffset
+		 * @return {number} The midi note number.
+		 */
 		calculateNote: function(noteOffset) {
 			return SHORTS.noteAnchor + noteOffset;
 		},
@@ -132,7 +253,12 @@ define([
 		//--------------------------------------------------
 		// Event handler functions
 
-		// handles key down event
+		/**
+		 * Handles a keydown event.
+		 *
+		 * @param {object} e
+		 * @return undefined
+		 */
 		onKeyDown: function(e) {
 			// skip repeated keydowns (chrome repeats keydown events)
 			if(this.keyState[e.keyCode]) {
@@ -141,12 +267,24 @@ define([
 			this.keyState[e.keyCode] = true;
 			this.onKeyChange('down', e.keyCode, e);
 		},
-		// handles key up event
+		/**
+		 * Handles a keyup event.
+		 *
+		 * @param e
+		 * @return undefined
+		 */
 		onKeyUp: function(e) {
 			this.keyState[e.keyCode] = false;
 			this.onKeyChange('up', e.keyCode, e);
 		},
-		// handles key change event
+		/**
+		 * Handles a key change event.
+		 *
+		 * @param {string} state up|down
+		 * @param {number} keyCode
+		 * @param {object} e
+		 * @return undefined
+		 */
 		onKeyChange: function(state, keyCode, e) {
 			var mapped = this.mapKeyName(keyCode);
 			switch(mapped.type) {
@@ -164,9 +302,14 @@ define([
 					break;
 			}
 		},
-		// overrides key up/down events if they are supported
-		// and passes control to the provided callback, otherwise 
-		// lets the event propagate and do the default action as expected
+		/**
+		 * Overrides up/down key events if they are supported and passes control
+		 * to the provided callback, otherwise lets the event propagate as
+		 * normal and execute the default action.
+		 *
+		 * @param {function} callback
+		 * @return {boolean}
+		 */
 		overrideKey: function(callback) {
 			return function(e) {
 				var keyCode = e.keyCode;
@@ -187,26 +330,46 @@ define([
 				return callback.apply(this, arguments);
 			};
 		},
-		// returns true if the passed dom node is an input element, false
-		// otherwise.
+		/**
+		 * Returns true if the passed dom node is an input element, false
+		 * otherwise.
+		 *
+		 * @param {object} node
+		 * @return {boolean}
+		 */
 		isInputElement: function(node) {
 			return node.nodeName === 'INPUT';
 		},
-		// returns true if the event indicates that the key is an alt, ctrl, or
-		// meta key (i.e. "modifier" key), otherwise false.
+		/**
+		 * Returns true if the event indicates that the key is an alt, ctrl, or
+		 * meta key (i.e. "modifier" key), otherwise false.
+		 *
+		 * @param {object} keyEvent
+		 * @return {boolean}
+		 */
 		isModifierKey: function(keyEvent) {
 			return (keyEvent.altKey || keyEvent.ctrlKey || keyEvent.metaKey) ? true : false;
 		},
-		// returns true if the key code exists in the shortcuts table,
-		// false otherwise
+		/**
+		 * Returns true if the key code exists in the shortcuts table,
+		 * false otherwise
+		 *
+		 * @param {number} keyCode
+		 * @return {boolean}
+		 */
 		existsKeyCode: function(keyCode) {
 			if(SHORTS.keyCode.hasOwnProperty(keyCode)) {
 				return true;
 			}
 			return false;
 		},
-		// returns true if shortcuts mode is enabled, false otherwise
-		// Note: always returns true for the "toggleMode" key.
+		/**
+		 * Returns true if shortcuts mode is enabled, false otherwise
+		 * Note: always returns true for the "toggleMode" key.
+		 *
+		 * @param {number} keyCode
+		 * @return {boolean}
+		 */
 		modeEnabled: function(keyCode) {
 			var mapped = this.mapKeyName(keyCode);
 			if(mapped && mapped.value === 'toggleMode') {
@@ -214,8 +377,13 @@ define([
 			}
 			return this.enabled;
 		},
-		// returns true if the key code is mapped to an action in the
-		// keyboard shortcuts table.
+		/**
+		 * Returns true if the key code is mapped to an action in the
+		 * keyboard shortcuts table.
+		 *
+		 * @param {number} keyCode
+		 * @return {boolean}
+		 */
 		mappedKeyName: function(keyCode) {
 			var mapped = this.mapKeyName(keyCode);
 			return mapped ? true : false;
@@ -224,9 +392,14 @@ define([
 		//--------------------------------------------------
 		// Utility functions
 
-		// maps a key code to its associated entry in the shortcut table
-		// returns a hash with the type of entry, name of the key, and the
-		// value.
+		/**
+		 * Maps a key code to its associated entry in the shortcut table
+		 * returns a hash with the type of entry, name of the key, and the
+		 * value.
+		 *
+		 * @param {number} keyCode
+		 * @return {object} 
+		 */
 		mapKeyName: function(keyCode) {
 			var key_name = SHORTS.keyCode[keyCode];
 			var types = ['note', 'control'], len = types.length;

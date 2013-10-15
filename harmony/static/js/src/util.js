@@ -1,16 +1,39 @@
+/**
+ * @fileoverview Defines a namespace for common utility functions.
+ */
 define(['lodash'], function(_) {
+
+	/**
+	 * Defines a namespace for utility functions.
+	 *
+	 * @namespace
+	 */
 	var util = {
-		// Returns the static URL for the application with the path appended.
-		// If no static url is defined (global variable), it returns the
-		// default.
+
+		/**
+		 * Returns the application-specific static URL for a given path.
+		 *
+		 * Note, this function depends on the global window.appStaticUrl
+		 * property. The application must initialize this value, otherwise
+		 * it will return the path appended to the default static URL.
+		 *
+		 * @param {string} path
+		 * @return {string} The static URL.
+		 */
 		staticUrl: function(path) {
 			var defaultStaticUrl = '/static/';
 			var staticUrl = window.appStaticUrl || defaultStaticUrl;
 			return staticUrl + path;
 		},
-
-		// Returns the symbol associated with the text (if there is one),
-		// otherwise it returns the text unchanged. This 
+		/**
+		 * Converts or maps symbols in a text string to unicode characters.
+		 *
+		 * This method is primarily used in rendering musical analysis.
+		 *
+		 * @param {string} text
+		 * @return {string} Text with the symbols replaced with their unicode
+		 * values.
+		 */
 		convertSymbols: function(text) {
 			var rules = [
 				[/&dim;/g,"\u00b0"], //	diminished and half-diminished signs
@@ -51,12 +74,55 @@ define(['lodash'], function(_) {
 
 			return text;
 		},
-
-		// Takes a triplet of hue, saturation, and color [H,S,L] and returns a
-		// color string suitable for CSS or Canvas.
+		/**
+		 * Takes an HSL triplet (hue, saturation, color) and returns the
+		 * equivalent color string suitable for CSS/Canvas.
+		 *
+		 * @param {Array} color The [H,S,L] triplet.
+		 * @return {string}
+		 */
 		toHSLString: function(color) {
 			return 'hsl('+color[0]+','+color[1]+'%,'+color[2]+'%)';
+		},
+		/**
+		 * Relays event(s) from a source to a destination object.
+		 *
+		 * @param {array} events A list of event names to relay.
+		 * @param {object} src A source of the events to relay.
+		 * @param {object} dest A dstination object to fire the events.
+		 * @return {object} A mapping of event names to callbacks used to relay events.
+		 */
+		relayEvents: function(events, src, dest) {
+			var __slice = Array.prototype.slice;
+
+			var relay_map = _.reduce(events, function(map, eventName) {
+				map[eventName] = function() {
+					var args = __slice.call(arguments, 0);
+					args.unshift(eventName);
+					dest.trigger.apply(dest, args);
+				};
+				return map;
+			}, {});
+
+			_.each(relay_map, function(callback, eventName) {
+				src.bind(eventName, callback);
+			});
+
+			return relay_map;
+		},
+		/**
+		 * Unrelays event(s) from a source object.
+		 *
+		 * @param {object} relayMap A mapping of events to callbacks.
+		 * @param {object} src A source of the events to relay.
+		 * @return undefined;
+		 */
+		unrelayEvents: function(relayMap, src) {
+			_.each(relayMap, function(callback, eventName) {
+				src.unbind(eventName, callback);
+			});
 		}
 	};
+
 	return util;
 });

@@ -13,6 +13,9 @@ define({
 	// single character. 
 	pitchClasses: ["0","1","2","3","4","5","6","7","8","9","y","z"],
 
+	// Defines the order of sharps.
+	orderOfSharps: ["F","C","G","D","A","E","B"],
+
 	// Maps each major/minor key to a default spelling of the twelve pitches
 	// along with related key information. The keys are identified by unique 
 	// three character strings with the following format:
