@@ -27,7 +27,7 @@ Every method should have a free-form description of the purpose of the method an
 -	**@throws** {type} Will throw exception when...
 -	**@fires** eventName
 
-The <type> should be one of the basic javascript types. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return undefined**.
+The *type* should be one of the basic javascript types. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return undefined**.
 
 #### Classes
 
