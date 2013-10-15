@@ -1,4 +1,6 @@
-/* global define: false */
+/**
+ * @fileoverview Piano keyboard UI.
+ */
 define([
 	'jquery', 
 	'lodash', 
@@ -19,16 +21,17 @@ define([
 	"use strict";
 
 	/**
-	 * Piano Keyboard class.
+	 * Creates an instance of a PianoKeyboard.
+	 *
+	 * This object is reponsible for displaying the on-screen keyboard UI that
+	 * users can interact with. It is composed of a number of PianoKey objects. 
+	 *
+	 * The PianoKeyboard coordinates the flow of NOTE ON/OFF messages and
+	 * translates them to/from individual keys.
 	 *
 	 * @constructor
-	 * @this {PianoKeyboard}
+	 * @mixes MicroEvent
 	 * @param {integer} numberOfKeys The total number of keys on the keyboard.
-	 * 
-	 * Example:
-	 *   var keyboard = new PianoKeyboard(88);
-	 *   keyboard.render();
-	 *    $('#piano').append(keyboard.el);
 	 */
 	var PianoKeyboard = function(numberOfKeys) {
 		this.init(numberOfKeys);
@@ -37,23 +40,34 @@ define([
 	_.extend(PianoKeyboard.prototype, {
 		/**
 		 * Global event bus.
+		 * @type {object}
 		 */
 		eventBus: eventBus,
-
 		/**
-		 * Default size of the keyboard and keys.
+		 * Defines the default width of the keyboard.
+		 * @type {number}
 		 */
 		defaultWidth: 870,
+		/**
+		 * Defines the default height of the keyboard.
+		 * @type {number}
+		 */
 		defaultHeight: 120,
+		/**
+		 * Defines the default width of individual keys. 
+		 * @type {number}
+		 */
 		defaultKeyWidth: 30,
-
 		/**
 		 * Defines the number of keys on the keyboard.
+		 * @type {number}
 		 */
 		numberOfKeys: 49,
-
 		/**
 		 * Initializes the keyboard.
+		 *
+		 * @param {number} numberOfKeys
+		 * @return undefined
 		 */
 		init: function(numberOfKeys) {
 			if(!_.isUndefined(numberOfKeys) && _.isNumber(parseInt(numberOfKeys,10))) {
@@ -78,9 +92,10 @@ define([
 
 			this.initListeners();
 		},
-
 		/**
 		 * Initialize listeners.
+		 *
+		 * @return undefined
 		 */
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
@@ -88,9 +103,10 @@ define([
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.bind('key', this.triggerNoteChange);
 		},
-
 		/**
-		 * Remove listeners
+		 * Removes all listeners.
+		 *
+		 * @return undefined
 		 */
 		removeListeners: function() {
 			this.eventBus.unbind('note', this.onNoteChange);
@@ -98,12 +114,13 @@ define([
 			this.eventBus.unbind('pedal', this.onPedalChange);
 			this.unbind('key', this.triggerNoteChange);
 		},
-
 		/**
-		 * Constrain width so that the keyboard fits on screen.
+		 * Constrains the width so that the keyboard fits on screen.
 		 *
 		 * Note: in particular, this should force the 88-key keyboard to 
 		 * shrink to fit on screen.
+		 *
+		 * @return undefined
 		 */
 		constrainSize: function() {
 			this.height = this.defaultHeight;
@@ -116,18 +133,22 @@ define([
 				this.keyWidth = (this.defaultWidth / this.getNumWhiteKeys());
 			}
 		},
-
 		/**
-		 * Triggers a note change event to the event bus.
+		 * Fires a note change event on the event bus.
+		 *
+		 * @return undefined
 		 */
 		triggerNoteChange: function() {
 			var args = Array.prototype.slice.call(arguments);
 			args.unshift('note');
 			this.eventBus.trigger.apply(this.eventBus, args);
 		},
-
 		/**
-		 * Listen for note change events and updates the associated piano keys.
+		 * Listens for note change events from the event bus.
+		 * Performs the associated action (press/release) on the key with 
+		 * that note number.
+		 *
+		 * @return undefined
 		 */
 		onNoteChange: function(noteState, noteNumber, noteVelocity) {
 			var key = this.getKeyByNumber(noteNumber);
@@ -135,16 +156,18 @@ define([
 				key[noteState==='on'?'press':'release']();
 			}
 		},
-
 		/**
 		 * Resets all keys to their default state when the notes are cleared.
+		 *
+		 * @return undefined
 		 */
 		onClearNotes: function() {
 			this.clearKeys();
 		},
-
 		/*
 		 * Handles pedal changes.
+		 *
+		 * @return undefined
 		 */
 		onPedalChange: function(pedal, state) {
 			if(pedal === 'sustain') { 
@@ -154,58 +177,60 @@ define([
 				});
 			}
 		},
-
 		/**
-		 * Returns a sequence of piano keys for the current keyboard size.
+		 * Generates a *new* sequence of piano keys for the current keyboard size.
+		 *
+		 * @return {array}
 		 */
 		generateKeys: function() {
 			return PianoKeyGenerator.generateKeys(this.numberOfKeys, this);
 		},
-
 		/**
-		 * Clears each key.
+		 * Clears each piano key.
+		 *
+		 * @return undefined
 		 */
 		clearKeys: function() {
 			_.invoke(this.keys, 'clear');
 		},
-
 		/**
 		 * Returns the total number of keys.
+		 *
+		 * @return {number}
 		 */
 		getNumKeys: function() {
 			return this.numberOfKeys;
 		},
-
 		/**
 		 * Returns a key object given a note number.
+		 *
+		 * @return {PianoKey}
 		 */
 		getKeyByNumber: function(noteNumber) {
 			return this.keysByNumber[noteNumber];
 		},
-
 		/**
 		 * Maps note numbers to keys.
+		 *
+		 * @return {object}
 		 */
 		mapKeysByNumber: function(keys) {
-			var noteNumbers = _.map(keys, function(key) {
-				return key.noteNumber;
-			});
-			return _.zipObject(noteNumbers, keys);
+			return _.zipObject(_.pluck(keys, 'noteNumber'), keys);
 		},
-
 		/**
 		 * Returns the total number of white keys on the keyboard.
 		 *
-		 * @return {integer}
+		 * @return {number}
 		 */
 		getNumWhiteKeys: function() {
-			return _.filter(this.keys, function(pianoKey) {
-				return pianoKey.isWhite;
+			return _.filter(this.keys, function(key) {
+				return key.isWhite;
 			}).length;
 		},
-
 		/**
 		 * Renders the keyboard.
+		 *
+		 * @return this
 		 */
 		render: function() {
 			var paper = this.paper;
@@ -229,15 +254,14 @@ define([
 
 			return this;
 		},
-
 		/**
 		 * Destroys the keyboard.
+		 * 
+		 * @return undefined
 		 */
 		destroy: function() {
 			this.removeListeners();			
-			_.each(this.keys, function(key) {
-				key.destroy();
-			});
+			_.invoke(this.keys, 'destroy');
 			this.paper.clear();
 			this.keyboardEl.remove();
 			this.el.remove();
