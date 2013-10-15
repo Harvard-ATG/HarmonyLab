@@ -20,15 +20,14 @@ jsdoc -c docs/jsdoc/conf.json
 
 #### Methods
 
-Every object method should at least use the following tags to document the function name, parameters, and return value along with a general description of the method and its purpose.
+Every method should have a free-form description of the purpose of the method and tags to document the parameters, return values, exceptions thrown, and events fired (if any): 
 
--	**@method**
 -	**@param** {<type>} 
 -	**@return** {<type>}
+-	**@throws** {<type>} Will throw exception when...
+-	**@fires** eventName
 
-The type should be one of: {string|number|boolean|function|object|array|undefined}. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return {undefined}**.
-
-If the method throws an exception it must include the **@throws** tag
+The <type> should be one of the basic javascript types. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return undefined**.
 
 #### Classes
 
