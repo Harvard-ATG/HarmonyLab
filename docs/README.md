@@ -22,9 +22,9 @@ jsdoc -c docs/jsdoc/conf.json
 
 Every method should have a free-form description of the purpose of the method and tags to document the parameters, return values, exceptions thrown, and events fired (if any): 
 
--	**@param** {<type>} 
--	**@return** {<type>}
--	**@throws** {<type>} Will throw exception when...
+-	**@param** {type} 
+-	**@return** {type}
+-	**@throws** {type} Will throw exception when...
 -	**@fires** eventName
 
 The <type> should be one of the basic javascript types. If a method does not return an explicit value (i.e. the method is called for its side-effects and not its return value), then it should be documented as **@return undefined**.
