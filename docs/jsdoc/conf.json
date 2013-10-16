@@ -1,0 +1,22 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+		"include": ["harmony/static/js/src"],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+	"opts": {
+		"encoding": "utf8",
+		"destination": "docs/jsdoc/out/",
+		"recurse": true,
+		"private": true,
+		"lenient": true
+	}
+}

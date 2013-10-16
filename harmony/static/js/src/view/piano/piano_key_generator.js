@@ -1,31 +1,36 @@
-/* global define: false */
-define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
+define([
+	'lodash', 
+	'app/view/piano/piano_key'
+], function(
+	_, 
+	PianoKey
+) {
 	"use strict";
 
 	/**
-	 * The PianoKeyGenerator object is responsible for knowing how to generate a
-	 * sequence of keys for different piano keyboard sizes. It does not store
-	 * any state on its own.
+	 * Defines an interface for generating a sequence of piano keys. 
+	 *
+	 * @namespace
 	 */
 	var PianoKeyGenerator = {
-
 		/**
 		 * White keys are represented by one of the 7 main notes in the western musical alphabet. 
+		 * @type {string}
 		 */
 		noteValues: 'ABCDEFG',
-
 		/**
 		 * Black keys represent half steps between the main notes (sharp or flat).
+		 * @type {string}
 		 */
 		blackNote: '-',
-
 		/**
 		 * Black keys are arranged in groups of 2's and 3's after specific notes.
+		 * @type {string}
 		 */
 		blackNotesAfter: 'ACDFG',
-
 		/**
 		 * Maps valid keyboard sizes to configuration parameters. 
+		 * @type {object}
 		 */
 		keyboardSizes: {
 			25: { 'firstNote': 'C', 'firstNoteNumber': 48 }, 
@@ -34,12 +39,11 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			61: { 'firstNote': 'C', 'firstNoteNumber': 36 }, 
 			88: { 'firstNote': 'A', 'firstNoteNumber': 21 }
 		},
-
 		/**
 		 * Returns a string representing the first note on the keyboard. 
 		 *
-		 * @param {integer} size The keyboard size.
-		 * @return {string} 
+		 * @param {number} size The keyboard size.
+		 * @return {number} 
 		 */
 		firstNote: function(size) {
 			if(!this.keyboardSizes.hasOwnProperty(size)) {
@@ -47,12 +51,11 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			}
 			return this.keyboardSizes[size].firstNote;
 		},
-
 		/**
 		 * Returns the first note number.
 		 *
-		 * @param {integer} size The keyboard size.
-		 * @return {integer}
+		 * @param {number} size The keyboard size.
+		 * @return {number}
 		 */
 		firstNoteNumber: function(size) {
 			if(!this.keyboardSizes.hasOwnProperty(size)) {
@@ -60,7 +63,6 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			}
 			return this.keyboardSizes[size].firstNoteNumber;
 		},
-
 		/**
 		 * Returns the next white key note in the musical alphabet. 
 		 *
@@ -74,7 +76,6 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			}
 			return this.noteValues.charAt((index + 1) % this.noteValues.length);
 		},
-
 		/**
 		 * Returns true if the note value represents a white key, or false if
 		 * it's a black key.
@@ -85,22 +86,20 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 		isWhiteNote: function(noteValue) { 
 			return this.noteValues.indexOf(noteValue) !== -1;
 		},
-
 		/**
 		 * Returns the octave for a note number.
 		 *
-		 * @param {integer} noteNumber The midi note number.
-		 * @return {integer}
+		 * @param {number} noteNumber The midi note number.
+		 * @return {number}
 		 */
 		octaveOf: function(noteNumber) {
 			return Math.floor(noteNumber / 12) - 1;
 		},
-
 		/**
 		 * Returns an array of strings representing white and black notes. 
 		 *
 		 * @param {string} noteValue The current note value.
-		 * @param {integer} size The keyboard size.
+		 * @param {number} size The keyboard size.
 		 * @return {array}
 		 */
 		noteSequence: function(noteValue, size) {
@@ -112,21 +111,19 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			} 
 			return [noteValue].concat(this.noteSequence(nextNote, size - 1));
 		},
-
 		/**
 		 * Returns an array of piano key string values.
 		 *
-		 * @param {integer} size The keyboard size.
+		 * @param {number} size The keyboard size.
 		 * @return {array}
 		 */
 		generateSequence: function(size) {
 			return this.noteSequence(this.firstNote(size), size);
 		},
-
 		/**
 		 * Returns an array of key objects. 
 		 *
-		 * @param {integer} size The keyboard size.
+		 * @param {number} size The keyboard size.
 		 * @param {object} keyboard The keyboard.
 		 * @return {array}
 		 */
@@ -135,11 +132,10 @@ define(['lodash', 'app/view/piano/piano_key'], function(_, PianoKey) {
 			var noteKeyConverter = _.bind(this.noteKeyConverter(size, keyboard), this);
 			return _.map(noteSequence, noteKeyConverter);
 		},
-
 		/**
 		 * Returns a function for converting a note value to a key object.
 		 *
-		 * @param {integer} size The keyboard size.
+		 * @param {number} size The keyboard size.
 		 * @return {function}
 		 */
 		noteKeyConverter: function(size, keyboard) {

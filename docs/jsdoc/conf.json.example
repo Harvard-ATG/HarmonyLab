@@ -1,0 +1,37 @@
+// You must remove the comments before adding these options to your .json file
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": [],
+        "exclude": [],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+        "template": "default",            // same as -t default
+        "encoding": "utf8",               // same as -e utf8
+        "destination": "./out/",          // same as -d ./out/
+        "recurse": true,                  // same as -r
+        "tutorials": "path/to/tutorials", // same as -u path/to/tutorials, default "" (no tutorials)
+        "query": "value",                 // same as -q value, default "" (no query)
+        "private": true,                  // same as -p
+        "lenient": true,                  // same as -l
+        // these can also be included, though you probably wouldn't bother
+        // putting these in conf.json rather than the command line as they cause
+        // JSDoc not to produce documentation. 
+        "version": true,                  // same as --version or -v
+        "explain": true,                  // same as -X
+        "test": true,                     // same as -T
+        "help": true,                     // same as --help or -h
+        "verbose": true,                  // same as --verbose, only relevant to tests.
+        "match": "value",                 // same as --match value, only relevant to tests.
+        "nocolor": true                   // same as --nocolor, only relevant to tests
+    }
+}

@@ -1,20 +1,56 @@
-/* global define: false */
-
+/**
+ * @fileoverview Piano key UI.
+ */
 define(['lodash'], function(_) {
 	"use strict";
 
-	// constants for piano key states
+	/**
+	 * Key up state. 
+	 * @type {string}
+	 * @const
+	 */
 	var STATE_KEYUP = 'off';
+	/**
+	 * Key down state.
+	 * @type {string}
+	 * @const
+	 */
 	var STATE_KEYDN = 'on';
-
-	// constants for sustain flag
+	/**
+	 * Sustain on state. 
+	 * @type {string}
+	 * @const
+	 */
 	var SUSTAIN_ON = 'on';
+	/**
+	 * Sustain off state.
+	 * @type {string}
+	 * @const
+	 */
 	var SUSTAIN_OFF = 'off';
-
-	// constants for piano key colors
+	/**
+	 * Black key up state.
+	 * @type {string}
+	 * @const
+	 */
 	var COLOR_BLACK_KEYUP = '90-hsl(0,0,25)-hsl(0,0,0)';
+	/**
+	 * White key up state.
+	 * @type {string}
+	 * @const
+	 */
 	var COLOR_WHITE_KEYUP = '#fffff0';
+	/**
+	 * Key down state.
+	 * @type {string}
+	 * @const
+	 */
 	var COLOR_KEYDN = 'hsl(0,0,60)';
+	/**
+	 * Key sustain state.
+	 * @type {string}
+	 * @const
+	 */
 	var COLOR_KEYSUSTAIN = '90-hsla(0, 30, 40)-hsl(0,45,20)';
 
 	/**
@@ -23,31 +59,31 @@ define(['lodash'], function(_) {
 	 * Encapsulates common functionality for displaying and interacting with piano
 	 * keys on the onscreen keyboard. 
 	 *
-	 * These properties and methods should be copied into the white/black piano key
-	 * classes.
+	 * @mixin
 	 */
 	var PianoKeyMixin = {
 		/**
 		 * Current state of the piano key (up or down).
 		 */
 		state: STATE_KEYUP,
-
 		/**
 		 * Sustain flag used to change the coloring of the key
 		 * when it is released to indicate that it is being sustained.
 		 */
 		sustain: SUSTAIN_OFF,
-
 		/**
 		 * Changes the piano key state to "pressed" (down).
+		 *
+		 * @return undefined
 		 */
 		press: function() {
 			this.state = STATE_KEYDN;
 			this.updateColor();
 		},
-
 		/**
 		 * Changes the piano key state to "released" (up).
+		 *
+		 * @return undefined
 		 */
 		release: function() {
 			switch(this.sustain) {
@@ -64,16 +100,16 @@ define(['lodash'], function(_) {
 			this.state = STATE_KEYUP;
 			this.updateColor();
 		},
-
 		/**
 		 * Clears the key.
+		 *
+		 * @return undefined
 		 */
 		clear: function() {
 			this.revertColor(STATE_KEYUP);
 			this.state = STATE_KEYUP;
 			this.updateColor();
 		},
-
 		/**
 		 * Sets the sustain on the key so that when the key is released
 		 * it will know to sustain it. 
@@ -81,6 +117,9 @@ define(['lodash'], function(_) {
 		 * Note that when the sustain is turned off, this method automatically
 		 * calls the release() method to revert it back to the normal release
 		 * state.
+		 *
+		 * @param {boolean} state When true, enable sustain, otherwise disable.
+		 * @return undefined
 		 */
 		setSustain: function(state) {
 			if(state) {
@@ -95,7 +134,6 @@ define(['lodash'], function(_) {
 				}
 			}
 		},
-
 		/**
 		 * Returns true if the key is in the down state.
 		 *
@@ -104,7 +142,6 @@ define(['lodash'], function(_) {
 		isPressed: function() {
 			return this.state === STATE_KEYDN;
 		},
-
 		/**
 		 * Returns true if the key is in the up state.
 		 *
@@ -113,11 +150,10 @@ define(['lodash'], function(_) {
 		isReleased: function() {
 			return this.state === STATE_KEYUP;
 		},
-
 		/**
 		 * Initializes the piano key.
 		 *
-		 * @return {this}
+		 * @return undefined
 		 */
 		init: function(config) {
 			if(!config.hasOwnProperty('noteNumber')) {
@@ -130,7 +166,6 @@ define(['lodash'], function(_) {
 
 			_.bindAll(this, ['onPress', 'onRelease']);
 		},
-
 		/**
 		 * Renders the piano key on the screen.
 		 * 
@@ -138,7 +173,7 @@ define(['lodash'], function(_) {
 		 * @param {integer} whiteKeyIndex the index of the white key immediately preceding this one.
 		 * @param {number} keyboardWidth the width of the keyboard
 		 * @param {number} keyboardHeight the height of the keyboard
-		 * @return {this}
+		 * @return this
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			this.el = paper.rect(
@@ -153,9 +188,10 @@ define(['lodash'], function(_) {
 			this.rendered = true;
 			return this;
 		},
-
 		/**
 		 * Event handler for key press.
+		 *
+		 * @return {boolean}
 		 */
 		onPress: function(e) {
 			if(this.isReleased()) {
@@ -164,9 +200,10 @@ define(['lodash'], function(_) {
 			}
 			return false;
 		},
-
 		/**
 		 * Event handler for key release.
+		 *
+		 * @return {boolean}
 		 */
 		onRelease: function(e) {
 			if(this.isPressed()) { 
@@ -175,30 +212,37 @@ define(['lodash'], function(_) {
 			}
 			return false;
 		},
-
 		/**
 		 * Update the element color.
+		 *
+		 * @return undefined
 		 */
 		updateColor: function() {
 			this.el.attr('fill', this.keyColorMap[this.state]);
 		},
-
 		/**
 		 * Reverts the color for a particular key state to the default.
+		 *
+		 * @param {string} keyState
+		 * @return undefined
 		 */
 		revertColor: function(keyState) {
 			this.keyColorMap[keyState] = this.defaultKeyColorMap[keyState];
 		},
-
 		/**
 		 * Sets the color for a particular key state.
+		 *
+		 * @param {string} keyState
+		 * @param {string} color 
+		 * @return undefined
 		 */
 		setColor: function(keyState, color) {
 			this.keyColorMap[keyState] = color;
 		},
-		
 		/**
 		 * Destroys the key.
+		 *
+		 * @return undefined
 		 */
 		destroy: function() {
 			if(this.rendered) {
@@ -210,10 +254,9 @@ define(['lodash'], function(_) {
 	};
 
 	/**
-	 * White piano key class.
+	 * Creates an instance of a white piano key. 
 	 *
 	 * @constructor
-	 * @this {WhitePianoKey}
 	 * @param {Object} config
 	 */
 	var WhitePianoKey = function() {
@@ -222,15 +265,15 @@ define(['lodash'], function(_) {
 
 	_.extend(WhitePianoKey.prototype, PianoKeyMixin, {
 		/**
-		 * Property to indicate if it's a white or black key.
+		 * Key color flag, when true means it's a white key.
+		 * @type {boolean}
 		 */
 		isWhite: true,
-
 		/**
-		 * Property for changing the key color when it's pressed or released.
+		 * Maps states to colors. 
+		 * @type {object}
 		 */
 		keyColorMap: {},
-
 		/**
 		 * Returns the width of the key.
 		 *
@@ -241,7 +284,6 @@ define(['lodash'], function(_) {
 		calculateWidth: function() {
 			return this.keyboard.keyWidth; 
 		},
-
 		/**
 		 * Returns the height of the key.
 		 *
@@ -251,7 +293,6 @@ define(['lodash'], function(_) {
 		calculateHeight: function(keyboardHeight) {
 			return keyboardHeight;
 		},
-
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
@@ -261,7 +302,6 @@ define(['lodash'], function(_) {
 		calculateOffsetX: function(whiteKeyIndex) {
 			return whiteKeyIndex * this.calculateWidth();
 		},
-
 		/**
 		 * Renders the key. 
 		 *
@@ -269,7 +309,7 @@ define(['lodash'], function(_) {
 		 * @param {integer} whiteKeyIndex The index of the preceding white key
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @param {number} keyboardHeight The height of the keyboard.
-		 * @return {this}
+		 * @return this
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);
@@ -285,10 +325,9 @@ define(['lodash'], function(_) {
 	WhitePianoKey.prototype.defaultKeyColorMap = _.clone(WhitePianoKey.prototype.keyColorMap);
 
 	/**
-	 * Black piano key class.
+	 * Creates an instance of a black key.
 	 *
 	 * @constructor
-	 * @this {BlackPianoKey}
 	 * @param {Object} config
 	 */
 	var BlackPianoKey = function() {
@@ -297,15 +336,15 @@ define(['lodash'], function(_) {
 
 	_.extend(BlackPianoKey.prototype, PianoKeyMixin, {
 		/**
-		 * Property to indicate if it's a white or black key.
+		 * Flag, when true indicates the key is white, otherwise black.
+		 * @type {object}
 		 */
 		isWhite: false,
-
 		/**
-		 * Property for changing the key color when it's pressed or released.
+		 * Maps states to colors.
+		 * @type {object}
 		 */
 		keyColorMap: {},
-
 		/**
 		 * Returns the width of the key.
 		 *
@@ -316,7 +355,6 @@ define(['lodash'], function(_) {
 		calculateWidth: function() {
 			return this.keyboard.keyWidth / 2;
 		},
-
 		/**
 		 * Returns the height of the key.
 		 *
@@ -326,7 +364,6 @@ define(['lodash'], function(_) {
 		calculateHeight: function(keyboardHeight) {
 			return 0.75 * keyboardHeight;
 		},
-
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
@@ -338,7 +375,6 @@ define(['lodash'], function(_) {
 			var width = this.calculateWidth();
 			return offset - (width / 2);
 		},
-
 		/**
 		 * Renders the key. 
 		 *
@@ -346,7 +382,7 @@ define(['lodash'], function(_) {
 		 * @param {integer} whiteKeyIndex The index of the preceding white key
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @param {number} keyboardHeight The height of the keyboard.
-		 * @return {this}
+		 * @return this
 		 */
 		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);

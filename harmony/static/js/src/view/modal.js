@@ -2,7 +2,12 @@
 define(['lodash', 'jquery'], function(_, $) {
 	"use strict";
 
-	var tpl = _.template([
+	/**
+	 * Defines the html template. 
+	 * @type {function}
+	 * @const
+	 */
+	var MODAL_TPL = _.template([
 		'<div>',
 			'<a href="#" class="modal-close-btn js-modal-close-btn">X</a>',
 			'<h2 class="modal-title"><%= title %></h2>',
@@ -10,18 +15,37 @@ define(['lodash', 'jquery'], function(_, $) {
 		'</div>'
 	].join(''));
 
-	// Simple modal dialog to display a message to the user.
-	// If something more complex is needed, get a plugin for jQuery
-	// or another off-the-shelf component.
-	//
-	// This only permits one modal to be active at a time.
+	/**
+	 * Creates an instance of a modal dialog.
+	 *
+	 * Only one modal dialog may be active at a time.
+	 *
+	 * This is *not* intended to be a feature-complete modal dialog, just a
+	 * simple dialog to display a message to the user. If something more complex
+	 * is needed, get a jQuery plugin or other ready-made component.
+	 *
+	 * @constructor
+	 * @param {object} config
+	 */
 	var Modal = function(config) {
 		this.init(config);	
 	};
 
+	/**
+	 * Adds a modal dialog to the list.
+	 *
+	 * @param {Modal} modal
+	 * @return undefined
+	 */
 	Modal.add = function(modal) {
 		this.modals.push(modal);
 	};
+
+	/**
+	 * Destroys all active modals.
+	 *
+	 * @return undefined
+	 */
 	Modal.destroyAll = function() {
 		_.each(this.modals, function(modal) {
 			modal.destroy();
@@ -30,6 +54,14 @@ define(['lodash', 'jquery'], function(_, $) {
 	};
 
 	_.extend(Modal.prototype, {
+		/**
+		 * Initializes the modal dialog.
+		 *
+		 * @param {object} config
+		 * @param {string} config.title
+		 * @param {string} config.msg
+		 * @return undefinefd
+		 */
 		init: function(config) {
 			this.title = config.title;
 			this.msg = config.msg;
@@ -37,33 +69,69 @@ define(['lodash', 'jquery'], function(_, $) {
 			this.initListeners();
 			Modal.add(this);
 		},
+		/**
+		 * Renders the dialog.
+		 *
+		 * @return this
+		 */
 		render: function() {
-			var html = tpl({ title: this.title, msg: this.msg });
+			var html = MODAL_TPL({ title: this.title, msg: this.msg });
 			this.el.html(html);
 			return this;
 		},
+		/**
+		 * Initializes listeners.
+		 *
+		 * @return this
+		 */
 		initListeners: function() {
 			this.el.on('click', '.js-modal-close-btn', null, _.bind(this.onClose,this));
 			return this;
 		},
+		/**
+		 * Opens the dialog.
+		 *
+		 * @return this
+		 */
 		open: function() {
 			this.render().appendToDOM();
 			this.el.removeClass('close').addClass('open');
 			return this;
 		},
+		/**
+		 * Handles the close event.
+		 *
+		 * @param evt
+		 * @return undefined
+		 */
 		onClose: function(evt) {
 			evt.stopPropagation();
 			evt.preventDefault();
 			this.close();
 		},
+		/**
+		 * Closes the dialog.
+		 *
+		 * @return this
+		 */
 		close: function() {
 			this.el.removeClass('open').addClass('close');
 			return this;
 		},
+		/**
+		 * Destroys the dialog.
+		 *
+		 * @return this
+		 */
 		destroy: function() {
 			this.el.remove();
 			return this;
 		},
+		/**
+		 * Appends the modal dialog to the DOM.
+		 *
+		 * @return this
+		 */
 		appendToDOM: function() {
 			if(!this.appendedToDom) {
 				$('body').append(this.el);
@@ -73,7 +141,14 @@ define(['lodash', 'jquery'], function(_, $) {
 		}
 	});
 
-	// shortcut method to display simple modal dialog
+	/**
+	 * Shortcut method to display simple modal dialog
+	 *
+	 * @static
+	 * @param {string} title
+	 * @param {string} msg
+	 * @return {Modal} The modal dialog object.
+	 */
 	Modal.msg  = function(title, msg) {
 		Modal.destroyAll();
 		return new Modal({ title: title, msg: msg }).open();

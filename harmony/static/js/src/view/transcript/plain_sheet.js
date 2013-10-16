@@ -22,29 +22,64 @@ define([
 ) {
 	"use strict";
 
+	/**
+	 * Defines the size of the chord bank (how many chords to display on
+	 * screen).
+	 * @type {number}
+	 */
 	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
+	/**
+	 * This is a map of analysis modes to booleans indicating whether the mode
+	 * is enabled or disabled by default.
+	 * @type {object}
+	 */
 	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
 
-	// Plain Sheet Music Notation.
-	// 
-	// This object knows how to display plain sheet music notation.
-	//
+	/**
+	 * Creates an instance of PlainSheet.
+	 *
+	 * This object is responsible for knowing how to display plain sheet music
+	 * notation with the notes that have sounded (saved in the chord bank) and
+	 * are currently sounding via MIDI input or some other means. So this object
+	 * should know how to display the grand staff and configure it for analysis,
+	 * highlights, etc.
+	 *
+	 * @constructor
+	 * @param {object} config
+	 */
 	var PlainSheet = function(config) {
 		this.init(config);
 	};
 
 	_.extend(PlainSheet.prototype, {
-		// global event bus 
+		/**
+		 * Global event bus for distributing app-wide events
+		 * @type {object}
+		 */
 		eventBus: eventBus, 
+		/**
+		 * Configuration for highlighting notes on the sheet music.
+		 * @type {object}
+		 */
 		highlightsConfig: {
 			enabled: false,
 			mode: {}
 		},
+		/**
+		 * Configuration for analyzing notes on the sheet music.
+		 * @type {object}
+		 */
 		analyzeConfig: {
 			enabled: false,
 			mode: ANALYZE_DEFAULT_MODE,
 			tempo: false,
 		},
+		/**
+		 * Initializes the sheet.
+		 *
+		 * @param {object} config
+		 * @return undefined
+		 */
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
@@ -52,6 +87,14 @@ define([
 			this.initStaves();
 			this.initListeners();
 		},
+		/**
+		 * Initializes the configuration and checks for missing/required
+		 * parameters.
+		 *
+		 * @return undefined
+		 * @throws {Error} Will throw an error if it is missing any required
+		 * params.
+		 */
 		initConfig: function() {
 			var required = ['transcript', 'chords', 'keySignature'];
 			_.each(required, function(propName) {
@@ -62,6 +105,11 @@ define([
 				}
 			}, this);
 		},
+		/**
+		 * Initializes the canvas renderer and dom element.
+		 *
+		 * @return
+		 */
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
@@ -73,9 +121,19 @@ define([
 
 			this.transcript.el.append(this.el);
 		},
+		/**
+		 * Initializes the staves that together will form the grand staff.
+		 *
+		 * @return undefined
+		 */
 		initStaves: function() {
 			this.updateStaves();
 		},
+		/**
+		 * Initializes event listeners.
+		 *
+		 * @return undefined
+		 */
 		initListeners: function() {
 			_.bindAll(this, [
 				'render',
@@ -93,29 +151,61 @@ define([
 			this.eventBus.bind("notation:analyze", this.onAnalyzeChange);
 			this.eventBus.bind("metronome", this.onMetronomeChange);
 		},
+		/**
+		 * Clears the sheet.
+		 *
+		 * @return undefined
+		 */
 		clear: function() {
 			this.vexRenderer.getContext().clear();
 		},
+		/**
+		 * Renders the grand staff and everything on it.
+		 *
+		 * @return this
+		 */
 		render: function() { 
 			this.clear();
 			this.renderStaves();
 			return this;
 		},
+		/**
+		 * Renders each individual stave.
+		 *
+		 * @return this
+		 */
 		renderStaves: function() {
 			var i, len, stave, _staves = this.staves;
 			for(i = 0, len = _staves.length; i < len; i++) {
 				stave = _staves[i];
 				stave.render();
 			}
+			return this;
 		},
+		/**
+		 * Resets the staves.
+		 *
+		 * @return this
+		 */
 		resetStaves: function() {
 			this.staves = [];
 			return this;
 		},
+		/**
+		 * Adds staves.
+		 *
+		 * @param {array} staves
+		 * @return this
+		 */
 		addStaves: function(staves) {
 			this.staves = this.staves.concat(staves);
 			return this;
 		},
+		/**
+		 * Updates and configures the staves.
+		 *
+		 * @return this
+		 */
 		updateStaves: function() {
 			var chord, treble, bass;
 			var limit = CHORD_BANK_SIZE;
@@ -148,6 +238,13 @@ define([
 
 			return this;
 		},
+		/**
+		 * Creates a stave to display the clef, key signature, etc.
+		 *
+		 * @param {string} clef
+		 * @param {object} position
+		 * @return {Stave}
+		 */
 		createDisplayStave: function(clef, position) {
 			var stave = new Stave(clef, position);
 
@@ -163,6 +260,14 @@ define([
 
 			return stave;
 		},
+		/**
+		 * Creates a stave to display notes.
+		 *
+		 * @param {string} clef
+		 * @param {object} position
+		 * @param {Chord} chord
+		 * @return {Stave}
+		 */
 		createNoteStave: function(clef, position, chord) {
 			var stave = new Stave(clef, position);
 
@@ -185,30 +290,29 @@ define([
 
 			return stave;
 		},
+		/**
+		 * Returns the width of the sheet.
+		 *
+		 * @return {number}
+		 */
 		getWidth: function() {
 			return this.transcript.getWidth();
 		},
+		/**
+		 * Returns the height of the sheet.
+		 *
+		 * @return {number}
+		 */
 		getHeight: function() {
 			return this.transcript.getHeight();
 		},
-		getBottomStaveX: function() {
-			if(this.staves.length > 0) {
-				return this.staves[0].getStartX();
-			}
-			return 0;
-		},
-		getBottomStaveY: function() {
-			if(this.staves.length > 0) {
-				return this.staves[0].getConnected().getBottomY();
-			}
-			return 0;
-		},
-		getTopStaveY: function() {
-			if(this.staves.length > 0) {
-				return this.staves[0].getTopY();
-			}
-			return 0;
-		},
+		/**
+		 * Updates settings.
+		 *
+		 * @param {string} prop
+		 * @param {object} setting
+		 * @return this
+		 */
 		updateSettings: function(prop, setting) {
 			var mode = _.cloneDeep(this[prop].mode);
 			switch(setting.key) {
@@ -224,18 +328,41 @@ define([
 			}
 			return this;
 		},
+		/**
+		 * Handles a chord bank update.
+		 *
+		 * @return undefined
+		 */
 		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
 		},
+		/**
+		 * Handles a change to the highlight settings.
+		 *
+		 * @param {object} settings
+		 * @return undefined
+		 */
 		onHighlightChange: function(settings) {
 			this.updateSettings('highlightsConfig', settings);
 			this.render();
 		},
+		/**
+		 * Handles a change to the analyze settings.
+		 *
+		 * @param {object} settings
+		 * @return undefined
+		 */
 		onAnalyzeChange: function(settings) {
 			this.updateSettings('analyzeConfig', settings);
 			this.render();
 		},
+		/**
+		 * Handles a change to the metronome settings.
+		 *
+		 * @param {object} settings
+		 * @return undefined
+		 */
 		onMetronomeChange: function(metronome) {
 			if(metronome.isPlaying()) {
 				this.analyzeConfig.tempo = metronome.getTempo();

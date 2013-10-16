@@ -1,9 +1,6 @@
-// Configuration reader. 
-//
-// Configuration data should only be read using the
-// interface provided by this module.
-
-/* global define: false */
+/**
+ * @fileoverview Defines an interface for reading app configuration values. 
+ */
 define([
 	'lodash', 
 	'app/config/general',
@@ -35,9 +32,19 @@ define([
 ) {
 	"use strict";
 
+	/**
+	 * Defines an interface to retrieve config values.
+	 *
+	 * @namespace Config
+	 */
 	var Config = {
+		
+		/**
+		 * Key separator for specifying nested values. Defaults to period.
+		 */
+		keySeparator: '.',
 
-		// private cache of config data
+		/** @private **/
 		__config: {
 			'general': ConfigGeneral,
 			'helpText': ConfigHelpText,
@@ -55,30 +62,42 @@ define([
 			}
 		},
 
-		// public method that returns the value of a key.
-		//
-		// For convenience, nested values may be retrieved 
-		// using dot notation: get("x.y.z") => value of z.
-		//
+		/**
+		 * Retrieves a config value.
+		 *
+		 * Use dot notation in the key string to retrieve nested config values. 
+		 * For example, specifying key "x.y.z" will return the value of "z"
+		 * nested under "x" and "y."
+		 *
+		 * @param {string} key The dot-separated config value to retrieve.
+		 * @return The configuration value.
+		 * @throws {Error} Will throw an error if the key is invalid.
+		 */
 		get: function(key) {
 			if(typeof key !== 'string') {
-				throw new Error("Config key must be a string: " + key);
+				throw new Error("Invalid parameter. Config key must be a string.");
 			}
 
 			var config = this.__config;
+			var ks = this.keySeparator;
+			var result, value;
 
-			_.each(key.split('.'), function(value) {
-				if(config.hasOwnProperty(value)) {
-					config = config[value];
+			// lookup the key value
+			result = _.reduce(key.split(ks), function(o, k) {
+				o.path.push(k);
+				if(o.value.hasOwnProperty(k)) {
+					o.value = o.value[k];
 				} else {
-					throw new Error("Key not found: " + key);
+					throw new Error("Invalid config key: ["+key+"] No such config value at: ["+o.path.join(ks)+"]");
 				}
-			});
+				return o;
+			}, {value: config, path: []});
 
-			return config;
-		},
-		set: function(key, value) {
-			throw new Error("config is read-only");
+			// this copies the value to prevent or at least localize issues
+			// that might occur if the config reference is modified by accident
+			value = _.cloneDeep(result.value);
+
+			return value;
 		}
 	};
 

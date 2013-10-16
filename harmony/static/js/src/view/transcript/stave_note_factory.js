@@ -1,27 +1,54 @@
-/* global define: false */ 
 define([
 	'lodash', 
 	'vexflow',
 	'app/util/analyze'
-], function(_, Vex, Analyze) {
+], function(
+	_, 
+	Vex, 
+	Analyze
+) {
 	"use strict";
 
-	// This object is responsible for knowing how to create stave notes
-	// to populate a stave.
-	//
-	// In addition to the basic responsibility of creating notes with the
-	// proper accidentals/modifiers, it should also know how to highlight
-	// notes in different colors.
-	// 
+	/**
+	 * Creates an instance of StaveNoteFactory.
+	 *
+	 * This object is responsible for knowing how to create stave notes that
+	 * may be added to a Stave.
+	 *
+	 * In addition to the basic responsibility of creating notes with the
+	 * correct accidental modifiers, it should also know how to highlight notes
+	 * in different colors in order to draw attention to specific musical
+	 * phenomena.
+	 *
+	 * @param {object} config
+	 * @return
+	 */
 	var StaveNoteFactory = function(config) {
 		this.init(config);
 	};
 
 	_.extend(StaveNoteFactory.prototype, {
+		/**
+		 * Initializes the object.
+		 *
+		 * @param {object} config
+		 * @return
+		 */
 		init: function(config) {
+			/**
+			 * Configuration data passed to the constructor.
+			 * @type {object}
+			 */
 			this.config = config;
+
 			this.initConfig();
 		},
+		/**
+		 * Initializes the config.
+		 *
+		 * @return undefined
+		 * @throws {Error} Will throw an error if any params are missing.
+		 */
 		initConfig: function() {
 			var required = ['chord', 'keySignature', 'clef', 'highlightsConfig'];
 			_.each(required, function(propName) {
@@ -32,26 +59,33 @@ define([
 				}
 			}, this);
 		},
-
-
-		//--------------------------------------------------
-		// Public methods
-
-		// returns an array of Vex.Flow.StaveNote objects
+		/**
+		 * Creates one more Vex.Flow.StaveNote's.
+		 *
+		 * @public
+		 * @return {array}
+		 */
 		createStaveNotes: function() {
 			var note_struct = this._getNoteKeysAndModifiers();
 			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
 			return [stave_note];
 		},
-		// returns true if there are any stave notes to create, false otherwise
+		// 
+		/**
+		 * Returns true if there are any stave notes to create, false otherwise.
+		 *
+		 * @public
+		 * @return {boolean}
+		 */
 		hasStaveNotes: function() {
 			return this.chord.hasNotes(this.clef);
 		},
-
-		//--------------------------------------------------
-		// Private methods
-
-		// returns a list of key names for this stave only ["note/octave", ...] 
+		/**
+		 * Returns a list of key names for this stave only ["note/octave", ...] 
+		 *
+		 * @protected
+		 * @return {array}
+		 */
 		_getNoteKeys: function() {
 			var keySignature = this.keySignature;
 			var clef = this.clef;
@@ -70,7 +104,13 @@ define([
 
 			return note_keys;
 		},
-		// returns an array of objects containing each key and accidental
+		/**
+		 * Returns an array of objects containing each key and accidental
+		 *
+		 * @protected
+		 * @param {array} noteKeys
+		 * @return {array}
+		 */
 		_getAccidentalsOf: function(noteKeys) {
 			var keySignature = this.keySignature;
 			var accidentals = [];
@@ -115,8 +155,16 @@ define([
 
 			return accidentals;
 		},
-		// returns the octave for a note, taking into account 
-		// the current note spelling 
+		
+		/**
+		 * Returns the octave for a note, taking into account the current note spelling.
+		 *
+		 * @protected
+		 * @param {number} pitchClass
+		 * @param {number} octave
+		 * @param {string} note
+		 * @return {number}
+		 */
 		calculateOctave: function(pitchClass, octave, note) {
 			var note_letter = note.charAt(0);
 			if(pitchClass === 0 && note_letter === 'B') {
@@ -126,7 +174,12 @@ define([
 			}
 			return octave;
 		},
-		// returns a list of keys and associated modifiers for constructing Vex.Flow stave notes
+		/**
+		 * Returns a list of keys and associated modifiers for constructing Vex.Flow stave notes.
+		 *
+		 * @protected
+		 * @return {array}
+		 */
 		_getNoteKeysAndModifiers: function() {
 			var keys = this._getNoteKeys();
 			var accidentals = this._getAccidentalsOf(keys);
@@ -145,12 +198,30 @@ define([
 
 			return {keys: keys, modifiers: modifiers};
 		},
-		// returns a function that will add an accidental to a Vex.Flow stave note
+		/**
+		 * Returns a function that will add an accidental to a
+		 * Vex.Flow.StaveNote. 
+		 *
+		 * @protected
+		 * @param {number} keyIndex
+		 * @param {string} accidental 
+		 * @return {function}
+		 */
 		_makeAccidentalModifier: function(keyIndex, accidental) {
 			return function(staveNote) {
 				staveNote.addAccidental(keyIndex, new Vex.Flow.Accidental(accidental));
 			};
 		},
+		/**
+		 * Returns a function that will add a highlight color to a
+		 * Vex.Flow.StaveNote.
+		 *
+		 * @protected
+		 * @param {number} keyIndex
+		 * @param {number} noteToHighlight MIDI note number.
+		 * @param {array} allNotes Array of MIDI note numbers.
+		 * @return {function}
+		 */
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
 			var analyzer = new Analyze(this.keySignature, {
 				highlightMode: this.highlightsConfig.mode
@@ -167,7 +238,14 @@ define([
 				staveNote.setKeyStyle(keyIndex, keyStyleOpts);
 			};
 		},
-		// returns a new Vex.Flow stave note
+		/**
+		 * Returns a new Vex.Flow.StaveNote with all modifiers added. 
+		 *
+		 * @protected
+		 * @param {array} keys
+		 * @param {array} modifiers
+		 * @return {Vex.Flow.StaveNote}
+		 */
 		_makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
