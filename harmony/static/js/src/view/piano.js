@@ -189,22 +189,6 @@ define([
 			this.metronomeControl = metronomeControl;
 		},
 		/**
-		 * Renders the metronome template.
-		 *
-		 * @return {string} html
-		 */
-		renderMetronome: function() {
-			var metronomeTpl = _.template([
-				'<div class="metronome-control">',
-					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
-					'<input style="float:right" name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
-					'<div style="float:right" class="metronome-led"></div>',
-				'</div>'
-			].join(''));
-
-			return metronomeTpl();
-		},
-		/**
 		 * Changes the keyboard size.
 		 *
 		 * @param {number} size The number of keys the keyboard should have.
