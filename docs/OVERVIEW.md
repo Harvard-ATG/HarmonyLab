@@ -6,7 +6,7 @@ Here's what you need to know to get started:
 
 - The app is written in Python and Javascript. Python on the backend (Django) and Javascript on the frontend.
 - The javascript is loosely organized into modules using [requirejs](http://requirejs.org/). 
-- The [Vex Flow](http://www.vexflow.com/) javascript library is used *extensively* to render musical notation. **Important**:  the Vex Flow library has been forked and modified for this project in order to implement a number of features, but most importantly, the ability to set the color of individual notes and accidentals. 
+- The [Vex Flow](http://www.vexflow.com/) javascript library is used *extensively* to render musical notation. **Important**:  the Vex Flow library has been [forked and modified](https://github.com/arthurian/vexflow) for this project in order to implement a number of features, but most importantly, the ability to set the color of individual notes and accidentals. 
 
 ## Directory Structure
 
