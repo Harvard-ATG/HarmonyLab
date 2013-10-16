@@ -2,14 +2,14 @@ define([
 	'jquery', 
 	'lodash',
 	'app/model/event_bus',
-	'app/presenter/metronome',
-	'app/view/piano/piano_keyboard'
+	'app/view/piano/piano_keyboard',
+	'app/view/piano/piano_metronome'
 ], function(
 	$,
 	_,
 	eventBus,
-	Metronome,
-	PianoKeyboard
+	PianoKeyboard,
+	PianoMetronome
 ) {
 	"use strict";
 
@@ -163,68 +163,30 @@ define([
 		/**
 		 * Initializes the metronome control
 		 *
-		 * @todo refactor into subcomponent
 		 * @return undefined
 		 */
 		initMetronomeControl: function() {
 			var eventBus = this.eventBus;
-			var selectors = {
-				inputEl: '.js-metronome-input',
-				ledEl: '.metronome-led',
-				btnEl: '.metronome-btn',
-				audioEl: '#metronome-audio',
-			};
-			var cssCls = {
-				ledActive: 'metronome-led-on',
-				btnActive: 'metronome-icon-active'
-			};
-			var $metronomeInputEl,
-				$metronomeLedEl,
-				$metronomeBtn,
-				$audioEl,
-				toggleMetronome,
-				metronome;
-				
-			this.toolbarEl.append(this.renderMetronome());
+			var metronomeControl = new PianoMetronome();
 
-			$metronomeInputEl = $(selectors.inputEl, this.toolbarEl);
-			$metronomeLedEl = $(selectors.ledEl, this.toolbarEl);
-			$metronomeBtn = $(selectors.btnEl, this.toolbarEl);
-			$audioEl = $(selectors.audioEl);
-
-			metronome = new Metronome($audioEl[0]);
-			metronome.bind('tick', function() {
-				$metronomeLedEl.toggleClass(cssCls.ledActive);
-				if(!$metronomeLedEl.hasClass(cssCls.ledActive)) {
-					eventBus.trigger("banknotes");
-				}
+			// Trigger a chord "bank" on the off-beats (per Rowland)
+			metronomeControl.bind("offbeat", function() {
+				eventBus.trigger("banknotes");
 			});
 
-			toggleMetronome = function() {
-				if(metronome.isPlaying()) {
-					metronome.stop();
-					$metronomeBtn.removeClass(cssCls.btnActive);
-					$metronomeLedEl.removeClass(cssCls.ledActive);
-				} else {
-					metronome.start();
-					$metronomeBtn.addClass(cssCls.btnActive);
-					$metronomeInputEl.val(metronome.getTempo());
-				}
-
-				eventBus.trigger("metronome", metronome);
-			};
-
-			this.toolbarEl.on('change', '.js-metronome-input', null, function(ev) {
-				var tempo = parseInt($(ev.target).val(), 10);
-				if(metronome.changeTempo(tempo)) {
-					eventBus.trigger("metronome", metronome);
-				}
+			// Relay metronome changes to the rest of the app
+			metronomeControl.bind("change", function() {
+				eventBus.trigger("metronome", metronomeControl.getMetronome());
 			});
 
-			this.toolbarEl.on('click', '.js-metronome-btn', null, toggleMetronome);
-			this.eventBus.bind("togglemetronome", toggleMetronome);
+			// Handles external commands to toggle the metronome (i.e. keyboard
+			// shortcuts)
+			eventBus.bind("togglemetronome", metronomeControl.toggle);
 
-			this.metronome = metronome;
+			// Adds the control to the toolbar
+			this.toolbarEl.append(metronomeControl.render().el);
+
+			this.metronomeControl = metronomeControl;
 		},
 		/**
 		 * Renders the metronome template.

@@ -38,30 +38,23 @@ define([
 	 * Creates an instance of a metronome. 
 	 *
 	 * @constructor
-	 * @param {Audio} el A reference to an audio element. 
 	 * @param {number} tempo The tempo.
 	 * @mixes MicroEvent
 	 * @fires tick
+	 * @fires change
 	 */
-	var Metronome = function(el, tempo) {
-		this.init(el, tempo);
+	var Metronome = function(tempo) {
+		this.init(tempo);
 	};
 
 	_.extend(Metronome.prototype, {
 		/**
 		 * Initializes the metronome.
 		 *
-		 * @param {Audio} el
 		 * @param {number} tempo
 		 * @return undefined
 		 */
-		init: function(el, tempo) {
-			/**
-			 * Audio element.
-			 * @type {Audio}
-			 * @protected
-			 */
-			this.audio = el;
+		init: function(tempo) {
 			/**
 			 * Tempo expressed in beats per minute (bpm).
 			 * @type {number}
@@ -92,7 +85,6 @@ define([
 		 * @fires tick
 		 */
 		play: function() {
-			this.audio.play();
 			if(this.repeat) {
 				this._scheduleNextPlay();
 			}
@@ -102,19 +94,23 @@ define([
 		 * Starts the metronome.
 		 *
 		 * @return undefined
+		 * @fires change
 		 */
 		start: function() {
 			this.repeat = true;
 			this._scheduleNextPlay();
+			this.trigger("change");
 		},
 		/**
 		 * Stops the metronome
 		 *
 		 * @return
+		 * @fires change
 		 */
 		stop: function() {
 			this.repeat = false;
 			this._unscheduleNextPlay();
+			this.trigger("change");
 		},
 		/**
 		 * Returns true if the metronome is playing, false otherwise.

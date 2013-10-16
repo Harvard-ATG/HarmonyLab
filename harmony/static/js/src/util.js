@@ -121,6 +121,23 @@ define(['lodash'], function(_) {
 			_.each(relayMap, function(callback, eventName) {
 				src.unbind(eventName, callback);
 			});
+		},
+		/**
+		 * Creates an audio element with one or more source elements.
+		 *
+		 * @param {array} sources A list of source urls
+		 * @return audio element
+		 */
+		createAudio: function(sources) {
+			var audio = document.createElement('audio');
+			_.each(sources, function(src) {
+				var source = document.createElement('source');
+				var type = (src.match(/ogg$/) ? 'audio/ogg' : 'audio/mp3');
+				source.src = src;
+				source.type = type;
+				audio.appendChild(source);
+			});
+			return audio;
 		}
 	};
 
