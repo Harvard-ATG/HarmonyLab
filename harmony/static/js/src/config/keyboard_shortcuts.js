@@ -47,7 +47,8 @@ define({
 		".":      "releaseSustain",
 		"k":      "rotateKeyFlatward",
 		"l":      "rotateKeySharpward",
-		",":      "setKeyToNone"
+		",":      "setKeyToNone",
+		"/":      "toggleMetronome"
 	},
 	// Defines key code -> key name mappings.
 	// This is not intended to be comprehensive. These key names

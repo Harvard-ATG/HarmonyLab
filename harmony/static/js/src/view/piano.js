@@ -130,6 +130,7 @@ define([
 		/**
 		 * Initializes the transpose control.
 		 *
+		 * @todo refactor into subcomponent
 		 * @return undefined
 		 */
 		initTransposeControl: function() {
@@ -162,17 +163,76 @@ define([
 		/**
 		 * Initializes the metronome control
 		 *
+		 * @todo refactor into subcomponent
 		 * @return undefined
 		 */
 		initMetronomeControl: function() {
-			var toolbarEl = this.toolbarEl;
 			var eventBus = this.eventBus;
+			var selectors = {
+				inputEl: '.js-metronome-input',
+				ledEl: '.metronome-led',
+				btnEl: '.metronome-btn',
+				audioEl: '#metronome-audio',
+			};
+			var cssCls = {
+				ledActive: 'metronome-led-on',
+				btnActive: 'metronome-icon-active'
+			};
+			var $metronomeInputEl,
+				$metronomeLedEl,
+				$metronomeBtn,
+				$audioEl,
+				toggleMetronome,
+				metronome;
+				
+			this.toolbarEl.append(this.renderMetronome());
 
-			var $metronomeInputEl; 
-			var $metronomeLedEl; 
-			var metronome;
-			var metronomeLedCls = 'metronome-led-on';
-			var metronome_tpl = _.template([
+			$metronomeInputEl = $(selectors.inputEl, this.toolbarEl);
+			$metronomeLedEl = $(selectors.ledEl, this.toolbarEl);
+			$metronomeBtn = $(selectors.btnEl, this.toolbarEl);
+			$audioEl = $(selectors.audioEl);
+
+			metronome = new Metronome($audioEl[0]);
+			metronome.bind('tick', function() {
+				$metronomeLedEl.toggleClass(cssCls.ledActive);
+				if(!$metronomeLedEl.hasClass(cssCls.ledActive)) {
+					eventBus.trigger("banknotes");
+				}
+			});
+
+			toggleMetronome = function() {
+				if(metronome.isPlaying()) {
+					metronome.stop();
+					$metronomeBtn.removeClass(cssCls.btnActive);
+					$metronomeLedEl.removeClass(cssCls.ledActive);
+				} else {
+					metronome.start();
+					$metronomeBtn.addClass(cssCls.btnActive);
+					$metronomeInputEl.val(metronome.getTempo());
+				}
+
+				eventBus.trigger("metronome", metronome);
+			};
+
+			this.toolbarEl.on('change', '.js-metronome-input', null, function(ev) {
+				var tempo = parseInt($(ev.target).val(), 10);
+				if(metronome.changeTempo(tempo)) {
+					eventBus.trigger("metronome", metronome);
+				}
+			});
+
+			this.toolbarEl.on('click', '.js-metronome-btn', null, toggleMetronome);
+			this.eventBus.bind("togglemetronome", toggleMetronome);
+
+			this.metronome = metronome;
+		},
+		/**
+		 * Renders the metronome template.
+		 *
+		 * @return {string} html
+		 */
+		renderMetronome: function() {
+			var metronomeTpl = _.template([
 				'<div class="metronome-control">',
 					'<div style="float:right" class="metronome-icon js-metronome-btn"></div>',
 					'<input style="float:right" name="bpm" type="text" class="metronome-control-input js-metronome-input" value="" maxlength="3" />',
@@ -180,44 +240,7 @@ define([
 				'</div>'
 			].join(''));
 
-			toolbarEl.append(metronome_tpl());
-
-			$metronomeInputEl = $('.js-metronome-input', toolbarEl);
-			$metronomeLedEl = $('.metronome-led', toolbarEl);
-
-			metronome = new Metronome($('#metronome-audio')[0]);
-			metronome.bind('tick', function() {
-				$metronomeLedEl.toggleClass(metronomeLedCls);
-				if(!$metronomeLedEl.hasClass(metronomeLedCls)) {
-					eventBus.trigger("banknotes");
-				}
-			});
-
-
-			toolbarEl.on('click', '.js-metronome-btn', null, function(ev) {
-				var active_cls = 'metronome-icon-active';
-				var is_playing = metronome.isPlaying();
-				var $btn = $(ev.target);
-
-				if(is_playing) {
-					metronome.stop();
-					$btn.removeClass(active_cls);
-					$metronomeLedEl.removeClass(metronomeLedCls);
-				} else {
-					metronome.start();
-					$btn.addClass(active_cls);
-					$metronomeInputEl.val(metronome.getTempo());
-				}
-
-				eventBus.trigger("metronome", metronome);
-			});
-
-			toolbarEl.on('change', '.js-metronome-input', null, function(ev) {
-				var tempo = parseInt($(ev.target).val(), 10);
-				if(metronome.changeTempo(tempo)) {
-					eventBus.trigger("metronome", metronome);
-				}
-			});
+			return metronomeTpl();
 		},
 		/**
 		 * Changes the keyboard size.
