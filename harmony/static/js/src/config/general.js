@@ -27,6 +27,14 @@ define({
 	//		[_|#|b] = natural, sharp, flat
 	//
 	keyMap: {
+		// SPECIAL CASE: this is a special case for "no key" (i.e. NULL value for the key)
+		"h": {
+			spelling: ["C","C#","D","D#","E","F","F#","G","G#","A","Bb","B"], 
+			pitchClass: 0,
+			name: "No key",
+			shortName: "",
+			signature: ""
+		},
 		"iAb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
 			pitchClass: 8,
@@ -271,6 +279,7 @@ define({
 	// Grouping of keys as they are to be displayed on the UI.
 	keyDisplayGroups: [
 		// [label, key1, key2, key3, ..., keyN]
+		["----", "h"],
 		["----", "jC_","iD_","jF_","jG_","iA_"],
 		["----", "jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
 		["----", "iC_","iG_","iD_","iA_","iE_","iB_","iF#"],

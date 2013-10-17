@@ -249,15 +249,22 @@ define([
 		 * @return {string}
 		 */
 		getVexKey: function() {
-			var key = this.keyOfSignature;
-			var vexKey = key.slice(1).replace('_', '');
-			var scale_type = key.charAt(0);
+			var key = this.keyOfSignature; 
+			var vex_key, scale_type;
+
+			// SPECIAL CASE: "no key" should be mapped to C major for Vex.Flow.
+			if(key === 'h') {
+				key = 'jC_';
+			}
+
+			vex_key = key.slice(1).replace('_', '');
+			scale_type = key.charAt(0);
 
 			// convert minor and major key types
 			switch(scale_type) {
 				case 'i':
 					// minor key signified by "m"
-					vexKey += 'm'; 
+					vex_key += 'm'; 
 					break;
 				case 'j':
 					// major key, no adjustment necessary
@@ -265,7 +272,7 @@ define([
 				default:
 			}
 
-			return vexKey;
+			return vex_key;
 		},
 		/**
 		 * Returns the signature, an array of notes with accidentals.
