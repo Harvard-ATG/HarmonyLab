@@ -47,6 +47,15 @@ define([
 		this.init(tempo);
 	};
 
+	/**
+	 * Make constants public (for test purposes). 
+	 */
+	_.extend(Metronome, {
+		MIN_TEMPO: MIN_TEMPO,
+		MAX_TEMPO: MAX_TEMPO,
+		DEFAULT_TEMPO: DEFAULT_TEMPO
+	});
+
 	_.extend(Metronome.prototype, {
 		/**
 		 * Initializes the metronome.
@@ -60,7 +69,14 @@ define([
 			 * @type {number}
 			 * @protected
 			 */
-			this.tempo = this.isValidTempo(tempo) ? tempo : DEFAULT_TEMPO;
+			if(typeof tempo === 'undefined') {
+				this.tempo = DEFAULT_TEMPO;
+			} else if(this.isValidTempo(tempo)) {
+				this.tempo = tempo;
+			} else {
+				throw new Error("invalid tempo");
+			}
+
 			/**
 			 * The delay between each tick of the metronome expressed in
 			 * milliseconds. This value depends on the tempo.
@@ -74,12 +90,16 @@ define([
 			 * @protected
 			 */
 			this.repeat = false;
+			/**
+			 * The ID associated with setTimeout() for scheduling ticks.
+			 * @type {number}
+			 */
 			this.timeoutID = null;
 
 			_.bindAll(this, ['play']);
 		},
 		/**
-		 * Plays the audio tick sound.
+		 * Plays the tick and repeats.
 		 *
 		 * @return undefined
 		 * @fires tick
@@ -125,11 +145,13 @@ define([
 		 *
 		 * @param {number} tempo Tempo in beats per minute.
 		 * @return {boolean} True if the tempo was changed, false otherwise.
+		 * @fires change
 		 */
 		changeTempo: function(tempo) {
 			if(this.isValidTempo(tempo)) {
 				this.tempo = tempo;
 				this.delay = this.calculateDelay(tempo);
+				this.trigger("change");
 				return true;
 			}
 			return false;
@@ -141,6 +163,15 @@ define([
 		 */
 		getTempo: function() {
 			return this.tempo;
+		},
+		/**
+		 * Returns the delay in milliseconds between each "tick" of the
+		 * metronome.
+		 *
+		 * @return {number}
+		 */
+		getDelay: function() {
+			return this.delay;
 		},
 		/**
 		 * Returns true if the tempo is valid, false otherwise.
