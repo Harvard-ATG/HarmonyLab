@@ -793,15 +793,15 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	},
 
 	generateDiatonicNotes: function(key) {
-		var keyName = key.slice(1).replace('_','').toLowerCase();
 		var roots = Vex.Flow.Music.roots;
 		var mus = new Vex.Flow.Music();
 		var diatonicNotes = Array(7);
-		var i, keyValue, scaleTones, intervals, startingNote;
+		var i, keyName, keyValue, scaleTones, intervals, startingNote;
 
-		if (keyName == "h") { 
-			keyName = "c";
+		if (key == "h") { 
+			key = 'jC_';
 		}
+		keyName = key.slice(1).replace('_','').toLowerCase();
 
 		try {
 			keyValue = mus.getNoteValue(keyName);

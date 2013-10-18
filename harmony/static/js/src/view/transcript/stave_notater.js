@@ -331,7 +331,9 @@ define([
 		drawKeyName: function(x, y) {
 			var ctx = this.getContext();
 			var key = this.keySignature.getKeyShortName();
-			ctx.fillText(util.convertSymbols(key) + ':', x, y);
+			if(key !== '') {
+				ctx.fillText(util.convertSymbols(key) + ':', x, y);
+			}
 		},
 		/**
 		 * Notates the stave.
