@@ -218,6 +218,14 @@ define([
 		bankChord: function() {
 			this.eventBus.trigger('banknotes');
 		},
+		/**
+		 * Toggles the metronome (play and stop).
+		 *
+		 * @return undefined
+		 */
+		toggleMetronome: function() {
+			this.eventBus.trigger("togglemetronome");
+		},
 
 		//--------------------------------------------------
 		// Note on/off functions
