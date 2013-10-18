@@ -134,12 +134,29 @@ define([
 			return this;
 		},
 		/**
+		 * Loads the audio when the browser is safari.
+		 *
+		 * This is called from the play() method.
+		 *
+		 * This is necessary because if load isn't called before each play(),
+		 * then the sound will only be played once.
+		 *
+		 * @return undefined
+		 */
+		loadAudioWhenSafari: function() {
+			var user_agent = window.navigator.userAgent;
+			if(user_agent.indexOf('Chrome') === -1 
+				&& user_agent.indexOf('Safari') > -1) {
+				this.audio.load(); 
+			} 
+		},
+		/**
 		 * Plays the audio tick sound.
 		 *
 		 * @return undefined
 		 */
 		play: function() {
-			this.audio.load(); // safari needs this, otherwise only plays the first time
+			this.loadAudioWhenSafari();
 			this.audio.play();
 		},
 		/**
