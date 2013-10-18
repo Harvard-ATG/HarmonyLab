@@ -145,6 +145,8 @@ define([
 		/**
 		 * Blinks the metronome LED on/off.
 		 *
+		 * @fires onbeat
+		 * @fires offbeat
 		 * @return undefined
 		 */
 		blink: function() {
