@@ -208,13 +208,7 @@ define([
 		 * @return undefined
 		 */
 		copySustain: function(chord) {
-			var is_sustained = chord.isSustained();
-			if(is_sustained) {
-				this._sustain = true;
-				this.copyNotes(chord);
-			} else {
-				this._sustain = false;
-			}
+			this._sustain = chord.isSustained();
 		},
 		/**
 		 * Copies the notes to another chord.

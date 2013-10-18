@@ -86,6 +86,7 @@ define([
 
 			// copy some settings from the current chord
 			chord.copyTranspose(current);
+			chord.copySustain(current);
 
 			// re-wires listeners to the current chord
 			this._removeListeners(current);
