@@ -85,29 +85,26 @@ define([
 			 */
 			this.delay = this.calculateDelay(this.tempo);
 			/**
-			 * Repeat flag. When true, schedules the next tick of the metronome.
+			 * Repeat flag. When true, metronome is running.
 			 * @type {boolean}
 			 * @protected
 			 */
-			this.repeat = false;
+			this.running = false;
 			/**
 			 * The ID associated with setTimeout() for scheduling ticks.
 			 * @type {number}
 			 */
-			this.timeoutID = null;
+			this.intervalID = null;
 
 			_.bindAll(this, ['play']);
 		},
 		/**
-		 * Plays the tick and repeats.
+		 * Plays the tick and runnings.
 		 *
 		 * @return undefined
 		 * @fires tick
 		 */
 		play: function() {
-			if(this.repeat) {
-				this._scheduleNextPlay();
-			}
 			this.trigger("tick");
 		},
 		/**
@@ -117,8 +114,8 @@ define([
 		 * @fires change
 		 */
 		start: function() {
-			this.repeat = true;
-			this._scheduleNextPlay();
+			this.running = true;
+			this._setInterval();
 			this.trigger("change");
 		},
 		/**
@@ -128,8 +125,8 @@ define([
 		 * @fires change
 		 */
 		stop: function() {
-			this.repeat = false;
-			this._unscheduleNextPlay();
+			this.running = false;
+			this._clearInterval();
 			this.trigger("change");
 		},
 		/**
@@ -138,7 +135,7 @@ define([
 		 * @return {boolean}
 		 */
 		isPlaying: function() {
-			return this.repeat;
+			return this.running;
 		},
 		/**
 		 * Changes the current tempo. 
@@ -151,6 +148,7 @@ define([
 			if(this.isValidTempo(tempo)) {
 				this.tempo = tempo;
 				this.delay = this.calculateDelay(tempo);
+				this._updateInterval();
 				this.trigger("change");
 				return true;
 			}
@@ -192,23 +190,35 @@ define([
 			return Math.floor(MS_PER_MIN / tempo);
 		},
 		/**
-		 * Schedules the next tick of the metronome.
+		 * Updates the interval when the metronome is playing.
+		 *
+		 * @return
+		 * @private
+		 */
+		_updateInterval: function() {
+			if(this.isPlaying()) {
+				this._clearInterval();
+				this._setInterval();
+			}
+		},
+		/**
+		 * Initializes the interval between ticks of the metronome.
 		 * 
 		 * @return undefined
 		 * @private
 		 */
-		_scheduleNextPlay: function() {
-			this.timeoutID = window.setTimeout(this.play, this.delay);
+		_setInterval: function() {
+			this.intervalID = window.setInterval(this.play, this.delay);
 		},
 		/**
-		 * Unschedules the next tick of the metronome
+		 * Unsets the tick intervals.
 		 *
 		 * @return undefined
 		 * @private
 		 */
-		_unscheduleNextPlay: function() {
-			if(this.timeoutID !== null) {
-				window.clearTimeout(this.timeoutID);
+		_clearInterval: function() {
+			if(this.intervalID !== null) {
+				window.clearInterval(this.intervalID);
 			}
 		}
 	});
