@@ -24,7 +24,7 @@ DATABASES = {
 #
 try: 
 	REQUIREJS_BUILD = None
-	with open(path.join(ROOT_DIR, 'data', 'build-requirejs.json'), 'r') as f:
+	with open(path.join(ROOT_DIR, 'data', 'requirejs-build.json'), 'r') as f:
 		REQUIREJS_BUILD = json.loads(f.read())
 
 	REQUIREJS_DEBUG = False

@@ -38,16 +38,18 @@ import json
 PROJECT_ROOT = common.PROJECT_ROOT
 ROOT_DIR = common.ROOT_DIR
 
-BUILD_CONFIG = os.path.join(PROJECT_ROOT, 'static', 'js', 'build.js')
+BUILD_CONFIG = os.path.join(PROJECT_ROOT, 'static', 'js', 'conf', 'requirejs.json')
 BUILD_OUTPUT_DIR = os.path.join(PROJECT_ROOT, 'static', 'js', 'build')
 BUILD_OUTPUT_FILE = os.path.join(BUILD_OUTPUT_DIR, 'main-built.js')
 BUILD_DATA_DIR = os.path.join(ROOT_DIR, 'data')
-BUILD_DATA_FILE = os.path.join(BUILD_DATA_DIR, 'build-requirejs.json')
+BUILD_DATA_FILE = os.path.join(BUILD_DATA_DIR, 'requirejs-build.json')
 
 for d in [BUILD_DATA_DIR, BUILD_OUTPUT_DIR]:
-	if not os.path.exists(d):
-		os.makedirs(d)
-		print "Created {0}\n".format(d)
+    if os.path.exists(d):
+        print "Build dir already exists: {0}\n".format(d)
+    else:
+        os.makedirs(d)
+        print "Created build dir: {0}\n".format(d)
 
 #----------
 # Run the require.js optimizer

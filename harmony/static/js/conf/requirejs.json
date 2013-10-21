@@ -1,0 +1,9 @@
+({
+	// Note: paths are relative to *this* config file
+    baseUrl: "../lib",
+    paths: {
+		app: "../src"
+    },
+    name: "app/main",
+    out: "../build/main-built.js"
+})
