@@ -87,6 +87,7 @@ define([
 				'onPedalChange', 
 				'onNoteChange', 
 				'onClearNotes',
+				'onBankNotes',
 				'triggerNoteChange'
 			]);
 
@@ -100,6 +101,7 @@ define([
 		initListeners: function() {
 			this.eventBus.bind('note', this.onNoteChange);
 			this.eventBus.bind('clearnotes', this.onClearNotes);
+			this.eventBus.bind('banknotes', this.onBankNotes);
 			this.eventBus.bind('pedal', this.onPedalChange);
 			this.bind('key', this.triggerNoteChange);
 		},
@@ -111,6 +113,7 @@ define([
 		removeListeners: function() {
 			this.eventBus.unbind('note', this.onNoteChange);
 			this.eventBus.unbind('clearnotes', this.onClearNotes);
+			this.eventBus.unbind('banknotes', this.onBankNotes);
 			this.eventBus.unbind('pedal', this.onPedalChange);
 			this.unbind('key', this.triggerNoteChange);
 		},
@@ -157,7 +160,15 @@ define([
 			}
 		},
 		/**
-		 * Resets all keys to their default state when the notes are cleared.
+		 * Clears all keys.
+		 *
+		 * @return undefined
+		 */
+		onBankNotes: function() {
+			this.clearKeys();
+		},
+		/**
+		 * Clears all keys.
 		 *
 		 * @return undefined
 		 */
