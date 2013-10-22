@@ -43,11 +43,6 @@ body {
 	margin-left: -63px;
 	z-index: 1000;
 }
-.content-overlay {
-	height: 100%;
-	width: 100%;
-	z-index: 999;
-}
 .fade {
 	transition: opacity .25s ease-in-out;
 	-moz-transition: opacity .25s ease-in-out;
