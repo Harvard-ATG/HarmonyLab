@@ -11,9 +11,9 @@ define([
 	'app/view/widget/highlight_widget',
 	'app/view/widget/key_signature_widget',
 	'app/view/widget/theme_selector_widget',
-	'app/presenter/midi_source',
-	'app/presenter/keyboard_shortcuts',
-	'app/presenter/notation_tabs',
+	'app/controller/midi_source',
+	'app/controller/keyboard_shortcuts',
+	'app/controller/notation_tabs',
 	'app/util/instruments'
 ], 
 function(
