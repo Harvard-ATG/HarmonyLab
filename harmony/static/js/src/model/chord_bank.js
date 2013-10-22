@@ -84,9 +84,8 @@ define([
 			var chord = new Chord();
 			var current = this.current();
 
-			// copy some settings from the current chord
-			chord.copyTranspose(current);
-			chord.copySustain(current);
+			// copy the current chord
+			chord.copy(current);
 
 			// re-wires listeners to the current chord
 			this._removeListeners(current);

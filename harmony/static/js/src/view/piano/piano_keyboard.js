@@ -160,13 +160,11 @@ define([
 			}
 		},
 		/**
-		 * Clears all keys.
+		 * Handles a bank event.
 		 *
 		 * @return undefined
 		 */
-		onBankNotes: function() {
-			this.clearKeys();
-		},
+		onBankNotes: function() {},
 		/**
 		 * Clears all keys.
 		 *
