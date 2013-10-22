@@ -30,6 +30,33 @@ body {
 	font-weight:normal; 
 	xpadding-top: 5px;
 }
+.ajax-loader {
+	background: transparent url(../img/ajax-loader.gif) no-repeat;
+	width: 126px;
+	height: 22px;
+}
+.ajax-loader-centered {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -22px;
+	margin-left: -63px;
+	z-index: 1000;
+}
+.content-overlay {
+	height: 100%;
+	width: 100%;
+	z-index: 999;
+}
+.fade {
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+}
+.fade.opaque { opacity: 0; }
+.fade.transparent { opacity: 1; }
+.fade.fade-in { opacity: 1; }
+.fade.fade-out { opacity: 0; }
 
 .qwerty-keyboard-legend {
 	background: url(../img/keyboard-shortcut-legend4.png) no-repeat;

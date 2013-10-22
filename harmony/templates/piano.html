@@ -9,6 +9,10 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="js-fade-out fade transparent ajax-loader ajax-loader-centered" style="top:33%"></div>
+<div class="js-fade-in fade opaque content-overlay ">
+
 <div id="container" class="theme theme-downlights" data-theme="downlights">
 
 	<div class="header">
@@ -106,6 +110,7 @@
 	<br class="clr" style="clear:both" />
 
 	<div id="theme-select" data-themes="downlights,concert,smoothblue,speakerwave"></div>
+</div>
 </div>
 
 {% endblock %}
