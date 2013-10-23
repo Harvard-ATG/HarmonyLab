@@ -48,10 +48,8 @@ body {
 	-moz-transition: opacity .25s ease-in-out;
 	-webkit-transition: opacity .25s ease-in-out;
 }
-.fade.opaque { opacity: 0; }
-.fade.transparent { opacity: 1; }
-.fade.fade-in { opacity: 1; }
-.fade.fade-out { opacity: 0; }
+.fade-in { opacity: 1; }
+.fade-out { opacity: 0; }
 
 .qwerty-keyboard-legend {
 	background: url(../img/keyboard-shortcut-legend4.png) no-repeat;

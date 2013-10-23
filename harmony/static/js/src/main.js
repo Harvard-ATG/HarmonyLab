@@ -231,8 +231,8 @@ function(
 		 * @return undefined
 		 */
 		fadeIn: function() {
-			$('.js-fade-in').addClass('fade-in');
-			$('.js-fade-out').addClass('fade-out');
+			$('.js-fade-in').css('opacity', 1);
+			$('.js-fade-out').css('opacity', 0);
 		},
 		/**
 		 * Initializes the user interface.
