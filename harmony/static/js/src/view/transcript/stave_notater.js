@@ -57,6 +57,11 @@ define([
 		 * @type {number}
 		 */
 		textLimit: 15,
+		/** 
+		 * Defines the height of a line of text.
+		 * @type {number}
+		 */
+		textLineHeight: 15,
 		/**
 		 * Initializes the notater.
 		 *
@@ -233,7 +238,7 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var solfege = this.getAnalyzer().getSolfege(notes);
 
-			solfege = util.convertSymbols(solfege);
+			solfege = this.convertSymbols(solfege);
 			if (solfege.indexOf("<br>") !== -1) {
 				solfege = solfege.split("<br>")[0];
 			}
@@ -255,7 +260,7 @@ define([
 			var numeral = this.getAnalyzer().getScaleDegree(notes);
 			var width = 0, caret_offset = 0, caret_x = x;
 
-			numeral = util.convertSymbols(numeral);
+			numeral = this.convertSymbols(numeral);
 			width = ctx.measureText(numeral).width;
 			//x = x + 8 + Math.floor(width/2);
 			caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
@@ -279,8 +284,8 @@ define([
 
 			if(chord_entry) {
 				label = chord_entry.label;
-				label = util.convertSymbols(label);
-				lines = util.wrapText(label, this.textLimit);
+				label = this.convertSymbols(label);
+				lines = this.wrapText(label);
 				this.drawTextLines(lines, x, y);
 			}
 		},
@@ -298,7 +303,7 @@ define([
 			var name = '', lines = [];
 			
 			if(interval && interval.name !== '') {
-				lines = util.wrapText(interval.name, this.textLimit);
+				lines = this.wrapText(interval.name);
 				this.drawTextLines(lines, x, y);
 			}
 		},
@@ -334,7 +339,7 @@ define([
 			var ctx = this.getContext();
 			var key = this.keySignature.getKeyShortName();
 			if(key !== '') {
-				ctx.fillText(util.convertSymbols(key) + ':', x, y);
+				ctx.fillText(this.convertSymbols(key) + ':', x, y);
 			}
 		},
 		/**
@@ -346,9 +351,13 @@ define([
 		 * @return
 		 */
 		drawTextLines: function(lines, x, y) {
-			var ctx = this.getContext(), margin = 15;
-			for(var i = 0, len = lines.length; i < len; i++) {
-				ctx.fillText(lines[i], x, y + (i*margin));
+			var ctx = this.getContext(); 
+			var line_height = this.textLineHeight;
+			var line_y, i, len;
+
+			for(i = 0, len = lines.length; i < len; i++) {
+				line_y = y + (i * line_height);
+				ctx.fillText(lines[i], x, line_y);
 			}
 		},
 		/**
@@ -373,6 +382,24 @@ define([
 		 */
 		notateChord: function() {
 			throw new Error("subclass responsibility");
+		},
+		/**
+		 * Wraps text. Delegates to utility method.
+		 *
+		 * @param {string} text
+		 * @return {array}
+		 */
+		wrapText: function(text) {
+			return util.wrapText(text, this.textLimit);
+		},
+		/**
+		 * Converts symbols to unicode. Delegates to utility method. 
+		 *
+		 * @param {string} text
+		 * @return {string}
+		 */
+		convertSymbols: function(text) {
+			return util.convertSymbols(text);
 		}
 	});
 
