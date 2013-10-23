@@ -141,7 +141,10 @@ define(['lodash'], function(_) {
 			return audio;
 		},
 		/**
-		 * Greedy word wrap.
+		 * Word wrap.
+		 *
+		 * This method attempts to wrap text on word boundaries, 
+		 * only splitting words when absolutely necessary (not hyphenated).
 		 *
 		 * @param {string} text
 		 * @param {number} lineWidth
