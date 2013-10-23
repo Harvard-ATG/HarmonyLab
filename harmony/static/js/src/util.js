@@ -143,7 +143,9 @@ define(['lodash'], function(_) {
 		/**
 		 * Greedy word wrap.
 		 *
+		 * @param {string} text
 		 * @param {number} lineWidth
+		 * @param {regexp|string} separator
 		 * @return {array} An array of lines
 		 */
 		wrapText: function(text, lineWidth, separator) {
