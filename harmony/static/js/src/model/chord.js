@@ -223,6 +223,18 @@ define([
 			}, {});
 		},
 		/**
+		 * Copies the chord.
+		 *
+		 * @param {Chord} chord
+		 * @return this
+		 */
+		copy: function(chord) {
+			this.copyTranspose(chord);
+			this.copySustain(chord);
+			this.copyNotes(chord);
+			return this;
+		},
+		/**
 		 * Returns true if the transpose value is valid, false otherwise.
 		 *
 		 * @param {number} value

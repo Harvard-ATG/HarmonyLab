@@ -157,7 +157,7 @@ define([
 			}
 		},
 		/**
-		 * Resets all keys to their default state when the notes are cleared.
+		 * Clears all keys.
 		 *
 		 * @return undefined
 		 */

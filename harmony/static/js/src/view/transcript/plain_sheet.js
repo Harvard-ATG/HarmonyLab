@@ -214,6 +214,7 @@ define([
 			var index = 0;
 			var count = items.length;
 			var position = {index:index,count:count,maxCount:limit};
+			var isBanked;
 
 			// the first stave bar is a special case: it's reserved to show the
 			// clef and key signature and nothing else
@@ -225,9 +226,10 @@ define([
 
 			// now add the staves for showing the notes
 			for(var i = 0, len = items.length; i < len; i++) {
-				chord = items[i];
-				treble = this.createNoteStave('treble', _.clone(position), chord);
-				bass = this.createNoteStave('bass', _.clone(position), chord);
+				chord = items[i].chord;
+				isBanked = items[i].isBanked;
+				treble = this.createNoteStave('treble', _.clone(position), chord, isBanked);
+				bass = this.createNoteStave('bass', _.clone(position), chord, isBanked);
 				position.index += 1;
 				treble.connect(bass);
 				staves.push(treble);
@@ -268,7 +270,7 @@ define([
 		 * @param {Chord} chord
 		 * @return {Stave}
 		 */
-		createNoteStave: function(clef, position, chord) {
+		createNoteStave: function(clef, position, chord, isBanked) {
 			var stave = new Stave(clef, position);
 
 			stave.setRenderer(this.vexRenderer);
@@ -276,6 +278,7 @@ define([
 			stave.setNoteFactory(new StaveNoteFactory({
 				clef: clef,
 				chord: chord,
+				isBanked: isBanked,
 				keySignature: this.keySignature,
 				highlightsConfig: this.highlightsConfig
 			}));
@@ -287,6 +290,7 @@ define([
 			}));
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
+			stave.setBanked(isBanked);
 
 			return stave;
 		},

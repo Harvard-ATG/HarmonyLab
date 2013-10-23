@@ -53,6 +53,11 @@ define([
 		 */
 		margin: {'top': 25, 'bottom': 25},
 		/**
+		 * Defines the text limit used to wrap text.
+		 * @type {number}
+		 */
+		textLimit: 15,
+		/**
 		 * Initializes the notater.
 		 *
 		 * @param {object} config
@@ -270,14 +275,13 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var ctx = this.getContext();
 			var chord_entry = this.getAnalyzer().ijFindChord(notes);
-			var label = '';
+			var label = '', lines = [];
 
 			if(chord_entry) {
 				label = chord_entry.label;
 				label = util.convertSymbols(label);
-				if(label !== '') {
-					ctx.fillText(label, x, y);
-				}
+				lines = util.wrapText(label, this.textLimit);
+				this.drawTextLines(lines, x, y);
 			}
 		},
 		/**
@@ -291,13 +295,11 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var ctx = this.getContext();
 			var interval = this.getAnalyzer().ijNameDegree(notes);
-			var name = '';
+			var name = '', lines = [];
 			
-			if(interval) {
-				name = interval.name;
-				if(name !== '') {
-					ctx.fillText(name, x, y);
-				}
+			if(interval && interval.name !== '') {
+				lines = util.wrapText(interval.name, this.textLimit);
+				this.drawTextLines(lines, x, y);
 			}
 		},
 		/**
@@ -333,6 +335,20 @@ define([
 			var key = this.keySignature.getKeyShortName();
 			if(key !== '') {
 				ctx.fillText(util.convertSymbols(key) + ':', x, y);
+			}
+		},
+		/**
+		 * Draws a sequence of text lines on the canvas.
+		 *
+		 * @param {array} lines
+		 * @param {number} x
+		 * @param {number} y
+		 * @return
+		 */
+		drawTextLines: function(lines, x, y) {
+			var ctx = this.getContext(), margin = 15;
+			for(var i = 0, len = lines.length; i < len; i++) {
+				ctx.fillText(lines[i], x, y + (i*margin));
 			}
 		},
 		/**
