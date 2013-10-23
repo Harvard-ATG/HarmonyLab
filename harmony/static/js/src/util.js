@@ -176,7 +176,7 @@ define(['lodash'], function(_) {
 						lines.push(line);
 						line = '';
 					}
-				} else if(word.length > lineWidth) {
+				} else {
 					word1 = word.substr(0, lineWidth);
 					word2 = word.substr(lineWidth, word.length - lineWidth);
 					words.shift();
