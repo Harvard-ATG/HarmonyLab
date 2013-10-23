@@ -98,5 +98,5 @@ def run_with_cgi(application):
 sys.path.append(os.path.expanduser("~/public_html/django/harmony"))
 
 # Change mysite to the name of your site package
-os.environ['DJANGO_SETTINGS_MODULE'] = 'harmony.settings.sitesfas'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'harmony.settings.sharedhosting'
 run_with_cgi(wsgi.get_wsgi_application()) 
