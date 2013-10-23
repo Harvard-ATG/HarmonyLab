@@ -21,6 +21,7 @@ define(['lodash'], function(_) {
 		 * @return {string} The static URL.
 		 */
 		staticUrl: function(path) {
+			path = path || '';
 			var defaultStaticUrl = '/static/';
 			var staticUrl = window.appStaticUrl || defaultStaticUrl;
 			return staticUrl + path;
@@ -138,6 +139,51 @@ define(['lodash'], function(_) {
 				audio.appendChild(source);
 			});
 			return audio;
+		},
+		/**
+		 * Greedy word wrap.
+		 *
+		 * @param {number} lineWidth
+		 * @return {array} An array of lines
+		 */
+		wrapText: function(text, lineWidth, separator) {
+			var word, word1, word2, words; 
+			var line = '', lines = [];
+
+			if(typeof text !== 'string') {
+				throw new Error("first argument must be a string");
+			}
+			if(!lineWidth || lineWidth < 0) {
+				return [text];
+			} 
+			if(!separator) {
+				separator = /(\s)/;
+			}
+
+			words = text.split(separator);
+			while(words.length > 0) {
+				word = words[0];
+				if(word.length <= lineWidth) {
+					if(line.length + word.length <= lineWidth) {
+						line = line + word;
+						words.shift();
+					} else {
+						lines.push(line);
+						line = '';
+					}
+				} else if(word.length > lineWidth) {
+					word1 = word.substr(0, lineWidth);
+					word2 = word.substr(lineWidth - 1, word.length - lineWidth);
+					words.shift();
+					words.unshift(word1, word2);
+				}
+			}
+
+			if(line) {
+				lines.push(line);
+			}
+
+			return lines;
 		}
 	};
 
