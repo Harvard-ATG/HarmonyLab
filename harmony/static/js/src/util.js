@@ -144,51 +144,25 @@ define(['lodash'], function(_) {
 		 * Word wrap.
 		 *
 		 * This method attempts to wrap text on word boundaries, 
-		 * only splitting words when absolutely necessary (not hyphenated).
+		 * only splitting words when absolutely necessary.
 		 *
-		 * @param {string} text
-		 * @param {number} lineWidth
-		 * @param {regexp|string} separator
+		 * @param {string} text the source string
+		 * @param {number} width maximum width of the text (default 75)
 		 * @return {array} An array of lines
 		 */
-		wrapText: function(text, lineWidth, separator) {
-			var word, word1, word2, words; 
-			var line = '', lines = [];
+		wrapText: function(text, width) {
+			width = width || 75;
 
 			if(typeof text !== 'string') {
-				throw new Error("first argument must be a string");
+				throw new Error("text must be a string");
 			}
-			if(!lineWidth || lineWidth < 0) {
+			if (!text || !width || width < 0) {
 				return [text];
-			} 
-			if(!separator) {
-				separator = /(\s)/;
 			}
 
-			words = text.split(separator);
-			while(words.length > 0) {
-				word = words[0];
-				if(word.length <= lineWidth) {
-					if(line.length + word.length <= lineWidth) {
-						line = line + word;
-						words.shift();
-					} else {
-						lines.push(line);
-						line = '';
-					}
-				} else {
-					word1 = word.substr(0, lineWidth);
-					word2 = word.substr(lineWidth, word.length - lineWidth);
-					words.shift();
-					words.unshift(word1, word2);
-				}
-			}
+			var regex = '.{1,' + width + '}(\\b|$)|.{' + width + '}';
 
-			if(line) {
-				lines.push(line);
-			}
-
-			return lines;
+			return text.match(RegExp(regex, 'g'));
 		}
 	};
 
