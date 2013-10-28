@@ -50,7 +50,7 @@ define([
 		 * @throws {Error} Will throw an error if any params are missing.
 		 */
 		initConfig: function() {
-			var required = ['chord', 'keySignature', 'clef', 'highlightsConfig'];
+			var required = ['chord', 'isBanked', 'keySignature', 'clef', 'highlightsConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -249,11 +249,21 @@ define([
 		_makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
+			var QUARTER_NOTE = "q";
+			var WHOLE_NOTE = "w";
+
 			var stave_note = new Vex.Flow.StaveNote({
 				keys: keys,
-				duration: 'w',
+				duration: (this.isBanked ? QUARTER_NOTE : WHOLE_NOTE),
 				clef: this.clef
 			});
+
+			if(this.isBanked) {
+				// @todo extend stave note so that we don't need to reach into
+				// the internals to get rid of the stems on quarter notes
+				stave_note.render_options.stem_height = 0;
+				stave_note.stem_direction = 0;
+			}
 
 			for(var i = 0, len = modifiers.length; i < len; i++) {
 				modifiers[i](stave_note);
