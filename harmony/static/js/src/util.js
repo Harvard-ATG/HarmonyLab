@@ -21,6 +21,7 @@ define(['lodash'], function(_) {
 		 * @return {string} The static URL.
 		 */
 		staticUrl: function(path) {
+			path = path || '';
 			var defaultStaticUrl = '/static/';
 			var staticUrl = window.appStaticUrl || defaultStaticUrl;
 			return staticUrl + path;
@@ -138,6 +139,30 @@ define(['lodash'], function(_) {
 				audio.appendChild(source);
 			});
 			return audio;
+		},
+		/**
+		 * Word wrap.
+		 *
+		 * This method attempts to wrap text on word boundaries, 
+		 * only splitting words when absolutely necessary.
+		 *
+		 * @param {string} text the source string
+		 * @param {number} width maximum width of the text (default 75)
+		 * @return {array} An array of lines
+		 */
+		wrapText: function(text, width) {
+			width = width || 75;
+
+			if(typeof text !== 'string') {
+				throw new Error("text must be a string");
+			}
+			if (!text || !width || width < 0) {
+				return [text];
+			}
+
+			var regex = '.{1,' + width + '}(\\b|$)|.{' + width + '}';
+
+			return text.match(RegExp(regex, 'g'));
 		}
 	};
 
