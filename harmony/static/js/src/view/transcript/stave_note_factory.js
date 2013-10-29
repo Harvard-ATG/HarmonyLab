@@ -40,6 +40,16 @@ define([
 			 * @type {object}
 			 */
 			this.config = config;
+			/**
+			 * Color for banked notes. 
+			 * @type {string}
+			 */
+			this.bankedColor = 'rgb(0,0,128)'; // dark blue
+			/**
+			 * Default note color.
+			 * @type {string}
+			 */
+			this.defaultColor = 'rgb(0,0,0)'; // black
 
 			this.initConfig();
 		},
@@ -191,6 +201,9 @@ define([
 				if(accidentals[i]) {
 					modifiers.push(this._makeAccidentalModifier(i, accidentals[i]));
 				}
+				if(this.isBanked) {
+					modifiers.push(this._makeBankedModifier(i));
+				}
 				if(this.highlightsConfig.enabled) {
 					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
 				}
@@ -223,11 +236,16 @@ define([
 		 * @return {function}
 		 */
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var analyzer = new Analyze(this.keySignature, {
+			var analyzer, color, keyStyleOpts;
+
+			analyzer = new Analyze(this.keySignature, {
 				highlightMode: this.highlightsConfig.mode
 			});
-			var color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
-			var keyStyleOpts = {
+			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
+			if(!color) {
+				color = (this.isBanked ? this.bankedColor : this.defaultColor);
+			}
+			keyStyleOpts = {
 				//shadowColor: color,
 				//shadowBlur: 15,
 				fillStyle: color,
@@ -236,6 +254,19 @@ define([
 
 			return function(staveNote) {
 				staveNote.setKeyStyle(keyIndex, keyStyleOpts);
+			};
+		},
+		/**
+		 * Makes a modifier for banked keys.
+		 *
+		 * @protected
+		 * @param {number} keyIndex
+		 * @return {function} 
+		 */
+		_makeBankedModifier: function(keyIndex) {
+			var keyStyle = {fillStyle:this.bankedColor, strokeStyle:this.bankedColor};
+			return function(staveNote) {
+				staveNote.setKeyStyle(keyIndex, keyStyle);
 			};
 		},
 		/**
@@ -254,16 +285,9 @@ define([
 
 			var stave_note = new Vex.Flow.StaveNote({
 				keys: keys,
-				duration: (this.isBanked ? QUARTER_NOTE : WHOLE_NOTE),
+				duration: WHOLE_NOTE,
 				clef: this.clef
 			});
-
-			if(this.isBanked) {
-				// @todo extend stave note so that we don't need to reach into
-				// the internals to get rid of the stems on quarter notes
-				stave_note.render_options.stem_height = 0;
-				stave_note.stem_direction = 0;
-			}
 
 			for(var i = 0, len = modifiers.length; i < len; i++) {
 				modifiers[i](stave_note);

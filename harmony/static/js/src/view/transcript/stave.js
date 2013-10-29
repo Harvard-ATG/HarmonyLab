@@ -266,11 +266,7 @@ define([
 			var voice, formatter, time;
 
 			if(this.hasStaveNotes()) {
-				if(this.isBanked()) { 
-					time = {num_beats: 1, resolution: Vex.Flow.RESOLUTION, beat_value: 4};
-				} else {
-					time = Vex.Flow.TIME4_4;
-				}
+				time = Vex.Flow.TIME4_4;
 				voice = new Vex.Flow.Voice(time);
 				voice.addTickables(this.createStaveNotes());
 			}

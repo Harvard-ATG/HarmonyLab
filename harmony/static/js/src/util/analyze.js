@@ -179,7 +179,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // it depends on "knowStepwiseDistance" and "knowSemitonalDistance."
 
 	ColorSpectacular: function (note, notes) {
-		var color = "black";
+		var color = "";
 		var interval = 0;
 		var fromRoot = this.knowSemitonalDistance(this.Piano.keynotePC, note) % 12;
 		var i = notes.indexOf(note);
