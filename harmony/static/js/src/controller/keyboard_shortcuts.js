@@ -199,8 +199,16 @@ define([
 		 * @return undefined
 		 */
 		retakeSustain: function() {
+			this.retakeTimeoutID = this.retakeTimeoutID || null;
+			if(this.retakeTimeoutID !== null) {
+				window.clearTimeout(this.retakeTimeoutID);
+			}
+
 			this.releaseSustain();
-			this.depressSustain();
+			window.setTimeout(_.bind(function() {
+				this.depressSustain();
+				this.retakeTimeoutID = null;
+			}, this), 100);
 		},
 		/**
 		 * Clears all the notes.

@@ -33,23 +33,30 @@ define([
 		 */
 		init: function() {
 			/**
+			 * Container for the notes that are active.
+			 * @type {object}
+			 * @protected
+			 */
+			this._notes = {};  
+			/**
 			 * Sustain flag. When true means notes should be sustained.
 			 * @type {boolean}
 			 * @protected
 			 */
 			this._sustain = false; 
 			/**
+			 * Container for the note state changes that occur while notes are
+			 * being sustained.
+			 * @type {object}
+			 * @protected
+			 */
+			this._sustained = {};
+			/**
 			 * Transpose value expressed as the number of semitones.
 			 * @type {number}
 			 * @protected
 			 */
 			this._transpose = 0;   
-			/**
-			 * Container for the notes that are active.
-			 * @type {object}
-			 * @protected
-			 */
-			this._notes = {};  
 		},
 		/**
 		 * Clears all the notes in the chord.
@@ -59,6 +66,7 @@ define([
 		 */
 		clear: function() {
 			this._notes = {};
+			this._sustained = {};
 			this.trigger('clear');
 		},
 		/**
@@ -75,6 +83,9 @@ define([
 
 			if(this._transpose) {
 				number = this.transpose(number);
+			}
+			if(this._sustain) {
+				this._sustained[number] = true;
 			}
 
 			changed = (this._notes[number] !== true); 
@@ -101,15 +112,16 @@ define([
 		noteOff: function(number) {
 			var changed;
 
-			if(this.isSustained()) {
-				return false;
-			} 
 			if(this._transpose) {
 				number = this.transpose(number);
 			}
+			if(this._sustain) {
+				this._sustained[number] = false;
+				return false;
+			} 
 
 			changed = (this._notes[number] === true);
-			delete this._notes[number];
+			this._notes[number] = false;
 
 			if(changed) {
 				this.trigger('change', 'note:off', number);
@@ -129,16 +141,22 @@ define([
 			this._sustain = true;
 		},
 		/**
-		 * Releases all sustained notes (turns them off), turns off the sustain,
-		 * and triggers a change event.
+		 * Releases the sustain and turns off any notes that may have been
+		 * released while the sustain was on.
 		 *
 		 * @fires change
 		 * @return undefined
 		 */
 		releaseSustain: function() {
-			this._notes = {}; 
 			this._sustain = false; 
-			this.trigger('change', 'notes:off');
+
+			_.each(this._sustained, function(state, noteNumber) {
+				if(!state) {
+					this.noteOff(noteNumber);
+				}
+			}, this);
+
+			this._sustained = {};
 		},
 		/**
 		 * Returns true if notes are being sustianed, false otherwise.
@@ -156,7 +174,7 @@ define([
 		 * of semitones into different key. Setting the transpose to zero
 		 * will return the chord to its original key.
 		 *
-		 * @param {number} value A number of semitones.
+		 * @param {number} newTranspose A number of semitones.
 		 * @return {boolean} True if the transpose succeeded, false otherwise.
 		 */
 		setTranspose: function(value) {
@@ -164,22 +182,18 @@ define([
 				return false;
 			}
 
-			var old_transpose = this._transpose;
 			var new_transpose = parseInt(value, 10);
+			var old_transpose = this._transpose;
 			var effective_transpose = new_transpose - old_transpose;
 
-			var transposeNote = function(state, noteNumber) {
-				return effective_transpose + parseInt(noteNumber, 10);
-			};
-			var trueValue = function() {
-				return true;
-			};
+			this._notes = _.reduce(this._notes, function(result, state, noteNumber) {
+				var transposition = effective_transpose + parseInt(noteNumber, 10);
+				result[transposition] = state;
+				return result;	
+			}, {});
 
-			var trans_notes = _.map(this._notes, transposeNote);
-			var trans_values = _.map(trans_notes, trueValue);
-
-			this._notes = _.zipObject(trans_notes, trans_values);
 			this._transpose = new_transpose;
+
 			this.trigger('change', 'notes:transpose');
 
 			return true;
@@ -217,10 +231,8 @@ define([
 		 * @return undefined
 		 */
 		copyNotes: function(chord) {
-			this._notes = _.reduce(chord.getNoteNumbers(), function(result, noteNum) {
-				result[noteNum] = true;
-				return result;
-			}, {});
+			this._notes = _.cloneDeep(chord._notes);
+			this._sustained = _.cloneDeep(chord._sustained);
 		},
 		/**
 		 * Copies the chord.
@@ -354,7 +366,7 @@ define([
 			var _notes = this._notes;
 			var notes = [];
 			for(var note in _notes) {
-				if(_notes.hasOwnProperty(note)) {
+				if(_notes.hasOwnProperty(note) && _notes[note]) {
 					notes.push(note);
 				}
 			}
