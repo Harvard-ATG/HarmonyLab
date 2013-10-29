@@ -331,5 +331,5 @@ define({
 
 	// Defines when a bank happens in relation to a metronome "tick."
 	// Expressed as a fraction of the current metronome tempo.
-	bankAfterMetronomeTick: 0.5
+	bankAfterMetronomeTick: 0.25
 });
