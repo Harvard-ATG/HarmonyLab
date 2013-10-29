@@ -40,19 +40,26 @@ define([
 	 * @type {number}
 	 * @const
 	 */
-	var DEFAULT_TOCK_FRACTION = 0;
+	var DEFAULT_TOCK_DELAY_FRACTION = 0;
 
 	/**
 	 * Creates an instance of a metronome. 
+	 *
+	 * A metronome fires "tick" and "tock" events. Ticks occur at regular
+	 * intervals defined by the tempo (beats per minute) that are given to the
+	 * metronome object. Tocks are like ticks in that they occur at regular
+	 * intervals _after_ each tick. The delay between the "tick" and "tock" is
+	 * some fraction of the tick interval.
 	 *
 	 * @constructor
 	 * @param {number} tempo The tempo.
 	 * @mixes MicroEvent
 	 * @fires tick
+	 * @fires tock
 	 * @fires change
 	 */
-	var Metronome = function(tempo, tockFraction) {
-		this.init(tempo, tockFraction);
+	var Metronome = function(tempo, tockDelayFraction) {
+		this.init(tempo, tockDelayFraction);
 	};
 
 	/**
@@ -71,7 +78,7 @@ define([
 		 * @param {number} tempo
 		 * @return undefined
 		 */
-		init: function(tempo, tockFraction) {
+		init: function(tempo, tockDelayFraction) {
 			/**
 			 * Tempo expressed in beats per minute (bpm).
 			 * @type {number}
@@ -85,15 +92,15 @@ define([
 				throw new Error("invalid tempo");
 			}
 			/**
-			 * Fraction of the tempo that will trigger a "tock" after the
-			 * "tick."
-			 *
-			 * @return
+			 * The delay after a "tick," expressed as a fraction, at which a
+			 * "tock" will occur.
+			 * @type {number}
+			 * @protected
 			 */
-			if(typeof tockFraction === 'undefined') {
-				this.tockFraction = DEFAULT_TOCK_FRACTION;
-			} else if(tockFraction >= 0 && tockFraction < 1) {
-				this.tockFraction = tockFraction;
+			if(typeof tockDelayFraction === 'undefined') {
+				this.tockDelayFraction = DEFAULT_TOCK_DELAY_FRACTION;
+			} else if(tockDelayFraction >= 0 && tockDelayFraction < 1) {
+				this.tockDelayFraction = tockDelayFraction;
 			} else {
 				throw new Error("invalid tock fraction");
 			}
@@ -111,7 +118,7 @@ define([
 			 * @type {number}
 			 * @protected
 			 */
-			this.tockDelay = this.calculateTockDelay(this.tempo, this.tockFraction);
+			this.tockDelay = this.calculateTockDelay(this.tempo, this.tockDelayFraction);
 			/**
 			 * The ID associated with the tick interval.
 			 * @type {number}
@@ -123,13 +130,19 @@ define([
 			 */
 			this.tockIntervalID = null;
 			/**
-			 * Repeat flag. When true, metronome is running.
+			 * The ID associated with the tock timer, which waits a certain
+			 * amount of time after the first tick to start the tock interval.
+			 * @type {number}
+			 */
+			this.tockTimeoutID = null;
+			/**
+			 * Repeat flag. When true, metronome is .
 			 * @type {boolean}
 			 * @protected
 			 */
 			this.running = false;
 
-			_.bindAll(this, ['tick', 'tock', 'ticktock']);
+			_.bindAll(this, ['tick', 'tock', '_startTockInterval']);
 		},
 		/**
 		 * Plays the tick.
@@ -139,6 +152,11 @@ define([
 		 */
 		tick: function() {
 			this.trigger("tick");
+			if(this.tockDelay > 0) {
+				this._scheduleTockInterval();
+			} else {
+				this.tock();
+			}
 		},
 		/**
 		 * Plays the tock.
@@ -150,15 +168,6 @@ define([
 			this.trigger("tock");
 		},
 		/**
-		 * Plays the tick and the tock.
-		 *
-		 * @return undefined
-		 */
-		ticktock: function() {
-			this.tick();
-			this.tock();
-		},
-		/**
 		 * Starts the metronome.
 		 *
 		 * @return undefined
@@ -166,7 +175,7 @@ define([
 		 */
 		start: function() {
 			this.running = true;
-			this._setInterval();
+			this._startTickInterval();
 			this.trigger("change");
 		},
 		/**
@@ -177,7 +186,7 @@ define([
 		 */
 		stop: function() {
 			this.running = false;
-			this._clearInterval();
+			this._clearIntervals();
 			this.trigger("change");
 		},
 		/**
@@ -199,8 +208,8 @@ define([
 			if(this.isValidTempo(tempo)) {
 				this.tempo = tempo;
 				this.tickDelay = this.calculateTickDelay(tempo);
-				this.tockDelay = this.calculateTockDelay(tempo, this.tockFraction);
-				this._updateInterval();
+				this.tockDelay = this.calculateTockDelay(tempo, this.tockDelayFraction);
+				this._updateIntervals();
 				this.trigger("change");
 				return true;
 			}
@@ -221,7 +230,7 @@ define([
 		 * @return {number}
 		 */
 		getDelay: function() {
-			return this.delay;
+			return this.tickDelay;
 		},
 		/**
 		 * Returns true if the tempo is valid, false otherwise.
@@ -250,7 +259,7 @@ define([
 		 * @return {number}
 		 */
 		calculateTockDelay: function(tempo, fraction) {
-			return (this.calculateTickDelay(tempo) * (1 + fraction));
+			return (fraction * this.calculateTickDelay(tempo));
 		},
 		/**
 		 * Updates the interval when the metronome is playing.
@@ -258,10 +267,10 @@ define([
 		 * @return
 		 * @private
 		 */
-		_updateInterval: function() {
+		_updateIntervals: function() {
 			if(this.isPlaying()) {
-				this._clearInterval();
-				this._setInterval();
+				this._clearIntervals();
+				this._startTickInterval();
 			}
 		},
 		/**
@@ -270,26 +279,48 @@ define([
 		 * @return undefined
 		 * @private
 		 */
-		_setInterval: function() {
-			if(this.tickDelay === this.tockDelay) {
-				this.tickIntervalID = window.setInterval(this.ticktock, this.tickDelay);
-			} else {
-				this.tickIntervalID = window.setInterval(this.tick, this.tickDelay);
-				this.tockIntervalID = window.setInterval(this.tock, this.tockDelay);
-			}
+		_startTickInterval: function() {
+			this.tickIntervalID = window.setInterval(this.tick, this.tickDelay);
 		},
 		/**
-		 * Unsets the tick intervals.
+		 * Initializes the interval between tocks of the metronome, which
+		 * is the same interval as ticks.
 		 *
 		 * @return undefined
 		 * @private
 		 */
-		_clearInterval: function() {
+		_startTockInterval: function() {
+			this.tockIntervalID = window.setInterval(this.tock, this.tickDelay);
+		},
+		/**
+		 * Schedules the start of the tock interval.
+		 *
+		 * @return undefined
+		 * @private
+		 */
+		_scheduleTockInterval: function() {
+			if(this.tockIntervalID === null) {
+				this.tockTimeoutID = window.setTimeout(this._startTockInterval, this.tockDelay);
+			}
+		},
+		/**
+		 * Unsets the intervals.
+		 *
+		 * @return undefined
+		 * @private
+		 */
+		_clearIntervals: function() {
+			if(this.tockTimeoutID !== null) {
+				window.clearTimeout(this.tockTimeoutID);
+				this.tockTimeoutID = null;
+			}
 			if(this.tickIntervalID !== null) {
 				window.clearInterval(this.tickIntervalID);
+				this.tickIntervalID = null;
 			}
 			if(this.tockIntervalID !== null) {
 				window.clearInterval(this.tockIntervalID);
+				this.tockIntervalID = null;
 			}
 		}
 	});
