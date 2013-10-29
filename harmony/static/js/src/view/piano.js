@@ -169,8 +169,8 @@ define([
 			var eventBus = this.eventBus;
 			var metronomeControl = new PianoMetronome();
 
-			// Trigger a chord "bank" on the off-beats (per Rowland)
-			metronomeControl.bind("offbeat", function() {
+			// Trigger a chord bank 
+			metronomeControl.bind("bank", function() {
 				eventBus.trigger("banknotes");
 			});
 
