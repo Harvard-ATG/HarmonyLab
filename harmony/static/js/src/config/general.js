@@ -321,5 +321,15 @@ define({
 			roman_numerals: true,
 			intervals: true
 		}
-	}
+	},
+
+	// Defines default metronome settings.
+	metronomeSettings: {
+		defaultTempo: 90,
+		maxTempo: 600
+	},
+
+	// Defines when a bank happens in relation to a metronome "tick."
+	// Expressed as a fraction of the current metronome tempo.
+	bankAfterMetronomeTick: 0.5
 });

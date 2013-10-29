@@ -1,11 +1,13 @@
 define([
 	'jquery',
 	'lodash',
-	'microevent'
+	'microevent',
+	'app/config'
 ], function(
 	$, 
 	_, 
-	MicroEvent
+	MicroEvent,
+	Config
 ) {
 	"use strict";
 
@@ -26,13 +28,19 @@ define([
 	 * @type {number}
 	 * @const
 	 */
-	var MAX_TEMPO = 600;
+	var MAX_TEMPO = Config.get('general.metronomeSettings.maxTempo');
 	/**
 	 * Defines the default tempo.
 	 * @type {number}
 	 * @const
 	 */
-	var DEFAULT_TEMPO = 90;
+	var DEFAULT_TEMPO = Config.get('general.metronomeSettings.defaultTempo');
+	/**
+	 * Defines the fraction of the tempo after which a tock occurs.
+	 * @type {number}
+	 * @const
+	 */
+	var DEFAULT_TOCK_FRACTION = 0;
 
 	/**
 	 * Creates an instance of a metronome. 
@@ -43,8 +51,8 @@ define([
 	 * @fires tick
 	 * @fires change
 	 */
-	var Metronome = function(tempo) {
-		this.init(tempo);
+	var Metronome = function(tempo, tockFraction) {
+		this.init(tempo, tockFraction);
 	};
 
 	/**
@@ -63,7 +71,7 @@ define([
 		 * @param {number} tempo
 		 * @return undefined
 		 */
-		init: function(tempo) {
+		init: function(tempo, tockFraction) {
 			/**
 			 * Tempo expressed in beats per minute (bpm).
 			 * @type {number}
@@ -76,6 +84,19 @@ define([
 			} else {
 				throw new Error("invalid tempo");
 			}
+			/**
+			 * Fraction of the tempo that will trigger a "tock" after the
+			 * "tick."
+			 *
+			 * @return
+			 */
+			if(typeof tockFraction === 'undefined') {
+				this.tockFraction = DEFAULT_TOCK_FRACTION;
+			} else if(tockFraction >= 0 && tockFraction < 1) {
+				this.tockFraction = tockFraction;
+			} else {
+				throw new Error("invalid tock fraction");
+			}
 
 			/**
 			 * The delay between each tick of the metronome expressed in
@@ -83,29 +104,59 @@ define([
 			 * @type {number}
 			 * @protected
 			 */
-			this.delay = this.calculateDelay(this.tempo);
+			this.tickDelay = this.calculateTickDelay(this.tempo);
+			/**
+			 * The delay between each tock of the metronome expressed in
+			 * milliseconds. This value is some fraction of the tempo.
+			 * @type {number}
+			 * @protected
+			 */
+			this.tockDelay = this.calculateTockDelay(this.tempo, this.tockFraction);
+			/**
+			 * The ID associated with the tick interval.
+			 * @type {number}
+			 */
+			this.tickIntervalID = null;
+			/**
+			 * The ID associated with the tock interval.
+			 * @type {number}
+			 */
+			this.tockIntervalID = null;
 			/**
 			 * Repeat flag. When true, metronome is running.
 			 * @type {boolean}
 			 * @protected
 			 */
 			this.running = false;
-			/**
-			 * The ID associated with setTimeout() for scheduling ticks.
-			 * @type {number}
-			 */
-			this.intervalID = null;
 
-			_.bindAll(this, ['play']);
+			_.bindAll(this, ['tick', 'tock', 'ticktock']);
 		},
 		/**
-		 * Plays the tick and runnings.
+		 * Plays the tick.
 		 *
 		 * @return undefined
 		 * @fires tick
 		 */
-		play: function() {
+		tick: function() {
 			this.trigger("tick");
+		},
+		/**
+		 * Plays the tock.
+		 *
+		 * @return undefined
+		 * @fires tock
+		 */
+		tock: function() {
+			this.trigger("tock");
+		},
+		/**
+		 * Plays the tick and the tock.
+		 *
+		 * @return undefined
+		 */
+		ticktock: function() {
+			this.tick();
+			this.tock();
 		},
 		/**
 		 * Starts the metronome.
@@ -147,7 +198,8 @@ define([
 		changeTempo: function(tempo) {
 			if(this.isValidTempo(tempo)) {
 				this.tempo = tempo;
-				this.delay = this.calculateDelay(tempo);
+				this.tickDelay = this.calculateTickDelay(tempo);
+				this.tockDelay = this.calculateTockDelay(tempo, this.tockFraction);
 				this._updateInterval();
 				this.trigger("change");
 				return true;
@@ -186,8 +238,19 @@ define([
 		 * @param {number} tempo Tempo in beats per minute.
 		 * @return {number}
 		 */
-		calculateDelay: function(tempo) {
+		calculateTickDelay: function(tempo) {
 			return Math.floor(MS_PER_MIN / tempo);
+		},
+		/**
+		 * Given beats per minute and a fraction, returns the number of
+		 * milliseconds .
+		 *
+		 * @param {number} tempo Tempo in bpm
+		 * @param {number} fraction Fraction of the tempo
+		 * @return {number}
+		 */
+		calculateTockDelay: function(tempo, fraction) {
+			return (this.calculateTickDelay(tempo) * (1 + fraction));
 		},
 		/**
 		 * Updates the interval when the metronome is playing.
@@ -208,7 +271,12 @@ define([
 		 * @private
 		 */
 		_setInterval: function() {
-			this.intervalID = window.setInterval(this.play, this.delay);
+			if(this.tickDelay === this.tockDelay) {
+				this.tickIntervalID = window.setInterval(this.ticktock, this.tickDelay);
+			} else {
+				this.tickIntervalID = window.setInterval(this.tick, this.tickDelay);
+				this.tockIntervalID = window.setInterval(this.tock, this.tockDelay);
+			}
 		},
 		/**
 		 * Unsets the tick intervals.
@@ -217,8 +285,11 @@ define([
 		 * @private
 		 */
 		_clearInterval: function() {
-			if(this.intervalID !== null) {
-				window.clearInterval(this.intervalID);
+			if(this.tickIntervalID !== null) {
+				window.clearInterval(this.tickIntervalID);
+			}
+			if(this.tockIntervalID !== null) {
+				window.clearInterval(this.tockIntervalID);
 			}
 		}
 	});
