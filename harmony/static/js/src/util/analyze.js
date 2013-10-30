@@ -343,17 +343,14 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			if(chords[entry]) {
 				root = chords[entry]["root"];
 			}
-			if(root === null || root === "_") {
-				return [];
-			}
-
-			root = this.pitchClasses.indexOf(root);
-			root = (root + this.Piano.keynotePC) % 12;
-
-			for(i = 0, len = notes.length; i < len; i++) {
-				note = notes[i];
-				if(root == (note % 12)) {
-					roots.push(note);
+			if(root !== null && root !== '_' && this.pitchClasses.indexOf(root) !== -1) {
+				root = this.pitchClasses.indexOf(root);
+				root = (root + this.Piano.keynotePC) % 12;
+				for(i = 0, len = notes.length; i < len; i++) {
+					note = notes[i];
+					if(root == (note % 12)) {
+						roots.push(note);
+					}
 				}
 			}
 		}
