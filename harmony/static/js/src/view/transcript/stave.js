@@ -61,6 +61,11 @@ define([
 		 * @type {object}
 		 */
 		this.position = {index: 0, count: 0};
+		/**
+		 * True if the stave is considered "banked" or false if not.
+		 * @type {boolean}
+		 */
+		this._isBanked = false;
 
 		this.init(clef, position);
 	};
@@ -258,9 +263,11 @@ define([
 		 * @return undefined
 		 */
 		createStaveVoice: function() {
-			var voice, formatter;
+			var voice, formatter, time;
+
 			if(this.hasStaveNotes()) {
-				voice = new Vex.Flow.Voice(Vex.Flow.TIME4_4);
+				time = Vex.Flow.TIME4_4;
+				voice = new Vex.Flow.Voice(time);
 				voice.addTickables(this.createStaveNotes());
 			}
 			this.staveVoice = voice;
@@ -569,6 +576,23 @@ define([
 		 */
 		isLastBar: function() {
 			return this.position.index === this.position.count;
+		},
+		/**
+		 * Sets the status of this stave as "banked" or not.
+		 *
+		 * @param {boolean} state
+		 * @return undefined
+		 */
+		setBanked: function(state) {
+			this._isBanked = (state ? true : false);
+		},
+		/**
+		 * Returns true if the stave is banked or not.
+		 *
+		 * @return {boolean}
+		 */
+		isBanked: function() {
+			return this._isBanked;
 		}
 	});
 

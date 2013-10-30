@@ -362,20 +362,13 @@ define([
 		 * @return undefined
 		 */
 		onClearNotes: function() {
-			var notes = this.chords.getAllNotes();
+			this.sendAllNotesOff();
 
-			// turn off all notes
-			_.each(notes, function(noteNumber) {
-				this.sendMIDIMessage(JMB.NOTE_OFF, noteNumber, this.noteVelocity);
-			}, this);
-
-			// retake the sustain to clear any sustained notes
 			if(this.chords.anySustained()) {
 				this.sendMIDIPedalMessage('sustain', 'off');
 				this.sendMIDIPedalMessage('sustain', 'on');
 			}
 
-			// clear the chords
 			this.chords.clear();
 		},
 		/**
@@ -440,6 +433,18 @@ define([
 			var toggle = (noteState === 'on' ? 'noteOn' : 'noteOff');
 			var chord = this.chords.current();
 			chord[toggle](noteNumber);
+		},
+		/**
+		 * Sends MIDI messages to turn off all notes. This should stop all notes
+		 * from sounding.
+		 *
+		 * @return undefined
+		 */
+		sendAllNotesOff: function() {
+			var notes = this.chords.getAllNotes();
+			_.each(notes, function(noteNumber) {
+				this.sendMIDIMessage(JMB.NOTE_OFF, noteNumber, this.noteVelocity);
+			}, this);
 		},
 		/**
 		 * Outputs a MIDI message via the Jazz MIDI bridge.

@@ -40,6 +40,16 @@ define([
 			 * @type {object}
 			 */
 			this.config = config;
+			/**
+			 * Color for banked notes. 
+			 * @type {string}
+			 */
+			this.bankedColor = 'rgb(0,0,128)'; // dark blue
+			/**
+			 * Default note color.
+			 * @type {string}
+			 */
+			this.defaultColor = 'rgb(0,0,0)'; // black
 
 			this.initConfig();
 		},
@@ -50,7 +60,7 @@ define([
 		 * @throws {Error} Will throw an error if any params are missing.
 		 */
 		initConfig: function() {
-			var required = ['chord', 'keySignature', 'clef', 'highlightsConfig'];
+			var required = ['chord', 'isBanked', 'keySignature', 'clef', 'highlightsConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -87,22 +97,32 @@ define([
 		 * @return {array}
 		 */
 		_getNoteKeys: function() {
-			var keySignature = this.keySignature;
-			var clef = this.clef;
-			var pitches = this.chord.getNotePitches(this.clef);
-			var spelling = keySignature.getSpelling();
-			var note, pitchClass, octave;
-			var note_keys = [];
+			var note_nums = this.chord.getNoteNumbers(this.clef);
+			var all_note_nums = this.chord.getNoteNumbers();
+			var note_name, note_keys = [];
 
-			for(var i = 0, len = pitches.length; i < len; i++) {
-				pitchClass = pitches[i].pitchClass;
-				octave = pitches[i].octave;
-				note = spelling[pitchClass];
-				octave = this.calculateOctave(pitchClass, octave, note);
-				note_keys.push([note, octave].join('/'));
+			for(var i = 0, len = note_nums.length; i < len; i++) {
+				note_name = this._getNoteName(note_nums[i], all_note_nums);
+				note_keys.push(note_name);
 			}
 
 			return note_keys;
+		},
+		/**
+		 * Returns the correct spelling or note name of a given note in a
+		 * collection of notes. 
+		 *
+		 * Note: this delegates to a utility function that handles the spelling
+		 * logic, because in some cases, a note may not use the default
+		 * spelling, but instead be re-spelled on the fly (snap spelling).
+		 *
+		 * @param {number} note
+		 * @param {array} notes
+		 * @return {string} the note name or spelling
+		 */
+		_getNoteName: function(note, notes) {
+			var analyzer = this._makeAnalyzer();
+			return analyzer.getNoteName(note, notes);
 		},
 		/**
 		 * Returns an array of objects containing each key and accidental
@@ -191,6 +211,9 @@ define([
 				if(accidentals[i]) {
 					modifiers.push(this._makeAccidentalModifier(i, accidentals[i]));
 				}
+				if(this.isBanked) {
+					modifiers.push(this._makeBankedModifier(i));
+				}
 				if(this.highlightsConfig.enabled) {
 					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
 				}
@@ -223,11 +246,21 @@ define([
 		 * @return {function}
 		 */
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var analyzer = new Analyze(this.keySignature, {
+			var color = '', keyStyleOpts = {};
+			var analyzer = this._makeAnalyzer({
 				highlightMode: this.highlightsConfig.mode
 			});
-			var color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
-			var keyStyleOpts = {
+
+			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
+			if(!color) {
+				if(this.isBanked) {
+					color = this.bankedColor;
+				} else {
+					color = this.defaultColor;
+				}
+			}
+
+			keyStyleOpts = {
 				//shadowColor: color,
 				//shadowBlur: 15,
 				fillStyle: color,
@@ -237,6 +270,31 @@ define([
 			return function(staveNote) {
 				staveNote.setKeyStyle(keyIndex, keyStyleOpts);
 			};
+		},
+		/**
+		 * Makes a modifier for banked keys.
+		 *
+		 * @protected
+		 * @param {number} keyIndex
+		 * @return {function} 
+		 */
+		_makeBankedModifier: function(keyIndex) {
+			var keyStyle = {fillStyle:this.bankedColor, strokeStyle:this.bankedColor};
+			return function(staveNote) {
+				staveNote.setKeyStyle(keyIndex, keyStyle);
+			};
+		},
+		/**
+		 * Returns a new instance of Analyze using the current key signature.
+		 *
+		 * Used by the highlight method to highlight certain notes and also by
+		 * the method that looks up the note name.
+		 *
+		 * @param {object} options
+		 * @return {object}
+		 */
+		_makeAnalyzer: function(options) {
+			return new Analyze(this.keySignature, options);
 		},
 		/**
 		 * Returns a new Vex.Flow.StaveNote with all modifiers added. 
@@ -249,9 +307,12 @@ define([
 		_makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
+			var QUARTER_NOTE = "q";
+			var WHOLE_NOTE = "w";
+
 			var stave_note = new Vex.Flow.StaveNote({
 				keys: keys,
-				duration: 'w',
+				duration: WHOLE_NOTE,
 				clef: this.clef
 			});
 

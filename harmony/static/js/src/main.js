@@ -226,6 +226,15 @@ function(
 			themeSelector.render();
 		},
 		/**
+		 * Fade in the content.
+		 *
+		 * @return undefined
+		 */
+		fadeIn: function() {
+			$('.js-fade-in').css('opacity', 1);
+			$('.js-fade-out').css('opacity', 0);
+		},
+		/**
 		 * Initializes the user interface.
 		 *
 		 * This method should be called when the DOM is ready.
@@ -256,6 +265,7 @@ function(
 			this.initKeyboardShortcuts(shortcuts);
 			this.initDevices(midi_source);
 			this.initThemeSelector();
+			this.fadeIn();
 		}
 	};
 

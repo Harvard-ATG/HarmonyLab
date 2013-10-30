@@ -5,16 +5,26 @@ define([
 	'lodash',
 	'jquery',
 	'microevent',
+	'app/config',
 	'app/model/metronome',
-	'app/util',
+	'app/util'
 ], function(
 	_, 
 	$, 
 	MicroEvent,
+	Config,
 	Metronome,
 	util
 ) {
 	"use strict";
+
+	/**
+	 * Banks after a metronome tick. Expressed as a fraction of the tempo.
+	 *
+	 * @type {number}
+	 * @return
+	 */
+	var BANK_AFTER_TICK = Config.get('general.bankAfterMetronomeTick'); 
 
 	/**
 	 * Creates an instance of a PianoMetronome.
@@ -74,7 +84,7 @@ define([
 		selectors: {
 			inputEl: '.js-metronome-input',
 			btnEl: '.js-metronome-btn',
-			ledEl: '.js-metronome-led',
+			ledEl: '.js-metronome-led'
 		},
 		/**
 		 * CSS classes used to manipulate the UI. 
@@ -99,10 +109,11 @@ define([
 		 * @return undefined
 		 */
 		init: function() {
-			this.metronome = new Metronome();
+			var tempo;
+			this.metronome = new Metronome(tempo, BANK_AFTER_TICK);
 			this.audio = util.createAudio(this.audioSources);
 
-			_.bindAll(this, ['play','blink','toggle','onChangeTempo']);
+			_.bindAll(this, ['play','blink','bank','toggle','onChangeTempo']);
 		},
 		/**
 		 * Initializes the listeners.
@@ -114,6 +125,7 @@ define([
 		initListeners: function() {
 			this.metronome.bind('tick', this.play);
 			this.metronome.bind('tick', this.blink);
+			this.metronome.bind('tock', this.bank);
 			this.btnEl.on('click', this.toggle);
 			this.inputEl.on('change', this.onChangeTempo);
 		},
@@ -145,8 +157,7 @@ define([
 		 */
 		loadAudioWhenSafari: function() {
 			var user_agent = window.navigator.userAgent;
-			if(user_agent.indexOf('Chrome') === -1 
-				&& user_agent.indexOf('Safari') > -1) {
+			if(user_agent.indexOf('Chrome') === -1 && user_agent.indexOf('Safari') > -1) {
 				this.audio.load(); 
 			} 
 		},
@@ -158,6 +169,14 @@ define([
 		play: function() {
 			this.loadAudioWhenSafari();
 			this.audio.play();
+		},
+		/**
+		 * Triggers a bank.
+		 *
+		 * @return undefined
+		 */
+		bank: function() {
+			this.trigger("bank");
 		},
 		/**
 		 * Blinks the metronome LED on/off.
@@ -212,7 +231,7 @@ define([
 		 */
 		getMetronome: function() {
 			return this.metronome;
-		},
+		}
 	});
 
 	MicroEvent.mixin(PianoMetronome);

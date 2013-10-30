@@ -84,9 +84,8 @@ define([
 			var chord = new Chord();
 			var current = this.current();
 
-			// copy some settings from the current chord
-			chord.copyTranspose(current);
-			chord.copySustain(current);
+			// copy the current chord
+			chord.copy(current);
 
 			// re-wires listeners to the current chord
 			this._removeListeners(current);
@@ -102,14 +101,18 @@ define([
 		 * @param {number} config.limit Will return items up to the limit.
 		 * @param {boolean} config.reverse Will reverse the order of items after
 		 * retrieving them up to the limit.
-		 * @return undefined
+		 * @return {array} Array of records
 		 */
 		items: function(config) {
 			config = config || {};
-			var items = this._items;
+			var current = this.current();
+			var _items = [], items = [];
 			if(config.limit) {
-				items = this._items.slice(0, config.limit);
+				_items = this._items.slice(0, config.limit);
 			}
+			items = _.map(_items, function(chord, index) {
+				return {chord:chord, isBanked:(chord!==current)};
+			});
 			if(config.reverse) {
 				items.reverse();
 			}
