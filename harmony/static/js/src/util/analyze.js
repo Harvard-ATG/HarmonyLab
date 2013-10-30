@@ -330,6 +330,9 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			return !isNaN(root) && typeof root !== 'undefined' && root !== null && root !== '_';
 		};
 
+		// notes should be in sorted order
+		notes.sort(function(a,b) { return a - b; });
+
 		if(this.Piano.key === "h") {
 			entry = this.getIntervalsAboveBass(notes);
 			if (this.hChords[entry]) {
