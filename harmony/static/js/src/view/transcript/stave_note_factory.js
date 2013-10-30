@@ -97,22 +97,32 @@ define([
 		 * @return {array}
 		 */
 		_getNoteKeys: function() {
-			var keySignature = this.keySignature;
-			var clef = this.clef;
-			var pitches = this.chord.getNotePitches(this.clef);
-			var spelling = keySignature.getSpelling();
-			var note, pitchClass, octave;
-			var note_keys = [];
+			var note_nums = this.chord.getNoteNumbers(this.clef);
+			var all_note_nums = this.chord.getNoteNumbers();
+			var note_name, note_keys = [];
 
-			for(var i = 0, len = pitches.length; i < len; i++) {
-				pitchClass = pitches[i].pitchClass;
-				octave = pitches[i].octave;
-				note = spelling[pitchClass];
-				octave = this.calculateOctave(pitchClass, octave, note);
-				note_keys.push([note, octave].join('/'));
+			for(var i = 0, len = note_nums.length; i < len; i++) {
+				note_name = this._getNoteName(note_nums[i], all_note_nums);
+				note_keys.push(note_name);
 			}
 
 			return note_keys;
+		},
+		/**
+		 * Returns the correct spelling or note name of a given note in a
+		 * collection of notes. 
+		 *
+		 * Note: this delegates to a utility function that handles the spelling
+		 * logic, because in some cases, a note may not use the default
+		 * spelling, but instead be re-spelled on the fly (snap spelling).
+		 *
+		 * @param {number} note
+		 * @param {array} notes
+		 * @return {string} the note name or spelling
+		 */
+		_getNoteName: function(note, notes) {
+			var analyzer = this._makeAnalyzer();
+			return analyzer.getNoteName(note, notes);
 		},
 		/**
 		 * Returns an array of objects containing each key and accidental
@@ -236,15 +246,20 @@ define([
 		 * @return {function}
 		 */
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var analyzer, color, keyStyleOpts;
-
-			analyzer = new Analyze(this.keySignature, {
+			var color = '', keyStyleOpts = {};
+			var analyzer = this._makeAnalyzer({
 				highlightMode: this.highlightsConfig.mode
 			});
+
 			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
 			if(!color) {
-				color = (this.isBanked ? this.bankedColor : this.defaultColor);
+				if(this.isBanked) {
+					color = this.bankedColor;
+				} else {
+					color = this.defaultColor;
+				}
 			}
+
 			keyStyleOpts = {
 				//shadowColor: color,
 				//shadowBlur: 15,
@@ -268,6 +283,18 @@ define([
 			return function(staveNote) {
 				staveNote.setKeyStyle(keyIndex, keyStyle);
 			};
+		},
+		/**
+		 * Returns a new instance of Analyze using the current key signature.
+		 *
+		 * Used by the highlight method to highlight certain notes and also by
+		 * the method that looks up the note name.
+		 *
+		 * @param {object} options
+		 * @return {object}
+		 */
+		_makeAnalyzer: function(options) {
+			return new Analyze(this.keySignature, options);
 		},
 		/**
 		 * Returns a new Vex.Flow.StaveNote with all modifiers added. 

@@ -584,6 +584,12 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			else return {"name": "", "numeral": null};
 		}
 	},
+	findChord: function(notes) {
+		if(this.Piano.key!=='h') {
+			return this.ijFindChord(notes);
+		}
+		return this.hFindChord(notes);
+	},
 	ijFindChord: function (notes) {
 		if (notes.length == 1) return this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
 		else if (notes.length == 2) {
@@ -606,7 +612,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		}
 		else {
 			var entry = this.getIntervalsAboveBass(notes);
-			var chordEntry = clone(this.hChords[entry]);
+			var chordEntry = _.cloneDeep(this.hChords[entry]);
 			if (chordEntry != undefined) {
 				var name = chordEntry["label"];
 				if (chordEntry["spellbass"] != "___")

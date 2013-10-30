@@ -279,7 +279,7 @@ define([
 		drawRoman: function(x, y) {
 			var notes = this.chord.getNoteNumbers();
 			var ctx = this.getContext();
-			var chord_entry = this.getAnalyzer().ijFindChord(notes);
+			var chord_entry = this.getAnalyzer().findChord(notes);
 			var label = '', lines = [];
 
 			if(chord_entry) {

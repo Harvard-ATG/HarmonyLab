@@ -382,6 +382,7 @@ define([
 		getNotePitches: function(clef) {
 			return this.mapNotes(clef, function(noteNum) {
 				return {
+					noteNum: noteNum,
 					pitchClass: (noteNum % 12),
 					octave: (Math.floor(noteNum / 12) -1)
 				};
