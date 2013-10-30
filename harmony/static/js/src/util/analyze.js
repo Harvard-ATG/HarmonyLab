@@ -240,8 +240,8 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 
 
 		if (this.Piano.highlightMode["roothighlight"]) {
-			var root = this.findRoot(notes);
-			if(note === root) {
+			var roots = this.findRoots(notes);
+			if(_.contains(roots, note)) {
 				color = "red";
 			}
 		}
@@ -322,37 +322,54 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		
 		return stripped;
 	},
-	findRoot: function (notes) {
-		var root = null;
-		if (this.Piano.key != "h") {
-			var entry = this.getOrderedPitchClasses(notes);
+	findRoots: function(notes) {
+		var roots = [], root; 
+		var entry, chords, note, i, len;
 
-			if (this.Piano.key.indexOf('i') == -1) { // major
-				if (this.jChords[entry] != undefined) root = this.jChords[entry]["root"];
+		if(this.Piano.key === "h") {
+			entry = this.getIntervalsAboveBass(notes);
+			if (this.hChords[entry]) {
+				root = parseInt(this.hChords[entry]["root"], 10);
 			}
-			else {
-				if (this.iChords[entry] != undefined) root = this.iChords[entry]["root"];
+			for(i = 0, len = notes.length; i < len; i++) {
+				note = notes[i];
+				if(root == ((12 + note - notes[0]) % 12)) {
+					roots.push(note);
+				}
 			}
-			if (root == null || root == "_") return undefined;
+		} else {
+			entry = this.getOrderedPitchClasses(notes);
+			chords = (this.Piano.key.indexOf('i') == -1 ? this.jChords : this.iChords);
+			if(chords[entry]) {
+				root = chords[entry]["root"];
+			}
+			if(root === null || root === "_") {
+				return [];
+			}
+
 			root = this.pitchClasses.indexOf(root);
 			root = (root + this.Piano.keynotePC) % 12;
-			var roots = [];
-			for (var note in notes) {
-				if (notes[note] % 12 == root) roots.push(notes[note]);
+
+			for(i = 0, len = notes.length; i < len; i++) {
+				note = notes[i];
+				if(root == (note % 12)) {
+					roots.push(note);
+				}
 			}
-			root = Math.min(roots);
 		}
-		else {
-			var entry = this.getIntervalsAboveBass(notes);
-			if (this.hChords[entry] != undefined) {
-				root = parseInt(this.hChords[entry]["root"]);
+
+		return roots;
+	},
+	findRoot: function(notes, minormax) {
+		var root = null, roots = this.findRoots(notes);
+		minormax = minormax || 'min';
+
+		if(roots.length > 0) {
+			if(minormax === 'min' || minormax === 'max') {
+				root = Math[minormax].apply(null, roots);
 			}
-			var roots = [];
-			for (var note in notes) {
-				if ((12 + notes[note] - notes[0]) % 12 == root) roots.push(notes[note]);
-			}
-			root = Math.min(roots);
 		}
+
 		return root;
 	},
 	nameNotes: function (notes) {
