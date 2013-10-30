@@ -323,27 +323,36 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		return stripped;
 	},
 	findRoots: function(notes) {
-		var roots = [], root; 
+		var roots = [], root, is_valid_root; 
 		var entry, chords, note, i, len;
+		var validate_root_type = function(root) {
+			// returns true if the root looks valid, false otherwise
+			return !isNaN(root) && typeof root !== 'undefined' && root !== null && root !== '_';
+		};
 
 		if(this.Piano.key === "h") {
 			entry = this.getIntervalsAboveBass(notes);
 			if (this.hChords[entry]) {
 				root = parseInt(this.hChords[entry]["root"], 10);
 			}
-			for(i = 0, len = notes.length; i < len; i++) {
-				note = notes[i];
-				if(root == ((12 + note - notes[0]) % 12)) {
-					roots.push(note);
+			if(validate_root_type(root)) {
+				for(i = 0, len = notes.length; i < len; i++) {
+					note = notes[i];
+					if(root == ((12 + note - notes[0]) % 12)) {
+						roots.push(note);
+					}
 				}
 			}
 		} else {
 			entry = this.getOrderedPitchClasses(notes);
-			chords = (this.Piano.key.indexOf('i') == -1 ? this.jChords : this.iChords);
+			chords = this.iChords;
+			if(this.Piano.key.indexOf('i') === -1) {
+				chords = this.jChords; // major
+			}
 			if(chords[entry]) {
 				root = chords[entry]["root"];
 			}
-			if(root !== null && root !== '_' && this.pitchClasses.indexOf(root) !== -1) {
+			if(validate_root_type(root) && this.pitchClasses.indexOf(root) !== -1) {
 				root = this.pitchClasses.indexOf(root);
 				root = (root + this.Piano.keynotePC) % 12;
 				for(i = 0, len = notes.length; i < len; i++) {
