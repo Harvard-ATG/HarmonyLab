@@ -257,17 +257,19 @@ define([
 		drawScaleDegree: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var numeral = this.getAnalyzer().getScaleDegree(notes);
 			var width = 0, caret_offset = 0, caret_x = x;
+			var numeral = this.getAnalyzer().getScaleDegree(notes);
 
-			numeral = this.convertSymbols(numeral);
-			width = ctx.measureText(numeral).width;
-			//x = x + 8 + Math.floor(width/2);
-			caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
-			caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
+			if(numeral !== '') {
+				numeral = this.convertSymbols(numeral);
+				width = ctx.measureText(numeral).width;
+				//x = x + 8 + Math.floor(width/2);
+				caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
+				caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
 
-			ctx.fillText(numeral, x, y);
-			ctx.fillText("^", caret_x, y - 10);
+				ctx.fillText(numeral, x, y);
+				ctx.fillText("^", caret_x, y - 10);
+			}
 		},
 		/**
 		 * Draws the roman numeral analysis.
