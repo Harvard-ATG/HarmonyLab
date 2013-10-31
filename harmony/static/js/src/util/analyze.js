@@ -578,31 +578,39 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // They also draw on many scripts here and in "\this.Piano."
 
 	ijNameDegree: function (notes) {
+		var distance;
 		if (notes.length == 2) {
-			var i =  this.distance(notes);
-			if (this.ijIntervals[i]) return {"name": this.ijIntervals[i], "numeral": null };
-			else return {"name": "", "numeral": null};
+			distance = this.distance(notes);
+			if (this.ijIntervals[distance]) {
+				return {"name": this.ijIntervals[distance]["label"], "numeral": null };
+			}
 		}
+		return {"name": "", "numeral": null};
 	},
 	findChord: function(notes) {
-		if(this.Piano.key!=='h') {
+		if(this.Piano.key !== 'h') {
 			return this.ijFindChord(notes);
 		}
 		return this.hFindChord(notes);
 	},
 	ijFindChord: function (notes) {
-		if (notes.length == 1) return this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
-		else if (notes.length == 2) {
-			var i = this.distance(notes);
-			if (this.ijIntervals[i]) return this.ijIntervals[i];
+		var distance, entry, chords;
+
+		if (notes.length == 1) {
+			return this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
+		} else if (notes.length == 2) {
+			distance = this.distance(notes);
+			if (this.ijIntervals[distance]) {
+				return this.ijIntervals[distance]["label"];
+			}
+		} else {
+			entry = this.getOrderedPitchClasses(notes);
+			chords = (this.Piano.key.indexOf('i') !== -1 ? this.iChords : this.jChords);
+			if(chords[entry]) {
+				return chords[entry];
+			}
 		}
-		else var entry = this.getOrderedPitchClasses(notes);
-		if (this.Piano.key.indexOf('i') != -1) { // minor
-			try { return this.iChords[entry]; } catch (e) {return undefined;}
-		}
-		else {
-			try { return this.jChords[entry]; } catch (e) {return undefined;}
-		}
+		return;
 	},
 	hFindChord: function (notes) {
 		if (notes.length == 1) var name = this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
