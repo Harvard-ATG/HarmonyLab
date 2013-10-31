@@ -11,7 +11,7 @@ define({
 	"3m": {"numeral": "b3", "solfege": "Me"},
 	"4m": {"numeral": "3", "solfege": "Mi"},
 	"5n": {"numeral": "4", "solfege": "Fa"},
-	"6n": {"numeral": "#4", "solfege": "F&#x131;"},
+	"6n": {"numeral": "#4", "solfege": "Fi"},
 	"6o": {"numeral": "b5", "solfege": "Se"},
 	"7o": {"numeral": "5", "solfege": "So"},
 	"8o": {"numeral": "#5", "solfege": "Si"},
