@@ -348,9 +348,9 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			}
 		} else {
 			entry = this.getOrderedPitchClasses(notes);
-			chords = this.iChords;
-			if(this.Piano.key.indexOf('i') === -1) {
-				chords = this.jChords; // major
+			chords = this.jChords;
+			if(this.Piano.key.indexOf('i') !== -1) {
+				chords = this.iChords; // minor
 			}
 			if(chords[entry]) {
 				root = chords[entry]["root"];
@@ -535,34 +535,51 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	//
 	// Note: pulled out from the ijNameDegree function
 	getSolfege: function(notes) {
-		var i;
-		if(notes.length == 1) {
-			i = this.distance([this.Piano.keynotePC,notes[0] % 12]);
-			return this.jDegrees[i]["solfege"];
+		var distance, scale_degrees, scale_degree, solfege = "";
+		var is_minor = (this.Piano.key.indexOf("i") !== -1);
+
+		if(notes.length == 1 && this.Piano.key !== 'h') {
+			distance = this.distance([this.Piano.keynotePC,notes[0] % 12]);
+			scale_degrees = (is_minor ? this.iDegrees : this.jDegrees);
+			scale_degree = scale_degrees[distance];
+			if(!scale_degree) {
+				return "";
+			}
+			solfege = scale_degree["solfege"];
 		}
-		return "";
+		return solfege;
 	},
 
 	// Returns the scale degree for a note.
 	//
 	// Note: pulled out from the ijNameDegree function
 	getScaleDegree: function(notes) {
-		var i, numeral = '';
-		if(notes.length == 1) {
-			i = this.distance([this.Piano.keynotePC,notes[0] % 12]);
-			if (this.jDegrees[i] !== undefined) {
-				numeral = this.jDegrees[i]["numeral"];
-				if (this.Piano.key.indexOf("i") != -1) {	// minor key variations; index changed to i from m -Rowland
-					if (numeral == "b3") numeral = '3';
-					else if (numeral == "3") numeral = '#3';
-					else if (numeral == "b6") numeral = '6'
-					else if (numeral == "6") numeral = '#6'
-					else if (numeral == "b7") numeral = '7';
-					else if (numeral == "7") numeral = '#7';
-				}
-				return numeral;
+		var distance, scale_degrees, scale_degree, numeral = '';
+		var is_minor = (this.Piano.key.indexOf("i") !== -1);
+		var minor_key_override = {
+			"b3": "3",
+			"3": "#3",
+			"b6": "6",
+			"b7": "7",
+			"7": "#7"
+		};
+
+		if(notes.length == 1 && this.Piano.key !== 'h') {
+			distance = this.distance([this.Piano.keynotePC, notes[0] % 12]);
+			scale_degrees = (is_minor ? this.iDegrees : this.jDegrees);
+			scale_degree = scale_degrees[distance];
+			if(!scale_degree) {
+				return '';
 			}
+
+			numeral = scale_degree["numeral"];
+
+			// override for minor key variations (from Rowland)
+			if(is_minor && minor_key_override.hasOwnProperty(numeral)) {
+				numeral = minor_key_override[numeral];
+			} 
 		}
+
 		return numeral;
 	},
 	getNameOfNote: function(notes) {
@@ -578,31 +595,39 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // They also draw on many scripts here and in "\this.Piano."
 
 	ijNameDegree: function (notes) {
+		var distance;
 		if (notes.length == 2) {
-			var i =  this.distance(notes);
-			if (this.ijIntervals[i]) return {"name": this.ijIntervals[i], "numeral": null };
-			else return {"name": "", "numeral": null};
+			distance = this.distance(notes);
+			if (this.ijIntervals[distance]) {
+				return {"name": this.ijIntervals[distance]["label"], "numeral": null };
+			}
 		}
+		return {"name": "", "numeral": null};
 	},
 	findChord: function(notes) {
-		if(this.Piano.key!=='h') {
+		if(this.Piano.key !== 'h') {
 			return this.ijFindChord(notes);
 		}
 		return this.hFindChord(notes);
 	},
 	ijFindChord: function (notes) {
-		if (notes.length == 1) return this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
-		else if (notes.length == 2) {
-			var i = this.distance(notes);
-			if (this.ijIntervals[i]) return this.ijIntervals[i];
+		var distance, entry, chords;
+
+		if (notes.length == 1) {
+			return this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
+		} else if (notes.length == 2) {
+			distance = this.distance(notes);
+			if (this.ijIntervals[distance]) {
+				return this.ijIntervals[distance]["label"];
+			}
+		} else {
+			entry = this.getOrderedPitchClasses(notes);
+			chords = (this.Piano.key.indexOf('i') !== -1 ? this.iChords : this.jChords);
+			if(chords[entry]) {
+				return chords[entry];
+			}
 		}
-		else var entry = this.getOrderedPitchClasses(notes);
-		if (this.Piano.key.indexOf('i') != -1) { // minor
-			try { return this.iChords[entry]; } catch (e) {return undefined;}
-		}
-		else {
-			try { return this.jChords[entry]; } catch (e) {return undefined;}
-		}
+		return;
 	},
 	hFindChord: function (notes) {
 		if (notes.length == 1) var name = this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
