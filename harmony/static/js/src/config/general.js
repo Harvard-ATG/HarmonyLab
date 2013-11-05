@@ -310,14 +310,16 @@ define({
 		displaySize: 4, 
 	},
 
-	// Defines the default analysis settings (i.e. what's enabled/disabled by
-	// default)
-	analyzeSettings: {
-		defaultMode: {
-			note_names: true,
-			helmholtz: false,
-			scale_degrees: true,
-			solfege: false,
+	// Defines the default analysis settings 
+	analysisSettings: {
+		// Enables or disables analysis
+		enabled: false,
+		// Enables or disables specific analysis modes
+		mode: {
+			note_names: true, // mutually exclusive with helmholtz
+			helmholtz: false, // see note_names
+			scale_degrees: true, // mutually exclusive with solfege
+			solfege: false, // see scale_degrees
 			roman_numerals: true,
 			intervals: true
 		}

@@ -33,7 +33,7 @@ define([
 	 * is enabled or disabled by default.
 	 * @type {object}
 	 */
-	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
+	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');
 
 	/**
 	 * Creates an instance of PlainSheet.
@@ -70,8 +70,8 @@ define([
 		 * @type {object}
 		 */
 		analyzeConfig: {
-			enabled: false,
-			mode: ANALYZE_DEFAULT_MODE,
+			enabled: ANALYSIS_SETTINGS.enabled,
+			mode: ANALYSIS_SETTINGS.mode,
 			tempo: false,
 		},
 		/**
