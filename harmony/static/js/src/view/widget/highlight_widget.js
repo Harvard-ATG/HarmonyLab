@@ -10,6 +10,8 @@ define([
 
 	var HIGHLIGHT_COLORS = Config.get('highlight.colors');
 
+	var HIGHLIGHT_SETTINGS = Config.get('general.highlightSettings');
+
 	var ITEMS = [{
 		'label': 'Highlight', 
 		'value': 'highlight',
@@ -45,6 +47,7 @@ define([
 	var HighlightWidget = function() {
 		this.el = $('<div></div>');
 		this.items = ITEMS;
+		this.state = _.cloneDeep(HIGHLIGHT_SETTINGS); // make sure we have our own copy
 	};
 
 	_.extend(HighlightWidget.prototype, {
@@ -66,11 +69,13 @@ define([
 				}
 
 				if(val.indexOf('.') === -1) {
+					that.state.enabled = checked;
 					that.trigger('changeCategory', val, checked);
 				} else {
 					valDot = val.indexOf('.');
 					valCat = val.substr(0, valDot);
 					valOpt = val.substr(valDot + 1);
+					that.state.mode[valOpt] = checked;
 					that.trigger('changeOption', valCat, valOpt, checked);
 				}
 
@@ -83,11 +88,13 @@ define([
 		},
 		render: function() {
 			var content = this.listTpl({ items: this.renderItems(this.items) });
+			var enabled = this.state.enabled;
+
 			this.el.remove();
 			this.el.append(content);
 			this.el.find('ul').each(function(index, el) {
 				var $parents = $(el).parents('ul');
-				if($parents.length > 0) {
+				if(!enabled && $parents.length > 0) {
 					$(el).find('input').attr('disabled', 'disabled');
 				}
 			});
@@ -98,17 +105,27 @@ define([
 			return _.map(items, function(item) {
 				var itemlist = item.items ? this.listTpl({ items: this.renderItems(item.items) }) : ""; 
 				var label = item.label;
+				var prop = item.value.replace('highlight.','');
 				var extra = '';
+				var checked;
+
+				if(prop === 'highlight') {
+					checked = this.state.enabled;
+				} else {
+					checked = this.state.mode[prop];
+				}
+
 				if(item.colors) {
 					extra = _.map(item.colors, function(color) {
 						return this.colorTpl({ color: color });
 					}, this).join("");
 				}
+
 				return this.itemTpl({
 					label: item.label,
 					extra: extra,
 					value: item.value,
-					checked: item.checked || "",
+					checked: (checked ? 'checked' : ''),
 					itemlist: itemlist
 				});
 			}, this).join('');

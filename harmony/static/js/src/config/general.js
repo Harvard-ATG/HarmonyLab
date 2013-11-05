@@ -325,6 +325,19 @@ define({
 		}
 	},
 
+	// Defines the default highlight settings
+	highlightSettings: {
+		// Enables or disables highlighting
+		enabled: false,
+		// Enables or disables specific highlight modes
+		mode: {
+			roothighlight: false,
+			tritonehighlight: false
+			//doublinghighlight: false,
+			//octaveshighlight: false
+		}
+	},
+
 	// Defines default metronome settings.
 	metronomeSettings: {
 		defaultTempo: 90,

@@ -144,15 +144,21 @@ define([
 		},
 		renderItems: function(items, separator) {
 			return _.map(items, function(item, index) {
-				var prop = item.value.replace('analyze.','');
-				var checked = this.state.mode[prop] ? 'checked' : '';
 				var itemlist = item.items ? this.listTpl({ items: this.renderGroups(item.items) }) : ""; 
+				var prop = item.value.replace('analyze.','');
+				var checked;
+
+				if(prop === 'analyze') {
+					checked = this.state.enabled;
+				} else {
+					checked = this.state.mode[prop];
+				}
 
 				var html = this.itemTpl({
 					cls: (index === 0 && separator ? 'separator' : ''),
 					label: item.label,
 					value: item.value,
-					checked: item.checked || checked,
+					checked: (checked ? 'checked' : ''),
 					itemlist: itemlist
 				});
 				return html;
