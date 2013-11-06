@@ -1,4 +1,4 @@
-#!/home/a/b/abarrett/public_html/django/python_virtualenv/bin/python
+#!/home/h/a/harmonylab/python_virtualenv/bin/python
 # encoding: utf-8
 """
 django.cgi
@@ -32,7 +32,7 @@ import os, sys
 
 # insert a sys.path.append("whatever") in here if django is not
 # on your sys.path.
-sys.path.append(os.path.expanduser('~/public_html/django/python_virtualenv'))
+sys.path.append(os.path.expanduser('~/python_virtualenv'))
 
 from django.core import wsgi
 
@@ -95,7 +95,7 @@ def run_with_cgi(application):
             result.close()
 
 # Change this to the directory above your site code.
-sys.path.append(os.path.expanduser("~/public_html/django/harmony"))
+sys.path.append(os.path.expanduser("~/harmonylab"))
 
 # Change mysite to the name of your site package
 os.environ['DJANGO_SETTINGS_MODULE'] = 'harmony.settings.sharedhosting'
