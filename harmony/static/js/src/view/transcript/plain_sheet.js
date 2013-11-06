@@ -33,7 +33,13 @@ define([
 	 * is enabled or disabled by default.
 	 * @type {object}
 	 */
-	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
+	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');
+	/**
+	 * This is a map of highlight modes to booleans indicating whether the mode
+	 * is enabled or disabled by default.
+	 * @type {object}
+	 */
+	var HIGHLIGHT_SETTINGS = Config.get('general.highlightSettings');
 
 	/**
 	 * Creates an instance of PlainSheet.
@@ -62,16 +68,16 @@ define([
 		 * @type {object}
 		 */
 		highlightsConfig: {
-			enabled: false,
-			mode: {}
+			enabled: HIGHLIGHT_SETTINGS.enabled,
+			mode: HIGHLIGHT_SETTINGS.mode
 		},
 		/**
 		 * Configuration for analyzing notes on the sheet music.
 		 * @type {object}
 		 */
 		analyzeConfig: {
-			enabled: false,
-			mode: ANALYZE_DEFAULT_MODE,
+			enabled: ANALYSIS_SETTINGS.enabled,
+			mode: ANALYSIS_SETTINGS.mode,
 			tempo: false,
 		},
 		/**

@@ -8,7 +8,7 @@ define([
 ], function(_, $, MicroEvent, Config, Analyze) {
 	"use strict";
 
-	var ANALYZE_DEFAULT_MODE = Config.get('general.analyzeSettings.defaultMode');
+	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');
 
 	var ITEMS = [{
 		'label': 'Analyze', 
@@ -42,6 +42,7 @@ define([
 	var AnalyzeWidget = function() {
 		this.el = $('<div></div>');
 		this.items = ITEMS;
+		this.state = _.cloneDeep(ANALYSIS_SETTINGS); // make sure we have our own copy
 	};
 
 	_.extend(AnalyzeWidget.prototype, {
@@ -71,9 +72,11 @@ define([
 				}
 
 				if(val.indexOf('.') === -1) {
+					that.state.enabled = checked;
 					that.trigger('changeCategory', val, checked);
 				} else {
 					parsed_val = that.parseValue(val);
+					that.state.mode[parsed_val.option] = checked;
 					that.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
 					that.uncheckRelated(target);
 				}
@@ -113,17 +116,20 @@ define([
 					selector = 'input[value="'+related.value+'"]';
 					parsed_val = this.parseValue(related.value);
 					$(selector, this.el).attr('checked', checked);
+					this.state.mode[parsed_val.option] = checked;
 					this.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
 				}
 			}, this);
 		},
 		render: function() {
 			var content = this.listTpl({ items: this.renderItems(this.items) });
+			var enabled = this.state.enabled;
+
 			this.el.remove();
 			this.el.append(content);
 			this.el.find('ul').each(function(index, el) {
 				var $parents = $(el).parents('ul');
-				if($parents.length > 0) {
+				if(!enabled && $parents.length > 0) {
 					$(el).find('input').attr('disabled', 'disabled');
 				}
 			});
@@ -138,15 +144,21 @@ define([
 		},
 		renderItems: function(items, separator) {
 			return _.map(items, function(item, index) {
-				var prop = item.value.replace('analyze.','');
-				var checked = ANALYZE_DEFAULT_MODE[prop] ? 'checked' : '';
 				var itemlist = item.items ? this.listTpl({ items: this.renderGroups(item.items) }) : ""; 
+				var prop = item.value.replace('analyze.','');
+				var checked;
+
+				if(prop === 'analyze') {
+					checked = this.state.enabled;
+				} else {
+					checked = this.state.mode[prop];
+				}
 
 				var html = this.itemTpl({
 					cls: (index === 0 && separator ? 'separator' : ''),
 					label: item.label,
 					value: item.value,
-					checked: item.checked || checked,
+					checked: (checked ? 'checked' : ''),
 					itemlist: itemlist
 				});
 				return html;
