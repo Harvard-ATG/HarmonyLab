@@ -649,13 +649,19 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 				} else {		// fully diminished seventh
 					bassName = this.spelling[chordEntry["spellbass"]][notes[0] % 12];
 				}
+
 				if (chordEntry["root"] != "_") {
 					rootName = this.noteFromSemitonalAndStepwiseDistance(notes[0],bassName,chordEntry["root"],chordEntry["rootstepwise"]);	
 				}
-				if (rootName !== '' && name.indexOf("&R") != -1) name = name.replace(/\&R/,rootName[0].toUpperCase() + rootName.slice(1));
-				if (rootName !== '' && name.indexOf("&r") != -1) name = name.replace(/\&r/,rootName.toLowerCase());
-				if (bassName !== '' && name.indexOf("&X") != -1) name = name.replace(/\&X/,bassName[0].toUpperCase() + bassName.slice(1));
-				if (bassName !== '' && name.indexOf("&x") != -1) name = name.replace(/\&x/,bassName.toLowerCase());
+
+				if (rootName !== '') {
+					if (name.indexOf("&R") != -1) name = name.replace(/\&R/,rootName[0].toUpperCase() + rootName.slice(1));
+					if (name.indexOf("&r") != -1) name = name.replace(/\&r/,rootName.toLowerCase());
+				}
+				if (bassName !== '') {
+					if (name.indexOf("&X") != -1) name = name.replace(/\&X/,bassName[0].toUpperCase() + bassName.slice(1));
+					if (name.indexOf("&x") != -1) name = name.replace(/\&x/,bassName.toLowerCase());
+				}
 				chordEntry["label"] = name;
 				name = chordEntry;
 			}
