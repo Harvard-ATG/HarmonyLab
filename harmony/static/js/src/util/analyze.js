@@ -618,38 +618,41 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		return;
 	},
 	hFindChord: function (notes) {
-		if (notes.length == 1) var name = this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
-		else if (notes.length == 2) {
-			var i = notes[1] - notes[0];
-			if (this.hIntervals[i]) var name = {"label": this.hIntervals[i]};
-		}
-		else {
-			var entry = this.getIntervalsAboveBass(notes);
-			var chordEntry = _.cloneDeep(this.hChords[entry]);
-			if (chordEntry != undefined) {
-				var name = chordEntry["label"];
-				if (chordEntry["spellbass"] != "___")
-					var bassName = this.spelling[chordEntry["spellbass"]][notes[0] % 12];
-				else {		// fully diminished seventh
-					name = chordEntry;
-					return name;
+		var i, name, entry, chordEntry;
+		var bassName = "", rootName = "";
+		if (notes.length == 1) {
+			name = this.toHelmholtzNotation(this.getNoteName(notes[0],notes));
+		} else if (notes.length == 2) {
+			i = notes[1] - notes[0];
+			if (this.hIntervals[i]) {
+				name = {"label": this.hIntervals[i]};
+			}
+		} else {
+			entry = this.getIntervalsAboveBass(notes);
+			chordEntry = _.cloneDeep(this.hChords[entry]);
+			if (chordEntry) {
+				name = chordEntry["label"];
+				if (chordEntry["spellbass"] === "___") {
+					return chordEntry;
+				} else {		// fully diminished seventh
+					bassName = this.spelling[chordEntry["spellbass"]][notes[0] % 12];
 				}
-				if (chordEntry["root"] != "_")
-					var rootName = this.noteFromSemitonalAndStepwiseDistance(notes[0], bassName,
-						chordEntry["root"], chordEntry["rootstepwise"]);	
-					var bassName = "";		// not finding it yet
-//			if (_.contains([1,3,6,8,10],rootValue % 12)) {
-//				if (this.Piano.spellSharp && rootName.indexOf("#") == -1) rootName = this.pushSharpward(rootValue,rootName);
-//				else if (this.Piano.spellFlat && rootName.lastIndexOf("b") < 1) rootName = this.pushFlatward(rootValue,rootName);
-//			}
-				if (name.indexOf("&R") != -1) name = name.replace(/\&R/,rootName[0].toUpperCase() + rootName.slice(1));
-				if (name.indexOf("&r") != -1) name = name.replace(/\&r/,rootName.toLowerCase());
-				if (name.indexOf("&X") != -1) name = name.replace(/\&X/,bassName[0].toUpperCase() + bassName.slice(1));
-				if (name.indexOf("&x") != -1) name = name.replace(/\&x/,bassName.toLowerCase());
+
+				if (chordEntry["root"] != "_") {
+					rootName = this.noteFromSemitonalAndStepwiseDistance(notes[0],bassName,chordEntry["root"],chordEntry["rootstepwise"]);	
+				}
+
+				if (rootName !== '') {
+					if (name.indexOf("&R") != -1) name = name.replace(/\&R/,rootName[0].toUpperCase() + rootName.slice(1));
+					if (name.indexOf("&r") != -1) name = name.replace(/\&r/,rootName.toLowerCase());
+				}
+				if (bassName !== '') {
+					if (name.indexOf("&X") != -1) name = name.replace(/\&X/,bassName[0].toUpperCase() + bassName.slice(1));
+					if (name.indexOf("&x") != -1) name = name.replace(/\&x/,bassName.toLowerCase());
+				}
 				chordEntry["label"] = name;
 				name = chordEntry;
 			}
-			else var name = undefined;
 		}
 		return name;
 	},
