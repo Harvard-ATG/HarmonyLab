@@ -556,13 +556,6 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	getScaleDegree: function(notes) {
 		var distance, scale_degrees, scale_degree, numeral = '';
 		var is_minor = (this.Piano.key.indexOf("i") !== -1);
-		var minor_key_override = {
-			"b3": "3",
-			"3": "#3",
-			"b6": "6",
-			"b7": "7",
-			"7": "#7"
-		};
 
 		if(notes.length == 1 && this.Piano.key !== 'h') {
 			distance = this.distance([this.Piano.keynotePC, notes[0] % 12]);
@@ -573,11 +566,6 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			}
 
 			numeral = scale_degree["numeral"];
-
-			// override for minor key variations (from Rowland)
-			if(is_minor && minor_key_override.hasOwnProperty(numeral)) {
-				numeral = minor_key_override[numeral];
-			} 
 		}
 
 		return numeral;
