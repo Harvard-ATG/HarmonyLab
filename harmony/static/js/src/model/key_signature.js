@@ -337,7 +337,7 @@ define([
 		needsNatural: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {
-				if(signature[i].charAt(0) === note) {
+				if(signature[i].charAt(0).toLowerCase() === note.toLowerCase()) {
 					return true;
 				}
 			}
@@ -353,7 +353,7 @@ define([
 		signatureContains: function(note) {
 			var i, len, signature = this.signature;
 			for(i = 0, len = signature.length; i < len; i++) {
-				if(signature[i] === note) {
+				if(signature[i].toLowerCase() === note.toLowerCase()) {
 					return true;
 				}
 			}
