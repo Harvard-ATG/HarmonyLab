@@ -2,12 +2,14 @@
 import os
 from harmony.settings.common import *
 
-# OVERRIDE STATIC URL PATH
-STATIC_URL = '/~abarrett/django/harmony/harmony/static/'
+######
+# UNCOMMENT SECTION BELOW TO OVERRIDE THE STATIC URL PATH
+######
 
-REQUIREJS_CONFIG = {
-	'baseUrl': path.join(STATIC_URL, 'js', 'lib'),
-	'paths': {
-		'app': path.join(STATIC_URL, 'js', 'src'),
-	},
-}
+#STATIC_URL = '/~abarrett/django/harmony/harmony/static/'
+#REQUIREJS_CONFIG = {
+#	'baseUrl': path.join(STATIC_URL, 'js', 'lib'),
+#	'paths': {
+#		'app': path.join(STATIC_URL, 'js', 'src'),
+#	},
+#}
