@@ -2,6 +2,7 @@
 define([
 	'lodash',
 	'jquery', 
+	'app/config',
 	'app/model/chord_bank',
 	'app/model/event_bus',
 	'app/model/key_signature',
@@ -19,6 +20,7 @@ define([
 function(
 	_,
 	$,
+	Config,
 	ChordBank,
 	eventBus,
 	KeySignature,
@@ -34,6 +36,12 @@ function(
 	Instruments
 ) {
 	"use strict";
+
+	/**
+	 * Defines whether keyboard shortcuts are enabled/disabled by default.
+	 * @type {boolean}
+	 */
+	var KEYBOARD_SHORTCUTS_ENABLED = Config.get('general.keyboardShortcutsEnabled');
 
 	/**
 	 * This defines a namespace for initialization methods for separate UI
@@ -250,7 +258,7 @@ function(
 				keySignature: key_signature 
 			});
 			var shortcuts = new KeyboardShortcuts({
-				enabled: false, 
+				enabled: KEYBOARD_SHORTCUTS_ENABLED, 
 				keySignature: key_signature
 			});
 			var piano = new Piano();
