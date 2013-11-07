@@ -343,6 +343,11 @@ define({
 		maxTempo: 360
 	},
 
+	// This defines whether keyboard shortcuts are enabled/disabled by default.
+	// When true, keyboard shortcuts are enabled by default, otherwise when set
+	// to false, they are disabled by default. 
+	keyboardShortcutsEnabled: true,
+
 	// Defines when a bank happens in relation to a metronome "tick."
 	// Expressed as a fraction of the current metronome tempo.
 	bankAfterMetronomeTick: 0.25
