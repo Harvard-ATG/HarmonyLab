@@ -297,26 +297,25 @@ define({
 
 	// Default key and signature to use for notation. This should be
 	// automatically selected on the UI.
-	defaultKeyAndSignature: "iD_", // D minor
+	defaultKeyAndSignature: "jF_", // F major
 
 	// Defines settings for the chord bank.
 	chordBank: {
-
-		 // This defines the number of chords that can be displayed
-		 // on the sheet music at one time. It should be a positive
-		 // integer in the range of 1-7. Chords are displayed
-		 // in fixed-width areas spread across the sheet music,
-		 // so generally numbers in the range of 3-5 work best.
-		displaySize: 4, 
+		// This defines the number of chords that can be displayed
+		// on the sheet music at one time. It should be a positive
+		// integer in the range of 1-7. Chords are displayed
+		// in fixed-width areas spread across the sheet music,
+		// so generally numbers in the range of 3-5 work best.
+		displaySize: 6
 	},
 
 	// Defines the default analysis settings 
 	analysisSettings: {
 		// Enables or disables analysis
-		enabled: false,
+		enabled: true,
 		// Enables or disables specific analysis modes
 		mode: {
-			note_names: true, // mutually exclusive with helmholtz
+			note_names: false, // mutually exclusive with helmholtz
 			helmholtz: false, // see note_names
 			scale_degrees: true, // mutually exclusive with solfege
 			solfege: false, // see scale_degrees
@@ -331,7 +330,7 @@ define({
 		enabled: false,
 		// Enables or disables specific highlight modes
 		mode: {
-			roothighlight: false,
+			roothighlight: true,
 			tritonehighlight: false
 			//doublinghighlight: false,
 			//octaveshighlight: false
@@ -340,8 +339,8 @@ define({
 
 	// Defines default metronome settings.
 	metronomeSettings: {
-		defaultTempo: 90,
-		maxTempo: 600
+		defaultTempo: 50,
+		maxTempo: 360
 	},
 
 	// Defines when a bank happens in relation to a metronome "tick."
