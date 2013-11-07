@@ -308,16 +308,19 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		return noteName;
 	},
 	stripRepeatedPitchClasses: function (notes) {
-		var dict = {};
-		var stripped = [];
-		for (var note in notes) {
-			dict[notes[note] % 12] = true;
-		}
-	
-		for (var note in notes) {
-			var pitch = dict[notes[note] % 12];
-			if (pitch != undefined) stripped.push(notes[note]);
-			delete dict[notes[note] % 12];
+		var dict = {}, stripped = [];
+		var i, len, note, pitch;
+
+		// iterates through the notes and strips out notes that repeat a pitch
+		// class, so only the first note identified for a given pitch class will
+		// be returned
+		for(i = 0, len = notes.length; i < len; i++) {
+			note = notes[i];
+			pitch = note % 12;
+			if(!dict.hasOwnProperty(pitch)) {
+				dict[pitch] = true;
+				stripped.push(note);
+			}
 		}
 		
 		return stripped;
@@ -331,7 +334,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		};
 
 		// notes should be in sorted order
-		notes.sort(function(a,b) { return a - b; });
+		notes.sort(this.sortNoteNumbers);
 
 		if(this.Piano.key === "h") {
 			entry = this.getIntervalsAboveBass(notes);
@@ -399,32 +402,43 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		var uniquePitches = this.stripRepeatedPitchClasses(notes);
 		var intervals = [];
 		var keynotePC = this.Piano.keynotePC;
+		var bass, i, len, entry = "";
 		
 		uniquePitches = _.map(uniquePitches, function (x) { return (12 + x - keynotePC) % 12;});
-		var bass = this.pitchClasses[uniquePitches[0]];
+		bass = this.pitchClasses[uniquePitches[0]];
 		uniquePitches = uniquePitches.slice(1);
-		uniquePitches.sort(function (a,b) { return a-b;});
-		for (var i = 0; i < uniquePitches.length; i++) {
+		uniquePitches.sort(this.sortNoteNumbers);
+
+		for (i = 0, len = uniquePitches.length; i < len; i++) {
 			intervals.push(this.pitchClasses[uniquePitches[i]]);
 		}
+
+		intervals.sort(this.sortNoteNumbers);
 		
-		var entry = "";
-		if (this.Piano.key != "h") entry = bass + "/" + intervals.join('');
-		else entry = intervals.join('');
+		if (this.Piano.key != "h") {
+			entry = bass + "/" + intervals.join('');
+		} else {
+			entry = intervals.join('');
+		}
+
 		return entry;
 	},
 	getIntervalsAboveBass: function (notes) {
 		var uniquePitches = this.stripRepeatedPitchClasses(notes);
 		var intervals = [];
+		var bass, i, len, entry;
 		
-		var bass = uniquePitches[0] % 12;
+		bass = uniquePitches[0] % 12;
 		uniquePitches = uniquePitches.slice(1);
-		uniquePitches.sort(function (a,b) { return a-b;});
-		for (var i = 0; i < uniquePitches.length; i++) {
+		uniquePitches.sort(this.sortNoteNumbers);
+
+		for (i = 0, len = uniquePitches.length; i < len; i++) {
 			intervals.push(this.pitchClasses[(12 + uniquePitches[i] - bass) % 12]);
 		}
-		
-		var entry = intervals.join('');
+
+		intervals.sort(this.sortNoteNumbers);
+		entry = intervals.join('');
+
 		return entry;
 	},
 	getLabel: function (notes) {
@@ -877,6 +891,12 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		}
 
 		return diatonicNotes;
+	},
+
+	// Function to sort two note numbers in ascending order.
+	// Expected to be passed to Array.prototype.sort().
+	sortNoteNumbers: function(a, b) {
+		return a - b;
 	}
 };
 
