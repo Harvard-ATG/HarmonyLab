@@ -279,25 +279,22 @@ define({
 	// Grouping of keys as they are to be displayed on the UI.
 	keyDisplayGroups: [
 		// [label, key1, key2, key3, ..., keyN]
-		["----", "h"],
-		["----", "jC_","iD_","jF_","jG_","iA_"],
-		["----", "jEb","jBb","jF_","jC_","jG_","jD_","jA_"],
-		["----", "iC_","iG_","iD_","iA_","iE_","iB_","iF#"],
-		["----", "jCb","jGb","jDb","jAb","jE_","jB_","jF#","jC#"],
-		["----", "iAb","iEb","iBb","iF_","iC#","iG#","iD#","iA#"]
+		["basic", "h","jC_","iA_","jG_","jF_","iD_"],
+		["sharps", "iE_","jD_","iB_","jA_","iF#","jE_","iC#","jB_","iG#","jF#","iD#","jC#","iA#"],
+		["flats", "jBb","iG_","jEb","iC_","jAb","iF_","jDb","iBb","jGb","iEb","jCb","iAb"]
 	],
 
 	// Wheel for rotating keys sharpward or flatward
 	// Default order is sharpward.
 	keyWheel: [
-		"iD_","jF_","iA_","jC_", "iE_","jG_","iB_","jD_",
-		"iF#","jA_","iC#","jE_", "iG#","jB_","iEb","jGb",
-		"iBb","jDb","iF_","jAb", "iC_","jEb","iG_","jBb"
+		"jC_", "iE_","jG_","iB_","jD_","iF#","jA_","iC#",
+		"jE_", "iG#","jB_","iEb","jGb","iBb","jDb","iF_",
+		"jAb", "iC_","jEb","iG_","jBb","iD_","jF_","iA_"
 	],
 
 	// Default key and signature to use for notation. This should be
 	// automatically selected on the UI.
-	defaultKeyAndSignature: "jF_", // F major
+	defaultKeyAndSignature: "h", // no key
 
 	// Defines settings for the chord bank.
 	chordBank: {
@@ -327,7 +324,7 @@ define({
 	// Defines the default highlight settings
 	highlightSettings: {
 		// Enables or disables highlighting
-		enabled: false,
+		enabled: true,
 		// Enables or disables specific highlight modes
 		mode: {
 			roothighlight: true,
@@ -339,7 +336,7 @@ define({
 
 	// Defines default metronome settings.
 	metronomeSettings: {
-		defaultTempo: 50,
+		defaultTempo: 40,
 		maxTempo: 360
 	},
 
@@ -352,3 +349,4 @@ define({
 	// Expressed as a fraction of the current metronome tempo.
 	bankAfterMetronomeTick: 0.25
 });
+
