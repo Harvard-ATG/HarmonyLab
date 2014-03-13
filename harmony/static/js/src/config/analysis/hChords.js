@@ -13,9 +13,9 @@ define({
 	"49": {"label": "&R-/&X", "description": "&R minor &6;", "stepwise": "25", "spellbass": "iF_", "root": "9", "rootstepwise": "5"},
 	"58": {"label": "&R-/&X", "description": "&64; dischord", "stepwise": "35", "spellbass": "iA_", "root": "5", "rootstepwise": "3"},
 	// diminished triad
-	"36": {"label": "&R&dim", "description": "&R diminished &53; (!)", "stepwise": "24", "spellbass": "iE_", "root": "0", "rootstepwise": "0"},
-	"39": {"label": "&R&dim/&X", "description": "&R diminished &6;", "stepwise": "25", "spellbass": "iG_", "root": "9", "rootstepwise": "5"},
-	"69": {"label": "&R&dim/&X", "description": "?!", "stepwise": "25", "spellbass": "iBb", "root": "6", "rootstepwise": "3"},
+	"36": {"label": "&R&dim;", "description": "&R diminished &53; (!)", "stepwise": "24", "spellbass": "iE_", "root": "0", "rootstepwise": "0"},
+	"39": {"label": "&R&dim;/&X", "description": "&R diminished &6;", "stepwise": "25", "spellbass": "iG_", "root": "9", "rootstepwise": "5"},
+	"69": {"label": "&R&dim;/&X", "description": "?!", "stepwise": "25", "spellbass": "iBb", "root": "6", "rootstepwise": "3"},
 	// augmented triad
 	"48": {"label": "&R+", "description": "&R augmented", "stepwise": "24", "spellbass": "iF_", "root": "0", "rootstepwise": "0"}, // root analysis or snap spelling not possible for symmetrical division of octave
 	// wannabe triad
