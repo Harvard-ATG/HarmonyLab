@@ -5,20 +5,17 @@
 
 /* global define: false */
 define({
-	"0/0": {"numeral": "1", "solfege": "Do"},
-	"1/0": {"numeral": "#1", "solfege": "Di"},
-	"1/1": {"numeral": "b2", "solfege": "Ra"},
-	"2/1": {"numeral": "2", "solfege": "Re"},
-	"3/1": {"numeral": "#2", "solfege": "Ri"},
-	"3/2": {"numeral": "3", "solfege": "Me"},
-	"4/2": {"numeral": "#3", "solfege": "Mi"},
-	"5/3": {"numeral": "4", "solfege": "Fa"},
-	"6/3": {"numeral": "#4", "solfege": "Fi"},
-	"6/4": {"numeral": "b5", "solfege": "Se"},
-	"7/4": {"numeral": "5", "solfege": "So"},
-	"8/4": {"numeral": "#5", "solfege": "Si"},
-	"8/5": {"numeral": "6", "solfege": "Le"},
-	"9/5": {"numeral": "6+", "solfege": "La"},
-	"10/6": {"numeral": "7", "solfege": "Te"},
-	"11/6": {"numeral": "7+", "solfege": "Ti"}
+	"0/0": {"numeral": "1", "solfege": "La"},
+	"1/1": {"numeral": "b2", "solfege": "Te"},
+	"2/1": {"numeral": "2", "solfege": "Ti"},
+	"3/2": {"numeral": "3", "solfege": "Do"},
+	"4/2": {"numeral": "#3", "solfege": "Di"},
+	"5/3": {"numeral": "4", "solfege": "Re"},
+	"6/3": {"numeral": "#4", "solfege": "Ri"},
+	"6/4": {"numeral": "b5", "solfege": "Me"},
+	"7/4": {"numeral": "5", "solfege": "Mi"},
+	"8/5": {"numeral": "6", "solfege": "Fa"},
+	"9/5": {"numeral": "6+", "solfege": "Fi"},
+	"10/6": {"numeral": "7", "solfege": "So"},
+	"11/6": {"numeral": "7+", "solfege": "Si"}
 });
