@@ -86,6 +86,7 @@ define([
 
 			// copy the current chord
 			chord.copy(current);
+			chord.syncSustainedNotes();
 
 			// re-wires listeners to the current chord
 			this._removeListeners(current);

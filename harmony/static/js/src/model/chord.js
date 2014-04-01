@@ -141,22 +141,36 @@ define([
 			this._sustain = true;
 		},
 		/**
-		 * Releases the sustain and turns off any notes that may have been
-		 * released while the sustain was on.
+		 * Releases the sustain.
 		 *
 		 * @fires change
 		 * @return undefined
 		 */
 		releaseSustain: function() {
-			this._sustain = false; 
+			this._sustain = false;
+		},
+		/**
+		 * Synchronize the notes playing with those that are being sustained.
+		 *
+		 * @returns {boolean}
+		 */
+		syncSustainedNotes: function() {
+			var _notes = this._notes;
+			var _sustained = this._sustained;
+			var changed = false;
 
-			_.each(this._sustained, function(state, noteNumber) {
-				if(!state) {
-					this.noteOff(noteNumber);
+			_.each(_sustained, function(state, noteNumber) {
+				if(_notes[noteNumber] !== state) {
+					_notes[noteNumber] = state;
+					changed = true;
 				}
 			}, this);
 
 			this._sustained = {};
+
+			if(changed) {
+				this.trigger('change');
+			}
 		},
 		/**
 		 * Returns true if notes are being sustianed, false otherwise.

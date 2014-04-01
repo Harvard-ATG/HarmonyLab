@@ -309,10 +309,15 @@ define([
 			var pedal_name = MIDI_CONTROL_MAP.pedal[controlNum];
 			var pedal_state = 'off';
 
+			// NOTE: the Yamaha FC5 sustain pedal sends value 0 when 
+			// the pedal is depressed and 127 when it is released.
+			// This is the pedal students are using in class, so we're 
+			// going to treat control values 0-63=ON and 64-127=OFF.
+		
 			if(controlVal >= 0 && controlVal <= 63) {
-				pedal_state = 'off';
-			} else if(controlVal > 63) {
 				pedal_state = 'on';
+			} else if(controlVal > 63) {
+				pedal_state = 'off';
 			} 
 
 			this.eventBus.trigger('pedal', pedal_name, pedal_state);
@@ -393,7 +398,13 @@ define([
 					this.noteVelocity = (state === 'off' ? DEFAULT_NOTE_VELOCITY : SOFT_NOTE_VELOCITY);
 					break;
 				case 'sustain':
-					chord[state==='on'?'sustainNotes':'releaseSustain']();
+					if(state==='on') {
+						chord.sustainNotes();
+						this.chords.bank();
+					} else {
+						chord.releaseSustain();
+						chord.syncSustainedNotes();
+					}
 					this.sendMIDIPedalMessage(pedal, state);
 					break;
 				default:
