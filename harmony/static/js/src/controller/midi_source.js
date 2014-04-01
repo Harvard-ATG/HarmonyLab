@@ -393,7 +393,12 @@ define([
 					this.noteVelocity = (state === 'off' ? DEFAULT_NOTE_VELOCITY : SOFT_NOTE_VELOCITY);
 					break;
 				case 'sustain':
-					chord[state==='on'?'sustainNotes':'releaseSustain']();
+					if(state==='on') {
+						chord.sustainNotes();
+					} else {
+						chord.releaseSustain();
+						this.chords.bank();
+					}
 					this.sendMIDIPedalMessage(pedal, state);
 					break;
 				default:
