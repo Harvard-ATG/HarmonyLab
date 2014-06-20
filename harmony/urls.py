@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from harmony.apps.lab.views import HomeView, ExerciseView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -6,18 +7,14 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'harmony.apps.lab.views.index', name='index'),
-	#url(r'^login/$', 'django_openid_auth.views.login_begin', name='openid-login'),
-	#url(r'^login-complete/$', 'django_openid_auth.views.login_complete', name='openid-complete'),
-	#url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/',}, name='logout'),
-	#url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Applications/MAMP/htdocs/lab/lab/static'}),
-    # url(r'^lab/', include('lab.foo.urls')),
+    url(r'^$', HomeView.as_view(), name='index'),
+    url(r'^exercise/(?P<exercise_id>[0-9]+)', ExerciseView.as_view(), name="exercise"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/', include(admin.site.urls)),
 
     # Uncomment the next line to enable the jasmine test runner:
     url(r'^jasmine/', include('harmony.apps.jasmine.urls'))
