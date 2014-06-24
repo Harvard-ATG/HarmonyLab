@@ -3,6 +3,8 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.views.generic import View, TemplateView
 
+from .exercise import Exercise
+
 import json
 
 REQUIRE_JS_CONTEXT = {
@@ -18,29 +20,14 @@ class HomeView(TemplateView):
         return context
 
 class ExerciseView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, exercise_id, *args, **kwargs):
+        exercise = self.get_exercise(exercise_id)
+
         context = {}
         context.update(REQUIRE_JS_CONTEXT)
-        context.update({
-            "exercise": {
-                "introduction": "This exercise is about learning to play simple chords.",
-                "problems": [
-                    {
-                        "type": "matching",
-                        "key": "jC_",
-                        "text": "Play the C major chord in root position (0,4,7)",
-                        "notes": [60,64,67],
-                    },
-                    {
-                        "type": "matching",
-                        "key": "jF_",
-                        "text": "Play the F major chord in root position (0,4,7)",
-                        "notes": [65,69,72],
-                    },
-                ]
-            }
-        })
-
-        context['exercise'] = json.dumps(context['exercise'], indent=4, separators=(',', ': '), sort_keys=True)
+        context.update({"exercise": exercise.as_json()})
 
         return render(request, "exercise.html", context)
+
+    def get_exercise(self, exercise_id):
+        return Exercise().load(exercise_id)

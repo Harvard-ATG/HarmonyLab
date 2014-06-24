@@ -1,0 +1,19 @@
+{
+  "text": "Learn to play chords in root position",
+  "problems": [{
+      "type": "matching",
+      "key": "jC_",
+      "text": "Play the C major chord in root position (0,4,7)",
+      "notes": [60,64,67]
+    },{
+      "type": "matching",
+      "key": "jF_",
+      "text": "Play the F major chord in root position (0,4,7)",
+      "notes": [65,69,72]
+    },{
+      "type": "matching",
+      "key": "jG_",
+      "text": "Play the G major chord in root position (0,4,7)",
+      "notes": [67,71,74]
+    }]
+}
