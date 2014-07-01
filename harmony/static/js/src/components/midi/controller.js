@@ -1,18 +1,12 @@
-/* global define:false */
 define([
 	'lodash', 
-	'microevent', 
-	'jazzmidibridge', 
-	'app/model/event_bus',
-	'app/view/modal'
+	'jazzmidibridge',
+	'app/components/component'
 ], function(
 	_, 
-	MicroEvent, 
-	JMB, 
-	eventBus, 
-	Modal
+	JMB,
+	Component
 ) {
-	"use strict";
 
 	/**
 	 * Defines the default instrument (Acoustic Grand Piano).
@@ -49,36 +43,30 @@ define([
 	};
 
 	/**
-	 * Creates an instance of MidiSource. 
+	 * MidiControllerComponent
 	 *
-	 * The midi source is intended to act as an interface between MIDI external hardware
-	 * and the rest of the application. Its job is to broker MIDI-related
-	 * messages, whether receiving them from other parts of the application
-	 * through the EventBus or broadcasting messages from the MIDI hardware.
+	 * This component controls the interactions between the application and
+	 * the MIDI device driver (i.e. browser plugin). It listens for MIDI-related
+	 * messages from the application and translates them into instructions for
+	 * the MIDI driver and vice versa. 
 	 *
 	 * Note that the Jazz Midi Bridge (JMB) is a high-level library used to
-	 * interface with the underlying Jazz Midi Plugin that handles low-level
+	 * interface with the Jazz Midi Plugin, which in turn handles low-level
 	 * MIDI input/output.
 	 *
 	 * @constructor
-	 * @param {object} config
-	 * @param {object} config.chords Chords object (required).
+	 * @param {object} settings
+	 * @param {object} settings.chords Chords object (required).
 	 * @mixes MicroEvent
 	 * @fires devices
 	 */
-	var MidiSource = function(config) {
+	var MidiControllerComponent = function(settings) {
 		/**
 		 * Configuration.
 		 * @type {object}
 		 * @protected
 		 */
-		this.config = config || {};
-		/**
-		 * Reference to the event bus.
-		 * @type {object} 
-		 * @protected
-		 */
-		this.eventBus = eventBus;
+		this.settings = settings || {};
 		/**
 		 * The midi channel used to transmit messages.
 		 * @type {number}
@@ -124,18 +112,20 @@ define([
 		this.init();
 	};
 
-	_.extend(MidiSource.prototype, {
+	MidiControllerComponent.prototype = new Component();
+
+	_.extend(MidiControllerComponent.prototype, {
 		/**
-		 * Initializes the MidiSource.
+		 * Initializes the MidiControllerComponent.
 		 *
 		 * @return undefined
 		 */
-		init: function() {
-			if(!this.config.hasOwnProperty('chords')) {
-				throw new Error("missing config property");
+		initComponent: function() {
+			if(!this.settings.hasOwnProperty('chords')) {
+				throw new Error("missing settings.chords");
 			}
 
-			this.chords = this.config.chords;
+			this.chords = this.settings.chords;
 
 			_.bindAll(this, [
 				'onMidiMessage',
@@ -173,14 +163,14 @@ define([
 		 * @return undefined
 		 */
 		onJMBError: function() {
-			var title = 'Jazz MIDI Plugin Required';
-			var msg = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. ' +
+			var error = 'Jazz MIDI Plugin Required';
+			var htmlError = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. ' +
 				'This browser plugin is required to produce sound with the on-screen keyboard or to ' + 
 				'connect and use your own MIDI keyboard.</p>' +
 				'<p>Please download and install the Jazz MIDI plugin here: <br/>' + 
 				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
-			Modal.msg(title, msg);
+			this.broadcast("error:jazzmidiplugin", {error:error, htmlError:htmlError});
 		},
 		/**
 		 * Detects the devices that are available.
@@ -248,12 +238,12 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
-			this.eventBus.bind('note', this.onNoteChange);
-			this.eventBus.bind('clearnotes', this.onClearNotes);
-			this.eventBus.bind('banknotes', this.onBankNotes);
-			this.eventBus.bind('pedal', this.onPedalChange);
-			this.eventBus.bind('instrument', this.onInstrumentChange);
-			this.eventBus.bind('transpose', this.onTransposeChange);
+			this.subscribe('note', this.onNoteChange);
+			this.subscribe('clearnotes', this.onClearNotes);
+			this.subscribe('banknotes', this.onBankNotes);
+			this.subscribe('pedal', this.onPedalChange);
+			this.subscribe('instrument', this.onInstrumentChange);
+			this.subscribe('transpose', this.onTransposeChange);
 
 			if(this.midiDevice.selectedInput) {
 				this.midiDevice.selectedInput.addEventListener('midimessage', this.onMidiMessage);
@@ -320,7 +310,7 @@ define([
 				pedal_state = 'off';
 			} 
 
-			this.eventBus.trigger('pedal', pedal_name, pedal_state);
+			this.broadcast('pedal', pedal_name, pedal_state);
 		},
 		/**
 		 * Broadcasts a note "on" event to the application.
@@ -333,7 +323,7 @@ define([
 			if(this.noteVelocity !== null) {
 				noteVelocity = this.noteVelocity;
 			}
-			this.eventBus.trigger('note', 'on', noteNum, noteVelocity);
+			this.broadcast('note', 'on', noteNum, noteVelocity);
 		},
 		/**
 		 * Broadcasts a note "off" event to the application.
@@ -346,7 +336,7 @@ define([
 			if(this.noteVelocity !== null) {
 				noteVelocity = this.noteVelocity;
 			}
-			this.eventBus.trigger('note', 'off', noteNum, noteVelocity);
+			this.broadcast('note', 'off', noteNum, noteVelocity);
 		},
 		/**
 		 * Handles a note change event and sends a NOTE ON/OFF message to the
@@ -505,7 +495,5 @@ define([
 		}
 	});
 
-	MicroEvent.mixin(MidiSource); // make object observable
-
-	return MidiSource;
+	return MidiControllerComponent;
 });
