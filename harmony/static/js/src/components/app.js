@@ -2,16 +2,18 @@ define([
 	'lodash',
 	'jquery',
 	'app/components/component',
-	'app/components/ui/piano',
+	'app/components/input/shortcuts',
 	'app/components/midi/controller',
+	'app/components/ui/piano',
 	'app/models/chord_bank',
 	'app/models/key_signature'
 ], function(
 	_,
 	$,
 	Component,
-	PianoComponent,
+	KeyboardShortcutsComponent,
 	MidiControllerComponent,
+	PianoComponent,
 	ChordBank,
 	KeySignature
 ) {
@@ -47,7 +49,7 @@ define([
 	_.extend(AppComponent.prototype, {
 		_initPianoComponent: function() {
 			var c = new PianoComponent({"renderTo": "#piano"});
-			c.init();
+			c.init(this);
 			c.render();
 			this.addComponent(c);
 		},
@@ -55,9 +57,17 @@ define([
 			var c = new MidiControllerComponent({
 				chords: this.models.chords
 			});
-			c.init();
+			c.init(this);
 			this.addComponent(c);
-		}
+		},
+		_initKeyboardShortcutsComponent: function() {
+			var c = new KeyboardShortcutsComponent({
+				enabled: true,
+				keySignature: this.models.keySignature
+			});
+			c.init(this);
+			this.addComponent(c);
+		},
 	});
 
 	return AppComponent;

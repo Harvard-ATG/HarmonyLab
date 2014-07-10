@@ -9,46 +9,42 @@ define({
 	"noteAnchor": 48,
 	
 	// Uused letters to avoid mishaps: 3, 6, and g.
-	"note": {
-		"1": -4, // GA
-		"q": -3, // A
-		"2": -2, // AB
-		"w": -1, // B
-		"e": 0, // C
-		"4": 1, // CD
-		"r": 2, // D
-		"5": 3, // DE
-		"t": 4, // E
-		"y": 5, // F
-		"7": 6, // FG
-		"u": 7, // G
-		"a": 16, // E
-		"z": 17, // F
-		"s": 18, // FG
-		"x": 19, // G
-		"d": 20, // GA
-		"c": 21, // A
-		"f": 22, // AB
-		"v": 23, // B
-		"b": 24, // C
-		"h": 25, // CD
-		"n": 26, // D
-		"j": 27, // DE
-		"m": 28 // E
-	},
-	// Application control shortcuts.
-	// Maps a key to function name.
-	"control": {
-		"ESC":    "toggleMode",
-		"ENTER":  "clearNotes",
-		"SPACE":  "bankChord",
-		"'":      "depressSustain",
-		";":      "retakeSustain",
-		".":      "releaseSustain",
-		"k":      "rotateKeyFlatward",
-		"l":      "rotateKeySharpward",
-		",":      "setKeyToNone",
-		"/":      "toggleMetronome"
+	"keyMap": {
+		"1": {msg:"note", data:-4}, // GA
+		"q": {msg:"note", data:-3}, // A
+		"2": {msg:"note", data:-2}, // AB
+		"w": {msg:"note", data:-1}, // B
+		"e": {msg:"note", data:0}, // C
+		"4": {msg:"note", data:1}, // CD
+		"r": {msg:"note", data:2}, // D
+		"5": {msg:"note", data:3}, // DE
+		"t": {msg:"note", data:4}, // E
+		"y": {msg:"note", data:5}, // F
+		"7": {msg:"note", data:6}, // FG
+		"u": {msg:"note", data:7}, // G
+		"a": {msg:"note", data:16}, // E
+		"z": {msg:"note", data:17}, // F
+		"s": {msg:"note", data:18}, // FG
+		"x": {msg:"note", data:19}, // G
+		"d": {msg:"note", data:20}, // GA
+		"c": {msg:"note", data:21}, // A
+		"f": {msg:"note", data:22}, // AB
+		"v": {msg:"note", data:23}, // B
+		"b": {msg:"note", data:24}, // C
+		"h": {msg:"note", data:25}, // CD
+		"n": {msg:"note", data:26}, // D
+		"j": {msg:"note", data:27}, // DE
+		"m": {msg:"note", data:28}, // E
+		"'":      {msg:"depressSustain"},
+		";":      {msg:"retakeSustain"},
+		".":      {msg:"releaseSustain"},
+		"k":      {msg:"rotateKeyFlatward"},
+		"l":      {msg:"rotateKeySharpward"},
+		",":      {msg:"setKeyToNone"},
+		"/":      {msg:"toggleMetronome"},
+		"ESC":    {msg:"toggleMode"},
+		"ENTER":  {msg:"clearNotes"},
+		"SPACE":  {msg:"bankChord"}
 	},
 	// Defines key code -> key name mappings.
 	// This is not intended to be comprehensive. These key names

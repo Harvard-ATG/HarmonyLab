@@ -43,7 +43,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	Component.prototype.destroy = function() {};
 
 	Component.prototype.broadcast = function() {
-		console.log("broadcast", this, 'args', arguments);
+		this.debug("broadcast()", "args:", arguments, "this:", this);
 		EVENT_BUS.trigger.apply(EVENT_BUS, arguments);
 	};
 	Component.prototype.subscribe = function() {
@@ -54,7 +54,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	};
 
 	Component.prototype.trigger = function() {
-		console.log("trigger", this, 'args', arguments);
+		this.debug("trigger()", "args:", arguments, "this:", this);
 		MicroEvent.prototype.trigger.apply(this, arguments);
 	};
 	Component.prototype.bind = function() {
@@ -67,6 +67,14 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	Component.prototype.log = function() {
 		console.log.apply(console, arguments);		
 	};
+
+	Component.prototype.debug = function() {
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift("[DEBUG]");
+		if(this.DEBUG || window.APP_DEBUG) {
+			this.log.apply(this, args);
+		}
+	}
 
 	return Component;
 });
