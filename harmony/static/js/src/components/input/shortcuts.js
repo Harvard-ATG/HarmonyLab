@@ -87,6 +87,7 @@ define([
 			}, this);
 
 			_.bindAll(this, this.messages);
+			_.bindAll(this, ['handleToggle']);
 
 			this.initListeners();
 		},
@@ -121,6 +122,7 @@ define([
 				input.bind(msg, this[msg]);
 			}, this);
 
+			this.subscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, this.handleToggle);
 		},
 		/**
 		 * Removes listeners on the input component.
@@ -132,6 +134,8 @@ define([
 			_.each(this.messages, function(msg) {
 				input.unbind(msg, this[msg]);
 			}, this);
+
+			this.unsubscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, this.handleToggle);
 		},
 		/**
 		 * Enables shortcuts.
@@ -139,9 +143,7 @@ define([
 		 * @return undefined
 		 */
 		enable: function() {
-			var input = this.getComponent('input');
 			this.enabled = true;
-			input.enable();
 		},
 		/**
 		 * Disables shortcuts.
@@ -149,9 +151,7 @@ define([
 		 * @return undefined
 		 */
 		disable: function() {
-			var input = this.getComponent('input');
 			this.enabled = false;
-			input.disable();
 		},
 		/**
 		 * Checks if shortcuts are enabled.
@@ -176,7 +176,15 @@ define([
 		 */
 		toggleMode: function(state) {
 			this.enabled = !this.enabled;
-			this.trigger('toggle', this.enabled);
+			this.broadcast(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, this.enabled);
+		},
+		/**
+		 * Handles a toggle event.
+		 *
+		 * @return undefined
+		 */
+		handleToggle: function(enabled) {
+			this[enabled?'enable':'disable']();
 		},
 		/**
 		 * Flattens the key.

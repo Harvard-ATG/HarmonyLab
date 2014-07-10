@@ -16,7 +16,9 @@ define({
 		"INSTRUMENT": "instrument",
 		"TRANSPOSE": "transpose",
 		"METRONOME": "metronome",
-		"TOGGLE_METRONOME": "togglemetronome"
+		"TOGGLE_METRONOME": "togglemetronome",
+		"TOGGLE_SHORTCUTS": "toggleshortcuts",
+		"KEYBOARD_SIZE": "keyboardsize"
 	},
 	"TRIGGER": {
 	}

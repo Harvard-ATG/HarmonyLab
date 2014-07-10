@@ -5,6 +5,7 @@ define([
 	'app/components/input/shortcuts',
 	'app/components/midi/controller',
 	'app/components/ui/piano',
+	'app/components/ui/nav/tabs',
 	'app/models/chord_bank',
 	'app/models/key_signature'
 ], function(
@@ -14,6 +15,7 @@ define([
 	KeyboardShortcutsComponent,
 	MidiControllerComponent,
 	PianoComponent,
+	TabsComponent,
 	ChordBank,
 	KeySignature
 ) {
@@ -27,40 +29,44 @@ define([
 	AppComponent.prototype.models = {};
 	AppComponent.prototype.initComponent = function() {
 		this.models = {};
-		this.models.chords = new ChordBank();
-		this.models.keySignature = new KeySignature();
-		this.initRest();
+		this._setupComponents([
+			'_setupNavTabsComponent',
+			'_setupPianoComponent',
+			'_setupKeyboardShortcutsComponent',
+			'_setupMidiComponent',
+		]);
 	};
 
-	AppComponent.prototype.initRest = function() {
-		// call all _initXXX methods
-		var prefix = "_init", todo = [];
-		for(var method in this) {
-			if(method.substring(0, prefix.length) === prefix) {
-				todo.push(method);
-			}
+	AppComponent.prototype._setupComponents = function(methods) {
+		this._beforeSetup();
+		for(var i = 0, len = methods.length; i < len; i++) {
+			this[methods[i]].call(this);
 		}
-		todo.sort();
-		for(var i = 0; i < todo.length; i++) {
-			this[todo[i]].call(this);
-		}
+		this._afterSetup();
 	};
 
 	_.extend(AppComponent.prototype, {
-		_initPianoComponent: function() {
+		_beforeSetup: function() {
+			this.models.chords = new ChordBank();
+			this.models.keySignature = new KeySignature();
+		},
+		_afterSetup: function() {
+			this.fadeIn();
+		},
+		_setupPianoComponent: function() {
 			var c = new PianoComponent({"renderTo": "#piano"});
 			c.init(this);
 			c.render();
 			this.addComponent(c);
 		},
-		_initMidiComponent: function() {
+		_setupMidiComponent: function() {
 			var c = new MidiControllerComponent({
 				chords: this.models.chords
 			});
 			c.init(this);
 			this.addComponent(c);
 		},
-		_initKeyboardShortcutsComponent: function() {
+		_setupKeyboardShortcutsComponent: function() {
 			var c = new KeyboardShortcutsComponent({
 				enabled: true,
 				keySignature: this.models.keySignature
@@ -68,6 +74,22 @@ define([
 			c.init(this);
 			this.addComponent(c);
 		},
+		_setupNavTabsComponent: function() {
+			var c = new TabsComponent({
+				keySignature: this.models.keySignature
+			});
+			c.init(this);
+			this.addComponent(c);
+			console.log(c);
+		},
+		fadeIn: function() {
+			$('.js-fade-in').css('opacity', 1);
+			$('.js-fade-out').css('opacity', 0);
+		},
+		fadeOut: function() {
+			$('.js-fade-in').css('opacity', 0);
+			$('.js-fade-out').css('opacity', 1);
+		}
 	});
 
 	return AppComponent;

@@ -1,5 +1,10 @@
 define({
 	// Application note on/off keyboard shortcuts.
+	
+	// Defines whether shortcuts are enabled or disabled by default.
+	// The user should be able to change this on the interface.
+	"defaultEnabled": true,
+
 	//
 	// Maps a key to an integer relative to the C *one octave below* 
 	// middle C (MIDI note number 48).

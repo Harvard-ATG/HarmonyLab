@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<div id="container" class="js-fade-in fade theme theme-downlights" style="opacity: 1;" data-theme="downlights">
+<div id="container" class="js-fade-in fade theme theme-downlights" style="opacity: 0;" data-theme="downlights">
 
 	<div class="header">
 		<div class="icon-btn icon-btn-right icon-btn-info js-btn-info"></div>
@@ -20,24 +20,15 @@
 	<div class="left-panel-bed">
 		<div id="tab-nav-1" class="tab-nav">
 		  <ul class="inst-tab">
-			<li><a href="#" class="js-tab js-tab-left">INSTRUMENT</a>
+			<li><a href="#" class="js-tab js-tab-left" data-tab-name="instruments">INSTRUMENT</a>
 			  <div class="tab-content-wrapper">
 				  <div class="tab-content-inner">
+					  <div class="tab-row js-instrument"></div>
+					  <div class="tab-row js-keyboardsize"></div>
 					  <div class="tab-row">
-						<select id="select_instrument"></select>
-					  </div>
-					  <div class="tab-row">
-						Keyboard size: 
-						<select id="select_keyboard_size" name="keyboard">
-						<option value="25">25</option>
-						<option value="37">37</option>
-						<option value="49" selected="selected">49</option>
-						<option value="88">88</option>
-						</select>
-					  </div>
-					  <div class="tab-row">
-						<label>Keyboard shortcuts:
-							<input type="checkbox" id="keyboard_shortcuts" name="keyboard_shortcuts" value="on" />
+                          <label>
+                              Keyboard shortcuts:
+							<input type="checkbox" name="keyboard_shortcuts" value="on" class="js-keyboardshortcuts" />
 						</label>
 					  </div>
 				  </div>
@@ -46,12 +37,10 @@
 		  </ul>
 
 		  <ul class="key-tab">
-			<li><a href="#" class="js-tab js-tab-left">KEY &amp; SIGNATURES</a>
+			<li><a href="#" class="js-tab js-tab-left" data-tab-name="keysignature">KEY &amp; SIGNATURES</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
-				  <div class="tab-row">
-					<div id="key_signature_widget"></div>
-				  </div>
+				  <div class="tab-row js-keysignature-widget"></div>
 				</div>
 			   </div>
 			 </li>
@@ -63,7 +52,7 @@
 		<div id="tab-nav-2" class="tab-nav">
 
 		  <ul class="midi-tab">
-			<li><a href="#" class="js-tab js-tab-right">MIDI SOURCE</a>
+			<li><a href="#" class="js-tab js-tab-right" data-tab-name="midi">MIDI SOURCE</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
 					<div class="tab-row">
@@ -80,7 +69,7 @@
 		  </ul>
 
 		  <ul class="note-tab">
-			<li><a href="#" class="js-tab js-tab-right">NOTATION</a>
+			<li><a href="#" class="js-tab js-tab-right" data-tab-name="notation">NOTATION</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
 					<div class="tab-row">
