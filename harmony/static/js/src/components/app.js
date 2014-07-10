@@ -68,7 +68,6 @@ define([
 		},
 		_setupKeyboardShortcutsComponent: function() {
 			var c = new KeyboardShortcutsComponent({
-				enabled: true,
 				keySignature: this.models.keySignature
 			});
 			c.init(this);

@@ -39,9 +39,9 @@ define([
 		}
 
 		this.enabled = false;
-		if(this.settings.hasOwnProperty("enabled")) {
-			this.enabled = this.settings.enabled ? true : false;
-		}
+		if(SHORTS.hasOwnProperty('defaultEnabled')) {
+			this.enabled = SHORTS.defaultEnabled;
+		} 
 
 		this.noteAnchor = 48;
 		if(SHORTS.hasOwnProperty('noteAnchor')) {

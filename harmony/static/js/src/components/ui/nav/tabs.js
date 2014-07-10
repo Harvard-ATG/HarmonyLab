@@ -225,7 +225,8 @@ define([
 			var el = $('.js-keyboardshortcuts', tab.contentEl);
 
 			// toggle shortcuts on/off via gui control
-			el.attr('checked', SHORTCUTS_ENABLED_DEFAULT).on('change', function() {
+			el.attr('checked', SHORTCUTS_ENABLED_DEFAULT);
+			el.on('change', function() {
 				var toggle = $(this).is(':checked') ? true : false;
 				that.broadcast(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, toggle);
 				$(this).blur(); // trigger blur so it loses focus
