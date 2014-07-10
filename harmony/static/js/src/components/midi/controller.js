@@ -1,12 +1,15 @@
 define([
 	'lodash', 
 	'jazzmidibridge',
+	'app/components/events',
 	'app/components/component'
 ], function(
 	_, 
 	JMB,
+	EVENTS,
 	Component
 ) {
+	console.log(EVENTS);
 
 	/**
 	 * Defines the default instrument (Acoustic Grand Piano).
@@ -170,7 +173,7 @@ define([
 				'<p>Please download and install the Jazz MIDI plugin here: <br/>' + 
 				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
-			this.broadcast("error:jazzmidiplugin", {error:error, htmlError:htmlError});
+			this.broadcast(EVENTS.BROADCAST.JAZZ_MIDI_ERROR, {error:error, htmlError:htmlError});
 		},
 		/**
 		 * Detects the devices that are available.
@@ -238,12 +241,12 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
-			this.subscribe('note', this.onNoteChange);
-			this.subscribe('clearnotes', this.onClearNotes);
-			this.subscribe('banknotes', this.onBankNotes);
-			this.subscribe('pedal', this.onPedalChange);
-			this.subscribe('instrument', this.onInstrumentChange);
-			this.subscribe('transpose', this.onTransposeChange);
+			this.subscribe(EVENTS.BROADCAST.NOTE, this.onNoteChange);
+			this.subscribe(EVENTS.BROADCAST.CLEAR_NOTES, this.onClearNotes);
+			this.subscribe(EVENTS.BROADCAST.BANK_NOTES, this.onBankNotes);
+			this.subscribe(EVENTS.BROADCAST.PEDAL, this.onPedalChange);
+			this.subscribe(EVENTS.BROADCAST.INSTRUMENT, this.onInstrumentChange);
+			this.subscribe(EVENTS.BROADCAST.TRANSPOSE, this.onTransposeChange);
 
 			if(this.midiDevice.selectedInput) {
 				this.midiDevice.selectedInput.addEventListener('midimessage', this.onMidiMessage);
@@ -310,7 +313,7 @@ define([
 				pedal_state = 'off';
 			} 
 
-			this.broadcast('pedal', pedal_name, pedal_state);
+			this.broadcast(EVENTS.BROADCAST.PEDAL, pedal_name, pedal_state);
 		},
 		/**
 		 * Broadcasts a note "on" event to the application.
@@ -323,7 +326,7 @@ define([
 			if(this.noteVelocity !== null) {
 				noteVelocity = this.noteVelocity;
 			}
-			this.broadcast('note', 'on', noteNum, noteVelocity);
+			this.broadcast(EVENTS.BROADCAST.NOTE, 'on', noteNum, noteVelocity);
 		},
 		/**
 		 * Broadcasts a note "off" event to the application.
@@ -336,7 +339,7 @@ define([
 			if(this.noteVelocity !== null) {
 				noteVelocity = this.noteVelocity;
 			}
-			this.broadcast('note', 'off', noteNum, noteVelocity);
+			this.broadcast(EVENTS.BROADCAST.NOTE, 'off', noteNum, noteVelocity);
 		},
 		/**
 		 * Handles a note change event and sends a NOTE ON/OFF message to the

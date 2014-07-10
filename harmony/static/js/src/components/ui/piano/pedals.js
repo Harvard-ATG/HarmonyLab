@@ -1,10 +1,12 @@
 define([
 	'jquery', 
 	'lodash',
+	'app/components/events',
 	'app/components/component'
 ], function(
 	$,
 	_,
+	EVENTS,
 	Component
 ) {
 
@@ -38,7 +40,7 @@ define([
 
 		$('.pedal', this.el).each(this.setupPedalEl);
 
-		this.subscribe("pedal", this.onPedalChange);
+		this.subscribe(EVENTS.BROADCAST.PEDAL, this.onPedalChange);
 
 		return this;
 	};
@@ -61,7 +63,7 @@ define([
 
 		$(el).on('click', function() {
 			pedal.toggle();
-			component.broadcast('pedal', name, pedal.state);
+			component.broadcast(EVENTS.BROADCAST.PEDAL, name, pedal.state);
 		});
 	};
 

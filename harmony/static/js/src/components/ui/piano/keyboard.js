@@ -6,6 +6,7 @@ define([
 	'lodash', 
 	'raphael',
 	'app/models/keyboard_generator',
+	'app/components/events',
 	'app/components/component',
 	'./key'
 ], function(
@@ -13,6 +14,7 @@ define([
 	_, 
 	Raphael,
 	KeyboardGenerator,
+	EVENTS,
 	Component,
 	KeyComponent
 ) {
@@ -71,9 +73,9 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
-			this.subscribe('note', this.onNoteChange);
-			this.subscribe('clearnotes', this.onClearNotes);
-			this.subscribe('pedal', this.onPedalChange);
+			this.subscribe(EVENTS.BROADCAST.NOTE, this.onNoteChange);
+			this.subscribe(EVENTS.BROADCAST.CLEAR_NOTES, this.onClearNotes);
+			this.subscribe(EVENTS.BROADCAST.PEDAL, this.onPedalChange);
 			this.bind('key', this.triggerNoteChange);
 		},
 		/**
@@ -82,9 +84,9 @@ define([
 		 * @return undefined
 		 */
 		removeListeners: function() {
-			this.unsubscribe('note', this.onNoteChange);
-			this.unsubscribe('clearnotes', this.onClearNotes);
-			this.unsubscribe('pedal', this.onPedalChange);
+			this.unsubscribe(EVENTS.BROADCAST.NOTE, this.onNoteChange);
+			this.unsubscribe(EVENTS.BROADCAST.CLEAR_NOTES, this.onClearNotes);
+			this.unsubscribe(EVENTS.BROADCAST.PEDAL, this.onPedalChange);
 			this.unbind('key', this.triggerNoteChange);
 		},
 		/**
@@ -119,7 +121,7 @@ define([
 		 */
 		triggerNoteChange: function() {
 			var args = Array.prototype.slice.call(arguments);
-			args.unshift('note');
+			args.unshift(EVENTS.BROADCAST.NOTE);
 			this.broadcast.apply(this, args);
 		},
 		/**

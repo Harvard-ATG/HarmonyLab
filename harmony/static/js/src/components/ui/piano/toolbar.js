@@ -1,11 +1,13 @@
 define([
 	'jquery', 
 	'lodash',
+	'app/components/events',
 	'app/components/component',
 	'./metronome'
 ], function(
 	$,
 	_,
+	EVENTS,
 	Component,
 	MetronomeComponent
 ) {
@@ -25,13 +27,13 @@ define([
 		var that = this;
 
 		metronome.bind("bank", function() {
-			that.broadcast("banknotes");
+			that.broadcast(EVENTS.BROADCAST.BANK_NOTES);
 		});
 		metronome.bind("change", function() {
-			that.broadcast("metronome", metronome.getMetronome());
+			that.broadcast(EVENTS.BROADCAST.METRONOME, metronome.getMetronome());
 		});
 
-		this.subscribe("togglemetronome", metronome.toggle);
+		this.subscribe(EVENTS.BROADCAST.TOGGLE_METRONOME, metronome.toggle);
 	};
 
 	ToolbarComponent.prototype.render = function() {
