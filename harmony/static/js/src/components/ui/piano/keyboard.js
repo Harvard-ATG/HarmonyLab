@@ -44,6 +44,7 @@ define([
 		defaultKeyWidth: 30,
 		numberOfKeys: 49,
 		initComponent: function() {
+			console.log("init", this.settings, this);
 			if("numberOfKeys" in this.settings) {
 				this.numberOfKeys = this.settings.numberOfKeys;
 			} 
@@ -252,6 +253,10 @@ define([
 			this.paper.clear();
 			this.keyboardEl.remove();
 			this.el.remove();
+			this.keyboardGenerator = null;
+			this.keyMap = null;
+			this.layout = null;
+			this.settings = null;
 		}
 	});
 

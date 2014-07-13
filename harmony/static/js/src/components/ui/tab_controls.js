@@ -38,6 +38,12 @@ define([
 	 * @const
 	 */
 	var SHORTCUTS_ENABLED_DEFAULT = Config.get('keyboardShortcuts.defaultEnabled');
+	/**
+	 * Defines the default keyboard size.
+	 * @type {number}
+	 * @const
+	 */
+	var DEFAULT_KEYBOARD_SIZE = Config.get('general.defaultKeyboardSize');
 
 	/**
 	 * Defines a namespace for setting up tab behavior around the notation
@@ -287,8 +293,10 @@ define([
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(sizes, function(size) { %><option value="<%= size %>"><%- size %></option><% }); %>');
 			var options = tpl({sizes: [25,37,49,88]})
+			var selected = DEFAULT_KEYBOARD_SIZE;
 
-			selectEl.append("Keyboard size:").append(options);
+			selectEl.append(options);
+			selectEl.find("[value="+selected+"]").attr("selected", "selected");
 			selectEl.on('change', function() {
 				var size = parseInt($(this).val(), 10);
 				that.broadcast(EVENTS.BROADCAST.KEYBOARD_SIZE, size);

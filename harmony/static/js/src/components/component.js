@@ -30,6 +30,20 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		this.components.push.apply(this.components, arguments);
 	};
 
+	Component.prototype.removeComponent = function(c) {
+		for(var i = 0, len = this.components.length; i < len; i++) {
+			if(this.components[i] === c) {
+				this.components.splice(i, 1);
+			}
+		}
+		for(var x in this.componentMap) {
+			if(this.componentMap.hasOwnProperty(x) && this.componentMap[x] === c) {
+				this.componentMap[x] = null;
+				delete this.componentMap[x];
+			}
+		}
+	};
+
 	Component.prototype.setComponent = function(name, component) {
 		this.componentMap = this.componentMap || {};
 		this.componentMap[name] = component;

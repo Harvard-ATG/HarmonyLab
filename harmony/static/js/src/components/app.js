@@ -57,9 +57,9 @@ define([
 			this.fadeIn();
 		},
 		_setupPianoComponent: function() {
-			var c = new PianoComponent({"renderTo": "#piano"});
+			var c = new PianoComponent();
 			c.init(this);
-			c.render();
+			c.renderTo("#piano");
 			this.addComponent(c);
 		},
 		_setupMidiComponent: function() {
