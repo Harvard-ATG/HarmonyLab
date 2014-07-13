@@ -1,10 +1,9 @@
 /**
- * Symbol table for event names. 
+ * Broadcast Events Table
  *
- * Used to refer to events symbolically instead of having to use strings
- * everywhere, which are susceptible to typo errors when used in multiple
- * places. This also is useful to document the complete set of events used
- * in the application.
+ * Used to refer to events symbolically instead of string literals to prevent
+ * typo errors and also to document the set of events broadcasted in the
+ * application.
  */
 define({
 	"BROADCAST": {
