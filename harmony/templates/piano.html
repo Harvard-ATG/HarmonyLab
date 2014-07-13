@@ -57,11 +57,10 @@
 				<div class="tab-content-inner">
 					<div class="tab-row">
 						<div class="label">MIDI in:</div>
-						<select id="select_midi_input" name="select_midi_input"></select>
+						<select class="js-select-midi-input" name="select_midi_input"></select>
 						<div class="label">MIDI out:</div>
-						<select id="select_midi_output" name="select_midi_output"></select>
-						<br />
-						<button id="refresh_midi_devices">Refresh</button>
+						<select class="js-select-midi-output" name="select_midi_output"></select><br/>
+						<button class="js-refresh-midi-devices">Refresh</button>
 					</div>
 				</div>
 			   </div>
@@ -72,9 +71,7 @@
 			<li><a href="#" class="js-tab js-tab-right" data-tab-name="notation">NOTATION</a>
 			  <div class="tab-content-wrapper">
 				<div class="tab-content-inner">
-					<div class="tab-row">
-						<div id="notation_widget"></div>
-					</div>
+					<div class="tab-row js-analyze-widget"></div>
 				</div>
 			  </div>
 			 </li>

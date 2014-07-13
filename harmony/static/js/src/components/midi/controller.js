@@ -9,7 +9,6 @@ define([
 	EVENTS,
 	Component
 ) {
-	console.log(EVENTS);
 
 	/**
 	 * Defines the default instrument (Acoustic Grand Piano).
@@ -48,20 +47,18 @@ define([
 	/**
 	 * MidiControllerComponent
 	 *
-	 * This component controls the interactions between the application and
+	 * This component coordinates the interactions between the application and
 	 * the MIDI device driver (i.e. browser plugin). It listens for MIDI-related
 	 * messages from the application and translates them into instructions for
 	 * the MIDI driver and vice versa. 
 	 *
-	 * Note that the Jazz Midi Bridge (JMB) is a high-level library used to
-	 * interface with the Jazz Midi Plugin, which in turn handles low-level
-	 * MIDI input/output.
+	 * Note that the Jazz Midi Bridge (JMB) is a library used to interface with 
+	 * the Jazz Midi Plugin, which in turn handles low-level MIDI input/output.
 	 *
 	 * @constructor
 	 * @param {object} settings
 	 * @param {object} settings.chords Chords object (required).
-	 * @mixes MicroEvent
-	 * @fires devices
+	 * @param {object} settings.midiDevice MidiDevice object (required).
 	 */
 	var MidiControllerComponent = function(settings) {
 		/**
@@ -90,21 +87,12 @@ define([
 		 */
 		this.noteVelocity = DEFAULT_NOTE_VELOCITY;
 		/**
-		 * Holds the list of input/output devices that are detected by the MIDI
-		 * Jazz Plugin.
+		 * The MidiDevice object that knows which Jazz MiDI input/output devices
+		 * are available and how to use them.
 		 * @type {object}
 		 * @protected
 		 */
-		this.midiDevice = {
-			inputs: [],
-			outputs: [],
-			selectedInput: null,
-			selectedOutput: null,
-			defaults: { 
-				inputIndex: 0,
-				outputIndex: 0
-			}
-		};
+		this.midiDevice = null;
 		/**
 		 * Holds a reference to the Chords object. 
 		 * @type {object}
@@ -112,7 +100,17 @@ define([
 		 */
 		this.chords = null;
 
-		this.init();
+		_.bindAll(this, [
+			'onMidiMessage',
+			'onNoteChange',
+			'onClearNotes',
+			'onBankNotes',
+			'onPedalChange',
+			'onInstrumentChange',
+			'onTransposeChange',
+			'onJMBInit',
+			'onJMBError'
+		]);
 	};
 
 	MidiControllerComponent.prototype = new Component();
@@ -124,24 +122,15 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			if(!this.settings.hasOwnProperty('chords')) {
+			if(!("chords" in this.settings)) {
 				throw new Error("missing settings.chords");
-			}
+			} 
+			if(!("midiDevice" in this.settings)) {
+				throw new Error("missing settings.midiDevice");
+			} 
 
 			this.chords = this.settings.chords;
-
-			_.bindAll(this, [
-				'onMidiMessage',
-				'onNoteChange',
-				'onClearNotes',
-				'onBankNotes',
-				'onPedalChange',
-				'onInstrumentChange',
-				'onTransposeChange'
-			]);
-
-			this.onJMBInit = this.execAfter(this.onJMBInit, this.initListeners);
-			this.onJMBError = this.execAfter(this.onJMBError, this.initListeners);
+			this.midiDevice = this.settings.midiDevice;
 
 			JMB.init(this.onJMBInit, this.onJMBError);
 		},
@@ -153,11 +142,16 @@ define([
 		 * @return undefined
 		 */
 		onJMBInit: function(MIDIAccess) {
-			if(MIDIAccess) {
-				this.midiAccess = MIDIAccess;
-				this.detectDevices();
-				this.selectDefaultDevices();
-			}
+			this.setMIDIAccess(MIDIAccess);
+			this.midiDevice.setUpdater(function() {
+				var inputs = MIDIAccess.enumerateInputs();
+				var outputs = MIDIAccess.enumerateOutputs();
+				this.clear();
+				this.setSources(inputs, outputs);
+				this.selectDefaults();
+			});
+			this.updateDevices();
+			this.initListeners();
 		},
 		/**
 		 * Called when the Jazz Midi Bridge (JMB) encounters an error while it
@@ -174,66 +168,7 @@ define([
 				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
 			this.broadcast(EVENTS.BROADCAST.JAZZ_MIDI_ERROR, {error:error, htmlError:htmlError});
-		},
-		/**
-		 * Detects the devices that are available.
-		 *
-		 * @return undefined
-		 * @fires devices
-		 */
-		detectDevices: function() {
-			if(this.midiAccess) {
-				this.midiDevice.outputs = this.midiAccess.enumerateOutputs() || [];
-				this.midiDevice.inputs = this.midiAccess.enumerateInputs() || [];
-				this.trigger('devices', this.midiDevice.inputs, this.midiDevice.outputs, this.midiDevice.defaults);
-			}
-		},
-		/**
-		 * Scans for changes to the MIDI devices.
-		 *
-		 * @return undefined
-		 */
-		scanDevices: function() {
-			JMB.rescan();
-		},
-		/**
-		 * Selects default MIDI devices.
-		 *
-		 * @return undefined
-		 */
-		selectDefaultDevices: function() {
-			var outputs = this.midiDevice.outputs;
-			var inputs = this.midiDevice.inputs;
-			if(outputs && outputs.length > 0) {
-				this.midiDevice.selectedOutput = outputs[this.midiDevice.defaults.outputIndex];
-			}
-			if(inputs && inputs.length > 0) {
-				this.midiDevice.selectedInput = inputs[this.midiDevice.defaults.inputIndex];
-			}
-		},
-		/**
-		 * Selects a MIDI device for input and output.
-		 *
-		 * @param {string} type input|output
-		 * @param {number} index of the device in the list of devices
-		 * @return {boolean} True if a device was selected, false otherwise.
-		 */
-		selectDevice: function(type, index) {
-			switch(type) {
-				case 'input': 
-					if(this.midiDevice.inputs.length > 0) {
-						this.midiDevice.selectedInput = this.midiDevice.inputs[index];
-						return true;
-					}
-					break;
-				case 'output':
-					if(this.midiDevice.outputs.length > 0) {
-						this.midiDevice.selectedOutput = this.midiDevice.outputs[index];
-						return true;
-					}
-					break;
-			}
-			return false;
+			this.initListeners();
 		},
 		/**
 		 * Initializes listeners.
@@ -247,40 +182,27 @@ define([
 			this.subscribe(EVENTS.BROADCAST.PEDAL, this.onPedalChange);
 			this.subscribe(EVENTS.BROADCAST.INSTRUMENT, this.onInstrumentChange);
 			this.subscribe(EVENTS.BROADCAST.TRANSPOSE, this.onTransposeChange);
-
-			if(this.midiDevice.selectedInput) {
-				this.midiDevice.selectedInput.addEventListener('midimessage', this.onMidiMessage);
+			this.midiDevice.bind("midimessage", this.onMidiMessage);
+		},
+		/**
+		 * Sets the Jazz MIDI Access bridge.
+		 *
+		 * @param {object} MIDIAccess
+		 * @return undefined
+		 */
+		setMIDIAccess: function(MIDIAccess) {
+			if(MIDIAccess) {
+				this.midiAccess = MIDIAccess;
 			}
 		},
 		/**
-		 * Handles a MIDI message received from the MIDI device.
+		 * Detects the devices that are available.
 		 *
-		 * @param {object} msg
 		 * @return undefined
+		 * @fires devices
 		 */
-		onMidiMessage: function(msg) {
-			var command = msg.command;
-
-			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
-			if(command === JMB.NOTE_ON && !msg.data2) {
-				command = JMB.NOTE_OFF;
-			}
-
-			switch(command) {
-				case JMB.NOTE_ON:
-					this.triggerNoteOn(msg.data1, msg.data2);
-					break;
-				case JMB.NOTE_OFF:
-					this.triggerNoteOff(msg.data1, msg.data2);
-					break;
-				case JMB.CONTROL_CHANGE:
-					if(this.isPedalControlChange(msg.data1)) {
-						this.triggerPedalChange(msg.data1, msg.data2);
-					}
-					break;
-				default:
-					console.log("midi message not handled: ", msg);
-			}
+		updateDevices: function() {
+			this.midiDevice.update();
 		},
 		/**
 		 * Returns true if the control message maps to a supported pedal.
@@ -340,6 +262,48 @@ define([
 				noteVelocity = this.noteVelocity;
 			}
 			this.broadcast(EVENTS.BROADCAST.NOTE, 'off', noteNum, noteVelocity);
+		},
+		/**
+		 * Toggles a note in the chord model.
+		 *
+		 * @param {string} noteState on|off
+		 * @param {number} noteNumber
+		 * @return undefined
+		 */
+		toggleNote: function(noteState, noteNumber) {
+			var toggle = (noteState === 'on' ? 'noteOn' : 'noteOff');
+			var chord = this.chords.current();
+			chord[toggle](noteNumber);
+		},
+		/**
+		 * Handles a MIDI message received from the MIDI device.
+		 *
+		 * @param {object} msg
+		 * @return undefined
+		 */
+		onMidiMessage: function(msg) {
+			var command = msg.command;
+
+			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
+			if(command === JMB.NOTE_ON && !msg.data2) {
+				command = JMB.NOTE_OFF;
+			}
+
+			switch(command) {
+				case JMB.NOTE_ON:
+					this.triggerNoteOn(msg.data1, msg.data2);
+					break;
+				case JMB.NOTE_OFF:
+					this.triggerNoteOff(msg.data1, msg.data2);
+					break;
+				case JMB.CONTROL_CHANGE:
+					if(this.isPedalControlChange(msg.data1)) {
+						this.triggerPedalChange(msg.data1, msg.data2);
+					}
+					break;
+				default:
+					console.log("midi message not handled: ", msg);
+			}
 		},
 		/**
 		 * Handles a note change event and sends a NOTE ON/OFF message to the
@@ -427,18 +391,6 @@ define([
 			chord.setTranspose(transpose);
 		},
 		/**
-		 * Toggles a note in the chord model.
-		 *
-		 * @param {string} noteState on|off
-		 * @param {number} noteNumber
-		 * @return undefined
-		 */
-		toggleNote: function(noteState, noteNumber) {
-			var toggle = (noteState === 'on' ? 'noteOn' : 'noteOff');
-			var chord = this.chords.current();
-			chord[toggle](noteNumber);
-		},
-		/**
 		 * Sends MIDI messages to turn off all notes. This should stop all notes
 		 * from sounding.
 		 *
@@ -446,24 +398,21 @@ define([
 		 */
 		sendAllNotesOff: function() {
 			var notes = this.chords.getAllNotes();
-			_.each(notes, function(noteNumber) {
-				this.sendMIDIMessage(JMB.NOTE_OFF, noteNumber, this.noteVelocity);
-			}, this);
+			var noteVelocity = this.noteVelocity;
+			for(var i = 0, len = notes.length; i < len; i++) {
+				this.sendMIDIMessage(JMB.NOTE_OFF, notes[i], noteVelocity);
+			}
 		},
 		/**
-		 * Outputs a MIDI message via the Jazz MIDI bridge.
+		 * Send a MIDI message to the Jazz MIDI bridge for output.
 		 *
 		 * @return undefined
 		 */
 		sendMIDIMessage: function() {
-			var output = this.midiDevice.selectedOutput; 
-			var midiAccess = this.midiAccess;
-			var msg; 
-			if(this.midiAccess) {
+			var msg = null, midiAccess = this.midiAccess, midiDevice = this.midiDevice;
+			if(midiAccess) {
 				msg = midiAccess.createMIDIMessage.apply(midiAccess, arguments);
-				if(output) {
-					output.sendMIDIMessage(msg);
-				} 
+				midiDevice.sendMIDIMessage(msg);
 			}
 		},
 		/**
@@ -478,23 +427,6 @@ define([
 			var controlNumber = MIDI_CONTROL_MAP.pedal[pedal];
 			var controlValue = (state === 'off' ? 0 : 127);
 			this.sendMIDIMessage(command, controlNumber, controlValue, this.midiChannel);
-		},
-		/**
-		 * Returns a function that when called will execute the first function
-		 * and then the second function, but return the results of the first
-		 * function.
-		 *
-		 * @param {function} firstFn Results of this function will be returned.
-		 * @param {function} secondFn Called after the first for the side effect.
-		 * @return {mixed}
-		 */
-		execAfter: function(firstFn, secondFn) {
-			var that = this;
-			return function() {
-				var result = firstFn.apply(that, arguments);
-				secondFn.call(that);
-				return result;
-			};
 		}
 	});
 

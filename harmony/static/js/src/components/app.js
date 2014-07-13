@@ -5,9 +5,10 @@ define([
 	'app/components/input/shortcuts',
 	'app/components/midi/controller',
 	'app/components/ui/piano',
-	'app/components/ui/nav/tabs',
+	'app/components/ui/tab_controls',
 	'app/models/chord_bank',
-	'app/models/key_signature'
+	'app/models/key_signature',
+	'app/models/midi_device'
 ], function(
 	_,
 	$,
@@ -15,9 +16,10 @@ define([
 	KeyboardShortcutsComponent,
 	MidiControllerComponent,
 	PianoComponent,
-	TabsComponent,
+	TabControlsComponent,
 	ChordBank,
-	KeySignature
+	KeySignature,
+	MidiDevice
 ) {
 
 	var AppComponent = function(settings) {
@@ -30,7 +32,7 @@ define([
 	AppComponent.prototype.initComponent = function() {
 		this.models = {};
 		this._setupComponents([
-			'_setupNavTabsComponent',
+			'_setupNavTabControlsComponent',
 			'_setupPianoComponent',
 			'_setupKeyboardShortcutsComponent',
 			'_setupMidiComponent',
@@ -49,6 +51,7 @@ define([
 		_beforeSetup: function() {
 			this.models.chords = new ChordBank();
 			this.models.keySignature = new KeySignature();
+			this.models.midiDevice = new MidiDevice();
 		},
 		_afterSetup: function() {
 			this.fadeIn();
@@ -61,7 +64,8 @@ define([
 		},
 		_setupMidiComponent: function() {
 			var c = new MidiControllerComponent({
-				chords: this.models.chords
+				chords: this.models.chords,
+				midiDevice: this.models.midiDevice
 			});
 			c.init(this);
 			this.addComponent(c);
@@ -73,13 +77,13 @@ define([
 			c.init(this);
 			this.addComponent(c);
 		},
-		_setupNavTabsComponent: function() {
-			var c = new TabsComponent({
-				keySignature: this.models.keySignature
+		_setupNavTabControlsComponent: function() {
+			var c = new TabControlsComponent({
+				keySignature: this.models.keySignature,
+				midiDevice: this.models.midiDevice
 			});
 			c.init(this);
 			this.addComponent(c);
-			console.log(c);
 		},
 		fadeIn: function() {
 			$('.js-fade-in').css('opacity', 1);

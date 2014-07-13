@@ -5,7 +5,9 @@ define([
 	'app/components/component',
 	'app/components/events',
 	'app/utils/instruments',
-	'app/widgets/key_signature'
+	'app/widgets/key_signature',
+	'app/widgets/analyze',
+	'app/widgets/highlight'
 ], function(
 	$, 
 	_, 
@@ -13,7 +15,9 @@ define([
 	Component,
 	EVENTS,
 	Instruments,
-	KeySignatureWidget
+	KeySignatureWidget,
+	AnalyzeWidget,
+	HighlightWidget
 ) {
 
 	/**
@@ -41,17 +45,23 @@ define([
 	 *
 	 * @namespace
 	 */
-	var TabsComponent = function(settings) {
+	var TabControlsComponent = function(settings) {
 		this.settings = settings || {};
 		if(!("keySignature" in settings)) {
 			throw new Error("missing keySignature setting");
 		}
+		if(!("midiDevice" in settings)) {
+			throw new Error("missing midiDevice setting");
+		}
 		this.keySignature = settings.keySignature;
+		this.midiDevice = settings.midiDevice;
+
+		_.bindAll(this, ['initTab', 'onClickToggleTabs']);
 	};
 
-	TabsComponent.prototype = new Component();
+	TabControlsComponent.prototype = new Component();
 
-	_.extend(TabsComponent.prototype, {
+	_.extend(TabControlsComponent.prototype, {
 		/**
 		 * Holds the tab elements.
 		 * @type {array}
@@ -68,7 +78,6 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			_.bindAll(this, ['initTab', 'onClickToggleTabs']);
 
 			$('.js-tab').each(this.initTab);
 			$('.js-toggle-tabs')
@@ -151,6 +160,48 @@ define([
 		 * @return undefined
 		 */
 		initMidiTab: function(tab) {
+			var renderDevices = function(midiDevice) {
+				var inputs = midiDevice.getInputs();
+				var outputs = midiDevice.getOutputs();
+				var tpl = _.template('<option value="<%= id %>"><%= name %></option>');
+				var makeOptions = function(device, idx) {
+					return tpl({ id: idx, name: device.deviceName });
+				};
+				var devices = {
+					'input': {
+						'selector': $('.js-select-midi-input', tab.contentEl),
+						'options': _.map(inputs, makeOptions)
+					},
+					'output': {
+						'selector': $('.js-select-midi-output', tab.contentEl),
+						'readonly': true,
+						'options': _.map(outputs, makeOptions) }
+				};
+
+				_.each(devices, function(device, type) {
+					if(device.options.length > 0) {
+						$(device.selector).html(device.options.join(''));
+					} else {
+						$(device.selector).html('<option>--</option>');
+					}
+
+					if(device.readonly) {
+						$(device.selector).attr('disabled', 'disabled');
+					} else {
+						$(device.selector).on('change', function() {
+							var index = parseInt($(this).val(), 10);
+							midiDevice[type=='input'?'selectInput':'selectOutput'](index);
+						});
+					}
+					$(device.selector).css('width', '100%');
+				});
+
+				$('.js-refresh-midi-devices', tab.contentEl).on('click', midiDevice.update);
+			};
+
+			this.midiDevice.bind("updated", renderDevices);
+
+			renderDevices(this.midiDevice);
 		},
 		/**
 		 * Initializes the content of the key signature tab.
@@ -171,6 +222,37 @@ define([
 		 * @return undefined
 		 */
 		initNotationTab: function(tab) {
+			var that = this;
+			var el = $('.js-analyze-widget', tab.contentEl);
+			var analyze_widget = new AnalyzeWidget();
+			var highlight_widget = new HighlightWidget();
+			var event_for = {
+				'highlight': EVENTS.BROADCAST.HIGHLIGHT_NOTES,
+				'analyze': EVENTS.BROADCAST.ANALYZE_NOTES
+			};
+			var onChangeCategory = function(category, enabled) {
+				if(event_for[category]) {
+					that.broadcast(event_for[category], {key: "enabled", value: enabled});
+				}
+			};
+			var onChangeOption = function(category, mode, enabled) {
+				var value = {};
+				if(event_for[category]) {
+					value[mode] = enabled;
+					that.broadcast(event_for[category], {key: "mode", value: value});
+				}
+			};
+
+			highlight_widget.bind('changeCategory', onChangeCategory);
+			highlight_widget.bind('changeOption', onChangeOption);
+
+			analyze_widget.bind('changeCategory', onChangeCategory);
+			analyze_widget.bind('changeOption', onChangeOption);
+
+			analyze_widget.render();
+			highlight_widget.render();
+
+			el.append(highlight_widget.el, analyze_widget.el);
 		},
 		/**
 		 * Renders the instrument selector.
@@ -212,7 +294,7 @@ define([
 				that.broadcast(EVENTS.BROADCAST.KEYBOARD_SIZE, size);
 			});
 
-			el.append(selectEl);
+			el.append(selectEl).wrapInner("<label>Keyboard size:</label>");
 		},
 		/**
 		 * Renders the keyboard shorcuts.
@@ -319,5 +401,5 @@ define([
 		}
 	});
 
-	return TabsComponent;
+	return TabControlsComponent;
 });
