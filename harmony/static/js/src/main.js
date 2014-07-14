@@ -1,14 +1,9 @@
 define([
-	'lodash',
 	'jquery',
-	'app/components/app'
+	'app/components/app/play'
 ], function(
-	_,
 	$,
-	AppComponent
+	AppPlayComponent
 ) {
-	$(document).ready(function() {
-		var app = new AppComponent();
-		app.init();
-	});
+	$(document).ready(AppPlayComponent.ready);
 });

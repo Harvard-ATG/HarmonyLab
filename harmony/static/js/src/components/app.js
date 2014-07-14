@@ -2,113 +2,53 @@ define([
 	'lodash',
 	'jquery',
 	'app/components/component',
-	'app/components/input/shortcuts',
-	'app/components/midi/controller',
-	'app/components/ui/piano',
-	'app/components/ui/tab_controls',
-	'app/components/ui/transcript',
-	'app/models/chord_bank',
-	'app/models/key_signature',
-	'app/models/midi_device'
 ], function(
 	_,
 	$,
-	Component,
-	KeyboardShortcutsComponent,
-	MidiControllerComponent,
-	PianoComponent,
-	TabControlsComponent,
-	TranscriptComponent,
-	ChordBank,
-	KeySignature,
-	MidiDevice
+	Component
 ) {
 
 	var AppComponent = function(settings) {
 		this.settings = settings || {};
+		this.models = {};
 	};
 
 	AppComponent.prototype = new Component();
 
-	AppComponent.prototype.models = {};
 	AppComponent.prototype.initComponent = function() {
-		this.models = {};
-		this._setupComponents([
-			'_setupNavTabControlsComponent',
-			'_setupPianoComponent',
-			'_setupKeyboardShortcutsComponent',
-			'_setupMidiComponent',
-			'_setupTranscriptComponent'
-		]);
+		var i, len, methods = [];
+
+		this.models = this.getModels();
+		this.beforeSetup();
+
+		methods = this.getComponentMethods();
+		for(i = 0, len = methods.length; i < len; i++) {
+			methods[i].call(this);
+		}
+
+		this.afterSetup();
 	};
 
-	AppComponent.prototype._setupComponents = function(methods) {
-		this._beforeSetup();
-		for(var i = 0, len = methods.length; i < len; i++) {
-			this[methods[i]].call(this);
-		}
-		this._afterSetup();
+	AppComponent.prototype.beforeSetup = function() {
 	};
 
-	_.extend(AppComponent.prototype, {
-		_beforeSetup: function() {
-			this.models.chords = new ChordBank();
-			this.models.keySignature = new KeySignature();
-			this.models.midiDevice = new MidiDevice();
-		},
-		_afterSetup: function() {
-			this.fadeIn();
-		},
-		_setupPianoComponent: function() {
-			var c = new PianoComponent();
-			c.init(this);
-			c.renderTo("#piano");
-			this.addComponent(c);
-		},
-		_setupMidiComponent: function() {
-			var c = new MidiControllerComponent({
-				chords: this.models.chords,
-				midiDevice: this.models.midiDevice
-			});
-			c.init(this);
-			this.addComponent(c);
-		},
-		_setupKeyboardShortcutsComponent: function() {
-			var c = new KeyboardShortcutsComponent({
-				keySignature: this.models.keySignature
-			});
-			c.init(this);
-			this.addComponent(c);
-		},
-		_setupNavTabControlsComponent: function() {
-			var c = new TabControlsComponent({
-				keySignature: this.models.keySignature,
-				midiDevice: this.models.midiDevice
-			});
-			c.init(this);
-			this.addComponent(c);
-		},
-		_setupTranscriptComponent: function() {
-			var c = new TranscriptComponent({
-				chords: this.models.chords,
-				keySignature: this.models.keySignature
-			});
-			c.init(this);
-			c.renderTo("#staff-area");
-			this.addComponent(c);
-		},
-		fade: function(state) {
-			// fade in [state=true], fade out [state=false]
-			$('.js-fade-in').css('opacity', state ? 1 : 0);
-			$('.js-fade-out').css('opacity', state ? 0 : 1);
-		}, 
-		fadeIn: function() {
-			this.fade(true);
-		},
-		fadeOut: function() {
-			this.fade(false);
-		}
-	});
+	AppComponent.prototype.afterSetup = function() {
+		this.fadeIn();
+	};
+
+	AppComponent.prototype.fade = function(state) {
+		// fade in [state=true], fade out [state=false]
+		$('.js-fade-in').css('opacity', state ? 1 : 0);
+		$('.js-fade-out').css('opacity', state ? 0 : 1);
+	};
+
+	AppComponent.prototype.fadeIn = function() {
+		this.fade(true);
+	};
+
+	AppComponent.prototype.fadeOut = function() {
+		this.fade(false);
+	};
 
 	return AppComponent;
 });

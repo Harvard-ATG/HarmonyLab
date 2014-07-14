@@ -1,13 +1,13 @@
 /**
- * Broadcast Events Table
+ * Broadcast Events Table for Components
  *
+ * This is a complete list of events that may be broadcast by Components.
  * Used to refer to events symbolically instead of string literals to prevent
  * typo errors and also to document the set of events broadcasted in the
  * application.
  */
 define({
 	"BROADCAST": {
-		"JAZZ_MIDI_ERROR": "jazzmidierror",
 		"PEDAL": "pedal",
 		"NOTE": "note",
 		"CLEAR_NOTES": "clearnotes",
