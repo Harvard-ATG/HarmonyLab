@@ -1,12 +1,14 @@
 define([
 	'lodash', 
 	'jazzmidibridge',
+	'app/config',
 	'app/components/events',
 	'app/components/component',
 	'app/components/ui/modal'
 ], function(
 	_, 
 	JMB,
+	Config,
 	EVENTS,
 	Component,
 	ModalComponent
@@ -45,6 +47,19 @@ define([
 			'soft': 67
 		}
 	};
+	/**
+	 * Defines the title of the jazz midi error modal.
+	 * @type {string} 
+	 * @const
+	 */
+	var JAZZ_MIDI_ERROR_TITLE = Config.get("helpText.jazzMidiError.title");
+	/**
+	 * Defines the content of the jazz midi error modal.
+	 * @type {string} 
+	 * @const
+	 */
+	var JAZZ_MIDI_ERROR_CONTENT = Config.get("helpText.jazzMidiError.content");
+
 
 	/**
 	 * MidiControllerComponent
@@ -164,14 +179,7 @@ define([
 		 * @return undefined
 		 */
 		onJMBError: function() {
-			var error = 'Jazz MIDI Plugin Required';
-			var htmlError = '<p>Your browser is missing the <a href="http://jazz-soft.net/download">Jazz MIDI plugin</a>. ' +
-				'This browser plugin is required to produce sound with the on-screen keyboard or to ' + 
-				'connect and use your own MIDI keyboard.</p>' +
-				'<p>Please download and install the Jazz MIDI plugin here: <br/>' + 
-				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
-
-			this.trigger("modal", {title:error, content:htmlError});
+			this.trigger("modal", {title: JAZZ_MIDI_ERROR_TITLE, content: JAZZ_MIDI_ERROR_CONTENT});
 			this.initListeners();
 		},
 		/**

@@ -70,16 +70,17 @@ define([
 		 */
 		initComponent: function() {
 			this.messages = [
+				'depressSustain',
+				'retakeSustain',
+				'releaseSustain',
 				'rotateKeyFlatward',
 				'rotateKeySharpward',
 				'setKeyToNone',
-				'depressSustain',
-				'releaseSustain',
-				'retakeSustain',
-				'clearNotes',
 				'toggleMetronome',
-				'note',
-				'toggleMode'
+				'toggleMode',
+				'clearNotes',
+				'bankChord',
+				'toggleNote'
 			];
 
 			this.toggleMode = this.execIf([this.isKeyDown], this.toggleMode);
@@ -87,7 +88,7 @@ define([
 
 			_.each(this.messages, function(msg) {
 				var fn = this[msg];
-				if(msg !== 'note' && msg !== 'toggleMode') {
+				if(msg !== 'toggleNote' && msg !== 'toggleMode') {
 					this[msg] = this.execIf([this.isEnabled, this.isKeyDown], fn);
 				}
 			}, this);
@@ -283,7 +284,7 @@ define([
 		 * @param {number} noteOffset
 		 * @return undefined
 		 */
-		note: function(state, noteOffset) {
+		toggleNote: function(state, noteOffset) {
 			var on_or_off = state ? 'on' : 'off';
 			var note_value = this.calculateNote(noteOffset);
 			this.broadcast(EVENTS.BROADCAST.NOTE, on_or_off, note_value);

@@ -6,6 +6,7 @@ define([
 	'app/components/midi/controller',
 	'app/components/ui/piano',
 	'app/components/ui/tab_controls',
+	'app/components/ui/transcript',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
@@ -17,6 +18,7 @@ define([
 	MidiControllerComponent,
 	PianoComponent,
 	TabControlsComponent,
+	TranscriptComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -36,6 +38,7 @@ define([
 			'_setupPianoComponent',
 			'_setupKeyboardShortcutsComponent',
 			'_setupMidiComponent',
+			'_setupTranscriptComponent'
 		]);
 	};
 
@@ -85,13 +88,25 @@ define([
 			c.init(this);
 			this.addComponent(c);
 		},
+		_setupTranscriptComponent: function() {
+			var c = new TranscriptComponent({
+				chords: this.models.chords,
+				keySignature: this.models.keySignature
+			});
+			c.init(this);
+			c.renderTo("#staff-area");
+			this.addComponent(c);
+		},
+		fade: function(state) {
+			// fade in [state=true], fade out [state=false]
+			$('.js-fade-in').css('opacity', state ? 1 : 0);
+			$('.js-fade-out').css('opacity', state ? 0 : 1);
+		}, 
 		fadeIn: function() {
-			$('.js-fade-in').css('opacity', 1);
-			$('.js-fade-out').css('opacity', 0);
+			this.fade(true);
 		},
 		fadeOut: function() {
-			$('.js-fade-in').css('opacity', 0);
-			$('.js-fade-out').css('opacity', 1);
+			this.fade(false);
 		}
 	});
 

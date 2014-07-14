@@ -10,31 +10,31 @@ define({
 	
 	// Uused letters to avoid mishaps: 3, 6, and g.
 	"keyMap": {
-		"1": {msg:"note", data:-4}, // GA
-		"q": {msg:"note", data:-3}, // A
-		"2": {msg:"note", data:-2}, // AB
-		"w": {msg:"note", data:-1}, // B
-		"e": {msg:"note", data:0}, // C
-		"4": {msg:"note", data:1}, // CD
-		"r": {msg:"note", data:2}, // D
-		"5": {msg:"note", data:3}, // DE
-		"t": {msg:"note", data:4}, // E
-		"y": {msg:"note", data:5}, // F
-		"7": {msg:"note", data:6}, // FG
-		"u": {msg:"note", data:7}, // G
-		"a": {msg:"note", data:16}, // E
-		"z": {msg:"note", data:17}, // F
-		"s": {msg:"note", data:18}, // FG
-		"x": {msg:"note", data:19}, // G
-		"d": {msg:"note", data:20}, // GA
-		"c": {msg:"note", data:21}, // A
-		"f": {msg:"note", data:22}, // AB
-		"v": {msg:"note", data:23}, // B
-		"b": {msg:"note", data:24}, // C
-		"h": {msg:"note", data:25}, // CD
-		"n": {msg:"note", data:26}, // D
-		"j": {msg:"note", data:27}, // DE
-		"m": {msg:"note", data:28}, // E
+		"1":      {msg:"toggleNote", data:-4}, // GA
+		"q":      {msg:"toggleNote", data:-3}, // A
+		"2":      {msg:"toggleNote", data:-2}, // AB
+		"w":      {msg:"toggleNote", data:-1}, // B
+		"e":      {msg:"toggleNote", data:0}, // C
+		"4":      {msg:"toggleNote", data:1}, // CD
+		"r":      {msg:"toggleNote", data:2}, // D
+		"5":      {msg:"toggleNote", data:3}, // DE
+		"t":      {msg:"toggleNote", data:4}, // E
+		"y":      {msg:"toggleNote", data:5}, // F
+		"7":      {msg:"toggleNote", data:6}, // FG
+		"u":      {msg:"toggleNote", data:7}, // G
+		"a":      {msg:"toggleNote", data:16}, // E
+		"z":      {msg:"toggleNote", data:17}, // F
+		"s":      {msg:"toggleNote", data:18}, // FG
+		"x":      {msg:"toggleNote", data:19}, // G
+		"d":      {msg:"toggleNote", data:20}, // GA
+		"c":      {msg:"toggleNote", data:21}, // A
+		"f":      {msg:"toggleNote", data:22}, // AB
+		"v":      {msg:"toggleNote", data:23}, // B
+		"b":      {msg:"toggleNote", data:24}, // C
+		"h":      {msg:"toggleNote", data:25}, // CD
+		"n":      {msg:"toggleNote", data:26}, // D
+		"j":      {msg:"toggleNote", data:27}, // DE
+		"m":      {msg:"toggleNote", data:28}, // E
 		"'":      {msg:"depressSustain"},
 		";":      {msg:"retakeSustain"},
 		".":      {msg:"releaseSustain"},
@@ -46,6 +46,7 @@ define({
 		"ENTER":  {msg:"clearNotes"},
 		"SPACE":  {msg:"bankChord"}
 	},
+
 	// Defines key code -> key name mappings.
 	// This is not intended to be comprehensive. These key names
 	// should be used in the note and control shortcut mappings.
