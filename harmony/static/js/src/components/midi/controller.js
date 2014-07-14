@@ -2,12 +2,14 @@ define([
 	'lodash', 
 	'jazzmidibridge',
 	'app/components/events',
-	'app/components/component'
+	'app/components/component',
+	'app/components/ui/modal'
 ], function(
 	_, 
 	JMB,
 	EVENTS,
-	Component
+	Component,
+	ModalComponent
 ) {
 
 	/**
@@ -111,6 +113,8 @@ define([
 			'onJMBInit',
 			'onJMBError'
 		]);
+
+		this.addComponent(new ModalComponent());
 	};
 
 	MidiControllerComponent.prototype = new Component();
@@ -167,7 +171,7 @@ define([
 				'<p>Please download and install the Jazz MIDI plugin here: <br/>' + 
 				'<a href="http://jazz-soft.net/download">http://jazz-soft.net/</a>.</p>';
 
-			this.broadcast(EVENTS.BROADCAST.JAZZ_MIDI_ERROR, {error:error, htmlError:htmlError});
+			this.trigger("modal", {title:error, content:htmlError});
 			this.initListeners();
 		},
 		/**

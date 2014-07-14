@@ -44,7 +44,6 @@ define([
 		defaultKeyWidth: 30,
 		numberOfKeys: 49,
 		initComponent: function() {
-			console.log("init", this.settings, this);
 			if("numberOfKeys" in this.settings) {
 				this.numberOfKeys = this.settings.numberOfKeys;
 			} 

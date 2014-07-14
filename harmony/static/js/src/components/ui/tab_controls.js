@@ -2,8 +2,9 @@ define([
 	'jquery', 
 	'lodash', 
 	'app/config',
-	'app/components/component',
 	'app/components/events',
+	'app/components/component',
+	'app/components/ui/modal',
 	'app/utils/instruments',
 	'app/widgets/key_signature',
 	'app/widgets/analyze',
@@ -12,8 +13,9 @@ define([
 	$, 
 	_, 
 	Config, 
-	Component,
 	EVENTS,
+	Component,
+	ModalComponent,
 	Instruments,
 	KeySignatureWidget,
 	AnalyzeWidget,
@@ -62,7 +64,9 @@ define([
 		this.keySignature = settings.keySignature;
 		this.midiDevice = settings.midiDevice;
 
-		_.bindAll(this, ['initTab', 'onClickToggleTabs']);
+		this.addComponent(new ModalComponent());
+
+		_.bindAll(this, ['initTab', 'onClickToggleTabs', 'onClickInfo']);
 	};
 
 	TabControlsComponent.prototype = new Component();
@@ -374,8 +378,8 @@ define([
 		 * @return {boolean} false
 		 */
 		onClickInfo: function(evt) {
-			// TODO: why is this here? nothing to do with tabs
-			console.log("modal", APP_INFO_TITLE, APP_INFO_CONTENT);
+			// TODO: why is this here? nothing to do with tabs 
+			this.trigger("modal", {title: APP_INFO_TITLE, content: APP_INFO_CONTENT});
 			return false;
 		},
 		/**
