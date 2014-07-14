@@ -20,6 +20,12 @@ define([
 	var SHORTS = Config.get('keyboardShortcuts');
 
 	/**
+	 * Defines whether keyboard shortcuts are enabled/disabled by default.
+	 * @type {boolean}
+	 */
+	var KEYBOARD_SHORTCUTS_ENABLED = Config.get('general.keyboardShortcutsEnabled');
+
+	/**
 	 * This Shortcuts component is responsible for handling the
 	 * shortcut logic. 
 	 *
@@ -38,9 +44,9 @@ define([
 			throw new Error("missing key signature");
 		}
 
-		this.enabled = false;
-		if(SHORTS.hasOwnProperty('defaultEnabled')) {
-			this.enabled = SHORTS.defaultEnabled;
+		this.enabled = KEYBOARD_SHORTCUTS_ENABLED;
+		if(this.settings.hasOwnProperty('enabled')) {
+			this.enabled = this.settings.enabled;
 		} 
 
 		this.noteAnchor = 48;

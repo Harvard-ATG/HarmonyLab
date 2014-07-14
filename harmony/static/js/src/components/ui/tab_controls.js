@@ -39,7 +39,7 @@ define([
 	 * @type {boolean}
 	 * @const
 	 */
-	var SHORTCUTS_ENABLED_DEFAULT = Config.get('keyboardShortcuts.defaultEnabled');
+	var KEYBOARD_SHORTCUTS_ENABLED = Config.get('general.keyboardShortcutsEnabled');
 	/**
 	 * Defines the default keyboard size.
 	 * @type {number}
@@ -319,7 +319,7 @@ define([
 			var el = $('.js-keyboardshortcuts', tab.contentEl);
 
 			// toggle shortcuts on/off via gui control
-			el.attr('checked', SHORTCUTS_ENABLED_DEFAULT);
+			el.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);
 			el.on('change', function() {
 				var toggle = $(this).is(':checked') ? true : false;
 				that.broadcast(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, toggle);
