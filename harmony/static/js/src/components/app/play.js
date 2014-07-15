@@ -26,12 +26,24 @@ define([
 	MidiDevice
 ) {
 
+	/**
+	 * AppPlayComponent class.
+	 *
+	 * Creates the sandbox environment for playing and experimenting
+	 * with chords and chord sequences. This is the basic mode of the
+	 * application for students to just play around and try things.
+	 *
+	 * @constructor
+	 */
 	var AppPlayComponent = function(settings) {
 		AppComponent.call(this, settings);
 	};
 
 	AppPlayComponent.prototype = new AppComponent();
 
+	/**
+	 * Returns the models used by the app.
+	 */
 	AppPlayComponent.prototype.getModels = function() {
 		var models = {};
 		models.chords = new ChordBank();
@@ -40,6 +52,12 @@ define([
 		return models;
 	};
 
+	/**
+	 * Returns an array of functions that will create and initialize
+	 * each sub-component of the application.
+	 *
+	 * @return {array} of functions
+	 */
 	AppPlayComponent.prototype.getComponentMethods = function() {
 		var methods = [
 			function() {
