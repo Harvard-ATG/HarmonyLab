@@ -206,8 +206,9 @@ define([
 					$(device.selector).css('width', '100%');
 				});
 
-				$('.js-refresh-midi-devices', tab.contentEl).on('click', midiDevice.update);
 			};
+
+			$('.js-refresh-midi-devices', tab.contentEl).on('click', this.midiDevice.update);
 
 			this.midiDevice.bind("updated", renderDevices);
 

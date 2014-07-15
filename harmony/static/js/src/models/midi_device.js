@@ -87,7 +87,6 @@ define([
 	 */
 	MidiDevice.prototype.selectInput = function(index) {
 		if(this.isValidSelection(this.inputs, index)) {
-			this.removeInputListener();
 			this._inputidx = index;
 			this._input = this.inputs[index];
 			this.addInputListener();
@@ -157,17 +156,6 @@ define([
 	};
 
 	/**
-	 * Removes the input listener for midi messages.
-	 *
-	 * @return undefined
-	 */
-	MidiDevice.prototype.removeInputListener = function() {
-		if(this._input) {
-			this._input.removeEventListener('midimessage', this.handleMIDIMessage);
-		}
-	};
-
-	/**
 	 * Adds the input listener for midi messages.
 	 *
 	 * @return undefined
@@ -206,7 +194,6 @@ define([
 	 * @return undefined
 	 */
 	MidiDevice.prototype.clear = function() {
-		this.removeInputListener();
 		this._inputidx = 0;
 		this._outputidx = 0;
 		this.inputs = [];
