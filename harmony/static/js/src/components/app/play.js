@@ -7,6 +7,7 @@ define([
 	'app/components/midi/controller',
 	'app/components/ui/piano',
 	'app/components/ui/tab_controls',
+	'app/components/ui/theme',
 	'app/components/ui/transcript',
 	'app/models/chord_bank',
 	'app/models/key_signature',
@@ -20,6 +21,7 @@ define([
 	MidiControllerComponent,
 	PianoComponent,
 	TabControlsComponent,
+	ThemeComponent,
 	TranscriptComponent,
 	ChordBank,
 	KeySignature,
@@ -96,6 +98,14 @@ define([
 				});
 				c.init(this);
 				c.renderTo("#staff-area");
+				this.addComponent(c);
+			},
+			function() {
+				var c = new ThemeComponent({
+					targetEl: "#container"
+				});
+				c.init(this);
+				c.renderTo("#theme-select");
 				this.addComponent(c);
 			}
 		];

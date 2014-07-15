@@ -1,48 +1,51 @@
-/* global define: false */
 define(['jquery', 'lodash'], function($, _) {
-	"use strict";
 
-	var ThemeSelectorWidget = function(selectorEl, targetEl) {
-		this.selectorEl = $(selectorEl); // select the theme using this el
+	var ThemeSelectorWidget = function(targetEl) {
+		this.el = $('<ul class="theme-thumbnails"></ul>');
 		this.targetEl = $(targetEl); // set theme on this el
 		this.themes = []; // available themes
-
-		this.init();
+		_.bindAll(this, ['onSelectTheme']);
 	};
 
 	_.extend(ThemeSelectorWidget.prototype, {
 		init: function() {
-			if(this.selectorEl.data('themes')) {
-				this.themes = this.selectorEl.data('themes').split(',');
+			if(this.targetEl.data('themes')) {
+				this.themes = this.targetEl.data('themes').split(',');
 			}
 			this.initListeners();
 		},
 		initListeners: function() {
-			_.bindAll(this, ['onSelectTheme']);
-			this.selectorEl.delegate('.theme-thumbnail', 'click', this.onSelectTheme);
+			this.el.delegate('.theme-thumbnail', 'click', this.onSelectTheme);
 		},
 		onSelectTheme: function(ev) {
+			var theme_key = "theme";
 			var prefix = 'theme-';
-			var targetEl = this.targetEl;
 			var $el = $(ev.target); 
-			var old_theme = targetEl.data('theme');
-			var new_theme = $el.data('theme'); 
+			var old_theme = this.targetEl.data(theme_key);
+			var new_theme = $el.data(theme_key); 
 
 			if(new_theme !== old_theme) {
-				targetEl.removeClass(prefix + old_theme)
-					.addClass(prefix + new_theme)
-					.data('theme', new_theme);
+				this.targetEl.removeClass(prefix+old_theme);
+				this.targetEl.addClass(prefix+new_theme);
+				this.targetEl.data(theme_key, new_theme);
+
+				// force update of data attribute in DOM as well
+				this.targetEl[0].setAttribute("data-"+theme_key, new_theme); 
 			}
 			return false;
 		},
 		render: function() {
-			this.selectorEl.html('');
-			_.each(this.themes, function(name) {
-				var el = $("<div/>");
+			this.el.html('');
+
+			var els = _.map(this.themes, function(name) {
+				var el = $("<li/>");
 				el[0].className = ['theme-thumbnail','theme-'+name].join(' ');
 				el[0].setAttribute('data-theme', name);
-				this.selectorEl.append(el);
+				return el;
 			}, this);
+
+			this.el.append(els);
+
 			return this;
 		}
 	});
