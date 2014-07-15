@@ -1,19 +1,15 @@
-{% extends "base.html" %}
-
-{% block css_extra %}
-<link href="{{ STATIC_URL }}css/harmony.css" type="text/css" rel="stylesheet" />
-{% endblock %}
+{% extends "__base.html" %}
 
 {% block js_extra %}
-<!--script>require(['app/main']);</script>-->
+<script>require(['app/main']);</script>
 {% endblock %}
 
 {% block content %}
-<div id="container">
-	<div class="header">
-		<div class="icon-btn icon-btn-right icon-btn-info js-btn-info"></div>
-		<h1>Harmony Lab</h1>
-	</div>
-    <pre style="background: #fff;color: #000">{% autoescape off %}{{exercise}}{% endautoescape %}</pre>
+<div id="container" class="js-fade-in fade theme theme-downlights" style="opacity: 0;" data-theme="downlights" data-themes="downlights,concert,smoothblue,speakerwave">
+    {% include "_header.html" %}
+    {% include "_harmonyui.html" %}
+    {% include "_footer.html" %}
 </div>
+<div class="js-fade-out fade ajax-loader ajax-loader-centered" style="top:33%;opacity: 1"></div>
+<pre style="margin: 75px 0 0 0; background: #fff;color: #000; text-align:left; display:block;">{% autoescape off %}{{exercise}}{% endautoescape %}</pre>
 {% endblock %}

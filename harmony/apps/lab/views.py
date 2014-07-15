@@ -12,10 +12,10 @@ REQUIRE_JS_CONTEXT = {
     'REQUIREJS_CONFIG': json.dumps(settings.REQUIREJS_CONFIG)
 }
 
-class HomeView(TemplateView):
-    template_name = "piano.html"
+class PlayView(TemplateView):
+    template_name = "play.html"
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super(PlayView, self).get_context_data(**kwargs)
         context.update(REQUIRE_JS_CONTEXT)
         return context
 

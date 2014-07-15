@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from harmony.apps.lab.views import HomeView, ExerciseView
+from harmony.apps.lab.views import PlayView, ExerciseView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -7,7 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', HomeView.as_view(), name='index'),
+    url(r'^$', PlayView.as_view(), name='index'),
     url(r'^exercise/(?P<exercise_id>[0-9]+)', ExerciseView.as_view(), name="exercise"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
