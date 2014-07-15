@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{ STATIC_URL }}css/harmony.css" type="text/css" rel="stylesheet" />
+	{% block css_extra %}{% endblock %}
+</head>
+<body>
+	
+{% block content %}{% endblock %}
+
+{% block js_require %}
+
+{% autoescape off %}
+<script src="{{ STATIC_URL }}js/lib/require.js"></script>
+<script>requirejs.config({{ REQUIREJS_CONFIG }});</script>
+<script>window.appStaticUrl = '{{ STATIC_URL }}';</script>
+
+{% if REQUIREJS_DEBUG %}<script>requirejs.config({'urlArgs': 't='+(new Date().getTime())});</script>{% endif %}
+
+{% endautoescape %}
+
+{% endblock %}
+
+
+{% block js_extra %}
+{% endblock %}
+
+{% include "_googleanalytics.html" %}
+</body>
+</html>
