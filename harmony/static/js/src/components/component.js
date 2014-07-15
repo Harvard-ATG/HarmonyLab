@@ -74,9 +74,10 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	 * Initializes the component. 
 	 * Sub-classes should implment this method.
 	 *
+	 * @param {object} C the component (i.e. this)
 	 * @return undefined
 	 */
-	Component.prototype.initComponent = function() {
+	Component.prototype.initComponent = function(C) {
 		throw new Error("subclass responsibility");
 	};
 
