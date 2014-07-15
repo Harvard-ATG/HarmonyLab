@@ -220,7 +220,7 @@ define([
 		 * @return {number}
 		 */
 		getNumWhiteKeys: function() {
-			return this.keyboardGenerator.numWhiteKeys();
+			return this.keyboardGenerator.getNumWhiteKeys();
 		},
 		/**
 		 * Renders the keyboard.

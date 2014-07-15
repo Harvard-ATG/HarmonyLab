@@ -1,16 +1,26 @@
 define(['lodash'], function(_) {
 
 	/**
-	 * Models a keyboard generator that knows how to generate
-	 * different sized keyboards. 
+	 * KeyboardGenerator
 	 *
+	 * Models a keyboard generator that knows how to generate
+	 * keyboards of different sizes. When a new instance is created
+	 * it automatically generates the specifications for the given
+	 * keyboard size.
+	 *
+	 * @param {number} size The size of the keyboard
 	 * @constructor
 	 */
 	var KeyboardGenerator = function(size) {
 		this.keySpecs = this.generate(size);
 	};
 
-	// Defines: keys that are white (true), or black (false) modulo 12
+	/**
+	 * For each of the 12 keys in the octave [0-11], defines whether
+	 * the key is white (true) or black (false).
+	 *
+	 * @property {object}
+	 */
 	KeyboardGenerator.keyIsWhite = {
 		0: true,
 		1: false,
@@ -26,7 +36,12 @@ define(['lodash'], function(_) {
 		11: true
 	};
 
-	// Maps: keyboard size => starting midi note number
+	/**
+	 * For each of supported keyboard sizes, defines the MIDI note
+	 * number that should be assigned to the first key in the sequence.
+	 *
+	 * @property {object}
+	 */
 	KeyboardGenerator.startingNoteForSize = {
 		25: 48,
 		37: 48,
@@ -35,17 +50,27 @@ define(['lodash'], function(_) {
 		88: 21
 	};
 
-	// Given the size of the piano, this function returns the initial note number 
-	// that begins the sequence of keys.
+	/**
+	 * Given the size, returns the starting MIDI note for the sequence. 
+	 *
+	 * @param {number} size The size of the keyboard
+	 * @return {number}
+	 */
 	KeyboardGenerator.prototype.startingNote = function(size) {
-		if(!(size in KeyboardGenerator.startingNoteForSize)) {
-			throw new Error("invalid keygen size: " + size);
+		var startingNoteForSize = KeyboardGenerator.startingNoteForSize;
+		if(!(size in startingNoteForSize)) {
+			throw new Error("invalid keyboard size: " + size + " must be one of " + _.keys(startingNoteForSize).join(', '));
 		}
-		return KeyboardGenerator.startingNoteForSize[size];
+		return startingNoteForSize[size];
 	};
 
-	// Returns an array of spec objects that define the sequence of keys
-	// on the piano for a given size.
+	/**
+	 * Generates a sequence of key specifications for each key
+	 * in the keyboard.
+	 *
+	 * @param {number} size The size of the keyboard
+	 * @return {array} 
+	 */
 	KeyboardGenerator.prototype.generate = function(size) {
 		var noteNumber = this.startingNote(size);
 		var keySpecs = [];
@@ -62,8 +87,22 @@ define(['lodash'], function(_) {
 		return keySpecs;
 	};
 
-	KeyboardGenerator.prototype.numWhiteKeys = function() {
+	/**
+	 * Returns the total number of "white" keys in the keyboard.
+	 *
+	 * @return {number}
+	 */
+	KeyboardGenerator.prototype.getNumWhiteKeys = function() {
 		return _.filter(_.pluck(this.keySpecs, 'isWhite')).length;
+	};
+
+	/**
+	 * Returns the total number of keys in the keyboard.
+	 *
+	 * @return {number}
+	 */
+	KeyboardGenerator.prototype.getSize = function() {
+		return this.keySpecs.length;
 	};
 
 	return KeyboardGenerator;
