@@ -8,7 +8,7 @@ define([
 	'app/components/ui/piano',
 	'app/components/ui/tab_controls',
 	'app/components/ui/theme',
-	'app/components/ui/transcript',
+	'app/components/ui/music',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
@@ -22,7 +22,7 @@ define([
 	PianoComponent,
 	TabControlsComponent,
 	ThemeComponent,
-	TranscriptComponent,
+	MusicComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -92,7 +92,7 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				var c = new TranscriptComponent({
+				var c = new MusicComponent({
 					chords: this.models.chords,
 					keySignature: this.models.keySignature
 				});

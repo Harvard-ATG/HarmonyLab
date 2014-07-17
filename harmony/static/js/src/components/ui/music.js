@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'lodash', 
 	'app/components/component',
-	'./transcript/plain_sheet'
+	'./music/plain_sheet'
 ], function(
 	$, 
 	_, 
@@ -11,7 +11,7 @@ define([
 ) {
 
 	/**
-	 * Creates an instance of Transcript.
+	 * Creates an instance of MusicComponent.
 	 *
 	 * This object is responsible for displaying the sheet music and laying out
 	 * related components.
@@ -21,7 +21,7 @@ define([
 	 * @param {ChordBank} settings.chords Required property.
 	 * @param {KeySignature} settings.keySignature Required property.
 	 */
-	var TranscriptComponent = function(settings) {
+	var MusicComponent = function(settings) {
 		this.settings = settings || {};
 
 		if(!("chords" in this.settings)) {
@@ -34,22 +34,22 @@ define([
 		this.setComponent("sheet", new PlainSheetComponent(settings));
 
 		/**
-		 * Defines the width/height for the transcript.
+		 * Defines the width/height for the music.
 		 * @type {object} 
 		 */
 		this.layout = {width:520, height:355};
 		/**
-		 * Defines the transcript element.
+		 * Defines the music element.
 		 * @type {jQuery}
 		 */
 		this.el = $('<div></div>');
 	};
 
-	TranscriptComponent.prototype = new Component();
+	MusicComponent.prototype = new Component();
 
-	_.extend(TranscriptComponent.prototype, {
+	_.extend(MusicComponent.prototype, {
 		/**
-		 * Initializes the transcript.
+		 * Initializes the music.
 		 *
 		 * @return undefined
 		 */
@@ -58,7 +58,7 @@ define([
 			this.el[0].height = this.getHeight(); 
 		},
 		/**
-		 * Renders the transcript.
+		 * Renders the music.
 		 *
 		 * @return this
 		 */
@@ -69,7 +69,7 @@ define([
 			return this;
 		},
 		/**
-		 * Renders the transcript to a selector.
+		 * Renders the music to a selector.
 		 *
 		 * @return this;
 		 */
@@ -96,5 +96,5 @@ define([
 		}
 	});
 
-	return TranscriptComponent;
+	return MusicComponent;
 });

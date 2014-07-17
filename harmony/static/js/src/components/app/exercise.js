@@ -8,7 +8,7 @@ define([
 	'app/components/ui/piano',
 	'app/components/ui/tab_controls',
 	'app/components/ui/theme',
-	'app/components/ui/transcript',
+	'app/components/ui/music',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
