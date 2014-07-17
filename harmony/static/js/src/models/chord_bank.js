@@ -38,7 +38,8 @@ define([
 	 * @fires bank
 	 * @fires clear
 	 */
-	var ChordBank = function() {
+	var ChordBank = function(settings) {
+		this.settings = settings || {};
 		this.init();
 	};
 
@@ -49,8 +50,6 @@ define([
 		 * @return undefined
 		 */
 		init: function() {
-			var chord = new Chord();
-
 			/**
 			 * Holds a mapping of events to callback functions.
 			 * Used to relay events from the active chord.
@@ -64,14 +63,21 @@ define([
 			 * @protected
 			 */
 			this._limit = 10; // limit number of chords in the bank
+			if(typeof this.settings.limit === 'number' && this.settings.limit >= 0) {
+				this._limit = this.settings.limit;
+			}
+
 			/**
 			 * Contains the items in the bank.
 			 * @type {array}
 			 * @protected
 			 */
-			this._items = [chord];
+			this._items = this.settings.chords || [new Chord()];
+			if(this._limit && this._items.length > this._limit) {
+				throw new Error("number of chords exceeds the limit");
+			}
 
-			this._addListeners(chord);
+			this._addListeners(this._items[0]);
 		},
 		/**
 		 * Banks the current chord and generates a new chord that becomes the

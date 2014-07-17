@@ -27,5 +27,7 @@ class Exercise:
 
         return self
 
-    def as_json(self):
-        return json.dumps(self.data, indent=4, separators=(',', ': '), sort_keys=True)
+    def as_json(self, pretty=False):
+        if pretty:
+            return json.dumps(self.data, indent=4, separators=(',', ': '), sort_keys=True)
+        return json.dumps(self.data)

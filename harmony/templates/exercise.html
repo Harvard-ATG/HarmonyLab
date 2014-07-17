@@ -2,6 +2,13 @@
 
 {% block js_extra %}
 <script>require(['app/main']);</script>
+
+{% autoescape off %}
+<script>
+window.appConfig={"exercise":{{exercise_json}}};
+</script>
+{% endautoescape %}
+
 {% endblock %}
 
 {% block content %}
@@ -11,5 +18,4 @@
     {% include "_footer.html" %}
 </div>
 <div class="js-fade-out fade ajax-loader ajax-loader-centered" style="top:33%;opacity: 1"></div>
-<pre style="margin: 75px 0 0 0; background: #fff;color: #000; text-align:left; display:block;">{% autoescape off %}{{exercise}}{% endautoescape %}</pre>
 {% endblock %}

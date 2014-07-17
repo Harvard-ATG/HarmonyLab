@@ -25,7 +25,7 @@ class ExerciseView(View):
 
         context = {}
         context.update(REQUIRE_JS_CONTEXT)
-        context.update({"exercise": exercise.as_json()})
+        context.update({"exercise_json": exercise.as_json()})
 
         return render(request, "exercise.html", context)
 

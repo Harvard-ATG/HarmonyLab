@@ -48,7 +48,8 @@ define([
 	 */
 	AppExerciseComponent.prototype.getModels = function() {
 		var models = {};
-		models.chords = new ChordBank();
+		models.playChords = new ChordBank();
+		models.exerciseChords = new ChordBank();
 		models.keySignature = new KeySignature();
 		models.midiDevice = new MidiDevice();
 		return models;
@@ -70,7 +71,7 @@ define([
 			},
 			function() {
 				var c = new MidiControllerComponent({
-					chords: this.models.chords,
+					chords: this.models.playChords,
 					midiDevice: this.models.midiDevice
 				});
 				c.init(this);
@@ -93,7 +94,7 @@ define([
 			},
 			function() {
 				var c = new TranscriptComponent({
-					chords: this.models.chords,
+					chords: this.models.exerciseChords,
 					keySignature: this.models.keySignature
 				});
 				c.init(this);
