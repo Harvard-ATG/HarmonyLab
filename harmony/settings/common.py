@@ -2,6 +2,7 @@
 from os import path
 from glob import glob
 import time
+from . import requirejs
 
 # Django settings for harmony project.
 
@@ -157,44 +158,58 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
     'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': path.join(ROOT_DIR, 'debug.log'),
+            'formatter': 'simple',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
     },
     'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+        'django': {
+            'handlers': ['null'],
             'propagate': True,
+            'level': 'INFO'
         },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'harmony': {
+            'handlers': ['console','file'],
+            'level': 'INFO',
+        }
     }
 }
 
-# Default configuration for require.js
-REQUIREJS_DEBUG = True
-REQUIREJS_CONFIG = {
-	'baseUrl': path.join(STATIC_URL, 'js', 'lib'),
-	'paths': {
-		'app': path.join(STATIC_URL, 'js', 'src'),
-	},
-}
-
-#AUTHENTICATION_BACKENDS = (
-#	'harmony.libs.auth.GoogleBackend',
-#    'django_openid_auth.auth.OpenIDBackend',
-#	'django.contrib.auth.backends.ModelBackend',
-#)
-#OPENID_CREATE_USERS = True
-#OPENID_UPDATE_DETAILS_FROM_SREG = True
-#LOGIN_URL = '/login/'
-#LOGIN_REDIRECT_URL = '/'
-#LOGOUT_URL = '/logout/'
-#OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+REQUIREJS_DEBUG, REQUIREJS_CONFIG = requirejs.configure(ROOT_DIR, STATIC_URL)
