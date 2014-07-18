@@ -118,13 +118,11 @@ define([
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
-			this.el = $('<canvas></canvas>');
+			this.el = $('#piano-cvs');
 			this.el[0].width = this.getWidth();
 			this.el[0].height = this.getHeight();
 
 			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], CANVAS);
-
-			this.parentComponent.el.append(this.el);
 		},
 		/**
 		 * Initializes the staves that together will form the grand staff.
@@ -165,8 +163,21 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
+			this.renderUsername();
 			return this;
 		},
+		/**
+		 * Renders the user's name from window var
+		 * 
+		 * @return this
+		 */
+		renderUsername: function() {
+			var ctx = this.el[0].getContext('2d');
+			ctx.font = "18px Verdana";
+			ctx.fillText(window.canvas_username, 75, 50);
+			return this;
+		},
+	
 		/**
 		 * Renders each individual stave.
 		 *
