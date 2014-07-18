@@ -1,6 +1,6 @@
 define([
 	'lodash', 
-	'app/model/metronome'
+	'app/models/metronome'
 ], function(
 	_, 
 	Metronome

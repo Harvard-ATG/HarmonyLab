@@ -3,22 +3,24 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow',
+	'app/util',
 	'app/config',
-	'app/model/event_bus',
-	'app/view/transcript/stave',
-	'app/view/transcript/stave_notater',
-	'app/view/transcript/stave_note_factory',
-	'app/util'
+	'app/components/events',
+	'app/components/component',
+	'./stave',
+	'./stave_notater',
+	'./stave_note_factory'
 ], function(
 	$,
 	_, 
 	Vex, 
+	util,
 	Config,
-	eventBus, 
+	EVENTS,
+	Component,
 	Stave, 
 	StaveNotater,
-	StaveNoteFactory,
-	util
+	StaveNoteFactory
 ) {
 	"use strict";
 
@@ -42,7 +44,7 @@ define([
 	var HIGHLIGHT_SETTINGS = Config.get('general.highlightSettings');
 
 	/**
-	 * Creates an instance of PlainSheet.
+	 * PlainSheetComponent
 	 *
 	 * This object is responsible for knowing how to display plain sheet music
 	 * notation with the notes that have sounded (saved in the chord bank) and
@@ -51,18 +53,35 @@ define([
 	 * highlights, etc.
 	 *
 	 * @constructor
-	 * @param {object} config
+	 * @param {object} settings
 	 */
-	var PlainSheet = function(config) {
-		this.init(config);
+	var PlainSheetComponent = function(settings) {
+		this.settings = settings || {};
+
+		if("chords" in this.settings) {
+			this.chords = this.settings.chords;
+		} else {
+			throw new Error("missing settings.chords");
+		}
+
+		if("keySignature" in this.settings) {
+			this.keySignature = this.settings.keySignature;
+		} else {
+			throw new Error("missing settings.keySignature");
+		}
+
+		_.bindAll(this, [
+			'render',
+			'onHighlightChange',
+			'onAnalyzeChange',
+			'onMetronomeChange',
+			'onChordsUpdate'
+		]);
 	};
 
-	_.extend(PlainSheet.prototype, {
-		/**
-		 * Global event bus for distributing app-wide events
-		 * @type {object}
-		 */
-		eventBus: eventBus, 
+	PlainSheetComponent.prototype = new Component();
+
+	_.extend(PlainSheetComponent.prototype, {
 		/**
 		 * Configuration for highlighting notes on the sheet music.
 		 * @type {object}
@@ -86,30 +105,10 @@ define([
 		 * @param {object} config
 		 * @return undefined
 		 */
-		init: function(config) {
-			this.config = config;
-			this.initConfig();
+		initComponent: function() {
 			this.initRenderer();
 			this.initStaves();
 			this.initListeners();
-		},
-		/**
-		 * Initializes the configuration and checks for missing/required
-		 * parameters.
-		 *
-		 * @return undefined
-		 * @throws {Error} Will throw an error if it is missing any required
-		 * params.
-		 */
-		initConfig: function() {
-			var required = ['transcript', 'chords', 'keySignature'];
-			_.each(required, function(propName) {
-				if(this.config.hasOwnProperty(propName)) {
-					this[propName] = this.config[propName];
-				} else {
-					throw new Error("missing required config property: "+propName);
-				}
-			}, this);
 		},
 		/**
 		 * Initializes the canvas renderer and dom element.
@@ -125,7 +124,7 @@ define([
 
 			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], CANVAS);
 
-			this.transcript.el.append(this.el);
+			this.parentComponent.el.append(this.el);
 		},
 		/**
 		 * Initializes the staves that together will form the grand staff.
@@ -141,29 +140,22 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
-			_.bindAll(this, [
-				'render',
-				'onHighlightChange',
-				'onAnalyzeChange',
-				'onMetronomeChange',
-				'onChordsUpdate'
-			]);
-
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
 			this.chords.bind('clear', this.onChordsUpdate);
 			this.chords.bind('bank', this.onChordsUpdate);
-			this.eventBus.bind("notation:highlight", this.onHighlightChange);
-			this.eventBus.bind("notation:analyze", this.onAnalyzeChange);
-			this.eventBus.bind("metronome", this.onMetronomeChange);
+			this.subscribe(EVENTS.BROADCAST.HIGHLIGHT_NOTES, this.onHighlightChange);
+			this.subscribe(EVENTS.BROADCAST.ANALYZE_NOTES, this.onAnalyzeChange);
+			this.subscribe(EVENTS.BROADCAST.METRONOME, this.onMetronomeChange);
 		},
 		/**
 		 * Clears the sheet.
 		 *
-		 * @return undefined
+		 * @return this
 		 */
 		clear: function() {
 			this.vexRenderer.getContext().clear();
+			return this;
 		},
 		/**
 		 * Renders the grand staff and everything on it.
@@ -306,7 +298,7 @@ define([
 		 * @return {number}
 		 */
 		getWidth: function() {
-			return this.transcript.getWidth();
+			return this.parentComponent.getWidth();
 		},
 		/**
 		 * Returns the height of the sheet.
@@ -314,7 +306,7 @@ define([
 		 * @return {number}
 		 */
 		getHeight: function() {
-			return this.transcript.getHeight();
+			return this.parentComponent.getHeight();
 		},
 		/**
 		 * Updates settings.
@@ -383,5 +375,5 @@ define([
 		}
 	});
 
-	return PlainSheet;
+	return PlainSheetComponent;
 });

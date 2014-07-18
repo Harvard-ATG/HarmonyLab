@@ -1,7 +1,7 @@
 define([
 	'lodash',
-	'app/model/key_signature',
-	'app/util/analyze'
+	'app/models/key_signature',
+	'app/utils/analyze'
 ], function(_, KeySignature, Analyze) {
 
 	describe("getIntervalsAboveBass", function() {

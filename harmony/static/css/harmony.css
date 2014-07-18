@@ -406,24 +406,33 @@ body {
 .theme-speakerwave {
 	background:#000 url('../img/speakerwave.jpg') center no-repeat;
 }
-.theme-thumbnail {
+ul.theme-thumbnails {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ul.theme-thumbnails li.theme-thumbnail {
+    display: block;
+    float: left;
 	border: 1px solid #666;
-	padding: 0;
-	margin-left: 10px;
 	width: 20px;
 	height: 20px;
+	padding: 0;
+    margin: 0;
 	background-size: 100%;
 	cursor:pointer;
 }
-#theme-select { 
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	margin: -10px 0 10px 0; 
-	height: 20px;
+ul.theme-thumbnails li.theme-thumbnail:hover {
+    border: 1px solid #fff;
 }
-#theme-select .theme-thumbnail { 
-	float: left 
+ul.theme-thumbnails li.theme-thumbnail:not(:first-child) {
+    margin-left: 10px;
+}
+#theme-select { 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 10px 0 -30px 0;
 }
 
 /*--------------------------------------------------*/

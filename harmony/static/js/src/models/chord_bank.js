@@ -4,13 +4,13 @@
 define([
 	'lodash', 
 	'microevent',
-	'app/model/chord',
-	'app/util'
+	'app/util',
+	'./chord',
 ], function(
 	_, 
 	MicroEvent, 
-	Chord,
-	util
+	util,
+	Chord
 ) {
 	"use strict";
 

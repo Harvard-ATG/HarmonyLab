@@ -3,9 +3,8 @@ define([
 	'lodash', 
 	'jquery', 
 	'microevent',
-	'app/config',
-	'app/util/analyze'
-], function(_, $, MicroEvent, Config, Analyze) {
+	'app/config'
+], function(_, $, MicroEvent, Config) {
 	"use strict";
 
 	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');

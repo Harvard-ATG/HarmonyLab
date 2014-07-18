@@ -4,15 +4,15 @@
 define([
 	'lodash',
 	'jquery',
-	'microevent',
 	'app/config',
-	'app/model/metronome',
+	'app/components/component',
+	'app/models/metronome',
 	'app/util'
 ], function(
 	_, 
 	$, 
-	MicroEvent,
 	Config,
+	Component,
 	Metronome,
 	util
 ) {
@@ -27,7 +27,7 @@ define([
 	var BANK_AFTER_TICK = Config.get('general.bankAfterMetronomeTick'); 
 
 	/**
-	 * Creates an instance of a PianoMetronome.
+	 * Creates an instance of a MetronomeComponent.
 	 *
 	 * This is a UI control used to manipulate the metronome, which will play a
 	 * "tick" sound when it is started. This object is primarily responsible
@@ -40,7 +40,15 @@ define([
 	 * @fires offbeat
 	 * @mixes MicroEvent
 	 */
-	var PianoMetronome = function() {
+	var MetronomeComponent = function() {
+	};
+
+	MetronomeComponent.prototype = new Component();
+
+	/**
+	 * Initializes the component.
+	 */
+	MetronomeComponent.prototype.initComponent = function() {
 		/**
 		 * The DOM element encapsulating this view.
 		 * @type {object}
@@ -50,22 +58,22 @@ define([
 		 * Audio element.
 		 * @type {Audio}
 		 */
-		this.audio = null;
+		this.audio = util.createAudio(this.audioSources);
 		/**
 		 * Metronome model object.
 		 * @type {Metronome}
 		 */
-		this.metronome = null;
+		this.metronome = new Metronome(undefined, BANK_AFTER_TICK);
 		/**
 		 * Flag to indicate if the element was rendered.
 		 * @type {boolean}
 		 */
 		this.rendered = false;
 
-		this.init();
+		_.bindAll(this, ['play','blink','bank','toggle','onChangeTempo']);
 	};
 
-	_.extend(PianoMetronome.prototype, {
+	_.extend(MetronomeComponent.prototype, {
 		/**
 		 * Template that defines the metronome UI. 
 		 * @type {function}
@@ -103,18 +111,6 @@ define([
 			util.staticUrl('audio/metronome.mp3'),
 			util.staticUrl('audio/metronome.ogg')
 		],
-		/**
-		 * Initializes the object.
-		 *
-		 * @return undefined
-		 */
-		init: function() {
-			var tempo;
-			this.metronome = new Metronome(tempo, BANK_AFTER_TICK);
-			this.audio = util.createAudio(this.audioSources);
-
-			_.bindAll(this, ['play','blink','bank','toggle','onChangeTempo']);
-		},
 		/**
 		 * Initializes the listeners.
 		 *
@@ -234,7 +230,5 @@ define([
 		}
 	});
 
-	MicroEvent.mixin(PianoMetronome);
-
-	return PianoMetronome;
+	return MetronomeComponent;
 });

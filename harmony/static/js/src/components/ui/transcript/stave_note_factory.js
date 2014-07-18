@@ -1,7 +1,7 @@
 define([
 	'lodash', 
 	'vexflow',
-	'app/util/analyze'
+	'app/utils/analyze'
 ], function(
 	_, 
 	Vex, 

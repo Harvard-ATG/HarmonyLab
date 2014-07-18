@@ -8,7 +8,7 @@ define(['lodash', 'jquery'], function(_, $) {
 	 * @const
 	 */
 	var MODAL_TPL = _.template([
-		'<div>',
+		'<div class="modal-wrapper">',
 			'<a href="#" class="modal-close-btn js-modal-close-btn">X</a>',
 			'<h2 class="modal-title"><%= title %></h2>',
 			'<div class="modal-body"><%= msg %><div>',
@@ -28,6 +28,7 @@ define(['lodash', 'jquery'], function(_, $) {
 	 * @param {object} config
 	 */
 	var Modal = function(config) {
+		_.bindAll(this, ['onClose', 'onClickOutsideModal']);
 		this.init(config);	
 	};
 
@@ -38,7 +39,17 @@ define(['lodash', 'jquery'], function(_, $) {
 	 * @return undefined
 	 */
 	Modal.add = function(modal) {
+		this.modals = this.modals || [];
 		this.modals.push(modal);
+	};
+
+	/**
+	 * Closes all modals.
+	 *
+	 * @return undefined
+	 */
+	Modal.closeAll = function() {
+		_.invoke(this.modals, 'close');
 	};
 
 	/**
@@ -47,9 +58,7 @@ define(['lodash', 'jquery'], function(_, $) {
 	 * @return undefined
 	 */
 	Modal.destroyAll = function() {
-		_.each(this.modals, function(modal) {
-			modal.destroy();
-		});
+		_.invoke(this.modals, 'destroy');
 		this.modals = [];
 	};
 
@@ -66,7 +75,6 @@ define(['lodash', 'jquery'], function(_, $) {
 			this.title = config.title;
 			this.msg = config.msg;
 			this.el = $('<div class="modal close"></div>');
-			this.initListeners();
 			Modal.add(this);
 		},
 		/**
@@ -85,7 +93,18 @@ define(['lodash', 'jquery'], function(_, $) {
 		 * @return this
 		 */
 		initListeners: function() {
-			this.el.on('click', '.js-modal-close-btn', null, _.bind(this.onClose,this));
+			this.el.on('click', '.js-modal-close-btn', null, this.onClose);
+			$("body").on('click', this.onClickOutsideModal);
+			return this;
+		},
+		/**
+		 * Removes listeners.
+		 *
+		 * @return this
+		 */
+		removeListeners: function() {
+			this.el.unbind('click', '.js-modal-close-btn', null, this.onClose);
+			$("body").unbind('click', this.onClickOutsideModal);
 			return this;
 		},
 		/**
@@ -95,6 +114,7 @@ define(['lodash', 'jquery'], function(_, $) {
 		 */
 		open: function() {
 			this.render().appendToDOM();
+			this.initListeners();
 			this.el.removeClass('close').addClass('open');
 			return this;
 		},
@@ -105,9 +125,19 @@ define(['lodash', 'jquery'], function(_, $) {
 		 * @return undefined
 		 */
 		onClose: function(evt) {
-			evt.stopPropagation();
 			evt.preventDefault();
 			this.close();
+		},
+		/**
+		 * Closes the modal if a click is detected outside the modal
+		 *
+		 * @return undefined
+		 */
+		onClickOutsideModal: function(evt) {
+			evt.preventDefault();
+			if($(".modal").find(evt.target).length == 0) {
+				this.close();
+			}
 		},
 		/**
 		 * Closes the dialog.
@@ -116,6 +146,7 @@ define(['lodash', 'jquery'], function(_, $) {
 		 */
 		close: function() {
 			this.el.removeClass('open').addClass('close');
+			this.removeListeners();
 			return this;
 		},
 		/**
@@ -124,6 +155,7 @@ define(['lodash', 'jquery'], function(_, $) {
 		 * @return this
 		 */
 		destroy: function() {
+			this.removeListeners();
 			this.el.remove();
 			return this;
 		},
@@ -150,8 +182,16 @@ define(['lodash', 'jquery'], function(_, $) {
 	 * @return {Modal} The modal dialog object.
 	 */
 	Modal.msg  = function(title, msg) {
-		Modal.destroyAll();
-		return new Modal({ title: title, msg: msg }).open();
+		var cacheKey = title + msg;
+		Modal.cache = Modal.cache || {};
+		if(Modal.cache[cacheKey]) {
+			Modal.cache[cacheKey].open();
+		} else {
+			var modal = new Modal({ title: title, msg: msg });
+			Modal.closeAll();
+			modal.open();
+			Modal.cache[cacheKey] = modal;
+		}
 	};
 
 	return Modal;

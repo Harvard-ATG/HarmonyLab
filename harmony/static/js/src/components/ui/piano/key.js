@@ -1,7 +1,13 @@
 /**
- * @fileoverview Piano key UI.
+ * Piano key UI.
  */
-define(['lodash'], function(_) {
+define([
+	'lodash',
+	'app/components/component'
+], function(
+	_,
+	Component
+) {
 	"use strict";
 
 	/**
@@ -155,14 +161,16 @@ define(['lodash'], function(_) {
 		 *
 		 * @return undefined
 		 */
-		init: function(config) {
-			if(!config.hasOwnProperty('noteNumber')) {
+		initComponent: function() {
+			if(!("noteNumber" in this.settings)) {
 				throw new Error("Key must have a MIDI note number");
 			}
+			if(!("whiteKeyIndex" in this.settings)) {
+				throw new Error("Key must know its white key index");
+			}
 
-			this.noteNumber = config.noteNumber;
-			this.noteName = config.noteName || '';
-			this.keyboard = config.keyboard;
+			this.noteNumber = this.settings.noteNumber;
+			this.whiteKeyIndex = this.settings.whiteKeyIndex;
 
 			_.bindAll(this, ['onPress', 'onRelease']);
 		},
@@ -170,14 +178,15 @@ define(['lodash'], function(_) {
 		 * Renders the piano key on the screen.
 		 * 
 		 * @param {Raphael} paper Paper object from Raphael SVG library.
-		 * @param {integer} whiteKeyIndex the index of the white key immediately preceding this one.
+		 * @param {number} keyWidth the width of the key
 		 * @param {number} keyboardWidth the width of the keyboard
 		 * @param {number} keyboardHeight the height of the keyboard
 		 * @return this
 		 */
-		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
+		render: function(paper, keyWidth, keyboardWidth, keyboardHeight) {
+			this.keyWidth = keyWidth;
 			this.el = paper.rect(
-				this.calculateOffsetX(whiteKeyIndex), 
+				this.calculateOffsetX(), 
 				0, // offsetY 
 				this.calculateWidth(), 
 				this.calculateHeight(keyboardHeight)
@@ -196,7 +205,7 @@ define(['lodash'], function(_) {
 		onPress: function(e) {
 			if(this.isReleased()) {
 				this.press();
-				this.keyboard.trigger('key', this.state, this.noteNumber);
+				this.parentComponent.trigger('key', this.state, this.noteNumber);
 			}
 			return false;
 		},
@@ -208,7 +217,7 @@ define(['lodash'], function(_) {
 		onRelease: function(e) {
 			if(this.isPressed()) { 
 				this.release();
-				this.keyboard.trigger('key', this.state, this.noteNumber);
+				this.parentComponent.trigger('key', this.state, this.noteNumber);
 			}
 			return false;
 		},
@@ -259,9 +268,11 @@ define(['lodash'], function(_) {
 	 * @constructor
 	 * @param {Object} config
 	 */
-	var WhitePianoKey = function() {
-		this.init.apply(this, arguments);
+	var WhitePianoKey = function(settings) {
+		this.settings = settings || {};
 	};
+
+	WhitePianoKey.prototype = new Component();
 
 	_.extend(WhitePianoKey.prototype, PianoKeyMixin, {
 		/**
@@ -277,12 +288,10 @@ define(['lodash'], function(_) {
 		/**
 		 * Returns the width of the key.
 		 *
-		 * @param {integer} numWhiteKeys The total number of white keys on the keyboard.
-		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
 		calculateWidth: function() {
-			return this.keyboard.keyWidth; 
+			return this.keyWidth; 
 		},
 		/**
 		 * Returns the height of the key.
@@ -296,22 +305,21 @@ define(['lodash'], function(_) {
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
-		 * @param {integer} whiteKeyIndex The index of the preceding white key
 		 * @return {number}
 		 */
-		calculateOffsetX: function(whiteKeyIndex) {
-			return whiteKeyIndex * this.calculateWidth();
+		calculateOffsetX: function() {
+			return this.whiteKeyIndex * this.calculateWidth();
 		},
 		/**
 		 * Renders the key. 
 		 *
 		 * @param {Raphael} paper The Raphael paper object.
-		 * @param {integer} whiteKeyIndex The index of the preceding white key
+		 * @param {number} keyWidth the width of the key
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @param {number} keyboardHeight The height of the keyboard.
 		 * @return this
 		 */
-		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
+		render: function(paper, keyWidth, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
 			el.attr({'stroke': '#000', 'fill': COLOR_WHITE_KEYUP});
@@ -330,9 +338,11 @@ define(['lodash'], function(_) {
 	 * @constructor
 	 * @param {Object} config
 	 */
-	var BlackPianoKey = function() {
-		this.init.apply(this, arguments);
+	var BlackPianoKey = function(settings) {
+		this.settings = settings || {};
 	};
+
+	BlackPianoKey.prototype = new Component();
 
 	_.extend(BlackPianoKey.prototype, PianoKeyMixin, {
 		/**
@@ -348,12 +358,10 @@ define(['lodash'], function(_) {
 		/**
 		 * Returns the width of the key.
 		 *
-		 * @param {integer} numWhiteKeys The total number of white keys on the keyboard.
-		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @return {number}
 		 */
 		calculateWidth: function() {
-			return this.keyboard.keyWidth / 2;
+			return this.keyWidth / 2;
 		},
 		/**
 		 * Returns the height of the key.
@@ -367,11 +375,10 @@ define(['lodash'], function(_) {
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.
 		 *
-		 * @param {integer} whiteKeyIndex The index of the preceding white key
 		 * @return {number}
 		 */
-		calculateOffsetX: function(whiteKeyIndex) {
-			var offset = (whiteKeyIndex * this.keyboard.keyWidth); 
+		calculateOffsetX: function() {
+			var offset = (this.whiteKeyIndex * this.keyWidth); 
 			var width = this.calculateWidth();
 			return offset - (width / 2);
 		},
@@ -379,12 +386,12 @@ define(['lodash'], function(_) {
 		 * Renders the key. 
 		 *
 		 * @param {Raphael} paper The Raphael paper object.
-		 * @param {integer} whiteKeyIndex The index of the preceding white key
+		 * @param {number} keyWidth the width of the key
 		 * @param {number} keyboardWidth The total width of the keyboard.
 		 * @param {number} keyboardHeight The height of the keyboard.
 		 * @return this
 		 */
-		render: function(paper, whiteKeyIndex, numWhiteKeys, keyboardWidth, keyboardHeight) {
+		render: function(paper,  keyWidth, keyboardWidth, keyboardHeight) {
 			PianoKeyMixin.render.apply(this, arguments);
 			var el = this.el;
 			el.attr('fill', COLOR_BLACK_KEYUP);
@@ -397,7 +404,7 @@ define(['lodash'], function(_) {
 	BlackPianoKey.prototype.keyColorMap[STATE_KEYDN] = COLOR_KEYDN; 
 	BlackPianoKey.prototype.defaultKeyColorMap = _.clone(BlackPianoKey.prototype.keyColorMap);
 
-	var PianoKey = {
+	var PianoKeyFactory = {
 		/**
 		 * Factory function that returns an instance of a white
 		 * or black piano key.
@@ -406,11 +413,11 @@ define(['lodash'], function(_) {
 		 * @param {string} key The string name of the key (optional).
 		 * @return {PianoKey}
 		 */
-		create: function(config) {
-			var KeyConstructor = config.isWhite ? WhitePianoKey : BlackPianoKey;
-			return new KeyConstructor(config);
+		create: function(settings) {
+			var KeyConstructor = settings.isWhite ? WhitePianoKey : BlackPianoKey;
+			return new KeyConstructor(settings);
 		}
 	};
 
-	return PianoKey;
+	return PianoKeyFactory;
 });
