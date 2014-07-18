@@ -1,3 +1,5 @@
 # Install dependencies common to all environments
-Django==1.5.1
-django-openid-auth==0.5
+Django>=1.6
+django-cached-authentication-middleware>=0.2.0
+git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v0.7#egg=django-auth-lti
+django-braces>=1.3
