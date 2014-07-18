@@ -12,7 +12,7 @@ class ToolConfigViewTest(unittest.TestCase):
         self.view.request = RequestFactory().get('/tool_config')
         self.view.request.session = {}
 
-    def test_launch_secure_luanch_url(self):
+    def test_launch_secure_launch_url(self):
         host = "localhost"
         self.view.request.get_host = Mock(return_value=host)
         self.view.request.is_secure = Mock(return_value=True)
