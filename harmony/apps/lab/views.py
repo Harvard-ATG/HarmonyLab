@@ -115,17 +115,16 @@ class ToolConfigView(View):
         })
         lti_tool_config.description = 'Harmony Lab is an application for music theory students and instructors.'
 
-    def get(self, request, *args, **kwargs):
+    def get_tool_config(self, request):
         launch_url = self.get_launch_url(request)
-
-        lti_tool_config = ToolConfig(
+        return ToolConfig(
             title=self.TOOL_TITLE,
             launch_url=launch_url,
             secure_launch_url=launch_url,
         )
 
+    def get(self, request, *args, **kwargs):
+        lti_tool_config = self.get_tool_config(request)
         self.set_extra_params(lti_tool_config)
-
-        resp = HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
-        return resp
+        return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
 
