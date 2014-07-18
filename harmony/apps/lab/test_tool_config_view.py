@@ -4,6 +4,8 @@ from .views import ToolConfigView
 from django.core.urlresolvers import reverse, resolve
 from django.test import RequestFactory
 
+from ims_lti_py.tool_config import ToolConfig
+
 class ToolConfigViewTest(unittest.TestCase):
     def setUp(self):
         self.view = ToolConfigView()
@@ -19,3 +21,18 @@ class ToolConfigViewTest(unittest.TestCase):
         expected = 'https://' + host + reverse(self.view.LAUNCH_URL)
 
         self.assertEqual(actual, expected)
+
+    def test_tool_config(self):
+        launch_url = "http://foo.bar/"
+        self.view.get_launch_url = Mock(return_value=launch_url)
+
+        expected = ToolConfig(
+            title=self.view.TOOL_TITLE,
+            launch_url=launch_url,
+            secure_launch_url=launch_url
+        )
+        actual = self.view.get_tool_config(self.view.request)
+
+        self.assertEqual(actual.title, expected.title)
+        self.assertEqual(actual.launch_url, expected.launch_url)
+        self.assertEqual(actual.secure_launch_url, expected.secure_launch_url)
