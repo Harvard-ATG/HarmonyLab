@@ -6,6 +6,9 @@
 
 {% block js_extra %}
 <script>require(['app/main']);</script>
+<script> 
+	window.canvas_username = "{{ user.get_full_name }}" 
+</script>
 {% endblock %}
 
 {% block content %}
@@ -85,6 +88,9 @@
 			<div class="icon-btn icon-btn-left icon-btn-open js-toggle-tabs"></div>
 			<div class="icon-btn icon-btn-left icon-btn-help hide"></div>
 			<a class="icon-btn icon-btn-right icon-btn-camera js-btn-screenshot" href="#" target="_blank" alt="Screenshot"> </a>
+		</div>
+		<div>
+			<canvas id="piano-cvs"></canvas>
 		</div>
 	</div>
 
