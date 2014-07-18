@@ -36,7 +36,7 @@ def configure(ROOT_DIR, STATIC_URL):
             with open(REQUIREJS_BUILD_FILE, 'r') as f:
                 REQUIREJS_BUILD = json.loads(f.read())
         else:
-            log.error('requirejs build file not found: {0}'.format(REQUIREJS_BUILD_FILE))
+            log.debug('requirejs build file not found: {0}'.format(REQUIREJS_BUILD_FILE))
 
         if REQUIREJS_BUILD is not None:
             REQUIREJS_DEBUG = False
