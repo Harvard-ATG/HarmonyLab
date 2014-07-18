@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, RedirectView
 from django.core.urlresolvers import reverse
 from ims_lti_py.tool_config import ToolConfig
-from braces.views import CsrfExemptMixin
+from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from .exercise import Exercise
 
 import json
@@ -15,16 +15,20 @@ REQUIRE_JS_CONTEXT = {
 }
 
 
-class HomeView(CsrfExemptMixin, TemplateView):
+class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
+    """
+    LTI consumers will POST to this view.
+    """
+    pattern_name = 'lab:index'
+
+
+class HomeView(TemplateView):
     template_name = "piano.html"
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context.update(REQUIRE_JS_CONTEXT)
         return context
-
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
 
 
 class ExerciseView(View):
@@ -90,7 +94,7 @@ class ToolConfigView(View):
     TOOL_TITLE = 'Harmony Lab'
 
     # This is the launch URL 
-    LAUNCH_URL = 'lab:index'
+    LAUNCH_URL = 'lab:lti-launch'
 
     # This is how to tell Canvas that this tool provides a course navigation link:
 
