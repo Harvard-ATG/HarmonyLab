@@ -99,6 +99,10 @@ class ToolConfigView(View):
     # This is how to tell Canvas that this tool provides a course navigation link:
 
     def get_launch_url(self, request):
+        '''
+        Returns the launch URL for the LTI tool. When a secure request is made,
+        a secure launch URL will be supplied.
+        '''
         if request.is_secure():
             host = 'https://' + request.get_host()
         else:
@@ -106,6 +110,14 @@ class ToolConfigView(View):
         return host + reverse(self.LAUNCH_URL);
 
     def set_extra_params(self, lti_tool_config):
+        '''
+        Sets extra parameters on the ToolConfig() instance using
+        the following method or by directly mutating attributes 
+        on the config:
+        
+        lti_tool_config.set_ext_param(ext_key, ext_params)
+        lti_tool_config.description = "my description..."
+        '''
         lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
         lti_tool_config.set_ext_param('canvas.instructure.com', 'course_navigation', {
             'enabled':'true', 
@@ -116,6 +128,9 @@ class ToolConfigView(View):
         lti_tool_config.description = 'Harmony Lab is an application for music theory students and instructors.'
 
     def get_tool_config(self, request):
+        '''
+        Returns an instance of ToolConfig().
+        '''
         launch_url = self.get_launch_url(request)
         return ToolConfig(
             title=self.TOOL_TITLE,
@@ -124,6 +139,9 @@ class ToolConfigView(View):
         )
 
     def get(self, request, *args, **kwargs):
+        '''
+        Returns the LTI tool configuration as XML.
+        '''
         lti_tool_config = self.get_tool_config(request)
         self.set_extra_params(lti_tool_config)
         return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
