@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.views.generic import View, TemplateView
 from django.core.urlresolvers import reverse
 from ims_lti_py.tool_config import ToolConfig
+from braces.views import CsrfExemptMixin
 from .exercise import Exercise
 
 import json
@@ -14,7 +15,7 @@ REQUIRE_JS_CONTEXT = {
 }
 
 
-class HomeView(TemplateView):
+class HomeView(CsrfExemptMixin, TemplateView):
     template_name = "piano.html"
 
     def get_context_data(self, **kwargs):
