@@ -85,29 +85,41 @@ class ToolConfigView(View):
         </cartridge_basiclti_link>
 
     """
-    def get(self, request, *args, **kwargs):
+    # This is the tool title
+    TOOL_TITLE = 'Harmony Lab'
+
+    # This is the launch URL 
+    LAUNCH_URL = 'lab:index'
+
+    # This is how to tell Canvas that this tool provides a course navigation link:
+
+    def get_launch_url(self, request):
         if request.is_secure():
             host = 'https://' + request.get_host()
         else:
             host = 'http://' + request.get_host()
+        return host + reverse(self.LAUNCH_URL);
 
-        url = host + reverse('lab:index')
-
-        lti_tool_config = ToolConfig(
-            title='Harmony Labs',
-            launch_url=url,
-            secure_launch_url=url,
-        )
-        # this is how to tell Canvas that this tool provides a course navigation link:
-        account_nav_params = {
-            'enabled': 'true',
+    def set_extra_params(self, lti_tool_config):
+        lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
+        lti_tool_config.set_ext_param('canvas.instructure.com', 'course_navigation', {
+            'enabled':'true', 
             # optionally, supply a different URL for the link:
             # 'url': 'http://library.harvard.edu',
-            'text': 'Harmony Labs',
-        }
-        lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
-        lti_tool_config.set_ext_param('canvas.instructure.com', 'course_navigation', account_nav_params)
-        lti_tool_config.description = 'This LTI tool allows instructors to create and link blogs to a course site.'
+            'text':'Harmony Lab'
+        })
+        lti_tool_config.description = 'Harmony Lab is an application for music theory students and instructors.'
+
+    def get(self, request, *args, **kwargs):
+        launch_url = self.get_launch_url(request)
+
+        lti_tool_config = ToolConfig(
+            title=self.TOOL_TITLE,
+            launch_url=launch_url,
+            secure_launch_url=launch_url,
+        )
+
+        self.set_extra_params(lti_tool_config)
 
         resp = HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
         return resp
