@@ -1,4 +1,5 @@
 *.db
+*.log
 *.pyc
 /docs/jsdoc/out/*
 /harmony/static/js/build/*
