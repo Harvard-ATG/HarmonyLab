@@ -1,11 +1,13 @@
 from django.conf.urls import patterns, include, url
-from harmony.apps.lab.views import PlayView, ExerciseView
+from django.views.generic.base import RedirectView
 
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
 #admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', RedirectView.as_view(url='/lab'), name='index'),
+
     url(r'^lab/', include('harmony.apps.lab.urls', namespace="lab")),
 
     # Uncomment the admin/doc line below to enable admin documentation:
