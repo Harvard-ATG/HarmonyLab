@@ -1,15 +1,15 @@
 import unittest
 from mock import Mock
-from .views import ToolConfigView
 from django.core.urlresolvers import reverse, resolve
 from django.test import RequestFactory
 
 from ims_lti_py.tool_config import ToolConfig
+from .views import LTIToolConfigView
 
 class ToolConfigViewTest(unittest.TestCase):
     def setUp(self):
-        self.view = ToolConfigView()
-        self.view.request = RequestFactory().get('/tool_config')
+        self.view = LTIToolConfigView()
+        self.view.request = RequestFactory().get('/lti-tool-config')
         self.view.request.session = {}
 
     def test_launch_secure_launch_url(self):
