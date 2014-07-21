@@ -1,7 +1,7 @@
 define(['jquery', 'app/components/app/play', 'app/components/app/exercise'], function($) {
 	var ROUTES = [
-		{url: /^\/?$/, app: 'app/components/app/play'},
-		{url: /^\/exercise\/\d+$/, app: 'app/components/app/exercise'}
+		{url: /^\/lab\/?$/, app: 'app/components/app/play'},
+		{url: /^\/lab\/exercise\/\d+$/, app: 'app/components/app/exercise'}
 	];
 
 	var router = function() {

@@ -17,6 +17,13 @@ REQUIRE_JS_CONTEXT = {
 class PlayView(TemplateView):
     template_name = "play.html"
 
+    def get(self, request):
+        context = {}
+        context.update(REQUIRE_JS_CONTEXT)
+
+        return render(request, "exercise.html", context)
+
+
 class ExerciseView(View):
     def get(self, request, exercise_id, *args, **kwargs):
         exercise = self.get_exercise(exercise_id)
