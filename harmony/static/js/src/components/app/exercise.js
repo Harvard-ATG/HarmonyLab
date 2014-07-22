@@ -96,11 +96,11 @@ define([
 			},
 			function() {
 				var c = new MusicComponent({
-                    sheet: new ExerciseSheetComponent({
-                        playChords: this.models.playChords,
-                        exerciseChords: this.models.exerciseChords,
-                        keySignature: this.models.keySignature
-                    })
+					sheet: new ExerciseSheetComponent({
+						playChords: this.models.playChords,
+						exerciseChords: this.models.exerciseChords,
+						keySignature: this.models.keySignature
+					})
 				});
 				c.init(this);
 				c.renderTo("#staff-area");
