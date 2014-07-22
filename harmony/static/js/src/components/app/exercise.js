@@ -5,6 +5,7 @@ define([
 	'app/components/app',
 	'app/components/piano',
 	'app/components/music',
+	'app/components/music/exercise_sheet',
 	'app/components/midi',
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
@@ -19,6 +20,7 @@ define([
 	AppComponent,
 	PianoComponent,
 	MusicComponent,
+	ExerciseSheetComponent,
 	MidiComponent,
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
@@ -94,8 +96,11 @@ define([
 			},
 			function() {
 				var c = new MusicComponent({
-					chords: this.models.exerciseChords,
-					keySignature: this.models.keySignature
+                    sheet: new ExerciseSheetComponent({
+                        playChords: this.models.playChords,
+                        exerciseChords: this.models.exerciseChords,
+                        keySignature: this.models.keySignature
+                    })
 				});
 				c.init(this);
 				c.renderTo("#staff-area");
