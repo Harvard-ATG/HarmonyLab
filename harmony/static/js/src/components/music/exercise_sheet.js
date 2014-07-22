@@ -28,7 +28,7 @@ define([
 	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
 
 	/**
-	 * PlaySheetComponent
+	 * ExerciseSheetComponent
 	 *
 	 * This object is responsible for knowing how to display plain sheet music
 	 * notation with the notes that have sounded (saved in the chord bank) and
@@ -41,7 +41,7 @@ define([
 	 * @param {ChordBank} settings.chords Required property.
 	 * @param {KeySignature} settings.keySignature Required property.
 	 */
-	var PlaySheetComponent = function(settings) {
+	var ExerciseSheetComponent = function(settings) {
 		this.settings = settings || {};
 
 		if("playChords" in this.settings) {
@@ -68,9 +68,9 @@ define([
 		]);
 	};
 
-	PlaySheetComponent.prototype = new Component();
+	ExerciseSheetComponent.prototype = new Component();
 
-	_.extend(PlaySheetComponent.prototype, {
+	_.extend(ExerciseSheetComponent.prototype, {
 		/**
 		 * Initializes the sheet.
 		 *
@@ -305,5 +305,5 @@ define([
 		}
 	});
 
-	return PlaySheetComponent;
+	return ExerciseSheetComponent;
 });
