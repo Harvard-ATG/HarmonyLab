@@ -3,9 +3,7 @@ define([
 	'jquery',
 	'lodash', 
 	'vexflow',
-	'app/util',
 	'app/config',
-	'app/components/events',
 	'app/components/component',
 	'./stave',
 	'./stave_notater',
@@ -14,9 +12,7 @@ define([
 	$,
 	_, 
 	Vex, 
-	util,
 	Config,
-	EVENTS,
 	Component,
 	Stave, 
 	StaveNotater,
@@ -30,32 +26,22 @@ define([
 	 * @type {number}
 	 */
 	var CHORD_BANK_SIZE = Config.get('general.chordBank.displaySize');
-	/**
-	 * This is a map of analysis modes to booleans indicating whether the mode
-	 * is enabled or disabled by default.
-	 * @type {object}
-	 */
-	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');
-	/**
-	 * This is a map of highlight modes to booleans indicating whether the mode
-	 * is enabled or disabled by default.
-	 * @type {object}
-	 */
-	var HIGHLIGHT_SETTINGS = Config.get('general.highlightSettings');
 
 	/**
-	 * PlainSheetComponent
+	 * PlaySheetComponent
 	 *
 	 * This object is responsible for knowing how to display plain sheet music
 	 * notation with the notes that have sounded (saved in the chord bank) and
 	 * are currently sounding via MIDI input or some other means. So this object
 	 * should know how to display the grand staff and configure it for analysis,
-	 * highlights, etc.
+	 * highlight, etc.
 	 *
 	 * @constructor
 	 * @param {object} settings
+	 * @param {ChordBank} settings.chords Required property.
+	 * @param {KeySignature} settings.keySignature Required property.
 	 */
-	var PlainSheetComponent = function(settings) {
+	var PlaySheetComponent = function(settings) {
 		this.settings = settings || {};
 
 		if("chords" in this.settings) {
@@ -72,33 +58,13 @@ define([
 
 		_.bindAll(this, [
 			'render',
-			'onHighlightChange',
-			'onAnalyzeChange',
-			'onMetronomeChange',
 			'onChordsUpdate'
 		]);
 	};
 
-	PlainSheetComponent.prototype = new Component();
+	PlaySheetComponent.prototype = new Component();
 
-	_.extend(PlainSheetComponent.prototype, {
-		/**
-		 * Configuration for highlighting notes on the sheet music.
-		 * @type {object}
-		 */
-		highlightsConfig: {
-			enabled: HIGHLIGHT_SETTINGS.enabled,
-			mode: HIGHLIGHT_SETTINGS.mode
-		},
-		/**
-		 * Configuration for analyzing notes on the sheet music.
-		 * @type {object}
-		 */
-		analyzeConfig: {
-			enabled: ANALYSIS_SETTINGS.enabled,
-			mode: ANALYSIS_SETTINGS.mode,
-			tempo: false,
-		},
+	_.extend(PlaySheetComponent.prototype, {
 		/**
 		 * Initializes the sheet.
 		 *
@@ -140,22 +106,11 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
+			this.parentComponent.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
 			this.chords.bind('change', this.render);
 			this.chords.bind('clear', this.onChordsUpdate);
 			this.chords.bind('bank', this.onChordsUpdate);
-			this.subscribe(EVENTS.BROADCAST.HIGHLIGHT_NOTES, this.onHighlightChange);
-			this.subscribe(EVENTS.BROADCAST.ANALYZE_NOTES, this.onAnalyzeChange);
-			this.subscribe(EVENTS.BROADCAST.METRONOME, this.onMetronomeChange);
-		},
-		/**
-		 * Clears the sheet.
-		 *
-		 * @return this
-		 */
-		clear: function() {
-			this.vexRenderer.getContext().clear();
-			return this;
 		},
 		/**
 		 * Renders the grand staff and everything on it.
@@ -165,6 +120,15 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
+			return this;
+		},
+		/**
+		 * Clears the sheet.
+		 *
+		 * @return this
+		 */
+		clear: function() {
+			this.vexRenderer.getContext().clear();
 			return this;
 		},
 		/**
@@ -253,7 +217,7 @@ define([
 			stave.setNotater(StaveNotater.create(clef, {
 				stave: stave,
 				keySignature: this.keySignature,
-				analyzeConfig: this.analyzeConfig
+				analyzeConfig: this.getAnalyzeConfig()
 			}));
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
@@ -278,13 +242,13 @@ define([
 				chord: chord,
 				isBanked: isBanked,
 				keySignature: this.keySignature,
-				highlightsConfig: this.highlightsConfig
+				highlightConfig: this.getHighlightConfig()
 			}));
 			stave.setNotater(StaveNotater.create(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
-				analyzeConfig: this.analyzeConfig
+				analyzeConfig: this.getAnalyzeConfig()
 			}));
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
@@ -309,26 +273,20 @@ define([
 			return this.parentComponent.getHeight();
 		},
 		/**
-		 * Updates settings.
+		 * Returns the analysis settings of the sheet.
 		 *
-		 * @param {string} prop
-		 * @param {object} setting
-		 * @return this
+		 * @return {object}
 		 */
-		updateSettings: function(prop, setting) {
-			var mode = _.cloneDeep(this[prop].mode);
-			switch(setting.key) {
-				case "enabled":
-					this[prop].enabled = setting.value; 
-					break;
-				case "mode":
-					_.assign(mode, setting.value);	
-					this[prop].mode = mode;
-					break;
-				default:
-					throw new Error("Invalid key");
-			}
-			return this;
+		getAnalyzeConfig: function() {
+			return this.parentComponent.analyzeConfig;
+		},
+		/**
+		 * Returns the highlight settings of the sheet.
+		 *
+		 * @return {object}
+		 */
+		getHighlightConfig: function() {
+			return this.parentComponent.highlightConfig;
 		},
 		/**
 		 * Handles a chord bank update.
@@ -338,42 +296,8 @@ define([
 		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
-		},
-		/**
-		 * Handles a change to the highlight settings.
-		 *
-		 * @param {object} settings
-		 * @return undefined
-		 */
-		onHighlightChange: function(settings) {
-			this.updateSettings('highlightsConfig', settings);
-			this.render();
-		},
-		/**
-		 * Handles a change to the analyze settings.
-		 *
-		 * @param {object} settings
-		 * @return undefined
-		 */
-		onAnalyzeChange: function(settings) {
-			this.updateSettings('analyzeConfig', settings);
-			this.render();
-		},
-		/**
-		 * Handles a change to the metronome settings.
-		 *
-		 * @param {object} settings
-		 * @return undefined
-		 */
-		onMetronomeChange: function(metronome) {
-			if(metronome.isPlaying()) {
-				this.analyzeConfig.tempo = metronome.getTempo();
-			} else {
-				this.analyzeConfig.tempo = false;
-			}
-			this.render();
 		}
 	});
 
-	return PlainSheetComponent;
+	return PlaySheetComponent;
 });
