@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse, resolve
 from django.test import RequestFactory
 
 from ims_lti_py.tool_config import ToolConfig
-from .views import LTIToolConfigView
+from ..views import LTIToolConfigView
 
 class ToolConfigViewTest(unittest.TestCase):
     def setUp(self):

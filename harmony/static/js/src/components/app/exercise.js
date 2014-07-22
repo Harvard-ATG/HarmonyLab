@@ -3,12 +3,12 @@ define([
 	'jquery',
 	'app/components/component',
 	'app/components/app',
+	'app/components/piano',
+	'app/components/music',
+	'app/components/midi',
 	'app/components/input/shortcuts',
-	'app/components/midi/controller',
-	'app/components/ui/piano',
 	'app/components/ui/tab_controls',
 	'app/components/ui/theme',
-	'app/components/ui/music',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
@@ -17,12 +17,12 @@ define([
 	$,
 	Component,
 	AppComponent,
-	KeyboardShortcutsComponent,
-	MidiControllerComponent,
 	PianoComponent,
+	MusicComponent,
+	MidiComponent,
+	KeyboardShortcutsComponent,
 	TabControlsComponent,
 	ThemeComponent,
-	MusicComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -70,7 +70,7 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				var c = new MidiControllerComponent({
+				var c = new MidiComponent({
 					chords: this.models.playChords,
 					midiDevice: this.models.midiDevice
 				});

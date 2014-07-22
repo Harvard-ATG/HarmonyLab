@@ -1,6 +1,6 @@
 define([
 	'lodash', 
-	'app/components/ui/piano/metronome'
+	'app/components/piano/metronome'
 ], function(
 	_, 
 	MetronomeComponent

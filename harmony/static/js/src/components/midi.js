@@ -62,7 +62,7 @@ define([
 
 
 	/**
-	 * MidiControllerComponent
+	 * MidiComponent
 	 *
 	 * This component coordinates the interactions between the application and
 	 * the MIDI device driver (i.e. browser plugin). It listens for MIDI-related
@@ -77,7 +77,7 @@ define([
 	 * @param {object} settings.chords Chords object (required).
 	 * @param {object} settings.midiDevice MidiDevice object (required).
 	 */
-	var MidiControllerComponent = function(settings) {
+	var MidiComponent = function(settings) {
 		/**
 		 * Configuration.
 		 * @type {object}
@@ -132,11 +132,11 @@ define([
 		this.addComponent(new ModalComponent());
 	};
 
-	MidiControllerComponent.prototype = new Component();
+	MidiComponent.prototype = new Component();
 
-	_.extend(MidiControllerComponent.prototype, {
+	_.extend(MidiComponent.prototype, {
 		/**
-		 * Initializes the MidiControllerComponent.
+		 * Initializes the MidiComponent.
 		 *
 		 * @return undefined
 		 */
@@ -442,5 +442,5 @@ define([
 		}
 	});
 
-	return MidiControllerComponent;
+	return MidiComponent;
 });
