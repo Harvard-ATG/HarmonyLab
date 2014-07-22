@@ -22,7 +22,7 @@ define([
 	PianoComponent,
 	TabControlsComponent,
 	ThemeComponent,
-	TranscriptComponent,
+	MusicComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -93,7 +93,7 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				var c = new TranscriptComponent({
+				var c = new MusicComponent({
 					chords: this.models.exerciseChords,
 					keySignature: this.models.keySignature
 				});
