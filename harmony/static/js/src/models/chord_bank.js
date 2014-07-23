@@ -112,17 +112,22 @@ define([
 		 */
 		items: function(config) {
 			config = config || {};
+			var _items = this._items; 
 			var current = this.current();
-			var _items = [], items = [];
+			var items = [];
+
 			if(config.limit) {
 				_items = this._items.slice(0, config.limit);
-			}
+			} 
+
 			items = _.map(_items, function(chord, index) {
 				return {chord:chord, isBanked:(chord!==current)};
 			});
+
 			if(config.reverse) {
 				items.reverse();
 			}
+
 			return items;
 		},
 		/**
