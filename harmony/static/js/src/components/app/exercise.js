@@ -12,7 +12,10 @@ define([
 	'app/components/ui/theme',
 	'app/models/chord_bank',
 	'app/models/key_signature',
-	'app/models/midi_device'
+	'app/models/midi_device',
+	'app/models/exercise_definition',
+	'app/models/exercise_grader',
+	'app/models/exercise_context'
 ], function(
 	_,
 	$,
@@ -27,7 +30,10 @@ define([
 	ThemeComponent,
 	ChordBank,
 	KeySignature,
-	MidiDevice
+	MidiDevice,
+	ExerciseDefinition,
+	ExerciseGrader,
+	ExerciseContext
 ) {
 
 	/**
@@ -50,11 +56,27 @@ define([
 	 */
 	AppExerciseComponent.prototype.getModels = function() {
 		var models = {};
-		models.playChords = new ChordBank();
-		models.exerciseChords = new ChordBank();
+		models.inputChords = new ChordBank();
 		models.keySignature = new KeySignature();
 		models.midiDevice = new MidiDevice();
+		models.exerciseContext = new ExerciseContext({
+			inputChords: models.inputChords,
+			grader: new ExerciseGrader(),
+			definition: new ExerciseDefinition({
+				definition: this.getExerciseDefinition()
+			})
+		});
 		return models;
+	};
+
+	/**
+	 * Returns the exercise definition.
+	 */
+	AppExerciseComponent.prototype.getExerciseDefinition = function() {
+		if(!window.appConfig || !window.appConfig.exercise) { 
+			throw new Error("missing window.appConfig.exercise"); 
+		}
+		return window.appConfig.exercise;
 	};
 
 	/**
@@ -73,7 +95,7 @@ define([
 			},
 			function() {
 				var c = new MidiComponent({
-					chords: this.models.playChords,
+					chords: this.models.inputChords,
 					midiDevice: this.models.midiDevice
 				});
 				c.init(this);
@@ -97,8 +119,7 @@ define([
 			function() {
 				var c = new MusicComponent({
 					sheet: new ExerciseSheetComponent({
-						playChords: this.models.playChords,
-						exerciseChords: this.models.exerciseChords,
+						exerciseContext: this.models.exerciseContext,
 						keySignature: this.models.keySignature
 					})
 				});

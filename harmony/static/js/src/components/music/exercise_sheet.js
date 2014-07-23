@@ -44,17 +44,11 @@ define([
 	var ExerciseSheetComponent = function(settings) {
 		this.settings = settings || {};
 
-		if("playChords" in this.settings) {
-			this.chords = this.settings.playChords;
+		if("exerciseContext" in this.settings) {
+			this.exerciseContext = this.settings.exerciseContext;
 		} else {
-			throw new Error("missing settings.playChords");
+			throw new Error("missing settings.exerciseContext");
 		}
-
-        if("exerciseChords" in this.settings) {
-            this.exerciseChords = this.settings.exerciseChords;
-        } else {
-            throw new Error("missing settings.exerciseChords");
-        }
 
 		if("keySignature" in this.settings) {
 			this.keySignature = this.settings.keySignature;
@@ -114,9 +108,9 @@ define([
 		initListeners: function() {
 			this.parentComponent.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
-			this.chords.bind('change', this.render);
-			this.chords.bind('clear', this.onChordsUpdate);
-			this.chords.bind('bank', this.onChordsUpdate);
+			this.getInputChords().bind('change', this.render);
+			this.getInputChords().bind('clear', this.onChordsUpdate);
+			this.getInputChords().bind('bank', this.onChordsUpdate);
 		},
 		/**
 		 * Renders the grand staff and everything on it.
@@ -177,7 +171,7 @@ define([
 		updateStaves: function() {
 			var chord, treble, bass;
 			var limit = CHORD_BANK_SIZE;
-			var items = this.chords.items({limit: limit, reverse: true});
+			var items = this.getDisplayChords().items({limit: limit, reverse: true});
 			var staves = [];
 			var index = 0;
 			var count = items.length;
@@ -302,7 +296,13 @@ define([
 		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
-		}
+		},
+		getDisplayChords: function() {
+			return this.exerciseContext.getDisplayChords();
+		},
+		getInputChords: function() {
+			return this.exerciseContext.getInputChords();
+		},
 	});
 
 	return ExerciseSheetComponent;
