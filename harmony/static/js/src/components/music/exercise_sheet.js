@@ -1,6 +1,7 @@
 /* global define: false */
 define([
 	'jquery',
+	'jquery-ui',
 	'lodash', 
 	'vexflow',
 	'app/config',
@@ -10,6 +11,7 @@ define([
 	'./stave_note_factory'
 ], function(
 	$,
+	$UI,
 	_, 
 	Vex, 
 	Config,
@@ -120,6 +122,45 @@ define([
 			this.clear();
 			this.renderStaves();
 			this.renderExerciseStatus();
+			this.renderExerciseText();
+
+			return this;
+		},
+		/**
+		 * Renders intro or review text for the exercise.
+		 *
+		 * @return this
+		 */
+		renderExerciseText: function() {
+			var exc = this.exerciseContext;
+			var definition = exc.getDefinition();
+			var $dialog = $("#exerciseDialog");
+			var dialog_config = {
+				modal: true,
+				buttons: {
+					Ok: function() {
+						$(this).dialog("close");
+					}
+				}
+			};
+
+			switch(exc.state) {
+				case exc.STATE.READY:
+					if(exc.definition.hasIntro()) {
+						$dialog.html(exc.definition.getIntro());
+						$dialog.dialog(dialog_config);
+					}
+					break;
+				case exc.STATE.CORRECT:
+					if(exc.definition.hasReview()) {
+						$dialog.html(exc.definition.getReview());
+						$dialog.dialog(dialog_config);
+					}
+					break;
+				default:
+					break;
+			}
+
 			return this;
 		},
 		/**

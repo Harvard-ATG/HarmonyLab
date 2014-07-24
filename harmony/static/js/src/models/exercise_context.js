@@ -133,6 +133,14 @@ define([
 			return this.graded;
 		},
 		/**
+		 * Returns the exercise definition object.
+		 *
+		 * @return {object}
+		 */
+		getDefinition: function() {
+			return this.definition;
+		},
+		/**
 		 * Helper function that creates the display chords.
 		 *
 		 * @return {object}
