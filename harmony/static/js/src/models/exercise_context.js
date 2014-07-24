@@ -18,8 +18,7 @@ define([
 	 * @param settings {object}
 	 * @param settings.definition ExerciseDefinition
 	 * @param settings.grader ExerciseGrader
-	 * @param settings.input ChordBank
-	 * @param settings.output ChordBank
+	 * @param settings.inputChords ChordBank
 	 * @constructor
 	 */
 	var ExerciseContext = function(settings) {
@@ -44,6 +43,11 @@ define([
 		this.init();
 	};
 
+	/**
+	 * Defines the possible states
+	 * @type {object}
+	 * @const
+	 */
 	ExerciseContext.STATE = {
 		READY: "ready",
 		WAITING: "waiting",
@@ -52,13 +56,28 @@ define([
 	};
 
 	_.extend(ExerciseContext.prototype, {
+		/**
+		 * Make the STATE values accessible via instance.
+		 */
 		STATE: ExerciseContext.STATE,
 		init: function() {
 			this.initListeners();
 		},
+		/**
+		 * Initializes listeners. 
+		 *
+		 * @return undefined
+		 */
 		initListeners: function() {
 			this.inputChords.bind("change", this.grade);
 		},
+		/**
+		 * Runs the grading process for the given exercise definition
+		 * and input chords.
+		 *
+		 * @return undefined
+		 * @fires graded
+		 */
 		grade: function() {
 			var state, graded;
 
@@ -80,22 +99,56 @@ define([
 			this.state = state;
 			this.trigger("graded");
 		},
+		/**
+		 * Returns chords for display on screen.
+		 *
+		 * @return {object}
+		 */
 		getDisplayChords: function() {
 			return this.displayChords;
 		},
+		/**
+		 * Returns the chords being used for input to the exercise.
+		 *
+		 * @return {object}
+		 */
 		getInputChords: function() {
 			return this.inputChords;
 		},
+		/**
+		 * Returns the state of the exercise context.
+		 *
+		 * @return {string}
+		 */
 		getState: function() {
 			return this.state;
 		},
+		/**
+		 * Returns a graded object for the exercise, or false
+		 * if the exercise hasn't been graded yet.
+		 *
+		 * @return {boolean|object}
+		 */
 		getGraded: function() {
 			return this.graded;
 		},
+		/**
+		 * Helper function that creates the display chords.
+		 *
+		 * @return {object}
+		 */
 		_createDisplayChords: function() {
-			var problem = this.definition.getProblemAt(0);
-			var chord = new Chord({ notes: problem.notes });
-			var chords = new ChordBank({ chords: [chord] });
+			var problem, chord, chords; 
+			var notes = [];
+
+			if(this.definition.hasProblems()) {
+				problem = this.definition.getProblemAt(0);
+				notes = problem.notes;
+			}
+
+			chord = new Chord({ notes: notes });
+			chords = new ChordBank({chords: [chord]});
+			
 			return chords;
 		}
 	});
