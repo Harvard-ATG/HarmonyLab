@@ -45,13 +45,14 @@ define([
 	};
 
 	ExerciseContext.STATE = {
-		READY: 0,
-		WAITING: 1,
-		INCORRECT: 2,
-		CORRECT: 3
+		READY: "ready",
+		WAITING: "waiting",
+		INCORRECT: "incorrect",
+		CORRECT: "correct" 
 	};
 
 	_.extend(ExerciseContext.prototype, {
+		STATE: ExerciseContext.STATE,
 		init: function() {
 			this.initListeners();
 		},

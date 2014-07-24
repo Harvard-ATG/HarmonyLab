@@ -77,6 +77,17 @@ define([
 				throw new Error("number of chords exceeds the limit");
 			}
 
+			/**
+			 * Flag that determines whether chords can be banked.
+			 * Defaults to true.
+			 * @type {boolean}
+			 * @protected
+			 */
+			this._enableBanking = true;
+			if("enableBanking" in this.settings) {
+				this._enableBanking = (this.settings.enableBanking ? true : false);
+			}
+
 			this._addListeners(this._items[0]);
 		},
 		/**
@@ -87,6 +98,9 @@ define([
 		 * @return undefined
 		 */
 		bank: function() {
+			if(!this._enableBanking) {
+				return;
+			}
 			var chord = new Chord();
 			var current = this.current();
 

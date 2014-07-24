@@ -110,7 +110,6 @@ define([
 			this.keySignature.bind('change', this.render);
 			this.getInputChords().bind('change', this.render);
 			this.getInputChords().bind('clear', this.onChordsUpdate);
-			this.getInputChords().bind('bank', this.onChordsUpdate);
 		},
 		/**
 		 * Renders the grand staff and everything on it.
@@ -120,7 +119,29 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
+			this.renderExerciseStatus();
 			return this;
+		},
+		/**
+		 * Renders the status of the exercise.
+		 *
+		 * @return undefined
+		 */
+		renderExerciseStatus: function() {
+			var ctx = this.vexRenderer.getContext()
+			var exc = this.exerciseContext;
+			var state = exc.state;
+			var color_map = {};
+			color_map[exc.STATE.INCORRECT] = "#990000";
+			color_map[exc.STATE.CORRECT] = "#4C9900";
+			color_map[exc.STATE.WAITING] = "#999900";
+			color_map[exc.STATE.READY] = "#000000";
+
+			ctx.save();
+			ctx.font = "14px Georgia, serif";
+			ctx.fillStyle = color_map[state];
+			ctx.fillText(state.toUpperCase(), this.getWidth() - 100, this.getHeight() - 25);
+			ctx.restore();
 		},
 		/**
 		 * Clears the sheet.
