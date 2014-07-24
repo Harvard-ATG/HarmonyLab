@@ -1,8 +1,8 @@
 import unittest
-from .views import LTILaunchView
 from braces.views import LoginRequiredMixin
 from django.views.generic import RedirectView
 
+from ..views import LTILaunchView
 
 class LTILaunchViewTest(unittest.TestCase):
     longMessage = True

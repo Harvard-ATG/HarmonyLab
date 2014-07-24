@@ -5,14 +5,17 @@ define([
 	'app/components/app',
 	'app/components/piano',
 	'app/components/music',
-	'app/components/music/play_sheet',
+	'app/components/music/exercise_sheet',
 	'app/components/midi',
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
 	'app/components/ui/theme',
 	'app/models/chord_bank',
 	'app/models/key_signature',
-	'app/models/midi_device'
+	'app/models/midi_device',
+	'app/models/exercise_definition',
+	'app/models/exercise_grader',
+	'app/models/exercise_context'
 ], function(
 	_,
 	$,
@@ -20,18 +23,21 @@ define([
 	AppComponent,
 	PianoComponent,
 	MusicComponent,
-	PlaySheetComponent,
+	ExerciseSheetComponent,
 	MidiComponent,
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
 	ThemeComponent,
 	ChordBank,
 	KeySignature,
-	MidiDevice
+	MidiDevice,
+	ExerciseDefinition,
+	ExerciseGrader,
+	ExerciseContext
 ) {
 
 	/**
-	 * AppPlayComponent class.
+	 * AppExerciseComponent class.
 	 *
 	 * Creates the sandbox environment for playing and experimenting
 	 * with chords and chord sequences. This is the basic mode of the
@@ -39,21 +45,40 @@ define([
 	 *
 	 * @constructor
 	 */
-	var AppPlayComponent = function(settings) {
+	var AppExerciseComponent = function(settings) {
 		AppComponent.call(this, settings);
 	};
 
-	AppPlayComponent.prototype = new AppComponent();
+	AppExerciseComponent.prototype = new AppComponent();
 
 	/**
 	 * Returns the models used by the app.
 	 */
-	AppPlayComponent.prototype.getModels = function() {
+	AppExerciseComponent.prototype.getModels = function() {
 		var models = {};
-		models.chords = new ChordBank();
-		models.keySignature = new KeySignature();
+		models.inputChords = new ChordBank();
 		models.midiDevice = new MidiDevice();
+		models.exerciseDefinition = new ExerciseDefinition({
+			definition: this.getExerciseDefinition()
+		});
+		models.exerciseGrader = new ExerciseGrader();
+		models.exerciseContext = new ExerciseContext({
+			inputChords: models.inputChords,
+			grader: models.exerciseGrader,
+			definition: models.exerciseDefinition
+		});
+		models.keySignature = new KeySignature(models.exerciseDefinition.getKey());
 		return models;
+	};
+
+	/**
+	 * Returns the exercise definition.
+	 */
+	AppExerciseComponent.prototype.getExerciseDefinition = function() {
+		if(!window.appConfig || !window.appConfig.exercise) { 
+			throw new Error("missing window.appConfig.exercise"); 
+		}
+		return window.appConfig.exercise;
 	};
 
 	/**
@@ -62,7 +87,7 @@ define([
 	 *
 	 * @return {array} of functions
 	 */
-	AppPlayComponent.prototype.getComponentMethods = function() {
+	AppExerciseComponent.prototype.getComponentMethods = function() {
 		var methods = [
 			function() {
 				var c = new PianoComponent();
@@ -72,7 +97,7 @@ define([
 			},
 			function() {
 				var c = new MidiComponent({
-					chords: this.models.chords,
+					chords: this.models.inputChords,
 					midiDevice: this.models.midiDevice
 				});
 				c.init(this);
@@ -95,8 +120,8 @@ define([
 			},
 			function() {
 				var c = new MusicComponent({
-					sheet: new PlaySheetComponent({ 
-						chords: this.models.chords,
+					sheet: new ExerciseSheetComponent({
+						exerciseContext: this.models.exerciseContext,
 						keySignature: this.models.keySignature
 					})
 				});
@@ -122,21 +147,11 @@ define([
 	 * 
 	 * @return undefined
 	 */
-	AppPlayComponent.ready = function() {
-		var app, end, start; 
-		if(window.performance) {
-			start = window.performance.now();
-		}
-
-		app = new AppPlayComponent();
+	AppExerciseComponent.ready = function() {
+		app = new AppExerciseComponent();
 		app.init();
 		app.log("App ready");
-
-		if(window.performance) {
-			end = window.performance.now();
-			app.log("Execution time: " + Math.ceil(end - start) + "ms");
-		}
 	};
 
-	return AppPlayComponent;
+	return AppExerciseComponent;
 });

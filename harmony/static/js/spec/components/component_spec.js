@@ -25,7 +25,6 @@ define([
 			var settings = {"foo":"bar", "n": 100};
 			var component = createTestComponent(settings);
 			var parentComponent = null;
-			console.log(component);
 
 			component.init(parentComponent);
 			expect(component.settings).toBe(settings);

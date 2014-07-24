@@ -1,0 +1,9 @@
+{
+  "type": "matching",
+  "introText": "Learn to play chords",
+  "key": "jC_",
+  "problems": [{
+      "text": "Play the C major chord inverted",
+      "notes": [64,67,72]
+  }]
+}

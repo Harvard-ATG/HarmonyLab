@@ -188,12 +188,6 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'simple',
         },
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': path.join(ROOT_DIR, 'debug.log'),
-            'formatter': 'simple',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -212,7 +206,7 @@ LOGGING = {
             'propagate': False,
         },
         'harmony': {
-            'handlers': ['console','file'],
+            'handlers': ['console'],
             'level': 'INFO',
         }
     }

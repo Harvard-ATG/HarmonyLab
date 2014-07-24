@@ -60,7 +60,7 @@ define([
 		 * @throws {Error} Will throw an error if any params are missing.
 		 */
 		initConfig: function() {
-			var required = ['chord', 'isBanked', 'keySignature', 'clef', 'highlightsConfig'];
+			var required = ['chord', 'isBanked', 'keySignature', 'clef', 'highlightConfig'];
 			_.each(required, function(propName) {
 				if(this.config.hasOwnProperty(propName)) {
 					this[propName] = this.config[propName];
@@ -203,7 +203,7 @@ define([
 		_getNoteKeysAndModifiers: function() {
 			var keys = this._getNoteKeys();
 			var accidentals = this._getAccidentalsOf(keys);
-			var allMidiKeys = this.chord.getNoteNumbers(); // for highlightsConfig across stave boundaries
+			var allMidiKeys = this.chord.getNoteNumbers(); // for highlightConfig across stave boundaries
 			var midiKeys = this.chord.getNoteNumbers(this.clef);
 			var modifiers = [];
 
@@ -214,7 +214,7 @@ define([
 				if(this.isBanked) {
 					modifiers.push(this._makeBankedModifier(i));
 				}
-				if(this.highlightsConfig.enabled) {
+				if(this.highlightConfig.enabled) {
 					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
 				}
 			}
@@ -248,7 +248,7 @@ define([
 		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
 			var color = '', keyStyleOpts = {};
 			var analyzer = this._makeAnalyzer({
-				highlightMode: this.highlightsConfig.mode
+				highlightMode: this.highlightConfig.mode
 			});
 
 			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);

@@ -14,19 +14,10 @@ REQUIRE_JS_CONTEXT = {
     'REQUIREJS_CONFIG': json.dumps(settings.REQUIREJS_CONFIG)
 }
 
-
-class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
-    """
-    LTI consumers will POST to this view.
-    """
-    pattern_name = 'lab:index'
-
-
-class HomeView(TemplateView):
-    template_name = "piano.html"
-
+class PlayView(TemplateView):
+    template_name = "play.html"
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super(PlayView, self).get_context_data(**kwargs)
         context.update(REQUIRE_JS_CONTEXT)
         return context
 
@@ -37,15 +28,25 @@ class ExerciseView(View):
 
         context = {}
         context.update(REQUIRE_JS_CONTEXT)
-        context.update({"exercise": exercise.as_json()})
+        context.update({"exercise_json": exercise.as_json()})
 
         return render(request, "exercise.html", context)
 
     def get_exercise(self, exercise_id):
         return Exercise().load(exercise_id)
 
+class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
+    """
+    LTI consumers will POST to this view.
+    """
+    pattern_name = 'lab:index'
 
-class ToolConfigView(View):
+    def get_context_data(self, **kwargs):
+        context = super(PlayView, self).get_context_data(**kwargs)
+        context.update(REQUIRE_JS_CONTEXT)
+        return context
+
+class LTIToolConfigView(View):
     """
     Outputs LTI configuration XML for Canvas as specified in the IMS Global Common Cartridge Profile.
 

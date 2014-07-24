@@ -2,13 +2,6 @@
 
 {% block js_extra %}
 <script>require(['app/main']);</script>
-
-{% autoescape off %}
-<script>
-window.appConfig={"exercise":{{exercise_json}}};
-</script>
-{% endautoescape %}
-
 {% endblock %}
 
 {% block content %}

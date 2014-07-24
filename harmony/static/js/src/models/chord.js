@@ -21,7 +21,8 @@ define([
 	 * @fires clear
 	 * @constructor 
 	 */
-	var Chord = function() {
+	var Chord = function(settings) {
+		this.settings = settings || {};
 		this.init();
 	};
 
@@ -57,6 +58,11 @@ define([
 			 * @protected
 			 */
 			this._transpose = 0;   
+
+			// initialize notes that should be on
+			if("notes" in this.settings) {
+				this.noteOn(this.settings.notes);
+			}
 		},
 		/**
 		 * Clears all the notes in the chord.
@@ -75,24 +81,33 @@ define([
 		 * If the status of the note has changed, it will fire a change event.
 		 *
 		 * @fires change
-		 * @param number
+		 * @param {number|array} notes The note or notes to turn on
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
-		noteOn: function(number) {
-			var changed;
+		noteOn: function(notes) {
+			var i, len, noteNumber, changed = false;
 
-			if(this._transpose) {
-				number = this.transpose(number);
-			}
-			if(this._sustain) {
-				this._sustained[number] = true;
+			if(typeof notes === 'number') {
+				notes = [notes];
 			}
 
-			changed = (this._notes[number] !== true); 
-			this._notes[number] = true;
+			for(i = 0, len = notes.length; i < len; i++) {
+				noteNumber = notes[i];
+				if(this._transpose) {
+					noteNumber = this.transpose(noteNumber);
+				}
+				if(this._sustain) {
+					this._sustained[noteNumber] = true;
+				}
+
+				if(!changed) {
+					changed = (this._notes[noteNumber] !== true); 
+				}
+				this._notes[noteNumber] = true;
+			}
 
 			if(changed) {
-				this.trigger('change', 'note:on', number);
+				this.trigger('change', 'note:on');
 			}
 
 			return changed;
@@ -106,25 +121,33 @@ define([
 		 * and this method will return false.
 		 *
 		 * @fires change
-		 * @param number
+		 * @param {number|array} notes The note or notes to turn off
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
-		noteOff: function(number) {
-			var changed;
+		noteOff: function(notes) {
+			var i, len, noteNumber, changed = false;
 
-			if(this._transpose) {
-				number = this.transpose(number);
+			if(typeof notes === 'number') {
+				notes = [notes];
 			}
-			if(this._sustain) {
-				this._sustained[number] = false;
-				return false;
-			} 
 
-			changed = (this._notes[number] === true);
-			this._notes[number] = false;
+			for(i = 0, len = notes.length; i < len; i++) {
+				noteNumber = notes[i];
+				if(this._transpose) {
+					noteNumber = this.transpose(noteNumber);
+				}
+				if(this._sustain) {
+					this._sustained[noteNumber] = false;
+				} else {
+					if(!changed) {
+						changed = (this._notes[noteNumber] === true);
+					}
+					this._notes[noteNumber] = false;
+				}
+			}
 
 			if(changed) {
-				this.trigger('change', 'note:off', number);
+				this.trigger('change', 'note:off');
 			}
 
 			return changed;

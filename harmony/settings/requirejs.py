@@ -21,12 +21,22 @@ log = logging.getLogger(__name__)
 #   ./build-requirejs.py
 #
 def configure(ROOT_DIR, STATIC_URL):
+    try:
+        BASE_URL
+    except NameError:
+        BASE_URL = ''
+
     REQUIREJS_DEBUG = True
     REQUIREJS_CONFIG = {
         'baseUrl': os.path.join(STATIC_URL, 'js', 'lib'),
         'paths': {
             'app': os.path.join(STATIC_URL, 'js', 'src'),
         },
+        'config': {
+            'app/router': {
+                'base_url': BASE_URL
+            }
+        }
     }
 
     try: 

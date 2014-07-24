@@ -4,3 +4,4 @@
 /docs/jsdoc/out/*
 /harmony/static/js/build/*
 /data/*
+/*.log
