@@ -59,6 +59,16 @@ define(['lodash'], function(_) {
 			return this.exercise.introText;
 		},
 		/**
+		 * Returns the key for the exercise (i.e. C Major, A minor, etc).
+		 * The format of the key string should be consistent with the
+		 * KeySignature model.
+		 *
+		 * @return {string}
+		 */
+		getKey: function() {
+			return this.exercise.key;
+		},
+		/**
 		 * Returns the review text.
 		 *
 		 * @return {string}
@@ -120,6 +130,11 @@ define(['lodash'], function(_) {
 			} else {
 				throw new Error("invalid definition.type: "+definition.type);
 			}
+
+			exercise.key = "h"; // means "no key" 
+			if(definition.hasOwnProperty('key')) {
+				exercise.key = definition.key;
+			} 
 
 			exercise.introText = false;
 			if(definition.hasOwnProperty("introText") && definition.introText) {

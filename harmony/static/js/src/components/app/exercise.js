@@ -57,15 +57,17 @@ define([
 	AppExerciseComponent.prototype.getModels = function() {
 		var models = {};
 		models.inputChords = new ChordBank();
-		models.keySignature = new KeySignature();
 		models.midiDevice = new MidiDevice();
+		models.exerciseDefinition = new ExerciseDefinition({
+			definition: this.getExerciseDefinition()
+		});
+		models.exerciseGrader = new ExerciseGrader();
 		models.exerciseContext = new ExerciseContext({
 			inputChords: models.inputChords,
-			grader: new ExerciseGrader(),
-			definition: new ExerciseDefinition({
-				definition: this.getExerciseDefinition()
-			})
+			grader: models.exerciseGrader,
+			definition: models.exerciseDefinition
 		});
+		models.keySignature = new KeySignature(models.exerciseDefinition.getKey());
 		return models;
 	};
 
