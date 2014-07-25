@@ -65,7 +65,9 @@ define([
 	AppPlayComponent.prototype.getComponentMethods = function() {
 		var methods = [
 			function() {
-				var c = new PianoComponent();
+				var c = new PianoComponent({
+					toolbarConfig: {metronome: true}
+				});
 				c.init(this);
 				c.renderTo("#piano");
 				this.addComponent(c);
