@@ -150,6 +150,7 @@ define([
 		 * @return this
 		 */
 		resetStaves: function() {
+			_.invoke(this.staves, "destroy");
 			this.staves = [];
 			return this;
 		},
@@ -211,14 +212,15 @@ define([
 		 */
 		createDisplayStave: function(clef, position) {
 			var stave = new Stave(clef, position);
-
-			stave.setRenderer(this.vexRenderer);
-			stave.setKeySignature(this.keySignature);
-			stave.setNotater(StaveNotater.create(clef, {
+			var stave_notater = this.createStaveNotater(clef, {
 				stave: stave,
 				keySignature: this.keySignature,
 				analyzeConfig: this.getAnalyzeConfig()
-			}));
+			});
+
+			stave.setRenderer(this.vexRenderer);
+			stave.setKeySignature(this.keySignature);
+			stave.setNotater(stave_notater);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
 
@@ -244,7 +246,7 @@ define([
 				keySignature: this.keySignature,
 				highlightConfig: this.getHighlightConfig()
 			}));
-			stave.setNotater(StaveNotater.create(clef, {
+			stave.setNotater(this.createStaveNotater(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
@@ -255,6 +257,16 @@ define([
 			stave.setBanked(isBanked);
 
 			return stave;
+		},
+		/**
+		 * Creates an instance of StaveNotater.
+		 *
+		 * @param {string} clef The clef, treble|bass, to create.
+		 * @param {object} config The config for the StaveNotater.
+		 * @return {object}
+		 */
+		createStaveNotater: function(clef, config) {
+			return StaveNotater.create(clef, config);
 		},
 		/**
 		 * Returns the width of the sheet.

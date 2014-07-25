@@ -60,7 +60,8 @@ define([
 
 		_.bindAll(this, [
 			'render',
-			'onChordsUpdate'
+			'onChordsUpdate',
+			'updateExerciseStatus'
 		]);
 	};
 
@@ -121,7 +122,6 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
-			this.renderExerciseStatus();
 			this.renderExerciseText();
 
 			return this;
@@ -162,31 +162,6 @@ define([
 			}
 
 			return this;
-		},
-		/**
-		 * Renders the status of the exercise.
-		 *
-		 * @return undefined
-		 */
-		renderExerciseStatus: function() {
-			var ctx = this.vexRenderer.getContext()
-			var exc = this.exerciseContext;
-			var state = exc.state;
-			var status_map = {};
-			var content;
-
-			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
-			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
-			status_map[exc.STATE.WAITING] = {color:"#999900",content:"\uf201"};
-			status_map[exc.STATE.READY] = {color:"#000000",content:""};
-
-			content = status_map[state].content + " " + state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
-
-			ctx.save();
-			ctx.font = "16px Ionicons";
-			ctx.fillStyle = status_map[state].color;
-			ctx.fillText(content, this.getWidth() - 110, this.getHeight() - 25);
-			ctx.restore();
 		},
 		/**
 		 * Clears the sheet.
@@ -277,16 +252,18 @@ define([
 		 */
 		createDisplayStave: function(clef, position) {
 			var stave = new Stave(clef, position);
-
-			stave.setRenderer(this.vexRenderer);
-			stave.setKeySignature(this.keySignature);
-			stave.setNotater(StaveNotater.create(clef, {
+			var stave_notater = this.createStaveNotater(clef, {
 				stave: stave,
 				keySignature: this.keySignature,
 				analyzeConfig: this.getAnalyzeConfig()
-			}));
+			});
+
+			stave.setRenderer(this.vexRenderer);
+			stave.setKeySignature(this.keySignature);
+			stave.setNotater(stave_notater);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
+			stave.bind("notated", this.updateExerciseStatus);
 
 			return stave;
 		},
@@ -310,7 +287,7 @@ define([
 				keySignature: this.keySignature,
 				highlightConfig: this.getHighlightConfig()
 			}));
-			stave.setNotater(StaveNotater.create(clef, {
+			stave.setNotater(this.createStaveNotater(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
@@ -321,6 +298,16 @@ define([
 			stave.setBanked(isBanked);
 
 			return stave;
+		},
+		/**
+		 * Creates an instance of StaveNotater.
+		 *
+		 * @param {string} clef The clef, treble|bass, to create.
+		 * @param {object} config The config for the StaveNotater.
+		 * @return {object}
+		 */
+		createStaveNotater: function(clef, config) {
+			return StaveNotater.create(clef, config);
 		},
 		/**
 		 * Returns the width of the sheet.
@@ -355,6 +342,22 @@ define([
 			return this.parentComponent.highlightConfig;
 		},
 		/**
+		 * Returns the chords for display.
+		 *
+		 * @return undefined
+		 */
+		getDisplayChords: function() {
+			return this.exerciseContext.getDisplayChords();
+		},
+		/**
+		 * Returns the input chords.
+		 *
+		 * @return undefined
+		 */
+		getInputChords: function() {
+			return this.exerciseContext.getInputChords();
+		},
+		/**
 		 * Handles a chord bank update.
 		 *
 		 * @return undefined
@@ -363,12 +366,57 @@ define([
 			this.updateStaves();
 			this.render();
 		},
-		getDisplayChords: function() {
-			return this.exerciseContext.getDisplayChords();
-		},
-		getInputChords: function() {
-			return this.exerciseContext.getInputChords();
-		},
+		/**
+		 * Updates the exercise status.
+		 *
+		 * @return undefined
+		 */
+		updateExerciseStatus: function(notater) {
+			var can_notate = (notater.clef === StaveNotater.BASS && notater.stave.isFirstBar());
+			if(!can_notate) {
+				return;
+			}
+			var ctx = notater.getContext()
+			var x = notater.getX();
+			var y = notater.getY() + 45;
+			var exc = this.exerciseContext;
+			var state = exc.state;
+			var label = 'Exercise status: '; 
+			var text_width = 0;
+			var content = '';
+			var status_map = {};
+			var font_size = "14px";
+
+			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
+			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
+			status_map[exc.STATE.WAITING] = {color:"#999900",content:""};
+			status_map[exc.STATE.READY] = {color:"#000000",content:""};
+
+			// status indicator label
+			ctx.save();
+			ctx.font = notater.getTextFont(font_size);
+			ctx.fillStyle = "#000000";
+			ctx.fillText(label, x, y);
+			text_width = ctx.measureText(label).width;
+			ctx.restore();
+
+			// status indicator text
+			ctx.save();
+			ctx.font = notater.getTextFont(font_size);
+			content = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+			ctx.fillStyle = status_map[state].color;
+			ctx.fillText(content, x + text_width + 5, y);
+			text_width += ctx.measureText(content).width + 5;
+			ctx.restore();
+
+			// status indicator icon
+			ctx.save();
+			ctx.font = notater.getIconFont(font_size);
+			ctx.fillStyle = status_map[state].color;
+			content = status_map[state].content;
+			ctx.fillText(content, x + text_width + 5, y);
+			ctx.restore();
+		}
 	});
 
 	return ExerciseSheetComponent;
