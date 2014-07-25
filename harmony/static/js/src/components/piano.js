@@ -34,9 +34,34 @@ define([
 	 */
 	var PianoComponent = function(settings) {
 		this.settings = settings || {};
-		this.setComponent('toolbar', new ToolbarComponent());
-		this.setComponent('keyboard', new KeyboardComponent({ numberOfKeys: DEFAULT_KEYBOARD_SIZE }));
-		this.setComponent('pedals', new PedalsComponent());
+
+		var toolbarConfig = {metronome: false};
+		var keyboardConfig = {numberOfKeys: DEFAULT_KEYBOARD_SIZE};
+		var toolbarEnabled = true;
+		var pedalsEnabled = true;
+
+		if("toolbarConfig" in this.settings) {
+			toolbarConfig = this.settings.toolbarConfig;
+		}
+		if("keyboardConfig" in this.settings) {
+			keyboardConfig = this.settings.keyboardConfig;
+		}
+		if("toolbarEnabled" in this.settings) {
+			toolbarEnabled = this.settings.toolbarEnabled ? true : false;
+		}
+		if("pedalsEnabled" in this.settings) {
+			pedalsEnabled = this.settings.pedalsEnabled ? true : false;
+		}
+
+		if(toolbarEnabled) {
+			this.setComponent('toolbar', new ToolbarComponent(toolbarConfig));
+		}
+		if(pedalsEnabled) {
+			this.setComponent('pedals', new PedalsComponent());
+		}
+
+		this.setComponent('keyboard', new KeyboardComponent(keyboardConfig));
+
 		_.bindAll(this, ['onKeyboardChange']);
 	};
 
@@ -78,9 +103,13 @@ define([
 	PianoComponent.prototype.render = function() {
 		this.el.empty();
 		_.invoke(this.components, "render");
-		this.el.append(this.getComponent('toolbar').el);
+		if(this.hasComponent('toolbar')) {
+			this.el.append(this.getComponent('toolbar').el);
+		}
 		this.el.append(this.getComponent('keyboard').el);
-		this.el.append(this.getComponent('pedals').el);
+		if(this.hasComponent('pedals')) {
+			this.el.append(this.getComponent('pedals').el);
+		}
 		return this;
 	};
 

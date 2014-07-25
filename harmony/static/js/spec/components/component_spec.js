@@ -84,5 +84,17 @@ define([
 			expect(spies.bar).toHaveBeenCalled();
 			expect(spies.bar).toHaveBeenCalledWith("beer me!");
 		});
+
+		it('should know if it has named components', function() {
+			var component = createTestComponent();
+			var another_component = createTestComponent();
+			var another_name = 'foo';
+
+			component.setComponent(another_name, another_component);
+			component.init(null);
+
+			expect(component.hasComponent(another_name)).toBe(true);
+			expect(component.getComponent(another_name)).toBe(another_component);
+		});
 	});
 });
