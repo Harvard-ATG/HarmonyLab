@@ -143,6 +143,16 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	};
 
 	/**
+	 * Returns true if the named component is present.
+	 *
+	 * @param {string} name
+	 * @return {boolean}
+	 */
+	Component.prototype.hasComponent = function(name) {
+		return this.componentMap.hasOwnProperty(name);
+	};
+
+	/**
 	 * Destroys the component and all sub-scomponents.
 	 * 
 	 * Should destroy all event listeners, elements, etc.
