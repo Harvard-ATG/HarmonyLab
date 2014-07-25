@@ -172,16 +172,20 @@ define([
 			var ctx = this.vexRenderer.getContext()
 			var exc = this.exerciseContext;
 			var state = exc.state;
-			var color_map = {};
-			color_map[exc.STATE.INCORRECT] = "#990000";
-			color_map[exc.STATE.CORRECT] = "#4C9900";
-			color_map[exc.STATE.WAITING] = "#999900";
-			color_map[exc.STATE.READY] = "#000000";
+			var status_map = {};
+			var content;
+
+			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
+			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
+			status_map[exc.STATE.WAITING] = {color:"#999900",content:"\uf201"};
+			status_map[exc.STATE.READY] = {color:"#000000",content:""};
+
+			content = status_map[state].content + " " + state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
 
 			ctx.save();
-			ctx.font = "14px Georgia, serif";
-			ctx.fillStyle = color_map[state];
-			ctx.fillText(state.toUpperCase(), this.getWidth() - 100, this.getHeight() - 25);
+			ctx.font = "16px Ionicons";
+			ctx.fillStyle = status_map[state].color;
+			ctx.fillText(content, this.getWidth() - 110, this.getHeight() - 25);
 			ctx.restore();
 		},
 		/**
