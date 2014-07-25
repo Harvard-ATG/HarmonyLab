@@ -134,27 +134,52 @@ define([
 		renderExerciseText: function() {
 			var exc = this.exerciseContext;
 			var definition = exc.getDefinition();
-			var $dialog = $("#exerciseDialog");
-			var dialog_config = {
-				modal: true,
-				buttons: {
-					Ok: function() {
-						$(this).dialog("close");
-					}
+			var $el = $("#staff-text");
+			var tpl = _.template([
+				'<div class="exercise-text">',
+					'<div class="exercise-text-title"><%= title %></div>',
+					'<div class="exercise-text-content"><%= content %></div>',
+					'<button class="exercise-text-btn"><%= buttonText %></button>',
+				'</div>'
+			].join(''));
+			var html = '';
+			var state = false;
+
+			$el.on("click", ".exercise-text-btn, .exercise-text-title", null, function() {
+				var that = this, height;
+				if(state) {
+					height = $(".exercise-text-title", $el).height() 
+				} else {
+					height = '100%';
 				}
-			};
+				state = !state;
+
+				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: 500,});
+			});
 
 			switch(exc.state) {
 				case exc.STATE.READY:
 					if(exc.definition.hasIntro()) {
-						$dialog.html(exc.definition.getIntro());
-						$dialog.dialog(dialog_config);
+						state = true;
+						html = tpl({
+							"title": "Exercise Preview",
+							"buttonText": "Begin",
+							"content": exc.definition.getIntro()
+						});
+						$el.html(html);
+						$el.slideDown();
 					}
 					break;
 				case exc.STATE.CORRECT:
 					if(exc.definition.hasReview()) {
-						$dialog.html(exc.definition.getReview());
-						$dialog.dialog(dialog_config);
+						state = true;
+						html = tpl({
+							"title": "Exercise Review",
+							"buttonText": "OK",
+							"content": exc.definition.getReview()
+						});
+						$el.html(html);
+						$el.slideDown();
 					}
 					break;
 				default:
