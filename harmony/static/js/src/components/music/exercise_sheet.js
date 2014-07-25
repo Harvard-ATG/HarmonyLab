@@ -87,7 +87,7 @@ define([
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
-			this.el = $('<canvas></canvas>');
+			this.el = $('canvas#staff');
 			this.el[0].width = this.getWidth();
 			this.el[0].height = this.getHeight();
 
