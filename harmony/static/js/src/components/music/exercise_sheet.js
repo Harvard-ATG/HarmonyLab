@@ -143,9 +143,8 @@ define([
 				'</div>'
 			].join(''));
 			var html = '';
-			var state = false;
 
-			var toggle_text_fn = function(evt) {
+			var toggle_text_fn = function(state, duration) {
 				var that = this; 
 				var up_arrow_cls = 'ion-arrow-up-b'; 
 				var down_arrow_cls = 'ion-arrow-down-b';
@@ -158,18 +157,23 @@ define([
 					height = '100%';
 					arrow_cls = [down_arrow_cls,up_arrow_cls];
 				}
-				state = !state;
 
-				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: 500,});
+				if(typeof duration === 'undefined') {
+					duration = 500;
+				}
+
+				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: duration});
 				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
 			};
 
-			$el.on("click", ".exercise-text-btn, .exercise-text-title", null, toggle_text_fn);
+			$el.on("click", ".exercise-text-btn, .exercise-text-title", {state:false}, function(evt) {
+				evt.data.state = !evt.data.state;
+				toggle_text_fn(evt.data.state)
+			});
 
 			switch(exc.state) {
 				case exc.STATE.READY:
 					if(exc.definition.hasIntro()) {
-						state = true;
 						html = tpl({
 							"title": "Exercise Preview",
 							"buttonText": "Begin",
@@ -182,7 +186,6 @@ define([
 					break;
 				case exc.STATE.CORRECT:
 					if(exc.definition.hasReview()) {
-						state = true;
 						html = tpl({
 							"title": "Exercise Review",
 							"buttonText": "OK",
@@ -194,6 +197,7 @@ define([
 					}
 					break;
 				default:
+					toggle_text_fn(true, 0);
 					break;
 			}
 
