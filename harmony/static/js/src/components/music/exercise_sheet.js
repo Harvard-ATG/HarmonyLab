@@ -137,7 +137,7 @@ define([
 			var $el = $("#staff-text");
 			var tpl = _.template([
 				'<div class="exercise-text">',
-					'<div class="exercise-text-title"><%= title %></div>',
+					'<div class="exercise-text-title"><%= title %>&nbsp;<i class="js-arrow ion-arrow-up-b"></i></div>',
 					'<div class="exercise-text-content"><%= content %></div>',
 					'<button class="exercise-text-btn"><%= buttonText %></button>',
 				'</div>'
@@ -145,17 +145,26 @@ define([
 			var html = '';
 			var state = false;
 
-			$el.on("click", ".exercise-text-btn, .exercise-text-title", null, function() {
-				var that = this, height;
+			var toggle_text_fn = function(evt) {
+				var that = this; 
+				var up_arrow_cls = 'ion-arrow-up-b'; 
+				var down_arrow_cls = 'ion-arrow-down-b';
+				var arrow_cls, height;
+
 				if(state) {
 					height = $(".exercise-text-title", $el).height() 
+					arrow_cls = [up_arrow_cls,down_arrow_cls];
 				} else {
 					height = '100%';
+					arrow_cls = [down_arrow_cls,up_arrow_cls];
 				}
 				state = !state;
 
 				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: 500,});
-			});
+				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
+			};
+
+			$el.on("click", ".exercise-text-btn, .exercise-text-title", null, toggle_text_fn);
 
 			switch(exc.state) {
 				case exc.STATE.READY:
@@ -167,7 +176,8 @@ define([
 							"content": exc.definition.getIntro()
 						});
 						$el.html(html);
-						$el.slideDown();
+					} else {
+						$el.hide();
 					}
 					break;
 				case exc.STATE.CORRECT:
@@ -179,7 +189,8 @@ define([
 							"content": exc.definition.getReview()
 						});
 						$el.html(html);
-						$el.slideDown();
+					} else {
+						$el.hide();
 					}
 					break;
 				default:
