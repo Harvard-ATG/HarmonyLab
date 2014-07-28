@@ -562,7 +562,7 @@ define([
 		 * @return {number}
 		 */
 		getYForClef: function(clef) {
-			var y = 25;
+			var y = 75;
 			y += (clef === 'treble' ? 0 : 75);
 			return y;
 		},

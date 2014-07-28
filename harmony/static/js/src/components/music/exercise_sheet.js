@@ -197,6 +197,8 @@ define([
 					break;
 			}
 
+			$el.removeClass('hide');
+
 			return this;
 		},
 		/**
@@ -414,7 +416,7 @@ define([
 			}
 			var ctx = notater.getContext()
 			var x = notater.getX();
-			var y = notater.getY() + 45;
+			var y = notater.getY() + 35;
 			var exc = this.exerciseContext;
 			var state = exc.state;
 			var label = 'Exercise status: '; 
