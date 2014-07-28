@@ -1,6 +1,7 @@
 /* global define: false */
 define([
 	'jquery',
+	'jquery-ui',
 	'lodash', 
 	'vexflow',
 	'app/config',
@@ -10,6 +11,7 @@ define([
 	'./stave_note_factory'
 ], function(
 	$,
+	$UI,
 	_, 
 	Vex, 
 	Config,
@@ -58,7 +60,8 @@ define([
 
 		_.bindAll(this, [
 			'render',
-			'onChordsUpdate'
+			'onChordsUpdate',
+			'updateExerciseStatus'
 		]);
 	};
 
@@ -84,7 +87,7 @@ define([
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
 
-			this.el = $('<canvas></canvas>');
+			this.el = $('canvas#staff');
 			this.el[0].width = this.getWidth();
 			this.el[0].height = this.getHeight();
 
@@ -119,29 +122,88 @@ define([
 		render: function() { 
 			this.clear();
 			this.renderStaves();
-			this.renderExerciseStatus();
+			this.renderExerciseText();
+
 			return this;
 		},
 		/**
-		 * Renders the status of the exercise.
+		 * Renders intro or review text for the exercise.
 		 *
-		 * @return undefined
+		 * @return this
 		 */
-		renderExerciseStatus: function() {
-			var ctx = this.vexRenderer.getContext()
+		renderExerciseText: function() {
 			var exc = this.exerciseContext;
-			var state = exc.state;
-			var color_map = {};
-			color_map[exc.STATE.INCORRECT] = "#990000";
-			color_map[exc.STATE.CORRECT] = "#4C9900";
-			color_map[exc.STATE.WAITING] = "#999900";
-			color_map[exc.STATE.READY] = "#000000";
+			var definition = exc.getDefinition();
+			var $el = $("#staff-text");
+			var tpl = _.template([
+				'<div class="exercise-text">',
+					'<div class="exercise-text-title"><%= title %>&nbsp;<i class="js-arrow ion-arrow-up-b"></i></div>',
+					'<div class="exercise-text-content"><%= content %></div>',
+					'<button class="exercise-text-btn"><%= buttonText %></button>',
+				'</div>'
+			].join(''));
+			var html = '';
 
-			ctx.save();
-			ctx.font = "14px Georgia, serif";
-			ctx.fillStyle = color_map[state];
-			ctx.fillText(state.toUpperCase(), this.getWidth() - 100, this.getHeight() - 25);
-			ctx.restore();
+			var toggle_text_fn = function(state, duration) {
+				var that = this; 
+				var up_arrow_cls = 'ion-arrow-up-b'; 
+				var down_arrow_cls = 'ion-arrow-down-b';
+				var arrow_cls, height;
+
+				if(state) {
+					height = $(".exercise-text-title", $el).height() 
+					arrow_cls = [up_arrow_cls,down_arrow_cls];
+				} else {
+					height = '100%';
+					arrow_cls = [down_arrow_cls,up_arrow_cls];
+				}
+
+				if(typeof duration === 'undefined') {
+					duration = 500;
+				}
+
+				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: duration});
+				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
+			};
+
+			$el.on("click", ".exercise-text-btn, .exercise-text-title", {state:false}, function(evt) {
+				evt.data.state = !evt.data.state;
+				toggle_text_fn(evt.data.state)
+			});
+
+			switch(exc.state) {
+				case exc.STATE.READY:
+					if(exc.definition.hasIntro()) {
+						html = tpl({
+							"title": "Exercise Preview",
+							"buttonText": "Begin",
+							"content": exc.definition.getIntro()
+						});
+						$el.html(html);
+					} else {
+						$el.hide();
+					}
+					break;
+				case exc.STATE.CORRECT:
+					if(exc.definition.hasReview()) {
+						html = tpl({
+							"title": "Exercise Review",
+							"buttonText": "OK",
+							"content": exc.definition.getReview()
+						});
+						$el.html(html);
+					} else {
+						$el.hide();
+					}
+					break;
+				default:
+					toggle_text_fn(true, 0);
+					break;
+			}
+
+			$el.removeClass('hide');
+
+			return this;
 		},
 		/**
 		 * Clears the sheet.
@@ -232,16 +294,18 @@ define([
 		 */
 		createDisplayStave: function(clef, position) {
 			var stave = new Stave(clef, position);
-
-			stave.setRenderer(this.vexRenderer);
-			stave.setKeySignature(this.keySignature);
-			stave.setNotater(StaveNotater.create(clef, {
+			var stave_notater = this.createStaveNotater(clef, {
 				stave: stave,
 				keySignature: this.keySignature,
 				analyzeConfig: this.getAnalyzeConfig()
-			}));
+			});
+
+			stave.setRenderer(this.vexRenderer);
+			stave.setKeySignature(this.keySignature);
+			stave.setNotater(stave_notater);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
+			stave.bind("notated", this.updateExerciseStatus);
 
 			return stave;
 		},
@@ -265,7 +329,7 @@ define([
 				keySignature: this.keySignature,
 				highlightConfig: this.getHighlightConfig()
 			}));
-			stave.setNotater(StaveNotater.create(clef, {
+			stave.setNotater(this.createStaveNotater(clef, {
 				stave: stave,
 				chord: chord,
 				keySignature: this.keySignature,
@@ -276,6 +340,16 @@ define([
 			stave.setBanked(isBanked);
 
 			return stave;
+		},
+		/**
+		 * Creates an instance of StaveNotater.
+		 *
+		 * @param {string} clef The clef, treble|bass, to create.
+		 * @param {object} config The config for the StaveNotater.
+		 * @return {object}
+		 */
+		createStaveNotater: function(clef, config) {
+			return StaveNotater.create(clef, config);
 		},
 		/**
 		 * Returns the width of the sheet.
@@ -310,6 +384,22 @@ define([
 			return this.parentComponent.highlightConfig;
 		},
 		/**
+		 * Returns the chords for display.
+		 *
+		 * @return undefined
+		 */
+		getDisplayChords: function() {
+			return this.exerciseContext.getDisplayChords();
+		},
+		/**
+		 * Returns the input chords.
+		 *
+		 * @return undefined
+		 */
+		getInputChords: function() {
+			return this.exerciseContext.getInputChords();
+		},
+		/**
 		 * Handles a chord bank update.
 		 *
 		 * @return undefined
@@ -318,12 +408,57 @@ define([
 			this.updateStaves();
 			this.render();
 		},
-		getDisplayChords: function() {
-			return this.exerciseContext.getDisplayChords();
-		},
-		getInputChords: function() {
-			return this.exerciseContext.getInputChords();
-		},
+		/**
+		 * Updates the exercise status.
+		 *
+		 * @return undefined
+		 */
+		updateExerciseStatus: function(notater) {
+			var can_notate = (notater.clef === StaveNotater.BASS && notater.stave.isFirstBar());
+			if(!can_notate) {
+				return;
+			}
+			var ctx = notater.getContext()
+			var x = notater.getX();
+			var y = notater.getY() + 35;
+			var exc = this.exerciseContext;
+			var state = exc.state;
+			var label = 'Exercise status: '; 
+			var text_width = 0;
+			var content = '';
+			var status_map = {};
+			var font_size = "14px";
+
+			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
+			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
+			status_map[exc.STATE.WAITING] = {color:"#999900",content:""};
+			status_map[exc.STATE.READY] = {color:"#000000",content:""};
+
+			// status indicator label
+			ctx.save();
+			ctx.font = notater.getTextFont(font_size);
+			ctx.fillStyle = "#000000";
+			ctx.fillText(label, x, y);
+			text_width = ctx.measureText(label).width;
+			ctx.restore();
+
+			// status indicator text
+			ctx.save();
+			ctx.font = notater.getTextFont(font_size);
+			content = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+			ctx.fillStyle = status_map[state].color;
+			ctx.fillText(content, x + text_width + 5, y);
+			text_width += ctx.measureText(content).width + 5;
+			ctx.restore();
+
+			// status indicator icon
+			ctx.save();
+			ctx.font = notater.getIconFont(font_size);
+			ctx.fillStyle = status_map[state].color;
+			content = status_map[state].content;
+			ctx.fillText(content, x + text_width + 5, y);
+			ctx.restore();
+		}
 	});
 
 	return ExerciseSheetComponent;

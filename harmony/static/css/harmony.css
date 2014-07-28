@@ -66,17 +66,41 @@ body {
 	background-color: rgb(238, 238, 221);
 	margin: 0 auto;
 	position:relative;
-	z-index:10;
+	z-index:0;
 	padding:0;
-}
-#staff-area canvas {
-	position: absolute;
-	top: 35px;
-	left: 0;
+	overflow:hidden;
+	overflow-y:auto;
 }
 #staff-toolbar {
+	position: absolute;
 	height: 35px;
-	padding: 5px 0px;
+	width: 100%;
+	padding: 0px;
+	z-index: 1;
+}
+canvas#staff {
+	position: static;
+	left: 0;
+	z-index: 1;
+}
+#staff-text {
+	position: static;
+	background-color: rgba(238, 238, 221);
+	border-bottom: 2px dashed #ccc;
+	z-index: 1;
+}
+#staff-text .exercise-text {
+	padding: .5em 1em;
+	margin: 0;
+	overflow: hidden;
+}
+#staff-text .exercise-text-title {
+	font-weight: bold;
+	font-size: 24px;
+}
+#staff-text .exercise-text-content {
+	font-weight: normal;
+	font-size: 16px;
 }
 .icon-btn {
 	background: url(../img/icon-btn-sprite.png) no-repeat;
@@ -142,10 +166,9 @@ body {
 /* Left side tabs of staff area */
 .left-panel-bed {
 	width: 200px;
-	margin: 0 auto;
 	padding: 0 0;  
 	text-align: left;
-	float:left;
+	position: absolute;
 }
 
 #tab-nav-1.tab-nav ul {

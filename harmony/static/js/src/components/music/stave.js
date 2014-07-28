@@ -1,9 +1,11 @@
 /* global define: false */ 
 define([
 	'lodash', 
+	'microevent',
 	'vexflow'
 ], function(
 	_, 
+	MicroEvent,
 	Vex
 ) {
 	"use strict";
@@ -66,6 +68,8 @@ define([
 		 * @type {boolean}
 		 */
 		this._isBanked = false;
+
+		_.bindAll(this, ['onNotated']);
 
 		this.init(clef, position);
 	};
@@ -368,6 +372,9 @@ define([
 		 */
 		setNotater: function(notater) {
 			this.notater = notater;
+			if(this.notater) {
+				this.notater.bind("notated", this.onNotated);
+			}
 		},
 		/**
 		 * Connects this stave to another.
@@ -555,7 +562,7 @@ define([
 		 * @return {number}
 		 */
 		getYForClef: function(clef) {
-			var y = 64;
+			var y = 75;
 			y += (clef === 'treble' ? 0 : 75);
 			return y;
 		},
@@ -593,8 +600,28 @@ define([
 		 */
 		isBanked: function() {
 			return this._isBanked;
+		},
+		/**
+		 * Handles a "notated" event.
+		 *
+		 * @fires notated 
+		 *
+		 * @return undefined
+		 */
+		onNotated: function(notater) {
+			this.trigger("notated", notater);
+		},
+		/**
+		 * Destroys the stave.
+		 */
+		destroy: function() {
+			if(this.notater) {
+				this.notater.unbind("notated", this.onNotated);
+			}
 		}
 	});
+
+	MicroEvent.mixin(Stave);
 
 	return Stave;
 });

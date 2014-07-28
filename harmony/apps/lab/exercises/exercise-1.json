@@ -1,6 +1,7 @@
 {
   "type": "matching",
-  "introText": "Learn to play chords in root position",
+  "introText": "Learn to play a C major chord in root position",
+  "reviewText": "Good job!",
   "key": "jC_",
   "problems": [{
       "text": "Play the C major chord in root position (0,4,7)",

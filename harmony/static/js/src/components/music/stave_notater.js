@@ -2,11 +2,13 @@
 define([
 	'lodash', 
 	'vexflow',
+	'microevent',
 	'app/util',
 	'app/utils/analyze'
 ], function(
 	_, 
 	Vex, 
+	MicroEvent,
 	util, 
 	Analyze
 ) {
@@ -45,6 +47,9 @@ define([
 	 */
 	var StaveNotater = function() {
 	};
+
+	StaveNotater.BASS = 'bass';
+	StaveNotater.TREBLE = 'treble';
 
 	_.extend(StaveNotater.prototype, {
 		/**
@@ -100,13 +105,14 @@ define([
 		/**
 		 * Notates the Stave if the notater is enabled.
 		 *
+		 * @fires notated
 		 * @return undefined
 		 */
 		notate: function() {
 			var ctx = this.getContext();
 
 			ctx.save();
-			ctx.font = this.getFont();
+			ctx.font = this.getTextFont();
 
 			this.notateStave();
 
@@ -118,6 +124,8 @@ define([
 			}
 
 			ctx.restore();
+
+			this.trigger("notated", this);
 		},
 		/**
 		 * Creates an analyzer object used to return analysis information about
@@ -157,8 +165,22 @@ define([
 		 *
 		 * @return {string}
 		 */
-		getFont: function() {
-			return "14px Georgia, serif";
+		getTextFont: function(size) {
+			if(!size) {
+				size = "14px"
+			}
+			return size + " Georgia, serif";
+		},
+		/**
+		 * Returns the font for rendering icons.
+		 *
+		 * @return {string}
+		 */
+		getIconFont: function(size) {
+			if(!size) {
+				size = "14px";
+			}
+			return size + " Ionicons";
 		},
 		/**
 		 * Returns the X position for notating.
@@ -417,6 +439,7 @@ define([
 	 */
 	var TrebleStaveNotater = function(config) {
 		this.init(config);
+		this.clef = StaveNotater.TREBLE;
 	};
 
 	/**
@@ -481,6 +504,8 @@ define([
 		}
 	});
 
+	MicroEvent.mixin(TrebleStaveNotater);
+
 	//------------------------------------------------------------
 
 	/**
@@ -493,6 +518,7 @@ define([
 	 */
 	var BassStaveNotater = function(config) {
 		this.init(config);
+		this.clef = StaveNotater.BASS;
 	};
 
 	/**
@@ -550,6 +576,8 @@ define([
 			}
 		}
 	});
+
+	MicroEvent.mixin(BassStaveNotater);
 
 	//------------------------------------------------------------
 
