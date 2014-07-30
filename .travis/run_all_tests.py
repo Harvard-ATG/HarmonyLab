@@ -9,7 +9,7 @@ parent_dir = os.path.dirname(cur_dir)
 statuses = [
     call(["echo", "Running python unit tests via nose..."]),
     call(["/usr/bin/env", "nosetests", parent_dir], env=os.environ.copy()),
-    call([os.path.join(cur_dir, "make_spec_runner.py")], env=os.environ.copy()),
+    call([os.path.join(cur_dir, "prepare_tests.py")], env=os.environ.copy()),
     call(["/usr/bin/env", "phantomjs", os.path.join(cur_dir, "jasmine.js")], env=os.environ.copy()),
 ]
 
