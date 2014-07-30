@@ -7,6 +7,9 @@ from subprocess import call
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.dirname(cur_dir)
 
+# Make sure we're executing from the current directory
+os.chdir(cur_dir)
+
 statuses = [
     call(["echo", "Running python unit tests via nose..."]),
     call(["/usr/bin/env", "nosetests", parent_dir]),
