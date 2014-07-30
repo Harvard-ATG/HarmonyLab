@@ -2,13 +2,16 @@
 
 import json
 import os.path
-from django.conf import settings
+
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+spec_file = os.path.join(cur_dir, "SpecRunner.js")
+root_dir = os.path.dirname(cur_dir)
 
 def get_all_specs():
     all_specs = []
     required_suffix = '_spec.js'
-    spec_dir = os.path.join(settings.PROJECT_ROOT, 'static', 'js', 'spec')
-    strip_prefix_len = len(os.path.join(settings.PROJECT_ROOT, 'static', 'js', '')) # with trailing slash
+    spec_dir = os.path.join(root_dir, 'harmony', 'static', 'js', 'spec')
+    strip_prefix_len = len(os.path.join(root_dir, 'harmony', 'static', 'js', '')) # with trailing slash
 
     for curpath, dirs, files in os.walk(spec_dir):
         for name in files:
@@ -33,8 +36,6 @@ spec_content += "\t\tjasmineEnv.execute();" + os.linesep
 spec_content += "\t});" + os.linesep
 spec_content += "});" + os.linesep
 
-cur_dir = os.path.dirname(os.path.realpath(__file__))
-spec_file = os.path.join(cur_dir, "SpecRunner.js")
 with open(spec_file, 'w') as f:
     print "Writing " + spec_file + "..."
     f.write(spec_content)

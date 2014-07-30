@@ -7,7 +7,7 @@ env:
     - DJANGO_SETTINGS_MODULE="harmony.settings.travis"
 
 # command to install dependencies
-install: "pip install -v -r requirements/travis.txt"
+install: "pip install -r requirements/travis.txt"
 
 before_install:
     - sudo apt-get update -qq
@@ -15,4 +15,4 @@ before_install:
 
 # command to run tests
 script: 
-    - cd .travis && run_all_tests.py
+    - cd .travis && ./run_all_tests.py
