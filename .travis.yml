@@ -5,11 +5,9 @@ python:
 # set environment variables
 env:
     - DJANGO_SETTINGS_MODULE="harmony.settings.travis"
-    - PYTHONPATH="/home/travis/build/Harvard-ATG/HarmonyLab"
-    - PIP_USE_MIRRORS=true
 
 # command to install dependencies
-install: "pip install -r requirements/travis.txt"
+install: "pip install -v -r requirements/travis.txt"
 
 before_install:
     - sudo apt-get update -qq
@@ -17,4 +15,4 @@ before_install:
 
 # command to run tests
 script: 
-    - .travis/run_all_tests.py
+    - cd .travis && run_all_tests.py

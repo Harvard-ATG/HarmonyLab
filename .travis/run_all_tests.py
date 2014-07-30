@@ -1,22 +1,16 @@
 #!/usr/bin/python
 
-import sys
-import os.path
+import sys, os, os.path
 from subprocess import call
 
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.dirname(cur_dir)
 
-# Make sure we're executing from the current directory
-os.chdir(cur_dir)
-
-print "pythonpath=", sys.path
-
 statuses = [
     call(["echo", "Running python unit tests via nose..."]),
-    call(["/usr/bin/env", "nosetests", parent_dir]),
-    call([os.path.join(cur_dir, "make_spec_runner.py")]),
-    call(["/usr/bin/env", "phantomjs", os.path.join(cur_dir, "jasmine.js")]),
+    call(["/usr/bin/env", "nosetests", parent_dir], env=os.environ.copy()),
+    call([os.path.join(cur_dir, "make_spec_runner.py")], env=os.environ.copy()),
+    call(["/usr/bin/env", "phantomjs", os.path.join(cur_dir, "jasmine.js")], env=os.environ.copy()),
 ]
 
 final_status = 0
