@@ -10,6 +10,8 @@ parent_dir = os.path.dirname(cur_dir)
 # Make sure we're executing from the current directory
 os.chdir(cur_dir)
 
+print "pythonpath=", sys.path
+
 statuses = [
     call(["echo", "Running python unit tests via nose..."]),
     call(["/usr/bin/env", "nosetests", parent_dir]),
