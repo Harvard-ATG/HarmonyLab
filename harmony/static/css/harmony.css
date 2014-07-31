@@ -72,7 +72,6 @@ body {
 	overflow-y:auto;
 }
 #staff-toolbar {
-	position: absolute;
 	height: 35px;
 	width: 100%;
 	padding: 0px;
@@ -84,23 +83,50 @@ canvas#staff {
 	z-index: 1;
 }
 #staff-text {
-	position: static;
-	background-color: rgba(238, 238, 221);
-	border-bottom: 2px dashed #ccc;
-	z-index: 1;
+	position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 0;
+}
+#staff-text .exercise-text-content.visible, 
+#staff-text .exercise-text-btn.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .5s linear;
+}
+#staff-text .exercise-text-content.hidden, 
+#staff-text .exercise-text-btn.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s .5s, opacity .5s linear;
+}
+#staff-text .exercise-text-shadow {
+    -webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
+    -moz-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
+    box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
 }
 #staff-text .exercise-text {
-	padding: .5em 1em;
+	padding: 0;
 	margin: 0;
 	overflow: hidden;
 }
 #staff-text .exercise-text-title {
 	font-weight: bold;
 	font-size: 24px;
+    z-index: 3;
 }
 #staff-text .exercise-text-content {
 	font-weight: normal;
-	font-size: 16px;
+	font-size: 14px;
+}
+#staff-text .exercise-text-content,
+#staff-text .exercise-text-title {
+    padding: 5px 10px;
+	background-color: rgba(34,34,34,.8);
+    color: rgb(224,224,224);
 }
 .icon-btn {
 	background: url(../img/icon-btn-sprite.png) no-repeat;

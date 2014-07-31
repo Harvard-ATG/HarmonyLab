@@ -143,32 +143,29 @@ define([
 				'</div>'
 			].join(''));
 			var html = '';
+			var data = {state:false};
 
-			var toggle_text_fn = function(state, duration) {
+			var toggle_text_fn = function() {
 				var that = this; 
+				var state = data.state;
 				var up_arrow_cls = 'ion-arrow-up-b'; 
 				var down_arrow_cls = 'ion-arrow-down-b';
-				var arrow_cls, height;
+				var arrow_cls = [down_arrow_cls,up_arrow_cls];
+				var visible_cls = ['hidden','visible'];
 
 				if(state) {
-					height = $(".exercise-text-title", $el).height() 
 					arrow_cls = [up_arrow_cls,down_arrow_cls];
-				} else {
-					height = '100%';
-					arrow_cls = [down_arrow_cls,up_arrow_cls];
-				}
+					visible_cls = ['visible','hidden'];
+				} 
 
-				if(typeof duration === 'undefined') {
-					duration = 500;
-				}
-
-				$(".exercise-text", $el).animate({height: height}, {queue: false, duration: duration});
 				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
+				$('.exercise-text-content, .exercise-text-btn', $el).removeClass(visible_cls[0]).addClass(visible_cls[1]);
+				$('.exercise-text-title', $el)[state?'addClass':'removeClass']('exercise-text-shadow');
 			};
 
-			$el.on("click", ".exercise-text-btn, .exercise-text-title", {state:false}, function(evt) {
-				evt.data.state = !evt.data.state;
-				toggle_text_fn(evt.data.state)
+			$el.on("click", ".exercise-text-btn,.exercise-text-title", data, function(evt) {
+				data.state = !data.state;
+				toggle_text_fn(data.state)
 			});
 
 			switch(exc.state) {
@@ -197,7 +194,8 @@ define([
 					}
 					break;
 				default:
-					toggle_text_fn(true, 0);
+					data.state = true;
+					toggle_text_fn();
 					break;
 			}
 
