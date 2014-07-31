@@ -77,11 +77,18 @@ body {
 	padding: 0px;
 	z-index: 1;
 }
+#staff-text+#staff-toolbar {
+    margin-top: 42px;
+}
+#staff-text.hide+#staff-toolbar {
+    margin-top: 0px;
+}
 canvas#staff {
 	position: static;
 	left: 0;
 	z-index: 1;
 }
+
 #staff-text {
 	position: absolute;
     left: 0;
@@ -117,6 +124,7 @@ canvas#staff {
 #staff-text .exercise-text-title {
 	font-weight: bold;
 	font-size: 24px;
+    height: 32px;
     z-index: 3;
 }
 #staff-text .exercise-text-content {
