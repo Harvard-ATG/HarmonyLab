@@ -9,7 +9,7 @@ define([
 		it('should create a generator object with a size', function() {
 			var size = 49;
 			var kg = new KeyboardGenerator(size);
-			expect(kg.getSize()).toBe(size);
+			expect(kg.getSize()).toBe(size+1);
 		});
 
 		it('should throw an exception for invalid sizes', function() {
