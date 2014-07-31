@@ -68,6 +68,7 @@
 
   proto.reportSpecStarting = function(spec) {
     this.executed_specs++;
+	console.log("Spec starting...", spec.id, spec.description);
   };
 
   proto.reportSpecResults = function(spec) {
@@ -87,7 +88,7 @@
   };
 
   proto.reportSuiteResults = function(suite) {
-    if (!suite.parentSuite) { return; }
+    //if (!suite.parentSuite) { return; }
     var results = suite.results();
     var failed = results.totalCount - results.passedCount;
     var color = (failed > 0)? "red" : "green";

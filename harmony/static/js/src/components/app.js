@@ -1,7 +1,7 @@
 define([
 	'lodash',
 	'jquery',
-	'app/components/component',
+	'app/components/component'
 ], function(
 	_,
 	$,

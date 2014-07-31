@@ -14,6 +14,7 @@ spec_runner_path = os.path.join(cur_dir, spec_runner_file_name)
 requirejs_config_file = os.path.join(cur_dir, "generated_require_config.js")
 
 def get_all_specs():
+    '''Returns a list of paths to all spec files with the extension stripped off.'''
     all_specs = []
     required_suffix = '_spec.js'
     strip_prefix_len = len(os.path.join(root_dir, 'harmony', 'static', 'js', '')) # with trailing slash
@@ -26,48 +27,55 @@ def get_all_specs():
                 all_specs.append(spec_require_name)
     return all_specs
 
-all_specs = get_all_specs()
+def get_spec_content(spec_files):
+    '''Returns the javascript to execute the jasmine tests.'''
+    spec_files_json = json.dumps(spec_files)
+    return "".join([
+        "define(function() {" + os.linesep,
+        "\trequire("+spec_files_json+", function(){" + os.linesep,
+        "\t\tconsole.log('Jasmine test suite loaded.');" + os.linesep,
+        "\t\tvar consoleReporter = new jasmine.ConsoleReporter();" + os.linesep,
+        "\t\tvar jasmineEnv = jasmine.getEnv();" + os.linesep,
+        "\t\tjasmineEnv.addReporter(consoleReporter);" + os.linesep,
+        "\t\tjasmineEnv.execute();" + os.linesep,
+        "\t});" + os.linesep,
+        "});" + os.linesep,
+    ])
 
-spec_runner_content = "".join([
-    "define(function() {" + os.linesep,
-    "\trequire("+json.dumps(all_specs, indent=4, separators=(',', ': '))+", function(){" + os.linesep,
-    "\t\tconsole.log('Specs loaded.');" + os.linesep,
-    "\t\tvar consoleReporter = new jasmine.ConsoleReporter();" + os.linesep,
-    "\t\tvar htmlReporter = new jasmine.HtmlReporter();" + os.linesep,
-    "\t\tvar jasmineEnv = jasmine.getEnv();" + os.linesep,
-    "\t\tjasmineEnv.addReporter(consoleReporter);" + os.linesep,
-    "\t\tjasmineEnv.addReporter(htmlReporter);" + os.linesep,
-    "\t\tjasmineEnv.execute();" + os.linesep,
-    "\t});" + os.linesep,
-    "});" + os.linesep,
-])
-
-requirejs_config = {
-    "baseUrl": lib_dir,
-    "paths": {
-        "app": src_dir,
-        "spec": spec_dir,
-        "generated_spec_runner": spec_runner_path
+def get_requirejs_config():
+    '''Returns a requirejs config for phantomjs to find files locally.'''
+    return {
+        "baseUrl": lib_dir,
+        "paths": {
+            "app": src_dir,
+            "spec": spec_dir,
+            "generated_spec_runner": spec_runner_path
+        }
     }
-}
 
-requirejs_config_content = "".join([
-    "requirejs.config("+json.dumps(requirejs_config, indent=4, separators=(',', ': '))+");" + os.linesep,
-    "window.onload = function() {"+os.linesep,
-    "\tconsole.log(Array(20).join('-'));"+os.linesep,
-    "\trequire(['"+spec_runner_file_name+"']);"+os.linesep,
-    "};"+os.linesep
-])
+def get_requirejs_content(requirejs_config):
+    '''Returns the javascript to execute the requirejs config and load the spec runner.'''
+    requirejs_config_json = json.dumps(requirejs_config, indent=4, separators=(',', ': '))
+    return "".join([
+        "requirejs.config("+requirejs_config_json+");" + os.linesep,
+        "window.onload = function() {"+os.linesep,
+        "\tconsole.log(Array(20).join('-'));"+os.linesep,
+        "\trequire(['"+spec_runner_file_name+"']);"+os.linesep,
+        "};"+os.linesep
+    ])
 
-
-
-with open(spec_runner_file, 'w') as f:
-    print "Writing " + spec_runner_file + "..."
-    f.write(spec_runner_content)
-
-with open(requirejs_config_file, 'w') as f:
-    print "Writing " + requirejs_config_file + "..."
-    f.write(requirejs_config_content)
+def write_js_file(file_name, content):
+    '''Utility to write js content to a file.'''
+    with open(file_name, 'w') as f:
+        print "Writing {0}...".format(file_name)
+        f.write(content)
 
 
+all_specs = get_all_specs()
+spec_runner_content = get_spec_content(all_specs)
 
+requirejs_config = get_requirejs_config()
+requirejs_config_content = get_requirejs_content(requirejs_config)
+
+write_js_file(spec_runner_file, spec_runner_content)
+write_js_file(requirejs_config_file, requirejs_config_content)
