@@ -138,7 +138,7 @@ define([
 			var tpl = _.template([
 				'<div class="exercise-text">',
 					'<div class="exercise-text-title"><%= title %>&nbsp;<i class="js-arrow ion-arrow-up-b"></i></div>',
-					'<div class="exercise-text-content">',
+					'<div class="exercise-text-content visible">',
 						'<%= content %>',
 						'<button class="exercise-text-btn"><%= buttonText %></button>',
 					'</div>',
@@ -162,7 +162,6 @@ define([
 
 				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
 				$('.exercise-text-content', $el).removeClass(visible_cls[0]).addClass(visible_cls[1]);
-				$('.exercise-text-title', $el)[state?'addClass':'removeClass']('exercise-text-shadow');
 			};
 
 			$el.on("click", ".exercise-text-btn,.exercise-text-title", data, function(evt) {

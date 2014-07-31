@@ -90,23 +90,24 @@ canvas#staff {
     margin: 0;
     padding: 0;
     z-index: 0;
-}
-#staff-text .exercise-text-content.visible, 
-#staff-text .exercise-text-btn.visible {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity .5s linear;
-}
-#staff-text .exercise-text-content.hidden, 
-#staff-text .exercise-text-btn.hidden {
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s .5s, opacity .5s linear;
-}
-#staff-text .exercise-text-shadow {
+    /*
     -webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
     -moz-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
     box-shadow: 0px 5px 10px 0px rgba(0,0,0,.75);
+    */
+}
+#staff-text .exercise-text-content.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0s linear, height 0s linear;
+    height: 100%;
+}
+#staff-text .exercise-text-content.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s .25s, opacity .25s linear, height .25s linear;
+    height: 0;
+    padding: 0;
 }
 #staff-text .exercise-text {
 	padding: 0;
