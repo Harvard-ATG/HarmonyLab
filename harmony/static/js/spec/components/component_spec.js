@@ -18,7 +18,7 @@ define([
 		};
 
 		return new TestComponent(settings);
-	};
+	}
 
 	describe('Component', function() {
 		it('should create a component', function() {

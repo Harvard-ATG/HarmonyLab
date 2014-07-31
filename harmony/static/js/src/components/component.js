@@ -98,7 +98,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 	 *
 	 * @param {object} c The component to remove.
 	 * @return {number} 0 if no components removed, 1 if removed unnamed component, 2 if 
-	 *		   a named component was removed.
+	 *		a named component was removed.
 	 */
 	Component.prototype.removeComponent = function(c) {
 		var removed = 0;
@@ -241,7 +241,7 @@ define(['lodash', 'microevent'], function(_, MicroEvent) {
 		if(this.DEBUG || window.APP_DEBUG) {
 			this.log.apply(this, args);
 		}
-	}
+	};
 
 	return Component;
 });

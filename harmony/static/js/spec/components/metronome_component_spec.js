@@ -20,7 +20,7 @@ define([
 
 		it("should render", function() {
 			var metronomeComponent = createMetronome();
-			metronomeComponent.render()
+			metronomeComponent.render();
 			expect(metronomeComponent.el).toBeTruthy();
 		});
 

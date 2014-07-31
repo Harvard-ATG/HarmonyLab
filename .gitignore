@@ -5,3 +5,4 @@
 /harmony/static/js/build/*
 /data/*
 /*.log
+/.travis/generated_*.js

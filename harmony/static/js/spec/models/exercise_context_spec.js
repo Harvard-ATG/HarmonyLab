@@ -29,5 +29,5 @@ define([
 			expect(ecx.getGraded()).toBe(false);
 			expect(ecx.getInputChords()).toBe(settings.inputChords);
 		});
-	})
+	});
 });
