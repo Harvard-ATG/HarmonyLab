@@ -58,6 +58,12 @@ define([
 			 * @protected
 			 */
 			this._transpose = 0;   
+			/**
+			 * Arbitrary properties associated with each note.
+			 * @type {object}
+			 * @protected
+			 */
+			this._noteProps = {};
 
 			// initialize notes that should be on
 			if("notes" in this.settings) {
@@ -151,6 +157,34 @@ define([
 			}
 
 			return changed;
+		},
+		/**
+		 * Sets note properties.
+		 * 
+		 * @param {number|array} notes
+		 * @param {object}
+		 */
+		setNoteProps: function(notes, props) {
+			props = props || {};
+			if(typeof notes === 'number') {
+				notes = [notes];
+			}
+			for(var i = 0, len = notes.length; i < len; i++) {
+				this._noteProps[notes[i]] = _.assign({}, props);
+			}
+			return this;
+		},
+		/**
+		 * Returns the properties associated with a given note.
+		 *
+		 * @param {number} note
+		 * @return The properties, or false if there are none.
+		 */
+		getNoteProps: function(note) {
+			if(this._noteProps.hasOwnProperty(note)) {
+				return this._noteProps[note];
+			}
+			return false;
 		},
 		/**
 		 * Commands the chord to sustain all notes that are turned on (i.e.
