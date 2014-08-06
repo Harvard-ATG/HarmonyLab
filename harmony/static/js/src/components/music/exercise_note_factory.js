@@ -14,7 +14,7 @@ define([
 	/**
 	 * ExerciseNoteFactory class.
 	 *
-	 * This class knows how to create Vex.Flow.StaveNote objects for play sheet.
+	 * This class knows how to create Vex.Flow.StaveNote objects for an exercise sheet.
 	 *
 	 * @constructor
 	 * @param {object} settings
