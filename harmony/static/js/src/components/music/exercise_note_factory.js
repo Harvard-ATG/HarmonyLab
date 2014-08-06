@@ -54,7 +54,7 @@ define([
 			this.noteColorMap = {
 				notplayed: 'rgb(179,179,179)',
 				correct: 'rgb(0,0,0)',
-				incorrect: 'rgb(255,0,0)',
+				incorrect: 'rgb(255,191,0)',
 			};
 			this.chord = this.settings.chord;
 			this.keySignature = this.settings.keySignature;
@@ -67,7 +67,8 @@ define([
 				chord: this.chord,
 				keySignature: this.keySignature,
 				clef: this.clef,
-				highlightConfig: this.highlightConfig
+				highlightConfig: this.highlightConfig,
+				defaultNoteColor: this.noteColorMap.notplayed
 			});
 			this.staveNoteFactory.setModifierCallback(this.createModifiers);
 		},
@@ -101,6 +102,7 @@ define([
 			var clefMidiKeys = this.chord.getNoteNumbers(this.clef);
 			var noteProps = this.chord.getNoteProps();
 			var modifiers = [];
+			var modifier;
 			var note;
 
 			for(var i = 0, len = keys.length; i < len; i++) {
@@ -111,7 +113,10 @@ define([
 				if(this.highlightConfig.enabled) {
 					modifiers.push(this.staveNoteFactory.makeHighlightModifier(i, note, allMidiKeys));
 				}
-				modifiers.push(this.makeCorrectnessModifier(i, noteProps[note]));
+				modifier = this.makeCorrectnessModifier(i, noteProps[note]);
+				if(modifier) {
+					modifiers.push(modifier);
+				}
 			}
 
 			return modifiers;
@@ -133,7 +138,7 @@ define([
 			} else if(correctness === false) {
 				colorStyle = this.noteColorMap.incorrect;
 			} else {
-				colorStyle = this.noteColorMap.notplayed;
+				return false;
 			}
 
 			keyStyle.fillStyle = colorStyle;

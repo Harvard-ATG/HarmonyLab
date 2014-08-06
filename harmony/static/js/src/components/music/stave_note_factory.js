@@ -230,11 +230,7 @@ define([
 
 			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
 			if(!color) {
-				if(this.isBanked) {
-					color = this.bankedColor;
-				} else {
-					color = this.defaultNoteColor;
-				}
+				color = this.defaultNoteColor;
 			}
 
 			keyStyleOpts = {
