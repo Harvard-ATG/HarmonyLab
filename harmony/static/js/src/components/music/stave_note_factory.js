@@ -10,64 +10,52 @@ define([
 	"use strict";
 
 	/**
-	 * Creates an instance of StaveNoteFactory.
+	 * StaveNoteFactory.
 	 *
-	 * This object is responsible for knowing how to create stave notes that
-	 * may be added to a Stave.
+	 * This class knows how to create Vex.Flow.StaveNote objects with modifiers.
 	 *
 	 * In addition to the basic responsibility of creating notes with the
-	 * correct accidental modifiers, it should also know how to highlight notes
-	 * in different colors in order to draw attention to specific musical
-	 * phenomena.
+	 * correct accidental modifiers, it can highlight notes in different 
+	 * colors to draw attention to specific musical phenomena.
 	 *
-	 * @param {object} config
+	 * @constructor
+	 * @param {object} settings
+	 * @param {object} settings.chord 
+	 * @param {object} settings.keySignature
+	 * @param {object} settings.clef
 	 * @return
 	 */
-	var StaveNoteFactory = function(config) {
-		this.init(config);
+	var StaveNoteFactory = function(settings) {
+		this.settings = settings || {};
+
+		if(!("chord" in this.settings)) {
+			throw new Error("missing required settings.chord");
+		}
+		if(!("keySignature" in this.settings)) {
+			throw new Error("missing required settings.keySignature");
+		}
+		if(!("clef" in this.settings)) {
+			throw new Error("missing required settings.clef");
+		}
+		if(!("highlightConfig" in this.settings)) {
+			throw new Error("missing required settings.highlightConfig");
+		}
+
+		this.init();
 	};
 
 	_.extend(StaveNoteFactory.prototype, {
 		/**
 		 * Initializes the object.
 		 *
-		 * @param {object} config
 		 * @return
 		 */
-		init: function(config) {
-			/**
-			 * Configuration data passed to the constructor.
-			 * @type {object}
-			 */
-			this.config = config;
-			/**
-			 * Color for banked notes. 
-			 * @type {string}
-			 */
-			this.bankedColor = 'rgb(0,0,128)'; // dark blue
-			/**
-			 * Default note color.
-			 * @type {string}
-			 */
-			this.defaultColor = 'rgb(0,0,0)'; // black
-
-			this.initConfig();
-		},
-		/**
-		 * Initializes the config.
-		 *
-		 * @return undefined
-		 * @throws {Error} Will throw an error if any params are missing.
-		 */
-		initConfig: function() {
-			var required = ['chord', 'isBanked', 'keySignature', 'clef', 'highlightConfig'];
-			_.each(required, function(propName) {
-				if(this.config.hasOwnProperty(propName)) {
-					this[propName] = this.config[propName];
-				} else {
-					throw new Error("missing required config property: "+propName);
-				}
-			}, this);
+		init: function() {
+			this.defaultNoteColor = this.settings.defaultNoteColor || 'rgb(0,0,0)'; // black
+			this.chord = this.settings.chord;
+			this.keySignature = this.settings.keySignature;
+			this.clef = this.settings.clef;
+			this.highlightConfig = this.settings.highlightConfig;
 		},
 		/**
 		 * Creates one more Vex.Flow.StaveNote's.
@@ -76,11 +64,9 @@ define([
 		 * @return {array}
 		 */
 		createStaveNotes: function() {
-			var note_struct = this._getNoteKeysAndModifiers();
-			var stave_note = this._makeStaveNote(note_struct.keys, note_struct.modifiers);
+			var stave_note = this._makeStaveNote(this.getNoteKeys(), this.getNoteModifiers());
 			return [stave_note];
 		},
-		// 
 		/**
 		 * Returns true if there are any stave notes to create, false otherwise.
 		 *
@@ -93,20 +79,38 @@ define([
 		/**
 		 * Returns a list of key names for this stave only ["note/octave", ...] 
 		 *
-		 * @protected
 		 * @return {array}
 		 */
-		_getNoteKeys: function() {
+		getNoteKeys: function() {
 			var note_nums = this.chord.getNoteNumbers(this.clef);
 			var all_note_nums = this.chord.getNoteNumbers();
 			var note_name, note_keys = [];
 
 			for(var i = 0, len = note_nums.length; i < len; i++) {
-				note_name = this._getNoteName(note_nums[i], all_note_nums);
+				note_name = this.getNoteName(note_nums[i], all_note_nums);
 				note_keys.push(note_name);
 			}
 
 			return note_keys;
+		},
+		/**
+		 * Returns an array of functions that will modify a Vex.Flow.StaveNote
+		 * that is passed as a parameter.
+		 *
+		 * @return {array}
+		 */
+		getNoteModifiers: function() {
+			return this.modifierCallback.call(this);
+		},
+		/**
+		 * Sets a function that when called will return an array of modifier
+		 * functions.
+		 *
+		 * @return this
+		 */
+		setModifierCallback: function(callback) {
+			this.modifierCallback = callback;
+			return this;
 		},
 		/**
 		 * Returns the correct spelling or note name of a given note in a
@@ -120,7 +124,7 @@ define([
 		 * @param {array} notes
 		 * @return {string} the note name or spelling
 		 */
-		_getNoteName: function(note, notes) {
+		getNoteName: function(note, notes) {
 			var analyzer = this._makeAnalyzer();
 			return analyzer.getNoteName(note, notes);
 		},
@@ -131,7 +135,7 @@ define([
 		 * @param {array} noteKeys
 		 * @return {array}
 		 */
-		_getAccidentalsOf: function(noteKeys) {
+		getAccidentalsOf: function(noteKeys) {
 			var keySignature = this.keySignature;
 			var accidentals = [];
 			var accidental, 
@@ -195,33 +199,6 @@ define([
 			return octave;
 		},
 		/**
-		 * Returns a list of keys and associated modifiers for constructing Vex.Flow stave notes.
-		 *
-		 * @protected
-		 * @return {array}
-		 */
-		_getNoteKeysAndModifiers: function() {
-			var keys = this._getNoteKeys();
-			var accidentals = this._getAccidentalsOf(keys);
-			var allMidiKeys = this.chord.getNoteNumbers(); // for highlightConfig across stave boundaries
-			var midiKeys = this.chord.getNoteNumbers(this.clef);
-			var modifiers = [];
-
-			for(var i = 0, len = keys.length; i < len; i++) {
-				if(accidentals[i]) {
-					modifiers.push(this._makeAccidentalModifier(i, accidentals[i]));
-				}
-				if(this.isBanked) {
-					modifiers.push(this._makeBankedModifier(i));
-				}
-				if(this.highlightConfig.enabled) {
-					modifiers.push(this._makeHighlightModifier(i, midiKeys[i], allMidiKeys));
-				}
-			}
-
-			return {keys: keys, modifiers: modifiers};
-		},
-		/**
 		 * Returns a function that will add an accidental to a
 		 * Vex.Flow.StaveNote. 
 		 *
@@ -230,7 +207,7 @@ define([
 		 * @param {string} accidental 
 		 * @return {function}
 		 */
-		_makeAccidentalModifier: function(keyIndex, accidental) {
+		makeAccidentalModifier: function(keyIndex, accidental) {
 			return function(staveNote) {
 				staveNote.addAccidental(keyIndex, new Vex.Flow.Accidental(accidental));
 			};
@@ -245,7 +222,7 @@ define([
 		 * @param {array} allNotes Array of MIDI note numbers.
 		 * @return {function}
 		 */
-		_makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
+		makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
 			var color = '', keyStyleOpts = {};
 			var analyzer = this._makeAnalyzer({
 				highlightMode: this.highlightConfig.mode
@@ -256,7 +233,7 @@ define([
 				if(this.isBanked) {
 					color = this.bankedColor;
 				} else {
-					color = this.defaultColor;
+					color = this.defaultNoteColor;
 				}
 			}
 
@@ -269,19 +246,6 @@ define([
 
 			return function(staveNote) {
 				staveNote.setKeyStyle(keyIndex, keyStyleOpts);
-			};
-		},
-		/**
-		 * Makes a modifier for banked keys.
-		 *
-		 * @protected
-		 * @param {number} keyIndex
-		 * @return {function} 
-		 */
-		_makeBankedModifier: function(keyIndex) {
-			var keyStyle = {fillStyle:this.bankedColor, strokeStyle:this.bankedColor};
-			return function(staveNote) {
-				staveNote.setKeyStyle(keyIndex, keyStyle);
 			};
 		},
 		/**

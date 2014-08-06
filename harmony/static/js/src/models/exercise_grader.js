@@ -65,7 +65,9 @@ define([
 				result = this.notesMatch(expected_notes, actual_notes);
 				graded.problems[i] = {
 					score: score_map[result.state],
-					counts: result.counts
+					count: result.count,
+					note: result.note,
+					notes: result.notes
 				};
 			}
 
@@ -96,12 +98,14 @@ define([
 			var bucket = {};
 			var result = {
 				state: null,
-				counts: {}
+				count: {},
+				note: {},
+				notes: []
 			};
 			var i, len, note; 
 
-			result.counts[INCORRECT] = [];
-			result.counts[CORRECT] = [];
+			result.count[INCORRECT] = [];
+			result.count[CORRECT] = [];
 
 			for(i = 0, len = expectedNotes.length; i < len; i++) {
 				bucket[expectedNotes[i]] = true;
@@ -116,12 +120,15 @@ define([
 			for(i = 0, len = actualNotes.length; i < len; i++) {
 				note = actualNotes[i];
 				if(bucket[note]) {
-					result.counts[CORRECT].push(note);
+					result.count[CORRECT].push(note);
+					result.note[note] = CORRECT;
 					++actual_matches;
 				} else {
 					++incorrect_matches;
-					result.counts[INCORRECT].push(note);
+					result.count[INCORRECT].push(note);
+					result.note[note] = INCORRECT;
 				}
+				result.notes.push(note);
 			}
 
 			if(incorrect_matches > 0) {

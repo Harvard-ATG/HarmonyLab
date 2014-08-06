@@ -1,13 +1,13 @@
 define([
 	'lodash',
 	'microevent',
-	'./chord',
-	'./chord_bank'
+	'./exercise_chord',
+	'./exercise_chord_bank'
 ], function(
 	_,
 	MicroEvent,
-	Chord,
-	ChordBank
+	ExerciseChord,
+	ExerciseChordBank
 ) {
 
 	/**
@@ -36,7 +36,8 @@ define([
 
 		this.state = ExerciseContext.STATE.READY;
 		this.graded = false;
-		this.displayChords = this._createDisplayChords();
+		this.displayChords = this.createDisplayChords();
+		this.exerciseChords = this.createExerciseChords();
 
 		_.bindAll(this, ['grade']);
 
@@ -97,6 +98,7 @@ define([
 
 			this.graded = graded;
 			this.state = state;
+			this.displayChords = this.createDisplayChords();
 			this.trigger("graded");
 		},
 		/**
@@ -106,6 +108,14 @@ define([
 		 */
 		getDisplayChords: function() {
 			return this.displayChords;
+		},
+		/**
+		 * Returns chords for exercise analysis on screen.
+		 *
+		 * @return {object}
+		 */
+		getExerciseChords: function() {
+			return this.exerciseChords;
 		},
 		/**
 		 * Returns the chords being used for input to the exercise.
@@ -145,18 +155,54 @@ define([
 		 *
 		 * @return {object}
 		 */
-		_createDisplayChords: function() {
-			var problem, chord, chords; 
+		createDisplayChords: function() {
+			var d_problem, g_problem, chord, chords; 
 			var notes = [];
+			var problem_index = 0;
+			var CORRECT = this.grader.STATE.CORRECT;
 
 			if(this.definition.hasProblems()) {
-				problem = this.definition.getProblemAt(0);
+				d_problem = this.definition.getProblemAt(problem_index);
+				notes = d_problem.notes;
+			}
+
+			if(this.graded !== false) {
+				g_problem = this.graded.problems[problem_index];
+				notes = notes.concat(g_problem.notes);
+				notes = _.uniq(notes);
+			}
+
+			chord = new ExerciseChord({ notes: notes });
+			chords = new ExerciseChordBank({chords: [chord]});
+
+			if(this.graded !== false) {
+				_.each(g_problem.count, function(notes, correctness) {
+					var is_correct = (correctness === CORRECT);
+					if(notes.length > 0) {
+						chord.grade(notes, is_correct);
+					}
+				}, this);
+			}
+
+			return chords;
+		},
+		/**
+		 * Helper function that creates the exercise chords.
+		 *
+		 * @return {object}
+		 */
+		createExerciseChords: function() {
+			var problem, notes = [];
+			var problem_index = 0;
+
+			if(this.definition.hasProblems()) {
+				problem = this.definition.getProblemAt(problem_index);
 				notes = problem.notes;
 			}
 
-			chord = new Chord({ notes: notes });
-			chords = new ChordBank({chords: [chord]});
-			
+			chord = new ExerciseChord({ notes: notes });
+			chords = new ExerciseChordBank({chords: [chord]});
+
 			return chords;
 		}
 	});

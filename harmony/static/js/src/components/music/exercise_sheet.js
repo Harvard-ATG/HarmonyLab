@@ -8,7 +8,7 @@ define([
 	'app/components/component',
 	'./stave',
 	'./stave_notater',
-	'./stave_note_factory'
+	'./exercise_note_factory'
 ], function(
 	$,
 	$UI,
@@ -18,7 +18,7 @@ define([
 	Component,
 	Stave, 
 	StaveNotater,
-	StaveNoteFactory
+	ExerciseNoteFactory
 ) {
 	"use strict";
 
@@ -111,7 +111,8 @@ define([
 		initListeners: function() {
 			this.parentComponent.bind('change', this.render);
 			this.keySignature.bind('change', this.render);
-			this.getInputChords().bind('change', this.render);
+			//this.getInputChords().bind('change', this.render);
+			this.getInputChords().bind('change', this.onChordsUpdate);
 			this.getInputChords().bind('clear', this.onChordsUpdate);
 		},
 		/**
@@ -253,12 +254,18 @@ define([
 		updateStaves: function() {
 			var chord, treble, bass;
 			var limit = CHORD_BANK_SIZE;
-			var items = this.getDisplayChords().items({limit: limit, reverse: true});
+			var display_items = this.getDisplayChords().items({limit: limit, reverse: true});
+			var exercise_items = this.getExerciseChords().items({limit: limit, reverse: true});
 			var staves = [];
 			var index = 0;
-			var count = items.length;
-			var position = {index:index,count:count,maxCount:limit};
-			var isBanked;
+			var count = display_items.length;
+			var position = {
+				index:index,
+				count:count,
+				maxCount:limit
+			};
+			var display_chord;
+			var exercise_chord;
 
 			// the first stave bar is a special case: it's reserved to show the
 			// clef and key signature and nothing else
@@ -269,11 +276,11 @@ define([
 			staves.push(treble);
 
 			// now add the staves for showing the notes
-			for(var i = 0, len = items.length; i < len; i++) {
-				chord = items[i].chord;
-				isBanked = items[i].isBanked;
-				treble = this.createNoteStave('treble', _.clone(position), chord, isBanked);
-				bass = this.createNoteStave('bass', _.clone(position), chord, isBanked);
+			for(var i = 0, len = display_items.length; i < len; i++) {
+				display_chord = display_items[i].chord;
+				exercise_chord = exercise_items[i].chord;
+				treble = this.createNoteStave('treble', _.clone(position), display_chord, exercise_chord);
+				bass = this.createNoteStave('bass', _.clone(position), display_chord, exercise_chord);
 				position.index += 1;
 				treble.connect(bass);
 				staves.push(treble);
@@ -316,27 +323,25 @@ define([
 		 * @param {Chord} chord
 		 * @return {Stave}
 		 */
-		createNoteStave: function(clef, position, chord, isBanked) {
+		createNoteStave: function(clef, position, displayChord, exerciseChord) {
 			var stave = new Stave(clef, position);
 
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
-			stave.setNoteFactory(new StaveNoteFactory({
+			stave.setNoteFactory(new ExerciseNoteFactory({
 				clef: clef,
-				chord: chord,
-				isBanked: isBanked,
+				chord: displayChord,
 				keySignature: this.keySignature,
 				highlightConfig: this.getHighlightConfig()
 			}));
 			stave.setNotater(this.createStaveNotater(clef, {
 				stave: stave,
-				chord: chord,
+				chord: exerciseChord,
 				keySignature: this.keySignature,
 				analyzeConfig: this.getAnalyzeConfig()
 			}));
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
-			stave.setBanked(isBanked);
 
 			return stave;
 		},
@@ -389,6 +394,14 @@ define([
 		 */
 		getDisplayChords: function() {
 			return this.exerciseContext.getDisplayChords();
+		},
+		/**
+		 * Returns the chords for exercise analysis.
+		 *
+		 * @return undefined
+		 */
+		getExerciseChords: function() {
+			return this.exerciseContext.getExerciseChords();
 		},
 		/**
 		 * Returns the input chords.

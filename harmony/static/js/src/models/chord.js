@@ -175,16 +175,23 @@ define([
 			return this;
 		},
 		/**
-		 * Returns the properties associated with a given note.
+		 * Returns all note properties.
 		 *
-		 * @param {number} note
-		 * @return The properties, or false if there are none.
+		 * @return {object}
 		 */
-		getNoteProps: function(note) {
-			if(this._noteProps.hasOwnProperty(note)) {
-				return this._noteProps[note];
+		getNoteProps: function() {
+			return this._noteProps;
+		},
+		/**
+		 * Returns properties associated with a single note.
+		 *
+		 * @return {object}
+		 */
+		getNoteProp: function(note) {
+			if(!this._noteProps.hasOwnProperty(note)) {
+				return false;
 			}
-			return false;
+			return this._noteProps[note];
 		},
 		/**
 		 * Commands the chord to sustain all notes that are turned on (i.e.
