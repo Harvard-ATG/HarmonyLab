@@ -20,26 +20,23 @@ define([
 	 *
 	 * @constructor
 	 * @param {object} settings
+	 * @param {object} settings.clef
 	 * @param {object} settings.chord 
 	 * @param {object} settings.keySignature
-	 * @param {object} settings.clef
+	 * @param {object} settings.highlightConfig
+	 * @param {object} settings.modifierCallback
 	 * @return
 	 */
 	var StaveNoteFactory = function(settings) {
 		this.settings = settings || {};
 
-		if(!("chord" in this.settings)) {
-			throw new Error("missing required settings.chord");
-		}
-		if(!("keySignature" in this.settings)) {
-			throw new Error("missing required settings.keySignature");
-		}
-		if(!("clef" in this.settings)) {
-			throw new Error("missing required settings.clef");
-		}
-		if(!("highlightConfig" in this.settings)) {
-			throw new Error("missing required settings.highlightConfig");
-		}
+		_.each(['chord','keySignature','clef','highlightConfig','modifierCallback'], function(prop) {
+			if(prop in this.settings) {
+				this[prop] = this.settings[prop];
+			} else {
+				throw new Error("missing required settings."+prop);
+			}
+		}, this);
 
 		this.init();
 	};
@@ -52,10 +49,7 @@ define([
 		 */
 		init: function() {
 			this.defaultNoteColor = this.settings.defaultNoteColor || 'rgb(0,0,0)'; // black
-			this.chord = this.settings.chord;
-			this.keySignature = this.settings.keySignature;
-			this.clef = this.settings.clef;
-			this.highlightConfig = this.settings.highlightConfig;
+			this.highlightMap = {};
 		},
 		/**
 		 * Creates one more Vex.Flow.StaveNote's.
@@ -101,16 +95,6 @@ define([
 		 */
 		getNoteModifiers: function() {
 			return this.modifierCallback.call(this);
-		},
-		/**
-		 * Sets a function that when called will return an array of modifier
-		 * functions.
-		 *
-		 * @return this
-		 */
-		setModifierCallback: function(callback) {
-			this.modifierCallback = callback;
-			return this;
 		},
 		/**
 		 * Returns the correct spelling or note name of a given note in a
@@ -179,7 +163,109 @@ define([
 
 			return accidentals;
 		},
-		
+		/**
+		 * Returns the analysis color for a given note.
+		 *
+		 * @return {object} An object containg keyStyle options 
+		 */
+		getAnalysisHighlightOf: function(noteNumber, chordNoteNumbers) {
+			var keyStyleOpts = {};
+			var analyzer = this._makeAnalyzer({highlightMode: this.highlightConfig.mode});
+			var color = analyzer.ColorSpectacular(noteNumber, chordNoteNumbers);
+			if(!color) {
+				return false;
+			}
+
+			keyStyleOpts = {
+				//shadowColor: color,
+				//shadowBlur: 15,
+				fillStyle: color,
+				strokeStyle: color
+			};
+
+			return keyStyleOpts;
+		},
+		/**
+		 * Resets the note highlight mappings.
+		 *
+		 * @return this
+		 */
+		resetHighlight: function() {
+			this.highlightMap = {};
+			return this;
+		},
+		/**
+		 * Highlights a note in a Vex.Flow.StaveNote, given by key index, 
+		 * and applies a key style. Since there may be several styles 
+		 * applied to a single key, each highlight should have a priority.
+		 * If all keys have a priority, then the order is undefined.
+		 *
+		 * Note: in order to retrieve the computed highlight, call 
+		 * makeHighlightModifier() once for each keyIndex.
+		 *
+		 * @return this
+		 */
+		highlightNote: function(keyIndex, keyStyleOpts, priority) {
+			if(typeof priority === 'undefined') {
+				priority = 0;
+			}
+			if(typeof keyStyleOpts === 'undefined') {
+				keyStyleOpts = {
+					//shadowColor: color,
+					//shadowBlur: color,
+					//fillStyle: color,
+					//strokeStyle: color
+				};
+			}
+
+			if(!this.highlightMap.hasOwnProperty(keyIndex)) {
+				this.highlightMap[keyIndex] = [];
+			}
+
+			this.highlightMap[keyIndex].push({
+				priority: priority,
+				keyStyle: keyStyleOpts
+			});
+
+			return this;
+		},
+		/**
+		 * Returns the highlight for a given key with the highest priority.
+		 *
+		 * @return {object} An object containing key style options.
+		 */
+		getHighlightOf: function(keyIndex) {
+			var hmap = this.highlightMap; 
+			var defaultKeyStyle = {
+				fillStyle: this.defaultNoteColor, 
+				strokeStyle: this.defaultNoteColor
+			};
+			var styles = [];
+
+			if(hmap[keyIndex]) {
+				if(hmap[keyIndex].length == 1) {
+					return hmap[keyIndex][0].keyStyle;
+				}
+				styles = hmap[keyIndex].slice(0);
+				styles.sort(this.comparePriority);
+				return styles[0].keyStyle;
+			}
+
+			return defaultKeyStyle;
+		},
+		/**
+		 * Compares two objects by the value of their priority attribute.
+		 *
+		 * @return -1 if a>b, 0 if a==b, or 1 if a<b
+		 */
+		comparePriority: function(a, b) {
+			if(a.priority > b.priority) {
+				return -1;
+			} else if(a.priority == b.priority) {
+				return 0;
+			}
+			return 1;
+		},
 		/**
 		 * Returns the octave for a note, taking into account the current note spelling.
 		 *
@@ -218,30 +304,12 @@ define([
 		 *
 		 * @protected
 		 * @param {number} keyIndex
-		 * @param {number} noteToHighlight MIDI note number.
-		 * @param {array} allNotes Array of MIDI note numbers.
+		 * @param {object} keyStyle Object of keyStyleOptions
 		 * @return {function}
 		 */
-		makeHighlightModifier: function(keyIndex, noteToHighlight, allNotes) {
-			var color = '', keyStyleOpts = {};
-			var analyzer = this._makeAnalyzer({
-				highlightMode: this.highlightConfig.mode
-			});
-
-			color = analyzer.ColorSpectacular(noteToHighlight, allNotes);
-			if(!color) {
-				color = this.defaultNoteColor;
-			}
-
-			keyStyleOpts = {
-				//shadowColor: color,
-				//shadowBlur: 15,
-				fillStyle: color,
-				strokeStyle: color
-			};
-
+		makeHighlightModifier: function(keyIndex, keyStyle) {
 			return function(staveNote) {
-				staveNote.setKeyStyle(keyIndex, keyStyleOpts);
+				staveNote.setKeyStyle(keyIndex, keyStyle);
 			};
 		},
 		/**

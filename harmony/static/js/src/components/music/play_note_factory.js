@@ -18,9 +18,9 @@ define([
 	 *
 	 * @constructor
 	 * @param {object} settings
+	 * @param {object} settings.clef
 	 * @param {object} settings.chord 
 	 * @param {object} settings.keySignature
-	 * @param {object} settings.clef
 	 * @param {object} settings.highlightConfig
 	 * @param {object} settings.isBanked
 	 * @return
@@ -28,21 +28,13 @@ define([
 	var PlayNoteFactory = function(settings) {
 		this.settings = settings || {};
 
-		if(!("chord" in this.settings)) {
-			throw new Error("missing required settings.chord");
-		}
-		if(!("keySignature" in this.settings)) {
-			throw new Error("missing required settings.keySignature");
-		}
-		if(!("clef" in this.settings)) {
-			throw new Error("missing required settings.clef");
-		}
-		if(!("highlightConfig" in this.settings)) {
-			throw new Error("missing required settings.highlightConfig");
-		}
-		if(!("isBanked" in this.settings)) {
-			throw new Error("missing required settings.isBanked");
-		}
+		_.each(['chord','keySignature','clef','highlightConfig','isBanked'], function(prop) {
+			if(prop in this.settings) {
+				this[prop] = this.settings[prop];
+			} else {
+				throw new Error("missing required settings."+prop);
+			}
+		}, this);
 
 		this.init();
 	};
@@ -60,17 +52,6 @@ define([
 			 * @type {string}
 			 */
 			this.bankedColor = 'rgb(0,0,128)'; // dark blue
-			/**
-			 * Indicates if chord is banked.
-			 *
-			 * @type {boolean}
-			 */
-			this.isBanked = this.settings.isBanked;
-
-			this.chord = this.settings.chord;
-			this.keySignature = this.settings.keySignature;
-			this.clef = this.settings.clef;
-			this.highlightConfig = this.settings.highlightConfig;
 
 			_.bindAll(this, ['createModifiers']);
 
@@ -78,9 +59,9 @@ define([
 				chord: this.chord,
 				keySignature: this.keySignature,
 				clef: this.clef,
-				highlightConfig: this.highlightConfig
+				highlightConfig: this.highlightConfig,
+				modifierCallback: this.createModifiers
 			});
-			this.staveNoteFactory.setModifierCallback(this.createModifiers);
 		},
 		/**
 		 * Creates one more Vex.Flow.StaveNote's.
@@ -111,34 +92,44 @@ define([
 			var allMidiKeys = this.chord.getNoteNumbers(); // for highlightConfig across stave boundaries
 			var clefMidiKeys = this.chord.getNoteNumbers(this.clef);
 			var modifiers = [];
+			var note, keyStyle;
+
+			this.staveNoteFactory.resetHighlight();
 
 			for(var i = 0, len = keys.length; i < len; i++) {
+				note = clefMidiKeys[i];
+
+				// Apply accidentals (if any)
 				if(accidentals[i]) {
 					modifiers.push(this.staveNoteFactory.makeAccidentalModifier(i, accidentals[i]));
 				}
+
+				// Set highlight colors on notes
 				if(this.isBanked) {
-					modifiers.push(this.makeBankedModifier(i));
+					this.staveNoteFactory.highlightNote(i, this.getBankedColorStyle(), 1);
 				}
 				if(this.highlightConfig.enabled) {
-					modifiers.push(this.staveNoteFactory.makeHighlightModifier(i, clefMidiKeys[i], allMidiKeys));
+					keyStyle = this.staveNoteFactory.getAnalysisHighlightOf(note, allMidiKeys);
+					if(keyStyle !== false) {
+						this.staveNoteFactory.highlightNote(i, keyStyle, 2);
+					}
 				}
+
+				keyStyle = this.staveNoteFactory.getHighlightOf(i);
+				modifiers.push(this.staveNoteFactory.makeHighlightModifier(i, keyStyle));
 			}
 
 			return modifiers;
 		},
 		/**
-		 * Makes a modifier for banked keys.
+		 * Returns the highlight color styles for banked notes.
 		 *
 		 * @protected
-		 * @param {number} keyIndex
-		 * @return {function} 
+		 * @return {object}
 		 */
-		makeBankedModifier: function(keyIndex) {
-			var keyStyle = {fillStyle:this.bankedColor, strokeStyle:this.bankedColor};
-			return function(staveNote) {
-				staveNote.setKeyStyle(keyIndex, keyStyle);
-			};
-		},
+		getBankedColorStyle: function() {
+			return {fillStyle:this.bankedColor, strokeStyle:this.bankedColor};
+		}
 	});
 
 	return PlayNoteFactory;

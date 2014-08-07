@@ -18,32 +18,38 @@ define([
 	 *
 	 * @constructor
 	 * @param {object} settings
+	 * @param {object} settings.clef
 	 * @param {object} settings.chord 
 	 * @param {object} settings.keySignature
-	 * @param {object} settings.clef
 	 * @param {object} settings.highlightConfig
 	 * @return
 	 */
 	var ExerciseNoteFactory = function(settings) {
 		this.settings = settings || {};
 
-		if(!("chord" in this.settings)) {
-			throw new Error("missing required settings.chord");
-		}
-		if(!("keySignature" in this.settings)) {
-			throw new Error("missing required settings.keySignature");
-		}
-		if(!("clef" in this.settings)) {
-			throw new Error("missing required settings.clef");
-		}
-		if(!("highlightConfig" in this.settings)) {
-			throw new Error("missing required settings.highlightConfig");
-		}
+		_.each(['chord','keySignature','clef','highlightConfig'], function(prop) {
+			if(prop in this.settings) {
+				this[prop] = this.settings[prop];
+			} else {
+				throw new Error("missing required settings."+prop);
+			}
+		}, this);
 
 		this.init();
 	};
 
 	_.extend(ExerciseNoteFactory.prototype, {
+		/**
+		 * Defines the colors used for highlighting notes.
+		 *
+		 * @public
+		 * @type {object}
+		 */
+		noteColorMap: {
+			notplayed: 'rgb(179,179,179)',
+			correct: 'rgb(0,0,0)',
+			incorrect: 'rgb(255,191,0)'
+		},
 		/**
 		 * Initializes the object.
 		 *
@@ -51,16 +57,6 @@ define([
 		 * @return
 		 */
 		init: function(config) {
-			this.noteColorMap = {
-				notplayed: 'rgb(179,179,179)',
-				correct: 'rgb(0,0,0)',
-				incorrect: 'rgb(255,191,0)',
-			};
-			this.chord = this.settings.chord;
-			this.keySignature = this.settings.keySignature;
-			this.clef = this.settings.clef;
-			this.highlightConfig = this.settings.highlightConfig;
-
 			_.bindAll(this, ['createModifiers']);
 
 			this.staveNoteFactory = new StaveNoteFactory({
@@ -68,9 +64,8 @@ define([
 				keySignature: this.keySignature,
 				clef: this.clef,
 				highlightConfig: this.highlightConfig,
-				defaultNoteColor: this.noteColorMap.notplayed
+				modifierCallback: this.createModifiers
 			});
-			this.staveNoteFactory.setModifierCallback(this.createModifiers);
 		},
 		/**
 		 * Creates one more Vex.Flow.StaveNote's.
@@ -102,52 +97,63 @@ define([
 			var clefMidiKeys = this.chord.getNoteNumbers(this.clef);
 			var noteProps = this.chord.getNoteProps();
 			var modifiers = [];
-			var modifier;
-			var note;
+			var note, keyStyle;
+
+			this.staveNoteFactory.resetHighlight();
 
 			for(var i = 0, len = keys.length; i < len; i++) {
 				note = clefMidiKeys[i];
+
+				// Apply accidentals (if any)
 				if(accidentals[i]) {
 					modifiers.push(this.staveNoteFactory.makeAccidentalModifier(i, accidentals[i]));
 				}
+
+				// Set highlights in order of priority
+				this.staveNoteFactory.highlightNote(i, {
+					fillStyle:this.noteColorMap.notplayed, 
+					strokeStyle:this.noteColorMap.notplayed
+				}, 1);
+
 				if(this.highlightConfig.enabled) {
-					modifiers.push(this.staveNoteFactory.makeHighlightModifier(i, note, allMidiKeys));
+					keyStyle = this.staveNoteFactory.getAnalysisHighlightOf(note, allMidiKeys);
+					if(keyStyle !== false) {
+						this.staveNoteFactory.highlightNote(i, keyStyle, 2);
+					}
 				}
-				modifier = this.makeCorrectnessModifier(i, noteProps[note]);
-				if(modifier) {
-					modifiers.push(modifier);
+
+				if(noteProps[note] && noteProps[note].hasOwnProperty('correctness')) {
+					keyStyle = this.getCorrectnessColorStyle(noteProps[note].correctness);
+					if(keyStyle !== false) {
+						this.staveNoteFactory.highlightNote(i, keyStyle, 3); 
+					}
 				}
+
+				keyStyle = this.staveNoteFactory.getHighlightOf(i);
+				modifiers.push(this.staveNoteFactory.makeHighlightModifier(i, keyStyle));
 			}
 
 			return modifiers;
 		},
 		/**
-		 * Makes a modifier for banked keys.
+		 * Returns the highlight color style for correct/incorrect notes.
 		 *
-		 * @protected
-		 * @param {number} keyIndex
-		 * @return {function} 
+		 * @param {boolean} isCorrect
+		 * @return {object} object with color styles, or false if none to apply
 		 */
-		makeCorrectnessModifier: function(keyIndex, noteProps) {
-			var keyStyle = {}, colorStyle, correctness;
-			noteProps = noteProps || {};
-			correctness = noteProps.correctness;
+		getCorrectnessColorStyle: function(isCorrect) {
+			var colorStyle;
 
-			if(correctness === true) {
+			if(isCorrect === true) {
 				colorStyle = this.noteColorMap.correct;
-			} else if(correctness === false) {
+			} else if(isCorrect === false) {
 				colorStyle = this.noteColorMap.incorrect;
 			} else {
 				return false;
 			}
 
-			keyStyle.fillStyle = colorStyle;
-			keyStyle.strokeStyle = colorStyle;
-
-			return function(staveNote) {
-				staveNote.setKeyStyle(keyIndex, keyStyle);
-			};
-		},
+			return {fillStyle: colorStyle, strokeStyle: colorStyle};
+		}
 	});
 
 	return ExerciseNoteFactory;
