@@ -7,7 +7,7 @@ define([
 	'app/components/component',
 	'./stave',
 	'./stave_notater',
-	'./stave_note_factory'
+	'./play_note_factory'
 ], function(
 	$,
 	_, 
@@ -16,7 +16,7 @@ define([
 	Component,
 	Stave, 
 	StaveNotater,
-	StaveNoteFactory
+	PlayNoteFactory
 ) {
 	"use strict";
 
@@ -239,7 +239,7 @@ define([
 
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
-			stave.setNoteFactory(new StaveNoteFactory({
+			stave.setNoteFactory(new PlayNoteFactory({
 				clef: clef,
 				chord: chord,
 				isBanked: isBanked,

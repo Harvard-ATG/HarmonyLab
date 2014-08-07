@@ -30,7 +30,7 @@ define([
 				];
 				_.each(actual_note_tests, function(actual_notes) {
 					var result = grader.notesMatch(expected_notes, actual_notes);
-					expect(result).toBe(grader.STATE.CORRECT);
+					expect(result.state).toBe(grader.STATE.CORRECT);
 				});
 			});
 
@@ -49,7 +49,7 @@ define([
 				];
 				_.each(actual_note_tests, function(actual_notes) {
 					var result = grader.notesMatch(expected_notes, actual_notes);
-					expect(result).toBe(grader.STATE.PARTIAL);
+					expect(result.state).toBe(grader.STATE.PARTIAL);
 				});
 			});
 
@@ -66,7 +66,7 @@ define([
 				];
 				_.each(actual_note_tests, function(actual_notes) {
 					var result = grader.notesMatch(expected_notes, actual_notes);
-					expect(result).toBe(grader.STATE.INCORRECT);
+					expect(result.state).toBe(grader.STATE.INCORRECT);
 				});
 			});
 		});
