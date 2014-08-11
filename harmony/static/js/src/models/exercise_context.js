@@ -98,7 +98,10 @@ define([
 
 			this.graded = graded;
 			this.state = state;
-			this.displayChords = this.createDisplayChords();
+
+			this.updateDisplayChords();
+			this.inputChords.goTo(graded.activeIndex);
+
 			this.trigger("graded");
 		},
 		/**
@@ -151,38 +154,54 @@ define([
 			return this.definition;
 		},
 		/**
+		 * Creates a new set of display chords.
+		 * Called for its side effects.
+		 *
+		 * @return this
+		 */
+		updateDisplayChords: function() {
+			this.displayChords = this.createDisplayChords();
+			return this;
+		},
+		/**
 		 * Helper function that creates the display chords.
 		 *
 		 * @return {object}
 		 */
 		createDisplayChords: function() {
-			var d_problem, g_problem, chord, chords; 
 			var notes = [];
-			var problem_index = 0;
+			var exercise_chords = [];
+			var problems = this.definition.getProblems();
 			var CORRECT = this.grader.STATE.CORRECT;
+			var g_problem, chord, chords; 
 
-			if(this.definition.hasProblems()) {
-				d_problem = this.definition.getProblemAt(problem_index);
-				notes = d_problem.notes;
+			for(var i = 0, len = problems.length; i < len; i++) {
+				notes = problems[i];
+				g_problem = false;
+				if(this.graded !== false && this.graded.problems[i]) {
+					g_problem = this.graded.problems[i];
+				}
+
+				if(g_problem) {
+					notes = notes.concat(g_problem.notes);
+					notes = _.uniq(notes);
+				}
+
+				chord = new ExerciseChord({ notes: notes });
+
+				if(g_problem) {
+					_.each(g_problem.count, function(notes, correctness) {
+						var is_correct = (correctness === CORRECT);
+						if(notes.length > 0) {
+							chord.grade(notes, is_correct);
+						}
+					}, this);
+				}
+
+				exercise_chords.push(chord);
 			}
 
-			if(this.graded !== false) {
-				g_problem = this.graded.problems[problem_index];
-				notes = notes.concat(g_problem.notes);
-				notes = _.uniq(notes);
-			}
-
-			chord = new ExerciseChord({ notes: notes });
-			chords = new ExerciseChordBank({chords: [chord]});
-
-			if(this.graded !== false) {
-				_.each(g_problem.count, function(notes, correctness) {
-					var is_correct = (correctness === CORRECT);
-					if(notes.length > 0) {
-						chord.grade(notes, is_correct);
-					}
-				}, this);
-			}
+			chords = new ExerciseChordBank({chords: exercise_chords});
 
 			return chords;
 		},
@@ -192,16 +211,18 @@ define([
 		 * @return {object}
 		 */
 		createExerciseChords: function() {
-			var problem, notes = [];
-			var problem_index = 0;
+			var problems = this.definition.getProblems();
+			var notes = [];
+			var exercise_chords = []; 
+			var chords;
 
-			if(this.definition.hasProblems()) {
-				problem = this.definition.getProblemAt(problem_index);
-				notes = problem.notes;
+			for(var i = 0, len = problems.length; i < len; i++) {
+				notes = problems[i];
+				chord = new ExerciseChord({ notes: notes });
+				exercise_chords.push(chord);
 			}
 
-			chord = new ExerciseChord({ notes: notes });
-			chords = new ExerciseChordBank({chords: [chord]});
+			chords = new ExerciseChordBank({chords: exercise_chords});
 
 			return chords;
 		}

@@ -4,7 +4,7 @@ define([
 	_
 ) {
 	/**
-	 * ExerciseGrader object is responsible for grading a given input for
+	 * ExerciseGrader object is responsible for grading a given inputChords for
 	 * an exercise.
 	 *
 	 * @param settings {object}
@@ -37,31 +37,34 @@ define([
 		 * Grades an exercise and returns a result.
 		 *
 		 * @param {ExerciseDefinition} definition The exercise definition
-		 * @param {ChordBank} input The chord bank that will server as input
+		 * @param {ChordBank} inputChords The chord bank that will server as inputChords
 		 * @return {object} A result object
 		 */
-		grade: function(definition, input) {
+		grade: function(definition, inputChords) {
 			var problems = definition.getProblems();
-			var items = input.items();
+			var items = inputChords.items();
 			var chords = _.pluck(items, "chord");
-			var graded= {
+			var graded = {
 				result: null,
 				score: 0,
 				problems:[]
 			};
 			var score_map = {};
 			var result_map = []; 
-			var i, len, problem, result, state;
+			var i, len, result, score, active_idx = problems.length; 
 
 			score_map[CORRECT]=0;
 			score_map[PARTIAL]=1;
 			score_map[INCORRECT]=2;
 			result_map = [CORRECT,PARTIAL,INCORRECT];
+			score = score_map[CORRECT];
 
 			for(i = 0, len = problems.length; i < len; i++) {
-				problem = problems[i];
-				expected_notes = problem.notes;
-				actual_notes = chords[i].getNoteNumbers();
+				expected_notes = problems[i];
+				actual_notes = [];
+				if(chords[i]) {
+					actual_notes = chords[i].getNoteNumbers();
+				}
 				result = this.notesMatch(expected_notes, actual_notes);
 				graded.problems[i] = {
 					score: score_map[result.state],
@@ -69,13 +72,15 @@ define([
 					note: result.note,
 					notes: result.notes
 				};
+				if(score_map[result.state] > score) {
+					score = score_map[result.state];
+					active_idx = i;
+				}
 			}
 
-			graded.score = _.reduce(graded.problems, function(max_score, problem) {
-				return (problem.score > max_score ? problem.score : max_score);
-			}, score_map[CORRECT]);
-
-			graded.result = result_map[graded.score];
+			graded.score = score;
+			graded.result = result_map[score];
+			graded.activeIndex = active_idx;
 
 			return graded;
 		},

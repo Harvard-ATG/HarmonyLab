@@ -3,13 +3,13 @@ define([
 	'app/models/exercise_context',
 	'app/models/exercise_definition',
 	'app/models/exercise_grader',
-	'app/models/chord_bank'
+	'app/models/exercise_chord_bank'
 ], function(
 	_, 
 	ExerciseContext,
 	ExerciseDefinition,
 	ExerciseGrader,
-	ChordBank
+	ExerciseChordBank
 ) {
 
 	describe("ExerciseContext", function() {
@@ -21,7 +21,7 @@ define([
 					}
 				}),
 				grader: new ExerciseGrader(),
-				inputChords: new ChordBank()
+				inputChords: new ExerciseChordBank()
 			};
 			var ecx = new ExerciseContext(settings);
 

@@ -91,11 +91,10 @@ define([
 			}];
 
 			_.each(tests, function(test, idx) {
-				var problem = {notes: test.expected};
 				var definition = new ExerciseDefinition({
 					definition: {
 						type: "matching",
-						problems: [problem]
+						chord: test.expected
 					}
 				});
 				var grader = new ExerciseGrader();

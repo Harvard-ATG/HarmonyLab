@@ -10,9 +10,9 @@ define([
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
 	'app/components/ui/theme',
-	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device',
+	'app/models/exercise_chord_bank',
 	'app/models/exercise_definition',
 	'app/models/exercise_grader',
 	'app/models/exercise_context'
@@ -28,9 +28,9 @@ define([
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
 	ThemeComponent,
-	ChordBank,
 	KeySignature,
 	MidiDevice,
+	ExerciseChordBank,
 	ExerciseDefinition,
 	ExerciseGrader,
 	ExerciseContext
@@ -56,7 +56,7 @@ define([
 	 */
 	AppExerciseComponent.prototype.getModels = function() {
 		var models = {};
-		models.inputChords = new ChordBank();
+		models.inputChords = new ExerciseChordBank();
 		models.midiDevice = new MidiDevice();
 		models.exerciseDefinition = new ExerciseDefinition({
 			definition: this.getExerciseDefinition()
