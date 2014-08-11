@@ -72,7 +72,12 @@ define([
 			 * @type {array}
 			 * @protected
 			 */
-			this._items = this.settings.chords || [new Chord()];
+			if(_.isArray(this.settings.chords) && this.settings.chords.length > 0) {
+				this._items = this.settings.chords;
+			} else {
+				this._items = [this.makeChord()];
+			}
+
 			if(this._limit && this._items.length > this._limit) {
 				throw new Error("number of chords exceeds the limit");
 			}
@@ -88,7 +93,9 @@ define([
 				this._enableBanking = (this.settings.enableBanking ? true : false);
 			}
 
-			this._addListeners(this._items[0]);
+			if(this._items[0]) {
+				this._addListeners(this._items[0]);
+			}
 		},
 		/**
 		 * Banks the current chord and generates a new chord that becomes the
@@ -188,6 +195,14 @@ define([
 			var note_nums = _.keys(note_map);
 
 			return note_nums;
+		},
+		/**
+		 * Makes a new chord.
+		 *
+		 * @return {Chord}
+		 */
+		makeChord: function() {
+			return new Chord();
 		},
 		/**
 		 * Returns true if any chords in the bank are sustained.

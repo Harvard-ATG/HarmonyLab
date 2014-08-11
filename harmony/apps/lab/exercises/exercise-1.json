@@ -3,8 +3,5 @@
   "introText": "Learn to play a C major chord in root position",
   "reviewText": "Good job!",
   "key": "jC_",
-  "problems": [{
-      "text": "Play the C major chord in root position (0,4,7)",
-      "notes": [60,64,67]
-  }]
+  "chord": [60,64,67]
 }

@@ -117,13 +117,18 @@ define(['lodash'], function(_) {
 			var exercise = {};
 			var problems = [];
 
-			if(definition.hasOwnProperty("problems")) {
-				if(_.isArray(definition.problems)) {
-					problems = definition.problems;
+			if(definition.hasOwnProperty("chord")) {
+				if(_.isArray(definition.chord)) {
+					if(_.isArray(definition.chord[0])) {
+						problems = definition.chord;
+					} else {
+						problems = [definition.chord];
+					}
 				} else {
 					throw new Error("definition.problems must be an array");
 				}
 			} 
+			exercise.problems = problems;
 
 			if(definition.hasOwnProperty('type') && (definition.type in ExerciseDefinition.TYPES)) {
 				exercise.type = definition.type;
@@ -145,13 +150,6 @@ define(['lodash'], function(_) {
 			if(definition.hasOwnProperty("reviewText") && definition.reviewText) {
 				exercise.reviewText = definition.reviewText;
 			}
-
-			exercise.problems = _.map(problems, function(problem) {
-				var valid_keys = ['text','notes'];
-				var actual_keys = _.keys(problem);
-				this.assertHasKeys(valid_keys, actual_keys, "invalid problem.type: ");
-				return problem; 
-			}, this);
 
 			return exercise;
 		},

@@ -1,9 +1,7 @@
 {
   "type": "matching",
-  "introText": "Learn to play chords",
+  "introText": "Learn to play a D major chord inverted",
+  "reviewText": "Well done!",
   "key": "jD_",
-  "problems": [{
-      "text": "Play the D major chord inverted",
-      "notes": [67,71,74]
-  }]
+  "chord": [67,71,74]
 }

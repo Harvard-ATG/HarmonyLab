@@ -1,0 +1,7 @@
+{
+  "type": "matching",
+  "introText": "Learn to play these C major chords",
+  "reviewText": "Good job!",
+  "key": "jC_",
+  "chord": [[60,64,67],[64,67,72],[67,72,76]]
+}

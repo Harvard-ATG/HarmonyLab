@@ -254,8 +254,8 @@ define([
 		updateStaves: function() {
 			var chord, treble, bass;
 			var limit = CHORD_BANK_SIZE;
-			var display_items = this.getDisplayChords().items({limit: limit, reverse: true});
-			var exercise_items = this.getExerciseChords().items({limit: limit, reverse: true});
+			var display_items = this.getDisplayChords().items({limit: limit, reverse: false});
+			var exercise_items = this.getExerciseChords().items({limit: limit, reverse: false});
 			var staves = [];
 			var index = 0;
 			var count = display_items.length;
