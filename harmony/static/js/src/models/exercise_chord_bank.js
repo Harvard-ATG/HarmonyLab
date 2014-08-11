@@ -33,7 +33,6 @@ define([
 	// Go to a chord in the bank. Create one at that location if necessary.
 	proto.goTo = function(index) {
 		var current;
-		console.log("goTo", index, this);
 		if(index < 0 || index === this._currentIndex) {
 			return this;
 		}
