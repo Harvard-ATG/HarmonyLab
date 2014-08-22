@@ -121,9 +121,7 @@ class LTIToolConfigView(View):
         '''
         lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
         lti_tool_config.set_ext_param('canvas.instructure.com', 'course_navigation', {
-            'enabled':'true', 
-            # optionally, supply a different URL for the link:
-            # 'url': 'http://library.harvard.edu',
+            'enabled':'false', 
             'text':'Harmony Lab'
         })
         lti_tool_config.description = 'Harmony Lab is an application for music theory students and instructors.'
