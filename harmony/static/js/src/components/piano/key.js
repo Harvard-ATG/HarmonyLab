@@ -200,24 +200,45 @@ define([
 		/**
 		 * Event handler for key press.
 		 *
+		 * When the key is pressed via right-click, the usual context 
+		 * menu and action should be prevented.
+		 *
 		 * @return {boolean}
 		 */
 		onPress: function(e) {
+			var is_right_click = (e.button == 2);
 			if(this.isReleased()) {
 				this.press();
-				this.parentComponent.trigger('key', this.state, this.noteNumber);
-			}
+				if(is_right_click) {
+					e.preventDefault();
+					e.stopPropagation();
+				} else {
+					this.parentComponent.trigger('key', this.state, this.noteNumber);
+				}
+			} 
+
 			return false;
 		},
 		/**
 		 * Event handler for key release.
 		 *
+		 * When right click is detected, should release the key
+		 * even if sustained.
+		 *
 		 * @return {boolean}
 		 */
 		onRelease: function(e) {
+			var is_right_click = (e.button == 2);
+			var sustain = this.sustain;
 			if(this.isPressed()) { 
+				if(is_right_click) {
+					this.setSustain(false);
+				}
 				this.release();
-				this.parentComponent.trigger('key', this.state, this.noteNumber);
+				this.parentComponent.trigger('key', this.state, this.noteNumber, {overrideSustain: is_right_click});
+				if(is_right_click) {
+					this.setSustain(sustain);
+				}
 			}
 			return false;
 		},

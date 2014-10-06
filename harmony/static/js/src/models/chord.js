@@ -87,22 +87,31 @@ define([
 		 * If the status of the note has changed, it will fire a change event.
 		 *
 		 * @fires change
-		 * @param {number|array} notes The note or notes to turn on
+		 * @param {number|array|object} notes The note or notes to turn on
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOn: function(notes) {
-			var i, len, noteNumber, changed = false;
+			var i, notesObj, len, noteNumber; 
+			var changed = false;
+			var _transpose = this._transpose;
+			var _sustain = this._sustain;
 
 			if(typeof notes === 'number') {
 				notes = [notes];
+			} else if(typeof notes === 'object') {
+				notesObj = notes;
+				notes = notesObj.notes;
+				if(notesObj.hasOwnProperty('overrideSustain')) {
+					_sustain = notesObj.overrideSustain ? false : _sustain;
+				}
 			}
 
 			for(i = 0, len = notes.length; i < len; i++) {
 				noteNumber = notes[i];
-				if(this._transpose) {
+				if(_transpose) {
 					noteNumber = this.transpose(noteNumber);
 				}
-				if(this._sustain) {
+				if(_sustain) {
 					this._sustained[noteNumber] = true;
 				}
 
@@ -127,22 +136,31 @@ define([
 		 * and this method will return false.
 		 *
 		 * @fires change
-		 * @param {number|array} notes The note or notes to turn off
+		 * @param {number|array|object} notes The note or notes to turn off
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOff: function(notes) {
-			var i, len, noteNumber, changed = false;
+			var i, notesObj, len, noteNumber; 
+			var changed = false;
+			var _transpose = this._transpose;
+			var _sustain = this._sustain;
 
 			if(typeof notes === 'number') {
 				notes = [notes];
+			} else if(typeof notes === 'object') {
+				notesObj = notes;
+				notes = notesObj.notes;
+				if(notesObj.hasOwnProperty('overrideSustain')) {
+					_sustain = notesObj.overrideSustain ? false : _sustain;
+				}
 			}
 
 			for(i = 0, len = notes.length; i < len; i++) {
 				noteNumber = notes[i];
-				if(this._transpose) {
+				if(_transpose) {
 					noteNumber = this.transpose(noteNumber);
 				}
-				if(this._sustain) {
+				if(_sustain) {
 					this._sustained[noteNumber] = false;
 				} else {
 					if(!changed) {

@@ -280,12 +280,17 @@ define([
 		 *
 		 * @param {string} noteState on|off
 		 * @param {number} noteNumber
+		 * @param {extra} extra.overrideSustain true|false overrides sustain
 		 * @return undefined
 		 */
-		toggleNote: function(noteState, noteNumber) {
+		toggleNote: function(noteState, noteNumber, extra) {
 			var toggle = (noteState === 'on' ? 'noteOn' : 'noteOff');
 			var chord = this.chords.current();
-			chord[toggle](noteNumber);
+			var noteObj = {notes: [noteNumber]};
+			if(extra && typeof extra === 'object') {
+				_.assign(noteObj, extra);
+			}
+			chord[toggle](noteObj);
 		},
 		/**
 		 * Handles a MIDI message received from the MIDI device.
@@ -323,11 +328,12 @@ define([
 		 *
 		 * @param {string} noteState on|off
 		 * @param {number} noteNumber
+		 * @param {object} extra
 		 * @return undefined
 		 */
-		onNoteChange: function(noteState, noteNumber) {
+		onNoteChange: function(noteState, noteNumber, extra) {
 			var command = (noteState === 'on' ? JMB.NOTE_ON : JMB.NOTE_OFF);
-			this.toggleNote(noteState, noteNumber);
+			this.toggleNote(noteState, noteNumber, extra);
 			this.sendMIDIMessage(command, noteNumber, this.noteVelocity);
 		},
 		/**
