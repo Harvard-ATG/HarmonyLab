@@ -194,8 +194,7 @@ define([
 			this.el.mousedown(this.onPress);
 			this.el.mouseup(this.onRelease);
 			this.el.mouseout(this.onRelease);
-			$(this.el.node).bind(this.onContextMenu);
-			this.rendered = true;
+			this.el.node.oncontextmenu = this.onContextMenu;
 			return this;
 		},
 		/**
