@@ -172,7 +172,7 @@ define([
 			this.noteNumber = this.settings.noteNumber;
 			this.whiteKeyIndex = this.settings.whiteKeyIndex;
 
-			_.bindAll(this, ['onPress', 'onRelease']);
+			_.bindAll(this, ['onPress', 'onRelease', 'onContextMenu']);
 		},
 		/**
 		 * Renders the piano key on the screen.
@@ -194,8 +194,34 @@ define([
 			this.el.mousedown(this.onPress);
 			this.el.mouseup(this.onRelease);
 			this.el.mouseout(this.onRelease);
+			$(this.el.node).bind(this.onContextMenu);
 			this.rendered = true;
 			return this;
+		},
+		/**
+		 * Triggers a "key" event on the parent component, which tells the
+		 * parent whether a key was pressed or released along with the 
+		 * corresponding note number and any additional properties.
+		 *
+		 * @param {string} state whether note is ON or OFF
+		 * @param {number} noteNumber the MIDI note number
+		 * @param {object} extraProps an object with extra properties
+		 * @return this
+		 */
+		triggerKey: function(state, noteNumber, extraProps) {
+			extraProps = extraProps || {};
+			this.parentComponent.trigger('key', state, noteNumber, extraProps);
+			return this;
+		},
+		/**
+		 * Handles a "contextmenu" event and cancels the default action.
+		 *
+		 * @return this
+		 */
+		onContextMenu: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
 		},
 		/**
 		 * Event handler for key press.
@@ -206,17 +232,22 @@ define([
 		 * @return {boolean}
 		 */
 		onPress: function(e) {
-			var is_right_click = (e.button == 2);
-			if(this.isReleased()) {
-				this.press();
-				if(is_right_click) {
+			switch(e.which) {
+				// Handle right click
+				case 3:
 					e.preventDefault();
 					e.stopPropagation();
-				} else {
-					this.parentComponent.trigger('key', this.state, this.noteNumber);
-				}
-			} 
-
+					break;
+				// Handle left click and default for others
+				case 2: 
+				case 1: 
+				default:
+					if(this.isReleased()) {
+						this.press();
+						this.triggerKey(this.state, this.noteNumber);
+					}
+					break;
+			}
 			return false;
 		},
 		/**
@@ -228,17 +259,28 @@ define([
 		 * @return {boolean}
 		 */
 		onRelease: function(e) {
-			var is_right_click = (e.button == 2);
-			var sustain = this.sustain;
-			if(this.isPressed()) { 
-				if(is_right_click) {
+			var sustain_cached;
+			switch(e.which) {
+				// Handle right click
+				case 3:
+					sustain_cached = this.sustain;
 					this.setSustain(false);
-				}
-				this.release();
-				this.parentComponent.trigger('key', this.state, this.noteNumber, {overrideSustain: is_right_click});
-				if(is_right_click) {
-					this.setSustain(sustain);
-				}
+					this.release();
+					this.triggerKey(this.state, this.noteNumber, {overrideSustain: true});
+					this.setSustain(sustain_cached);
+
+					e.preventDefault();
+					e.stopPropagation();
+					break;
+				// Handle left click and default for others
+				case 2:
+				case 1:
+				default:
+					if(this.isPressed()) { 
+						this.release();
+						this.triggerKey(this.state, this.noteNumber, {overrideSustain: false});
+					}
+					break;
 			}
 			return false;
 		},

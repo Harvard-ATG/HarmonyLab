@@ -91,18 +91,19 @@ define([
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOn: function(notes) {
-			var i, notesObj, len, noteNumber; 
+			var i, noteObj, len, noteNumber; 
 			var changed = false;
 			var _transpose = this._transpose;
 			var _sustain = this._sustain;
 
+			// make sure the argument is an array of note numbers
 			if(typeof notes === 'number') {
 				notes = [notes];
-			} else if(typeof notes === 'object') {
-				notesObj = notes;
-				notes = notesObj.notes;
-				if(notesObj.hasOwnProperty('overrideSustain')) {
-					_sustain = notesObj.overrideSustain ? false : _sustain;
+			} else if(!_.isArray(notes) && typeof notes === 'object') {
+				noteObj = notes;
+				notes = noteObj.notes;
+				if(noteObj.hasOwnProperty('overrideSustain')) {
+					_sustain = noteObj.overrideSustain ? false : _sustain;
 				}
 			}
 
@@ -140,18 +141,19 @@ define([
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOff: function(notes) {
-			var i, notesObj, len, noteNumber; 
+			var i, noteObj, len, noteNumber; 
 			var changed = false;
 			var _transpose = this._transpose;
 			var _sustain = this._sustain;
 
+			// make sure the argument is an array of note numbers
 			if(typeof notes === 'number') {
 				notes = [notes];
-			} else if(typeof notes === 'object') {
-				notesObj = notes;
-				notes = notesObj.notes;
-				if(notesObj.hasOwnProperty('overrideSustain')) {
-					_sustain = notesObj.overrideSustain ? false : _sustain;
+			} else if(!_.isArray(notes) && typeof notes === 'object') {
+				noteObj = notes;
+				notes = noteObj.notes;
+				if(noteObj.hasOwnProperty('overrideSustain')) {
+					_sustain = noteObj.overrideSustain ? false : _sustain;
 				}
 			}
 
