@@ -24,7 +24,7 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 				invalidClef: "treble"
 			},{
 				notes: [59,60],
-				clef: "treble"
+				clef: "treble",
 				invalidClef: false
 			},{
 				notes: [59,60],
@@ -38,7 +38,7 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 				expect(chord.hasNotes()).toBe(true);
 				expect(chord.hasNotes(clef)).toBe(true);
 				if(test.invalidClef) {
-					expect(chord.hasNotes(test.invalidClef).toBe(false);
+					expect(chord.hasNotes(test.invalidClef)).toBe(false);
 				}
 				expect(chord.getNotes(clef)).toEqual(notes);
 			});
