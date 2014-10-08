@@ -9,8 +9,7 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 			var notes = [59,60,61];
 			var chord = new Chord({notes:notes});
 			expect(chord.hasNotes()).toBe(true);
-			expect(chord.getNoteNumbers()).toEqual(notes);
-			expect(chord.getNotes()).toEqual(notes);
+			expect(chord.getSortedNotes()).toEqual(notes);
 		});
 
 		it("should know which clef notes belong to", function() {
@@ -40,18 +39,18 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 				if(test.invalidClef) {
 					expect(chord.hasNotes(test.invalidClef)).toBe(false);
 				}
-				expect(chord.getNotes(clef)).toEqual(notes);
+				expect(chord.getSortedNotes(clef)).toEqual(notes);
 			});
 		});
 
 		it("should be able to turn a note on and off", function() {
 			var chord = new Chord();
 			var note = 60;
-			expect(chord.getNotes()).not.toEqual([note]);
+			expect(chord.getSortedNotes()).not.toEqual([note]);
 			chord.noteOn(note);
-			expect(chord.getNotes()).toEqual([note]);
+			expect(chord.getSortedNotes()).toEqual([note]);
 			chord.noteOff(note);
-			expect(chord.getNotes()).not.toEqual([note]);
+			expect(chord.getSortedNotes()).not.toEqual([note]);
 		});
 
 		it("should be able to sustain notes", function() {
@@ -60,10 +59,10 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 			chord.sustainNotes();
 			chord.noteOn(note);
 			chord.noteOff(note);
-			expect(chord.getNotes()).toEqual([note]);
+			expect(chord.getSortedNotes()).toEqual([note]);
 			chord.releaseSustain();
 			chord.noteOff(note);
-			expect(chord.getNotes()).not.toEqual([note]);
+			expect(chord.getSortedNotes()).not.toEqual([note]);
 		});
 
 		it("should be able to turn off a single sustained note", function() {
@@ -71,12 +70,12 @@ define(['lodash', 'app/models/chord'], function(_, Chord) {
 			var chord = new Chord();
 			chord.sustainNotes();
 			chord.noteOn(note);
-			expect(chord.getNotes()).toEqual([note]);
+			expect(chord.getSortedNotes()).toEqual([note]);
 			chord.noteOff({
 				notes: [note],
 				overrideSustain: true
 			});
-			expect(chord.getNotes()).not.toEqual([note]);
+			expect(chord.getSortedNotes()).not.toEqual([note]);
 		});
 	});
 });

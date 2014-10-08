@@ -463,12 +463,16 @@ define([
 		getSortedNotes: function() {
 			var _notes = this._notes;
 			var notes = [];
+			var note_num;
 			for(var note in _notes) {
 				if(_notes.hasOwnProperty(note) && _notes[note]) {
-					notes.push(note);
+					note_num = parseInt(note, 10); // convert string key to num
+					notes.push(note_num);
 				}
 			}
-			notes.sort();
+			notes.sort(function(a, b) {
+				return a - b;
+			});
 			return notes;
 		},
 		/**
