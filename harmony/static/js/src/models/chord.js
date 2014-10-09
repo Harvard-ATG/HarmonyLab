@@ -87,22 +87,32 @@ define([
 		 * If the status of the note has changed, it will fire a change event.
 		 *
 		 * @fires change
-		 * @param {number|array} notes The note or notes to turn on
+		 * @param {number|array|object} notes The note or notes to turn on
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOn: function(notes) {
-			var i, len, noteNumber, changed = false;
+			var i, noteObj, len, noteNumber; 
+			var changed = false;
+			var _transpose = this._transpose;
+			var _sustain = this._sustain;
 
+			// make sure the argument is an array of note numbers
 			if(typeof notes === 'number') {
 				notes = [notes];
+			} else if(!_.isArray(notes) && typeof notes === 'object') {
+				noteObj = notes;
+				notes = noteObj.notes;
+				if(noteObj.hasOwnProperty('overrideSustain')) {
+					_sustain = noteObj.overrideSustain ? false : _sustain;
+				}
 			}
 
 			for(i = 0, len = notes.length; i < len; i++) {
 				noteNumber = notes[i];
-				if(this._transpose) {
+				if(_transpose) {
 					noteNumber = this.transpose(noteNumber);
 				}
-				if(this._sustain) {
+				if(_sustain) {
 					this._sustained[noteNumber] = true;
 				}
 
@@ -127,22 +137,32 @@ define([
 		 * and this method will return false.
 		 *
 		 * @fires change
-		 * @param {number|array} notes The note or notes to turn off
+		 * @param {number|array|object} notes The note or notes to turn off
 		 * @return {boolean} True if the note status changed, false otherwise.
 		 */
 		noteOff: function(notes) {
-			var i, len, noteNumber, changed = false;
+			var i, noteObj, len, noteNumber; 
+			var changed = false;
+			var _transpose = this._transpose;
+			var _sustain = this._sustain;
 
+			// make sure the argument is an array of note numbers
 			if(typeof notes === 'number') {
 				notes = [notes];
+			} else if(!_.isArray(notes) && typeof notes === 'object') {
+				noteObj = notes;
+				notes = noteObj.notes;
+				if(noteObj.hasOwnProperty('overrideSustain')) {
+					_sustain = noteObj.overrideSustain ? false : _sustain;
+				}
 			}
 
 			for(i = 0, len = notes.length; i < len; i++) {
 				noteNumber = notes[i];
-				if(this._transpose) {
+				if(_transpose) {
 					noteNumber = this.transpose(noteNumber);
 				}
-				if(this._sustain) {
+				if(_sustain) {
 					this._sustained[noteNumber] = false;
 				} else {
 					if(!changed) {
@@ -443,12 +463,16 @@ define([
 		getSortedNotes: function() {
 			var _notes = this._notes;
 			var notes = [];
+			var note_num;
 			for(var note in _notes) {
 				if(_notes.hasOwnProperty(note) && _notes[note]) {
-					notes.push(note);
+					note_num = parseInt(note, 10); // convert string key to num
+					notes.push(note_num);
 				}
 			}
-			notes.sort();
+			notes.sort(function(a, b) {
+				return a - b;
+			});
 			return notes;
 		},
 		/**

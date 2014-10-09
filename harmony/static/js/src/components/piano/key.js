@@ -172,7 +172,7 @@ define([
 			this.noteNumber = this.settings.noteNumber;
 			this.whiteKeyIndex = this.settings.whiteKeyIndex;
 
-			_.bindAll(this, ['onPress', 'onRelease']);
+			_.bindAll(this, ['onPress', 'onRelease', 'onContextMenu']);
 		},
 		/**
 		 * Renders the piano key on the screen.
@@ -194,30 +194,92 @@ define([
 			this.el.mousedown(this.onPress);
 			this.el.mouseup(this.onRelease);
 			this.el.mouseout(this.onRelease);
-			this.rendered = true;
+			this.el.node.oncontextmenu = this.onContextMenu;
 			return this;
+		},
+		/**
+		 * Triggers a "key" event on the parent component, which tells the
+		 * parent whether a key was pressed or released along with the 
+		 * corresponding note number and any additional properties.
+		 *
+		 * @param {string} state whether note is ON or OFF
+		 * @param {number} noteNumber the MIDI note number
+		 * @param {object} extraProps an object with extra properties
+		 * @return this
+		 */
+		triggerKey: function(state, noteNumber, extraProps) {
+			extraProps = extraProps || {};
+			this.parentComponent.trigger('key', state, noteNumber, extraProps);
+			return this;
+		},
+		/**
+		 * Handles a "contextmenu" event and cancels the default action.
+		 *
+		 * @return this
+		 */
+		onContextMenu: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
 		},
 		/**
 		 * Event handler for key press.
 		 *
+		 * When the key is pressed via right-click, the usual context 
+		 * menu and action should be prevented.
+		 *
 		 * @return {boolean}
 		 */
 		onPress: function(e) {
-			if(this.isReleased()) {
-				this.press();
-				this.parentComponent.trigger('key', this.state, this.noteNumber);
+			switch(e.which) {
+				// Handle right click
+				case 3:
+					e.preventDefault();
+					e.stopPropagation();
+					break;
+				// Handle left click and default for others
+				case 2: 
+				case 1: 
+				default:
+					if(this.isReleased()) {
+						this.press();
+						this.triggerKey(this.state, this.noteNumber);
+					}
+					break;
 			}
 			return false;
 		},
 		/**
 		 * Event handler for key release.
 		 *
+		 * When right click is detected, should release the key
+		 * even if sustained.
+		 *
 		 * @return {boolean}
 		 */
 		onRelease: function(e) {
-			if(this.isPressed()) { 
-				this.release();
-				this.parentComponent.trigger('key', this.state, this.noteNumber);
+			var sustain_cached;
+			switch(e.which) {
+				// Handle right click
+				case 3:
+					sustain_cached = this.sustain;
+					this.setSustain(false);
+					this.release();
+					this.triggerKey(this.state, this.noteNumber, {overrideSustain: true});
+					this.setSustain(sustain_cached);
+
+					e.preventDefault();
+					e.stopPropagation();
+					break;
+				// Handle left click and default for others
+				case 2:
+				case 1:
+				default:
+					if(this.isPressed()) { 
+						this.release();
+						this.triggerKey(this.state, this.noteNumber, {overrideSustain: false});
+					}
+					break;
 			}
 			return false;
 		},
