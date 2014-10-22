@@ -1,0 +1,10 @@
+{
+  "type": "matching",
+  "introText": "Complete the C chord"
+  "reviewText": "Well done!",
+  "key": "jC_",
+  "chord": [
+    {"visible":[60,64],"hidden":[67]},
+    {"visible":[60,67],"hidden":[64]},
+    {"visible":[64,67],"hidden":[60]}]
+}
