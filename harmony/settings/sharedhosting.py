@@ -19,6 +19,8 @@ elif os.environ.get('SERVER_NAME') == 'sites.dev.fas.harvard.edu':
     STATIC_URL = '/~harmonylab/static/'
     DEBUG = True
 
+# Update the requirejs configuration to use the modified STATIC_URL
+REQUIREJS_DEBUG, REQUIREJS_CONFIG = requirejs.configure(ROOT_DIR, STATIC_URL)
 
 # Configuration common to both PROD/DEV 
 CONFIG_DIR = os.path.join(ROOT_DIR, 'config')
