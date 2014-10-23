@@ -40,8 +40,8 @@ define([
 			};
 			var ed = new ExerciseDefinition(settings);
 			expect(ed.hasProblems()).toBe(true);
-			expect(ed.getProblemAt(0)).toEqual(chord);
 			expect(ed.getNumProblems()).toBe(1);
+			expect(ed.getProblemAt(0).notes).toEqual(chord);
 		});
 
 		it("should create an exercise definition with several chords to match", function() {
@@ -54,8 +54,25 @@ define([
 			};
 			var ed = new ExerciseDefinition(settings);
 			expect(ed.hasProblems()).toBe(true);
-			expect(ed.getProblemAt(0)).toEqual(chord[0]);
 			expect(ed.getNumProblems()).toBe(chord.length);
+			expect(ed.getProblemAt(0).notes).toEqual(chord[0]);
+		});
+
+		it("should create an exercise definition with a visible and hidden part", function() {
+			var chord = [{"visible":[60,67],"hidden":[64]}];
+			var expected_notes = [60,64,67];
+			var settings = {
+				definition: {
+					type: "matching",
+					chord: chord
+				}
+			};
+			var ed = new ExerciseDefinition(settings);
+			expect(ed.hasProblems()).toBe(true);
+			expect(ed.getNumProblems()).toBe(chord.length);
+			expect(ed.getProblemAt(0).visible).toEqual(chord[0].visible);
+			expect(ed.getProblemAt(0).hidden).toEqual(chord[0].hidden);
+			expect(ed.getProblemAt(0).notes).toEqual(expected_notes);
 		});
 	});
 });

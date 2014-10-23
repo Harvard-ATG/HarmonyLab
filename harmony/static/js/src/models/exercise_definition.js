@@ -117,9 +117,14 @@ define(['lodash'], function(_) {
 			var exercise = {};
 			var problems = [];
 
+			// check for a chord entry which may be an array of note numbers
+			// to represent one chord, or an array of arrays to represent
+			// chord sequence
 			if(definition.hasOwnProperty("chord")) {
 				if(_.isArray(definition.chord)) {
 					if(_.isArray(definition.chord[0])) {
+						problems = definition.chord;
+					} else if(_.isObject(definition.chord[0])) {
 						problems = definition.chord;
 					} else {
 						problems = [definition.chord];
@@ -128,29 +133,63 @@ define(['lodash'], function(_) {
 					throw new Error("definition.problems must be an array");
 				}
 			} 
+
+			// normalize the internal representation of each chord in the
+			// set of problems to have VISIBLE/HIDDEN parts
+			problems = _.map(problems, function(chord, index) {
+				var normalized = {"visible":[], "hidden":[],"notes":[]};
+
+				if(_.isArray(chord)) {
+					normalized.visible = chord;
+				} else if(_.isObject(chord)) {
+					if(!chord.hasOwnProperty("visible") || !chord.hasOwnProperty("hidden")) {
+						throw new Error("invalid chord at index: " + index + "; chord must have 'visible' and 'hidden' properties");
+					}
+					normalized.visible = chord.visible;
+					normalized.hidden = chord.hidden;
+				} else {
+					throw new Error("invalid chord at index: " + index);
+				}
+
+				// get the sum of the visible and hidden notes
+				normalized.notes = ExerciseDefinition.getNotesForProblem(normalized.visible, normalized.hidden);
+
+				// normalize the note order
+				normalized.visible = ExerciseDefinition.sortNotes(normalized.visible);
+				normalized.hidden = ExerciseDefinition.sortNotes(normalized.hidden);
+				normalized.notes = ExerciseDefinition.sortNotes(normalized.notes);
+
+				return normalized;
+			});
+
 			exercise.problems = problems;
 
+			// check that the problem type is supported
 			if(definition.hasOwnProperty('type') && (definition.type in ExerciseDefinition.TYPES)) {
 				exercise.type = definition.type;
 			} else {
 				throw new Error("invalid definition.type: "+definition.type);
 			}
 
+			// check for the "key" entry to use for the problem set
 			exercise.key = "h"; // means "no key" 
 			if(definition.hasOwnProperty('key')) {
 				exercise.key = definition.key;
 			} 
 
+			// check for the introductory text
 			exercise.introText = false;
 			if(definition.hasOwnProperty("introText") && definition.introText) {
 				exercise.introText = definition.introText;
 			}
 
+			// check for the review text
 			exercise.reviewText = false;
 			if(definition.hasOwnProperty("reviewText") && definition.reviewText) {
 				exercise.reviewText = definition.reviewText;
 			}
 
+			console.log("loaded exercise", exercise);
 			return exercise;
 		},
 		/**
@@ -177,6 +216,51 @@ define(['lodash'], function(_) {
 			}
 		}
 	});
+
+	/**
+	 * Returns a complete list of the notes that is the sum of the
+	 * visible and hidden parts.
+	 *
+	 * @param {array} visible the visible note numbers
+	 * @param {array} hidden the hidden note numbers
+	 * @return {array} the set of unique notes from the visible and hidden parts
+	 */
+	ExerciseDefinition.getNotesForProblem = function(visible, hidden) {
+		var note, notes = [], map = {}; 
+
+		for(var i = 0, len = visible.length; i < len; i++) { 
+			note = visible[i];
+			if(!map.hasOwnProperty(note)) {
+				map[note] = 1;
+				notes.push(note);
+			}
+		}
+
+		for(var i = 0, len = hidden.length; i < len; i++) {
+			note = hidden[i];
+			if(!map.hasOwnProperty(note)) {
+				map[note] = 1;
+				notes.push(note);
+			}
+		}
+
+		return notes;
+	};
+
+	/**
+	 * Returns a sorted copy of the notes. Expects
+	 * an array of note numbers.
+	 *
+	 * @param {array} notes
+	 * @return {array} of sorted notes
+	 */
+	ExerciseDefinition.sortNotes = function(notes) {
+		var copy = notes.slice();
+		copy.sort(function(a, b) {
+			return a - b;
+		});
+		return copy;
+	};
 
 	return ExerciseDefinition;
 });
