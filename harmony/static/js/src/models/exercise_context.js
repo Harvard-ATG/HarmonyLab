@@ -176,7 +176,7 @@ define([
 			var g_problem, chord, chords; 
 
 			for(var i = 0, len = problems.length; i < len; i++) {
-				notes = problems[i];
+				notes = problems[i].visible;
 				g_problem = false;
 				if(this.graded !== false && this.graded.problems[i]) {
 					g_problem = this.graded.problems[i];
@@ -217,7 +217,7 @@ define([
 			var chords;
 
 			for(var i = 0, len = problems.length; i < len; i++) {
-				notes = problems[i];
+				notes = problems[i].notes;
 				chord = new ExerciseChord({ notes: notes });
 				exercise_chords.push(chord);
 			}

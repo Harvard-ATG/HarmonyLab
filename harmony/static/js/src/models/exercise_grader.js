@@ -60,7 +60,7 @@ define([
 			score = score_map[CORRECT];
 
 			for(i = 0, len = problems.length; i < len; i++) {
-				expected_notes = problems[i];
+				expected_notes = problems[i].notes;
 				actual_notes = [];
 				if(chords[i]) {
 					actual_notes = chords[i].getNoteNumbers();
