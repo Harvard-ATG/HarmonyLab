@@ -16,7 +16,7 @@ class Exercise:
             return self
 
         path = os.path.dirname(os.path.realpath(__file__))
-        exercise_file = os.path.join(path, "exercises", "exercise-{0}.json".format(exercise_id))
+        exercise_file = os.path.join(path, "exercises", "json", "exercise-{0}.json".format(exercise_id))
 
         try:
             with open(exercise_file) as f:
