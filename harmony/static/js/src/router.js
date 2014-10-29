@@ -19,7 +19,7 @@ define([
 
 	var ROUTES = [
 		{url: match("(?:~.+)?lab/?$"), app: 'app/components/app/play'},
-		{url: match("(?:~.+)?lab/exercise/\\d+$"), app: 'app/components/app/exercise'}
+		{url: match("(?:~.+)?lab/exercise/\\w+$"), app: 'app/components/app/exercise'}
 	];
 
 	var router = function() {

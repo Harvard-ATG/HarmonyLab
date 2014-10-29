@@ -1,7 +1,0 @@
-{
-  "type": "matching",
-  "introText": "Complete the C chord",
-  "reviewText": "Awesome!",
-  "key": "jC_",
-  "chord": [{"visible":[60,64],"hidden":[67]}]
-}

@@ -1,0 +1,7 @@
+{
+  "type": "matching",
+  "reviewText": "Good job!",
+  "introText": "Complete the major triad above the given root (in close position).",
+  "key": "jC_",
+  "chord": [{"visible":[70],"hidden":[74,77]}]
+}
