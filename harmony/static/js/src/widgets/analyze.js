@@ -17,8 +17,8 @@ define([
 				'label': 'Note names',
 				'value': 'analyze.note_names',
 			},{
-				'label': 'Helmholtz',
-				'value': 'analyze.helmholtz'
+				'label': 'Scientific Pitch',
+				'value': 'analyze.scientific_pitch'
 			}],
 			[{
 				'label': 'Scale degrees',

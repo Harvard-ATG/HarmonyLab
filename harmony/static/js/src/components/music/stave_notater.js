@@ -249,6 +249,23 @@ define([
 			}
 		},
 		/**
+		 * Draws the name of a note in scientific pitch notation.
+		 *
+		 * @param {number} x
+		 * @param {number} y
+		 * @return undefined
+		 */
+		drawScientificPitch: function(x, y) {
+			var ctx = this.getContext();
+			var notes = this.chord.getNoteNumbers();
+			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
+			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name);
+
+			if(scientific_pitch !== '') {
+				ctx.fillText(scientific_pitch, x, y);
+			}
+		},
+		/**
 		 * Draws solfege.
 		 *
 		 * @param {number} x
@@ -482,8 +499,8 @@ define([
 				// second row of mutually exclusive options
 				if(mode.note_names && !mode.helmholtz) {
 					this.drawNoteName(x, second_row);
-				} else if(mode.helmholtz && !mode.note_names) {
-					this.drawHelmholtz(x, second_row);
+				} else if(mode.scientific_pitch && !mode.note_names) {
+					this.drawScientificPitch(x, second_row);
 				}
 			}
 		},
