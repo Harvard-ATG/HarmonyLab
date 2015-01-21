@@ -310,10 +310,11 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 	toScientificPitchNotation: function (note) {
 		var noteParts = note.split('/');
 		var scientific_pitch = "";
+		var noteName, octave;
 		if(noteParts.length == 2) {
-			var noteName = noteParts[0];
-			var octave = parseInt(noteParts[1], 10);
-			var scientific_pitch = noteName[0].toUpperCase() + noteName.slice(1) + octave;
+			noteName = noteParts[0];
+			octave = parseInt(noteParts[1], 10);
+			scientific_pitch = noteName[0].toUpperCase() + noteName.slice(1) + octave;
 		}
 		return scientific_pitch;
 	},
