@@ -141,22 +141,35 @@ define([
 			return true;
 		},
 		/**
+		 * Prepares for rendering.
+		 *
+		 * @return this
+		 */
+		prepareForRender: function() {
+			this.createStaveBar();
+			this.createStaveVoice();
+			return this;
+		},
+		/**
 		 * Renders the stave.
 		 *
 		 * @return this
 		 */
 		render: function() {
-			this.createStaveBar();
-			this.createStaveVoice();
-			this.formatStaveVoice();
+			if(!this.isConnected()) {
+				return;
+			}
+			this.prepareForRender();
+			this.doConnected('prepareForRender');
+
+			this.formatStaveVoices();
 
 			this.drawStaveVoice();
+			this.doConnected('drawStaveVoice');
 			this.drawStaveBar();
+			this.doConnected('drawStaveBar');
 
-			if(this.isConnected()) {
-				this.renderConnected();
-				this.renderStaveConnector();
-			}
+			this.renderStaveConnector();
 
 			this.notate();
 
@@ -281,11 +294,25 @@ define([
 		 *
 		 * @return undefined
 		 */
-		formatStaveVoice: function() {
-			var formatter, voice = this.staveVoice;
-			if(voice) {
+		formatStaveVoices: function() {
+			var voices = [], voice, connectedVoice, formatter; 
+
+			if(this.isConnected()) {
+				connectedVoice = this.getConnected().getStaveVoice();
+			}
+
+			if(this.staveVoice) {
+				voices.push(this.staveVoice);
+			}
+			if(connectedVoice) {
+				voices.push(connectedVoice);
+			}
+
+			voice = voices[0];
+
+			if(voices.length > 0) {
 				formatter = new Vex.Flow.Formatter();
-				formatter.joinVoices([voice]).formatToStave([voice], this.staveBar);
+				formatter.joinVoices([voice]).formatToStave(voices, this.staveBar);
 			}
 		},
 		/**
@@ -442,6 +469,14 @@ define([
 		 */
 		getStaveBar: function() {
 			return this.staveBar;
+		},
+		/**
+		 * Returns the underlying Vex.Flow.Voice object.
+		 *
+		 * @return {object}
+		 */
+		getStaveVoice: function() {
+			return this.staveVoice;
 		},
 		/**
 		 * Returns the clef associated with the stave.
