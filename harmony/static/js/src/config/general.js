@@ -312,10 +312,10 @@ define({
 		enabled: true,
 		// Enables or disables specific analysis modes
 		mode: {
-			note_names: false, // mutually exclusive with helmholtz
-			helmholtz: false, // see note_names
+			note_names: false, // mutually exclusive with scientific_pitch
+			scientific_pitch: false, 
 			scale_degrees: true, // mutually exclusive with solfege
-			solfege: false, // see scale_degrees
+			solfege: false, 
 			roman_numerals: true,
 			intervals: true
 		}

@@ -286,9 +286,9 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 // The following eleven scripts do important thinking about pitches, accidentals, roots.
 
 	toHelmholtzNotation: function (note) {
-		noteName = note.split('/')[0]
+		var noteName = note.split('/')[0]
+		var octave = parseInt(note.split('/')[1], 10);
 		noteName = noteName[0].toUpperCase() + noteName.slice(1)
-		var octave = parseInt(note.split('/')[1]);
 		switch (octave) {
 			case 0: 
 				noteName = noteName+' ,,';
@@ -306,6 +306,17 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 				break;
 		}
 		return noteName;
+	},
+	toScientificPitchNotation: function (note) {
+		var noteParts = note.split('/');
+		var scientific_pitch = "";
+		var noteName, octave;
+		if(noteParts.length == 2) {
+			noteName = noteParts[0];
+			octave = parseInt(noteParts[1], 10);
+			scientific_pitch = noteName[0].toUpperCase() + noteName.slice(1) + octave;
+		}
+		return scientific_pitch;
 	},
 	stripRepeatedPitchClasses: function (notes) {
 		var dict = {}, stripped = [];
