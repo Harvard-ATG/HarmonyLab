@@ -295,19 +295,20 @@ define([
 		 * @return undefined
 		 */
 		formatStaveVoices: function() {
-			var voices = [], voice = this.staveVoice;
-			var connectedVoice, formatter; 
-
-			if(voice) {
-				voices = [voice];
-			}
+			var voices = [], voice, connectedVoice, formatter; 
 
 			if(this.isConnected()) {
 				connectedVoice = this.getConnected().getStaveVoice();
-				if(connectedVoice) {
-					voices.push(connectedVoice);
-				}
 			}
+
+			if(this.staveVoice) {
+				voices.push(this.staveVoice);
+			}
+			if(connectedVoice) {
+				voices.push(connectedVoice);
+			}
+
+			voice = voices[0];
 
 			if(voices.length > 0) {
 				formatter = new Vex.Flow.Formatter();
