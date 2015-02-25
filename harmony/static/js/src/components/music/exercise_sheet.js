@@ -141,7 +141,16 @@ define([
 					'<div class="exercise-text-title"><%= title %>&nbsp;<i class="js-arrow ion-arrow-up-b"></i></div>',
 					'<div class="exercise-text-content visible">',
 						'<%= content %>',
-						'<button class="exercise-text-btn"><%= buttonText %></button>',
+						'<div class="exercise-btns">',
+						'<% if (typeof(nextExercise) !== "undefined") { %>',
+							'<button class="exercise-text-btn"><%= buttonText %></button>',
+							'<% if (nextExercise != "") {',
+								'<a class="exercise-next-btn" href="<%= nextExercise %>">Go to Next Exercise</a>',
+							'<% } %>',
+						'<% } else { %>',
+							'<button class="exercise-text-btn"><%= buttonText %></button>',
+						'<% } %>',
+						'</div>',
 					'</div>',
 				'</div>'
 			].join(''));
@@ -188,7 +197,8 @@ define([
 						html = tpl({
 							"title": "Exercise Review",
 							"buttonText": "OK",
-							"content": exc.definition.getReview()
+							"content": exc.definition.getReview(),
+							"nextExercise": exc.definition.getNextExercise()
 						});
 						$el.html(html);
 					} else {
