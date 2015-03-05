@@ -183,6 +183,17 @@ define([
 			return size + " Ionicons";
 		},
 		/**
+		 * Returns the font for rendering figured bass.
+		 *
+		 * @return {string}
+		 */
+		getFiguredBassFont: function(size) {
+			if(!size) {
+				size = "14px";
+			}
+			return size + " FiguredBassMHGPL";
+		},
+		/**
 		 * Returns the X position for notating.
 		 *
 		 * @return {number}
@@ -566,6 +577,10 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var num_notes = notes.length;
 			var mode = this.analyzeConfig.mode;
+			var ctx = this.getContext();
+
+			//ctx.save()
+			//ctx.font = this.getFiguredBassFont(); 
 
 			if(num_notes == 2) {
 				if(mode.intervals) {
@@ -576,6 +591,8 @@ define([
 					this.drawRoman(x, y);
 				}
 			}
+
+			//ctx.restore();
 		},
 		/**
 		 * Notates the stave.

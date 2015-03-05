@@ -172,6 +172,7 @@ define([
 			this.renderStaveConnector();
 
 			this.notate();
+			this.doConnected('notate');
 
 			return this;
 		},
