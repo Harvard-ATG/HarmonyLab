@@ -77,6 +77,14 @@ define(['lodash'], function(_) {
 			return this.exercise.reviewText;
 		},
 		/**
+		 * Returns the URL to the next exercise.
+		 *
+		 * @return {string}
+		 */
+		getNextExercise: function() {
+			return this.exercise.nextExercise;
+		},
+		/**
 		 * Returns all the problems.
 		 *
 		 * @return {array}
@@ -187,6 +195,12 @@ define(['lodash'], function(_) {
 			exercise.reviewText = false;
 			if(definition.hasOwnProperty("reviewText") && definition.reviewText) {
 				exercise.reviewText = definition.reviewText;
+			}
+
+			// check for the next exercise 
+			exercise.nextExercise = false;
+			if(definition.hasOwnProperty("nextExercise") && definition.nextExercise) {
+				exercise.nextExercise = definition.nextExercise;
 			}
 
 			console.log("loaded exercise", exercise);

@@ -142,10 +142,13 @@ canvas#staff {
 	background-color: rgba(34,34,34,.8);
     color: rgb(224,224,224);
 }
-#staff-text .exercise-text-btn {
-    display: block;
-    margin: 5px 0;
+#staff-text .exercise-btns {
+	display: block;
+	margin: 15px 0;
 }
+#staff-text .exercise-next-btn { color: #fff; margin-left: 10px; }
+#staff-text .exercise-next-btn:hover { color: red; }
+
 .icon-btn {
 	background: url(../img/icon-btn-sprite.png) no-repeat;
 	height: 25px;
