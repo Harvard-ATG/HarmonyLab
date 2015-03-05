@@ -12,14 +12,22 @@ class Exercise:
         self.json_data = None
         self.loaded = False
 
-        path = os.path.dirname(os.path.realpath(__file__))
-        self.exercise_path = os.path.join(path, 'exercises', 'json')
+        base_path = os.path.dirname(os.path.realpath(__file__))
+        self.exercise_base_path = os.path.join(base_path, 'exercises', 'json')
+
+    def getExerciseFile(self, exercise_id):
+        exercise_path = exercise_id.split('/')
+        return os.path.join(self.exercise_base_path, *exercise_path) + ".json"
+
+    def getExercisePath(self, exercise_id):
+        exercise_path = exercise_id.split('/')
+        return os.path.split(os.path.join(self.exercise_base_path, *exercise_path))[0]
 
     def load(self, exercise_id):
         if self.loaded:
             return self
 
-        exercise_file = os.path.join(self.exercise_path, "{0}.json".format(exercise_id))
+        exercise_file = self.getExerciseFile(exercise_id)
         try:
             with open(exercise_file) as f:
                 data = f.read()
@@ -38,10 +46,14 @@ class Exercise:
 
     def getNextExercise(self, exercise_id):
         '''Returns the next exercise after the given exercise ID, or None.'''
+
+        exercise_path = self.getExercisePath(exercise_id)
+        exercise_list = os.listdir(exercise_path)
+        print exercise_path, exercise_list
+        sorted_exercise_list = sorted(exercise_list, key=lambda e: e.lower())
+
         next_index = -1
-        exercise_list = os.listdir(self.exercise_path)
-        exercise_list = sorted(exercise_list, key=str.lower)
-        for index, item in enumerate(exercise_list):
+        for index, item in enumerate(sorted_exercise_list):
             item = item.replace('.json', '')
             if exercise_id == item:
                 next_index = index + 1
