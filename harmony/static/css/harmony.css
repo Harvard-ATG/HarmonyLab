@@ -1,4 +1,8 @@
 @charset "UTF-8";
+@font-face {
+    font-family: 'FiguredBassMHGPL';
+    src: url('../fonts/FiguredBassMHGPL.otf');
+}
 
 html, body, h1, h2, h3, h4, div, p  {
 	margin: 0; 
