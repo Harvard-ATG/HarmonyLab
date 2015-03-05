@@ -144,7 +144,7 @@ define([
 						'<div class="exercise-btns">',
 						'<% if (typeof(nextExercise) !== "undefined") { %>',
 							'<button class="exercise-text-btn"><%= buttonText %></button>',
-							'<% if (nextExercise != "") {',
+							'<% if (nextExercise != "") { %>',
 								'<a class="exercise-next-btn" href="<%= nextExercise %>">Go to Next Exercise</a>',
 							'<% } %>',
 						'<% } else { %>',

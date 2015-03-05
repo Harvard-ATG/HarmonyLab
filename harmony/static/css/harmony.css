@@ -142,7 +142,7 @@ canvas#staff {
 	display: block;
 	margin: 15px 0;
 }
-#staff-text .exercise-next-btn { color: #fff; }
+#staff-text .exercise-next-btn { color: #fff; margin-left: 10px; }
 #staff-text .exercise-next-btn:hover { color: red; }
 
 .icon-btn {
