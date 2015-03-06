@@ -332,13 +332,16 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var ctx = this.getContext();
 			var chord_entry = this.getAnalyzer().findChord(notes);
-			var label = '', lines = [];
+			var label;
 
 			if(chord_entry) {
 				label = chord_entry.label;
-				label = this.convertSymbols(label);
-				lines = this.wrapText(label);
-				this.drawTextLines(lines, x, y);
+				this.parseAndDraw(label, x, y, function(text, x, y) {
+					text = this.convertSymbols(text);
+					var lines = this.wrapText(text);
+					this.drawTextLines(lines, x, y);
+					return ctx.measureText(lines[0]).width; // return the width of the first line
+				});
 			}
 		},
 		/**
@@ -410,6 +413,69 @@ define([
 			for(i = 0, len = lines.length; i < len; i++) {
 				line_y = y + (i * line_height);
 				ctx.fillText(lines[i], x, line_y);
+			}
+		},
+		/**
+		 * Parses a string of text to find out which font to use, and then draws
+		 * the resulting text tokens with the necessary font. 
+		 *
+		 * There are only two fonts:
+		 * 		1. the standard text font (i.e. Georgia, etc)
+		 *		2. FiguredBassMHGPL which is a special font for rendering figured bass notation
+		 * 
+		 * Text that uses font #2 should be wrapped in brackets: "{TEXT}".
+		 *
+		 * This is very similar to the way templating engines work except all we're doing is
+		 * substituting a different font instead of a different value for the text, that way
+		 * the text is rendered correctly.
+		 *
+		 * Example: 
+		 * 		Source string = "foo{5e}bar{6q}++" 
+		 * 		Parsed result = ["foo", "{5e}", "bar", "{6q}", "++"]
+		 *
+		 * @param {string} str  - the string to draw
+		 * @param {number} x - the x coordinate to draw 
+		 * @param {number} y - the y coordinate to draw at
+		 * @param {function} callback - called to draw the text once the font is activated
+		 * @return undefined
+		 */
+		parseAndDraw: function(str, x, y, callback) {
+			var ctx = this.getContext();
+			var switchedFont = false;
+			var re =  /([^{}]+|(\{[^{}]+\}))/g;
+			var m, text;
+
+			while ((m = re.exec(str)) != null) {
+				if (m.index === re.lastIndex) {
+					re.lastIndex++;
+				}
+				text = m[1];
+				if(text == "" || typeof text == "undefined") {
+					continue;
+				}
+
+				if(text.charAt(0) == "{" && text.charAt(text.length-1) == "}") {
+					text = text.substr(1, text.length-2); // extract the TEXT in "{TEXT}"
+					if(!switchedFont) {
+						ctx.save();
+						ctx.font = this.getFiguredBassFont();
+						switchedFont = true;
+					}
+					x += callback.call(this, text, x, y);
+					x += 15; // padding
+				} else {
+					if(switchedFont) {
+						ctx.restore();
+						switchedFont = false;
+					}
+					x += callback.call(this, text, x, y);
+					x += 4; // padding
+				}
+
+			}
+
+			if(switchedFont) {
+				ctx.restore();
 			}
 		},
 		/**
@@ -577,10 +643,6 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var num_notes = notes.length;
 			var mode = this.analyzeConfig.mode;
-			var ctx = this.getContext();
-
-			//ctx.save()
-			//ctx.font = this.getFiguredBassFont(); 
 
 			if(num_notes == 2) {
 				if(mode.intervals) {
@@ -591,8 +653,6 @@ define([
 					this.drawRoman(x, y);
 				}
 			}
-
-			//ctx.restore();
 		},
 		/**
 		 * Notates the stave.
