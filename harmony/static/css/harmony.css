@@ -3,16 +3,23 @@
     font-family: 'FiguredBassMHGPL';
     src: url('../fonts/FiguredBassMHGPL.otf');
 }
+@font-face {
+	font-family: 'LinLibertine';
+	src: url('../fonts/LinLibertine.ttf');
+}
+
+html {
+	font-family: LinLibertine, Helvetica, Verdana, Arial, sans-serif;
+}
 
 html, body, h1, h2, h3, h4, div, p  {
 	margin: 0; 
 	padding: 0; 
 	border-width: 0;
 }
-p {padding: .4em 0;}
+p { padding: .4em 0; }
 
 body {
-  font: 90% Helvetica, Verdana, Arial, sans-serif;
   text-align: center;
   background:#000;
 }
@@ -30,7 +37,6 @@ body {
 }
 .header > h1, .header > h2 {
 	color: white;
-	font-family: Helvetica, "Trebuchet MS", Arial,sans-serif; 
 	font-weight:normal; 
 	xpadding-top: 5px;
 }
@@ -510,7 +516,6 @@ ul.theme-thumbnails li.theme-thumbnail:not(:first-child) {
 
 .modal {
 	position: fixed;
-	font-family: Arial, Helvetica, sans-serif;
 	top: 0;
 	right: 0;
 	bottom: 0;
