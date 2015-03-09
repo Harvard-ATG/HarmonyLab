@@ -7,16 +7,23 @@
     font-family: 'Sebastian';
     src: url('../fonts/Sebastian-FigBass-Harvard.otf');
 }
+@font-face {
+	font-family: 'LinLibertine';
+	src: url('../fonts/LinLibertine.ttf');
+}
+
+html {
+	font-family: LinLibertine, Helvetica, Verdana, Arial, sans-serif;
+}
 
 html, body, h1, h2, h3, h4, div, p  {
 	margin: 0; 
 	padding: 0; 
 	border-width: 0;
 }
-p {padding: .4em 0;}
+p { padding: .4em 0; }
 
 body {
-  font: 90% Helvetica, Verdana, Arial, sans-serif;
   text-align: center;
   background:#000;
 }
@@ -34,7 +41,6 @@ body {
 }
 .header > h1, .header > h2 {
 	color: white;
-	font-family: Helvetica, "Trebuchet MS", Arial,sans-serif; 
 	font-weight:normal; 
 	xpadding-top: 5px;
 }
@@ -146,10 +152,13 @@ canvas#staff {
 	background-color: rgba(34,34,34,.8);
     color: rgb(224,224,224);
 }
-#staff-text .exercise-text-btn {
-    display: block;
-    margin: 5px 0;
+#staff-text .exercise-btns {
+	display: block;
+	margin: 15px 0;
 }
+#staff-text .exercise-next-btn { color: #fff; margin-left: 10px; }
+#staff-text .exercise-next-btn:hover { color: red; }
+
 .icon-btn {
 	background: url(../img/icon-btn-sprite.png) no-repeat;
 	height: 25px;
@@ -465,6 +474,9 @@ canvas#staff {
 /*--------------------------------------------------*/
 /* Background image selection */
 
+.theme {
+	padding-bottom: 75px;
+}
 .theme-downlights {
 	background:#000 url('../img/Harmony-bkg.jpg') center no-repeat;
 }
@@ -511,7 +523,6 @@ ul.theme-thumbnails li.theme-thumbnail:not(:first-child) {
 
 .modal {
 	position: fixed;
-	font-family: Arial, Helvetica, sans-serif;
 	top: 0;
 	right: 0;
 	bottom: 0;

@@ -29,7 +29,7 @@ define({
 	"z/047": {"root": "0", "label": "I{ r2}", "priority": "90"},
 	
 	"0/47y": {"root": "0", "label": "V{ u}/IV", "priority": "80"},
-	"0/4y": {"root": "0", "label": "V{ u3}/IV", "nofifth": "true", "priority": "80"},
+	"0/4y": {"root": "0", "label": "V{u3}/IV", "nofifth": "true", "priority": "80"},
 	"4/07y": {"root": "0", "label": "V{ z5}/IV", "priority": "80"},
 	"7/04y": {"root": "0", "label": "V{ r3}/IV", "priority": "80"},
 	"y/047": {"root": "0", "label": "V{ r2}/IV", "priority": "80"},

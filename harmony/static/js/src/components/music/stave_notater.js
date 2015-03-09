@@ -68,6 +68,11 @@ define([
 		 */
 		textLineHeight: 15,
 		/**
+		 * Defines the default font size.
+		 * @type {string}
+		 */
+		defaultFontSize: "14px",
+		/**
 		 * Initializes the notater.
 		 *
 		 * @param {object} config
@@ -167,9 +172,9 @@ define([
 		 */
 		getTextFont: function(size) {
 			if(!size) {
-				size = "14px"
+				size = this.defaultFontSize; 
 			}
-			return size + " Georgia, serif";
+			return size + " LinLibertine, Helvetica, sans-serif";
 		},
 		/**
 		 * Returns the font for rendering icons.
@@ -178,7 +183,7 @@ define([
 		 */
 		getIconFont: function(size) {
 			if(!size) {
-				size = "14px";
+				size = this.defaultFontSize;
 			}
 			return size + " Ionicons";
 		},
@@ -189,7 +194,7 @@ define([
 		 */
 		getFiguredBassFont: function(size) {
 			if(!size) {
-				size = "14px";
+				size = this.defaultFontSize;
 			}
 			return size + " Sebastian";
 		},
