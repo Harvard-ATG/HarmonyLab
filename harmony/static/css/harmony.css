@@ -470,6 +470,9 @@ canvas#staff {
 /*--------------------------------------------------*/
 /* Background image selection */
 
+.theme {
+	padding-bottom: 75px;
+}
 .theme-downlights {
 	background:#000 url('../img/Harmony-bkg.jpg') center no-repeat;
 }

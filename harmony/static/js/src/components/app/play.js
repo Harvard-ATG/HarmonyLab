@@ -9,7 +9,6 @@ define([
 	'app/components/midi',
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
-	'app/components/ui/theme',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
@@ -24,7 +23,6 @@ define([
 	MidiComponent,
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
-	ThemeComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -104,14 +102,6 @@ define([
 				});
 				c.init(this);
 				c.renderTo("#staff-area");
-				this.addComponent(c);
-			},
-			function() {
-				var c = new ThemeComponent({
-					targetEl: "#container"
-				});
-				c.init(this);
-				c.renderTo("#theme-select");
 				this.addComponent(c);
 			}
 		];
