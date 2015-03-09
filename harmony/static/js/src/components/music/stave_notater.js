@@ -71,7 +71,7 @@ define([
 		 * Defines the default font size.
 		 * @type {string}
 		 */
-		defaultFontSize: "18px",
+		defaultFontSize: "1.125em",
 		/**
 		 * Initializes the notater.
 		 *
@@ -194,7 +194,7 @@ define([
 		 */
 		getFiguredBassFont: function(size) {
 			if(!size) {
-				size = "28px";
+				size = "1.75em";
 			}
 			return size + " Sebastian";
 		},
