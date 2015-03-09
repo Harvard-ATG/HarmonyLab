@@ -3,6 +3,10 @@
     font-family: 'FiguredBassMHGPL';
     src: url('../fonts/FiguredBassMHGPL.otf');
 }
+@font-face {
+    font-family: 'Sebastian';
+    src: url('../fonts/Sebastian-FigBass-Harvard.otf');
+}
 
 html, body, h1, h2, h3, h4, div, p  {
 	margin: 0; 

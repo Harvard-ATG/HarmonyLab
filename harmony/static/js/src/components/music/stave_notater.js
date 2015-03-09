@@ -191,7 +191,7 @@ define([
 			if(!size) {
 				size = "14px";
 			}
-			return size + " FiguredBassMHGPL";
+			return size + " Sebastian";
 		},
 		/**
 		 * Returns the X position for notating.
@@ -420,8 +420,9 @@ define([
 		 * the resulting text tokens with the necessary font. 
 		 *
 		 * There are only two fonts:
-		 * 		1. the standard text font (i.e. Georgia, etc)
-		 *		2. FiguredBassMHGPL which is a special font for rendering figured bass notation
+		 * 		1. the standard text font (i.e. Helvetica, etc).
+		 *		2. "Sebastian" which is a special font for rendering figured bass notation 
+		 *		   (FiguredBassMHGPL is another such font, but we're using Sebastian).
 		 * 
 		 * Text that uses font #2 should be wrapped in brackets: "{TEXT}".
 		 *
