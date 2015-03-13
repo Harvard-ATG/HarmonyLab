@@ -447,7 +447,6 @@ define([
 		 */
 		parseAndDraw: function(str, x, y, callback) {
 			var ctx = this.getContext();
-			var switchedFont = false;
 			var re =  /([^{}]+|(\{[^{}]+\}))/g;
 			var m, text;
 
@@ -462,27 +461,17 @@ define([
 
 				if(text.charAt(0) == "{" && text.charAt(text.length-1) == "}") {
 					text = text.substr(1, text.length-2); // extract the TEXT in "{TEXT}"
-					if(!switchedFont) {
-						ctx.save();
-						ctx.font = this.getFiguredBassFont();
-						switchedFont = true;
-					}
+					ctx.save();
+					ctx.font = this.getFiguredBassFont();
 					x += callback.call(this, text, x, y);
 					x += 4; // padding
+					ctx.restore();
 				} else {
-					if(switchedFont) {
-						ctx.restore();
-						switchedFont = false;
-					}
 					x += callback.call(this, text, x, y);
 					x += 4; // padding
 				}
-
 			}
 
-			if(switchedFont) {
-				ctx.restore();
-			}
 		},
 		/**
 		 * Notates the stave.
