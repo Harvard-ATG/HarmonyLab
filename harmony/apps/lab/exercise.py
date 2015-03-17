@@ -25,9 +25,7 @@ class Exercise:
         try:
             with open(exercise_file) as f:
                 data = f.read().strip()
-                print data
                 self.data = json.loads(data)
-                print self.data
         except IOError as e:
             raise ExerciseError("Error loading exercise. I/O error({0}): {1}".format(e.errno, e.strerror))
 
@@ -36,15 +34,19 @@ class Exercise:
         if next_exercise is None:
             self.data['nextExercise'] = ''
         else:
-            self.data['nextExercise'] = reverse('lab:exercise', kwargs={"exercise_id":next_exercise[1]})
+            self.data['nextExercise'] = self.getExerciseUrl(next_exercise['id'])
             
         exercise_list = self.getExerciseList()
         if exercise_list is None:
             self.data['exerciseList'] = ''
         else:
-            self.data['exerciseList'] = [{"name": e[0], "id": e[1]} for e in exercise_list]
+            self.data['exerciseList'] = exercise_list
 
         return self
+    
+    def getExerciseUrl(self, exercise_id):
+        '''Returns the URL for the exercise.'''
+        return reverse('lab:exercise', kwargs={"exercise_id":exercise_id})  
  
     def getExerciseFilePath(self):
         '''Returns the full path to the exercise file.'''
@@ -58,10 +60,16 @@ class Exercise:
    
     def getExerciseList(self):
         '''Returns the list of exercises.'''
-        head, tail = os.path.split(self.exercise_id) 
+        head, tail = os.path.split(self.exercise_id)
         exercise_list = os.listdir(self.getExerciseFileDir())
-        sorted_exercise_list = [e.replace('.json', '') for e in sorted(exercise_list, key=lambda e: e.lower())]
-        return [(e, os.path.join(head, e)) for e in sorted_exercise_list]
+        filtered_exercise_list = [e.replace('.json', '') for e in exercise_list if e.endswith(".json")]
+        sorted_exercise_list = sorted(filtered_exercise_list, key=lambda e: e.lower())
+        return [{
+            "name":name,
+            "id": os.path.join(head, name),
+            "parent": head,
+            "url": self.getExerciseUrl(os.path.join(head, name))
+        } for name in sorted_exercise_list]
     
     def getFirstExercise(self):
         '''Returns the first exercise, or None.'''
@@ -91,7 +99,7 @@ class Exercise:
 
         next_index = -1
         for index, exercise in enumerate(exercise_list):
-            if self.exercise_id == exercise[1]:
+            if self.exercise_id == exercise['id']:
                 next_index = index + 1
                 break
 
