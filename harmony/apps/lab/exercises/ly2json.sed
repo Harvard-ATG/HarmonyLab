@@ -1,6 +1,6 @@
 # s/input/output/g
 
-s/^\\version "2.18.2" \\language "english"$/\{\n  "type": "matching",\n  "reviewText": "Good job!",/g
+s/^\\version "[0-9\.]+" \\language "english"$/\{\n  "type": "matching",\n  "reviewText": "",/g
 
 s/^\\markup \{([^"]*)}$/  "introText": "\1",/g
 
@@ -42,67 +42,122 @@ s/"ias"/"iA#"/g
 s/^\\absolute \{ \\theKey (.*) }$/  "chord": \[\1]\n}/g
 s/<< \{ ([^}]*) } \\\\ \{ ([^}]*) } >>/\{"visible":\1,"hidden":\2}/g
 
-# PROBLEM: the following replacements interfere with possible entries for introText (especially the word "a"). ly2json must be changed to apply these replacements in the "chord" line only.
+/"chord":/ s/\bcf'/b/g
+/"chord":/ s/\bcf/b,/g
+/"chord":/ s/\bdf/cs/g
+/"chord":/ s/\bds/ef/g
+/"chord":/ s/\bes/f/g
+/"chord":/ s/\bff/e/g
+/"chord":/ s/\bgf/fs/g
+/"chord":/ s/\baf/gs/g
+/"chord":/ s/\bas/bf/g
+/"chord":/ s/\bbs,/c/g
+/"chord":/ s/\bbs/c'/g
 
-s/\bc''/72/g
-s/\bcs''/73/g
-s/\bd''/74/g
-s/\bef''/75/g
-s/\be''/76/g
-s/\bf''/77/g
-s/\bfs''/78/g
-s/\bg''/79/g
-s/\bgs''/80/g
-s/\ba''/81/g
-s/\bbf''/82/g
-s/\bb''/83/g
+/"chord":/  s/\bc'''''/108/g
 
-s/\bc'/60/g
-s/\bcs'/61/g
-s/\bd'/62/g
-s/\bef'/63/g
-s/\be'/64/g
-s/\bf'/65/g
-s/\bfs'/66/g
-s/\bg'/67/g
-s/\bgs'/68/g
-s/\ba'/69/g
-s/\bbf'/70/g
-s/\bb'/71/g
+/"chord":/  s/\bc''''/96/g
+/"chord":/ s/\bcs''''/97/g
+/"chord":/  s/\bd''''/98/g
+/"chord":/ s/\bef''''/99/g
+/"chord":/  s/\be''''/100/g
+/"chord":/  s/\bf''''/101/g
+/"chord":/ s/\bfs''''/102/g
+/"chord":/  s/\bg''''/103/g
+/"chord":/ s/\bgs''''/104/g
+/"chord":/  s/\ba''''/105/g
+/"chord":/ s/\bbf''''/106/g
+/"chord":/  s/\bb''''/107/g
 
-s/\bc,/36/g
-s/\bcs,/37/g
-s/\bd,/38/g
-s/\bef,/39/g
-s/\be,/40/g
-s/\bf,/41/g
-s/\bfs,/42/g
-s/\bg,/43/g
-s/\bgs,/44/g
-s/\ba,/45/g
-s/\bbf,/46/g
-s/\bb,/47/g
+/"chord":/  s/\bc'''/84/g
+/"chord":/ s/\bcs'''/85/g
+/"chord":/  s/\bd'''/86/g
+/"chord":/ s/\bef'''/87/g
+/"chord":/  s/\be'''/88/g
+/"chord":/  s/\bf'''/89/g
+/"chord":/ s/\bfs'''/90/g
+/"chord":/  s/\bg'''/91/g
+/"chord":/ s/\bgs'''/92/g
+/"chord":/  s/\ba'''/93/g
+/"chord":/ s/\bbf'''/94/g
+/"chord":/  s/\bb'''/95/g
 
-s/\bc\b/48/g
-s/\bcs\b/49/g
-s/\bd\b/50/g
-s/\bef\b/51/g
-s/\be\b/52/g
-s/\bf\b/53/g
-s/\bfs\b/54/g
-s/\bg\b/55/g
-s/\bgs\b/56/g
-s/\ba\b/57/g
-s/\bbf\b/58/g
-s/\bb\b/59/g
+/"chord":/  s/\bc''/72/g
+/"chord":/ s/\bcs''/73/g
+/"chord":/  s/\bd''/74/g
+/"chord":/ s/\bef''/75/g
+/"chord":/  s/\be''/76/g
+/"chord":/  s/\bf''/77/g
+/"chord":/ s/\bfs''/78/g
+/"chord":/  s/\bg''/79/g
+/"chord":/ s/\bgs''/80/g
+/"chord":/  s/\ba''/81/g
+/"chord":/ s/\bbf''/82/g
+/"chord":/  s/\bb''/83/g
 
-s/\b([0-9]+)\b \b([0-9]+)\b/\1,\2/g
-s/\b([0-9]+)\b \b([0-9]+)\b/\1,\2/g
+/"chord":/  s/\bc'/60/g
+/"chord":/ s/\bcs'/61/g
+/"chord":/  s/\bd'/62/g
+/"chord":/ s/\bef'/63/g
+/"chord":/  s/\be'/64/g
+/"chord":/  s/\bf'/65/g
+/"chord":/ s/\bfs'/66/g
+/"chord":/  s/\bg'/67/g
+/"chord":/ s/\bgs'/68/g
+/"chord":/  s/\ba'/69/g
+/"chord":/ s/\bbf'/70/g
+/"chord":/  s/\bb'/71/g
 
-s/<([,0-9]+)>[1-8]*/\[\1]/g
-s/<>/\[]/g
+/"chord":/  s/\ba,,,/21/g
+/"chord":/ s/\bbf,,,/22/g
+/"chord":/  s/\bb,,,/23/g
 
-s/] \[/],\[/g
-s/} \{/},\{/g
-s/} \[/},\[/g
-s/] \{/],\{/g
+/"chord":/  s/\bc,,/24/g
+/"chord":/ s/\bcs,,/25/g
+/"chord":/  s/\bd,,/26/g
+/"chord":/ s/\bef,,/27/g
+/"chord":/  s/\be,,/28/g
+/"chord":/  s/\bf,,/29/g
+/"chord":/ s/\bfs,,/30/g
+/"chord":/  s/\bg,,/31/g
+/"chord":/ s/\bgs,,/32/g
+/"chord":/  s/\ba,,/33/g
+/"chord":/ s/\bbf,,/34/g
+/"chord":/  s/\bb,,/35/g
+
+/"chord":/  s/\bc,/36/g
+/"chord":/ s/\bcs,/37/g
+/"chord":/  s/\bd,/38/g
+/"chord":/ s/\bef,/39/g
+/"chord":/  s/\be,/40/g
+/"chord":/  s/\bf,/41/g
+/"chord":/ s/\bfs,/42/g
+/"chord":/  s/\bg,/43/g
+/"chord":/ s/\bgs,/44/g
+/"chord":/  s/\ba,/45/g
+/"chord":/ s/\bbf,/46/g
+/"chord":/  s/\bb,/47/g
+
+/"chord":/  s/\bc\b/48/g
+/"chord":/ s/\bcs\b/49/g
+/"chord":/  s/\bd\b/50/g
+/"chord":/ s/\bef\b/51/g
+/"chord":/  s/\be\b/52/g
+/"chord":/  s/\bf\b/53/g
+/"chord":/ s/\bfs\b/54/g
+/"chord":/  s/\bg\b/55/g
+/"chord":/ s/\bgs\b/56/g
+/"chord":/  s/\ba\b/57/g
+/"chord":/ s/\bbf\b/58/g
+/"chord":/  s/\bb\b/59/g
+
+/"chord":/ s/\b([0-9]+)\b \b([0-9]+)\b/\1,\2/g
+/"chord":/ s/\b([0-9]+)\b \b([0-9]+)\b/\1,\2/g
+
+/"chord":/ s/<([,0-9]+)>[1-8]*/\[\1]/g
+/"chord":/ s/<>/\[]/g
+
+/"chord":/ s/] \[/],\[/g
+/"chord":/ s/} \{/},\{/g
+/"chord":/ s/} \[/},\[/g
+/"chord":/ s/] \{/],\{/g
