@@ -6,31 +6,22 @@ class ExerciseError(Exception):
     pass
 
 class Exercise:
-    def __init__(self):
+    BASE_PATH = os.path.dirname(os.path.realpath(__file__))
+    
+    def __init__(self, exercise_id):
         self.file = None
         self.data = None
         self.json_data = None
         self.loaded = False
+        self.exercise_base_path = os.path.join(Exercise.BASE_PATH, 'exercises', 'json')
+        self.exercise_id = exercise_id
 
-        base_path = os.path.dirname(os.path.realpath(__file__))
-        self.exercise_base_path = os.path.join(base_path, 'exercises', 'json')
-
-    def getExerciseFilePath(self, exercise_id):
-        '''Returns the full path to the exercise file.'''
-        exercise_path = exercise_id.split('/')
-        return os.path.join(self.exercise_base_path, *exercise_path) + ".json"
-
-    def getExerciseFileDir(self, exercise_id):
-        '''Returns the full path to the exercise file's directory.'''
-        exercise_path = exercise_id.split('/')
-        return os.path.split(os.path.join(self.exercise_base_path, *exercise_path))[0]
-
-    def load(self, exercise_id):
+    def load(self):
         '''Loads the exercise file data and determines the exercise in the sequence.'''
         if self.loaded:
             return self
 
-        exercise_file = self.getExerciseFilePath(exercise_id)
+        exercise_file = self.getExerciseFilePath()
         try:
             with open(exercise_file) as f:
                 data = f.read()
@@ -39,15 +30,52 @@ class Exercise:
             raise ExerciseError("Error loading exercise. I/O error({0}): {1}".format(e.errno, e.strerror))
 
 
-        next_exercise = self.getNextExercise(exercise_id)
-        if next_exercise:
-            self.data['nextExercise'] = reverse('lab:exercise', kwargs={"exercise_id":next_exercise})
-        else:
+        next_exercise = self.getNextExercise()
+        if next_exercise is None:
             self.data['nextExercise'] = ''
+        else:
+            self.data['nextExercise'] = reverse('lab:exercise', kwargs={"exercise_id":next_exercise[1]})
+            
+        exercise_list = self.getExerciseList()
+        if exercise_list is None:
+            self.data['exerciseList'] = ''
+        else:
+            self.data['exerciseList'] = [{"name": e[0], "id": e[1]} for e in exercise_list]
 
         return self
+ 
+    def getExerciseFilePath(self):
+        '''Returns the full path to the exercise file.'''
+        exercise_path = self.exercise_id.split('/')
+        return os.path.join(self.exercise_base_path, *exercise_path) + ".json"
 
-    def getNextExercise(self, exercise_id):
+    def getExerciseFileDir(self):
+        '''Returns the full path to the exercise file's directory.'''
+        exercise_path = self.exercise_id.split('/')
+        return os.path.split(os.path.join(self.exercise_base_path, *exercise_path))[0]
+   
+    def getExerciseList(self):
+        '''Returns the list of exercises.'''
+        head, tail = os.path.split(self.exercise_id) 
+        exercise_list = os.listdir(self.getExerciseFileDir())
+        sorted_exercise_list = [e.replace('.json', '') for e in sorted(exercise_list, key=lambda e: e.lower())]
+        return [(e, os.path.join(head, e)) for e in sorted_exercise_list]
+    
+    def getFirstExercise(self):
+        '''Returns the first exercise, or None.'''
+        exercise_list = self.getExerciseList()
+        if len(exercise_list) == 0:
+            return None
+        return exercise_list[0]
+    
+    def getLastExercise(self):
+        '''Returns the last exercise, or None.'''
+        exercise_list = self.getExerciseList()
+        if len(exercise_list) == 0:
+            return None
+        return exercise_list[-1]       
+
+    def getNextExercise(self):
         '''
         Returns a string that is the ID of the next exercise in the sequence, 
         or None if it's the last exercise.
@@ -57,16 +85,11 @@ class Exercise:
             - If an exercise is nested in a directory, the next exercise will be from that directory listing.
         '''
 
-        exercise_head, exercise_tail = os.path.split(exercise_id) 
-        exercise_list = os.listdir(self.getExerciseFileDir(exercise_id))
-        exercise_list = [
-            os.path.join(exercise_head, e.replace('.json', '')) 
-            for e in sorted(exercise_list, key=lambda e: e.lower())
-        ]
+        exercise_list = self.getExerciseList()
 
         next_index = -1
         for index, exercise in enumerate(exercise_list):
-            if exercise_id == exercise:
+            if self.exercise_id == exercise[1]:
                 next_index = index + 1
                 break
 
