@@ -71,7 +71,7 @@ define([
 		 * Defines the default font size.
 		 * @type {string}
 		 */
-		defaultFontSize: "14px",
+		defaultFontSize: "18px",
 		/**
 		 * Initializes the notater.
 		 *

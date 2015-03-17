@@ -449,7 +449,6 @@ define([
 			var text_width = 0;
 			var content = '';
 			var status_map = {};
-			var font_size = "14px";
 
 			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
 			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
@@ -458,7 +457,7 @@ define([
 
 			// status indicator label
 			ctx.save();
-			ctx.font = notater.getTextFont(font_size);
+			ctx.font = notater.getTextFont();
 			ctx.fillStyle = "#000000";
 			ctx.fillText(label, x, y);
 			text_width = ctx.measureText(label).width;
@@ -466,7 +465,7 @@ define([
 
 			// status indicator text
 			ctx.save();
-			ctx.font = notater.getTextFont(font_size);
+			ctx.font = notater.getTextFont();
 			content = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
 			ctx.fillStyle = status_map[state].color;
 			ctx.fillText(content, x + text_width + 5, y);
@@ -475,7 +474,7 @@ define([
 
 			// status indicator icon
 			ctx.save();
-			ctx.font = notater.getIconFont(font_size);
+			ctx.font = notater.getIconFont();
 			ctx.fillStyle = status_map[state].color;
 			content = status_map[state].content;
 			ctx.fillText(content, x + text_width + 5, y);
