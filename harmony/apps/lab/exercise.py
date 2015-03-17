@@ -24,8 +24,10 @@ class Exercise:
         exercise_file = self.getExerciseFilePath()
         try:
             with open(exercise_file) as f:
-                data = f.read()
+                data = f.read().strip()
+                print data
                 self.data = json.loads(data)
+                print self.data
         except IOError as e:
             raise ExerciseError("Error loading exercise. I/O error({0}): {1}".format(e.errno, e.strerror))
 
