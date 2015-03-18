@@ -87,13 +87,17 @@ define([
 			switch(graded.result) {
 				case this.grader.STATE.CORRECT:
 					state = ExerciseContext.STATE.CORRECT;
+					this.done = true;
+					this.listenForNext();
 					break;
 				case this.grader.STATE.INCORRECT:
 					state = ExerciseContext.STATE.INCORRECT;
+					this.done = false;
 					break;
 				case this.grader.STATE.PARTIAL:
 				default:
 					state = ExerciseContext.STATE.WAITING;
+					this.done = false;
 			}
 
 			this.graded = graded;
@@ -152,6 +156,63 @@ define([
 		 */
 		getDefinition: function() {
 			return this.definition;
+		},
+		/**
+		 * Advances to the next exercise.
+		 *
+		 * @return undefined
+		 */
+		goToNextExercise: function() {
+			var nextUrl = this.definition.getNextExercise();
+			if(nextUrl) {
+				window.location = nextUrl;
+			}
+		},
+		/**
+		 * Checks if the next exercise can be loaded.
+		 *
+		 * Returns true if any two "B" and "C" notes are played together on the
+		 * keyboard.
+		 *
+		 * @param {object} chord a Chord object
+		 * @return {boolean} true if "B" and "C" are played together, false otherwise.
+		 */
+		canGoToNextExercise: function(chord) {
+			var is_exercise_done = (this.done === true);
+			var trigger_pitches = [11, 0]; // pitch classes for "B" and "C"
+			var wanted_pitches = {};
+			var count_pitches = 0;
+			var can_trigger_next = false;
+			var given_pitches, i, len, pitch;
+
+			if(is_exercise_done) {
+				given_pitches = chord.getNotePitches();
+				for(i = 0, len = given_pitches.length; i < len; i++) {
+					pitch = given_pitches[i].pitchClass;
+					if(_.contains(trigger_pitches, pitch) && !(pitch in wanted_pitches)) {
+						wanted_pitches[pitch] = true;
+						++count_pitches;
+					}
+					if(count_pitches == trigger_pitches.length) {
+						can_trigger_next = true;
+						break;
+					}
+				}
+			}
+
+			return can_trigger_next;
+		},
+		/**
+		 * Listens for the keys "B" and "C" to be played which
+		 * will trigger the application to automatically advance
+		 * to the next exercise in the sequence.
+		 *
+		 * @return undefined
+		 */
+		listenForNext: function() {
+			if(this.canGoToNextExercise(this.inputChords.current())) {
+				this.goToNextExercise();
+			}
 		},
 		/**
 		 * Creates a new set of display chords.
