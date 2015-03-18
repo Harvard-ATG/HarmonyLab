@@ -179,21 +179,22 @@ define([
 		 */
 		canGoToNextExercise: function(chord) {
 			var is_exercise_done = (this.done === true);
-			var trigger_pitches = [11, 0]; // pitch classes for "B" and "C"
-			var wanted_pitches = {};
-			var count_pitches = 0;
+			var trigger_notes = [71,72]; // the "B" and "C" above middle "C"
+			var wanted_notes = {};
+			var count_notes = 0;
 			var can_trigger_next = false;
-			var given_pitches, i, len, pitch;
+			var note_nums, i, len, note;
 
 			if(is_exercise_done) {
-				given_pitches = chord.getNotePitches();
-				for(i = 0, len = given_pitches.length; i < len; i++) {
-					pitch = given_pitches[i].pitchClass;
-					if(_.contains(trigger_pitches, pitch) && !(pitch in wanted_pitches)) {
-						wanted_pitches[pitch] = true;
-						++count_pitches;
+				note_nums = chord.getSortedNotes();
+				for(i = 0, len = note_nums.length; i < len; i++) {
+					note_num = note_nums[i];
+					if(_.contains(trigger_notes, note_num) && !(note_num in wanted_notes)) {
+						wanted_notes[note_num] = true;
+						++count_notes;
 					}
-					if(count_pitches == trigger_pitches.length) {
+					console.log(note_nums, note_num, wanted_notes, count_notes, can_trigger_next);
+					if(count_notes == trigger_notes.length) {
 						can_trigger_next = true;
 						break;
 					}
