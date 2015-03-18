@@ -69,6 +69,17 @@ define(['lodash'], function(_) {
 			return this.exercise.key;
 		},
 		/**
+		 * Returns the key signature for the exercise.
+		 *
+		 * The format of the key signature string should be consistent with the
+		 * KeySignature model.
+		 *
+		 * @return {string}
+		 */
+		getKeySignature: function() {
+			return this.exercise.keySignature;
+		},
+		/**
 		 * Returns the review text.
 		 *
 		 * @return {string}
@@ -185,6 +196,12 @@ define(['lodash'], function(_) {
 				exercise.key = definition.key;
 			} 
 
+			// check for the "keySignature" entry 
+			exercise.keySignature = false; 
+			if(definition.hasOwnProperty('keySignature')) {
+				exercise.keySignature = definition.keySignature;
+			} 
+
 			// check for the introductory text
 			exercise.introText = false;
 			if(definition.hasOwnProperty("introText") && definition.introText) {
@@ -201,6 +218,18 @@ define(['lodash'], function(_) {
 			exercise.nextExercise = false;
 			if(definition.hasOwnProperty("nextExercise") && definition.nextExercise) {
 				exercise.nextExercise = definition.nextExercise;
+			}
+
+			// get analysis options (see config.general.analysisSettings)
+			exercise.analysis = {};
+			if(definition.hasOwnProperty("analysis") && definition.analysis) {
+				exercise.analysis = definition.analysis;
+			}
+
+			// get highlight options (see config.general.highlightSettings)
+			exercise.highlight = {};
+			if(definition.hasOwnProperty("highlight") && definition.highlight) {
+				exercise.highlight = definition.highlight;
 			}
 
 			console.log("loaded exercise", exercise);
