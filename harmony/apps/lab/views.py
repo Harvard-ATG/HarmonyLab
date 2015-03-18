@@ -35,7 +35,7 @@ class ExerciseView(View):
     def get_exercise(self, exercise_id):
         return Exercise(exercise_id).load()
 
-class LTILaunchView(CsrfExemptMixin, RedirectView):
+class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
     """
     LTI consumers will POST to this view.
     """
