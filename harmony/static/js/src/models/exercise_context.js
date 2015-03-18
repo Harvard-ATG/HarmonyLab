@@ -88,7 +88,7 @@ define([
 				case this.grader.STATE.CORRECT:
 					state = ExerciseContext.STATE.CORRECT;
 					this.done = true;
-					this.listenForNext();
+					this.triggerNextExercise();
 					break;
 				case this.grader.STATE.INCORRECT:
 					state = ExerciseContext.STATE.INCORRECT;
@@ -203,13 +203,16 @@ define([
 			return can_trigger_next;
 		},
 		/**
-		 * Listens for the keys "B" and "C" to be played which
-		 * will trigger the application to automatically advance
-		 * to the next exercise in the sequence.
+		 * This will trigger the application to automatically advance
+		 * to the next exercise in the sequence if the user
+		 * has played a special combination of keys on the piano.
+		 *
+		 * This is intended as a shortcut for hitting the "next"
+		 * button on the UI.
 		 *
 		 * @return undefined
 		 */
-		listenForNext: function() {
+		triggerNextExercise: function() {
 			if(this.canGoToNextExercise(this.inputChords.current())) {
 				this.goToNextExercise();
 			}
