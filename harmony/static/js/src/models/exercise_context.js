@@ -193,7 +193,6 @@ define([
 						wanted_notes[note_num] = true;
 						++count_notes;
 					}
-					console.log(note_nums, note_num, wanted_notes, count_notes, can_trigger_next);
 					if(count_notes == trigger_notes.length) {
 						can_trigger_next = true;
 						break;
