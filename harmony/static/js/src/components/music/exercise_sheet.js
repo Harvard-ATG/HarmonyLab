@@ -171,7 +171,6 @@ define([
 			}
 
 			html = tpl(tpl_data);
-			console.log($statusEl, status_map, tpl_data, html);
 
 			$statusEl.html(html);
 

@@ -179,7 +179,7 @@ define([
 		 */
 		canGoToNextExercise: function(chord) {
 			var is_exercise_done = (this.done === true);
-			var trigger_notes = [71,72]; // the "B" and "C" above middle "C"
+			var trigger_notes = [83,84]; // the "B" and "C" above middle "C"
 			var wanted_notes = {};
 			var count_notes = 0;
 			var can_trigger_next = false;
@@ -199,6 +199,7 @@ define([
 					}
 				}
 			}
+			console.log("can go to next", can_trigger_next, note_nums);
 
 			return can_trigger_next;
 		},

@@ -173,7 +173,6 @@ define([
 
 			this.notate();
 			this.doConnected('notate');
-			console.log("render stave", this);
 
 			return this;
 		},
