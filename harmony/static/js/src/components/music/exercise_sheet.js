@@ -60,8 +60,7 @@ define([
 
 		_.bindAll(this, [
 			'render',
-			'onChordsUpdate',
-			'updateExerciseStatus'
+			'onChordsUpdate'
 		]);
 	};
 
@@ -131,83 +130,50 @@ define([
 		renderExerciseText: function() {
 			var exc = this.exerciseContext;
 			var definition = exc.getDefinition();
-			var $el = $("#staff-text");
+			var $statusEl = $("#staff-status");
 			var tpl = _.template([
-				'<div class="exercise-text">',
-					'<div class="exercise-text-title"><%= title %>&nbsp;<i class="js-arrow ion-arrow-up-b"></i></div>',
-					'<div class="exercise-text-content visible">',
-						'<%= content %>',
-						'<div class="exercise-btns">',
-						'<% if (typeof(nextExercise) !== "undefined") { %>',
-							'<button class="exercise-text-btn"><%= buttonText %></button>',
-							'<% if (nextExercise != "") { %>',
-								'<a class="exercise-next-btn" href="<%= nextExercise %>">Go to Next Exercise</a>',
-							'<% } %>',
-						'<% } else { %>',
-							'<button class="exercise-text-btn"><%= buttonText %></button>',
+				'<div class="exercise-status">',
+					'<div class="exercise-status-text"><b>Prompt:</b> <%= prompt_text %></div>',
+					'<div class="exercise-status-text"><b>Status:</b> <span style="color:<%= status_color %>"><%= status_text %></span></div>',
+					'<div class="exercise-status-next">',
+						'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
+							'<a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise</a>',
 						'<% } %>',
-						'</div>',
 					'</div>',
 				'</div>'
 			].join(''));
 			var html = '';
-			var data = {state:false};
+			var status_map = {};
+			var tpl_data = {};
 
-			var toggle_text_fn = function() {
-				var that = this; 
-				var state = data.state;
-				var up_arrow_cls = 'ion-arrow-up-b'; 
-				var down_arrow_cls = 'ion-arrow-down-b';
-				var arrow_cls = [down_arrow_cls,up_arrow_cls];
-				var visible_cls = ['hidden','visible'];
+			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
+			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
+			status_map[exc.STATE.WAITING] = {color:"#999900",content:""};
+			status_map[exc.STATE.READY] = {color:"#000000",content:""};
 
-				if(state) {
-					arrow_cls = [up_arrow_cls,down_arrow_cls];
-					visible_cls = ['visible','hidden'];
-				} 
-
-				$(".js-arrow", $el).removeClass(arrow_cls[0]).addClass(arrow_cls[1]);
-				$('.exercise-text-content', $el).removeClass(visible_cls[0]).addClass(visible_cls[1]);
-			};
-
-			$el.on("click", ".exercise-text-btn,.exercise-text-title", data, function(evt) {
-				data.state = !data.state;
-				toggle_text_fn(data.state)
-			});
+			tpl_data.status_text = exc.state.charAt(0).toUpperCase() + exc.state.slice(1).toLowerCase();
+			tpl_data.status_color = status_map[exc.state].color;
+			tpl_data.next_exercise = exc.definition.getNextExercise();
+			tpl_data.prompt_text = "";
 
 			switch(exc.state) {
-				case exc.STATE.READY:
-					if(exc.definition.hasIntro()) {
-						html = tpl({
-							"title": "Exercise Preview",
-							"buttonText": "Begin",
-							"content": exc.definition.getIntro()
-						});
-						$el.html(html);
-					} else {
-						$el.hide();
-					}
-					break;
 				case exc.STATE.CORRECT:
 					if(exc.definition.hasReview()) {
-						html = tpl({
-							"title": "Exercise Review",
-							"buttonText": "OK",
-							"content": exc.definition.getReview(),
-							"nextExercise": exc.definition.getNextExercise()
-						});
-						$el.html(html);
-					} else {
-						$el.hide();
+						tpl_data.prompt_text = exc.definition.getReview();
 					}
 					break;
+				case exc.STATE.READY:
 				default:
-					data.state = true;
-					toggle_text_fn();
+					if(exc.definition.hasIntro()) {
+						tpl_data.prompt_text = exc.definition.getIntro();
+					}
 					break;
 			}
 
-			$el.removeClass('hide');
+			html = tpl(tpl_data);
+			console.log($statusEl, status_map, tpl_data, html);
+
+			$statusEl.html(html);
 
 			return this;
 		},
@@ -317,7 +283,6 @@ define([
 			stave.setNotater(stave_notater);
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
-			stave.bind("notated", this.updateExerciseStatus);
 
 			return stave;
 		},
@@ -425,56 +390,6 @@ define([
 		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
-		},
-		/**
-		 * Updates the exercise status.
-		 *
-		 * @return undefined
-		 */
-		updateExerciseStatus: function(notater) {
-			var can_notate = (notater.clef === StaveNotater.BASS && notater.stave.isFirstBar());
-			if(!can_notate) {
-				return;
-			}
-			var ctx = notater.getContext()
-			var x = notater.getX();
-			var y = notater.getY() + 35;
-			var exc = this.exerciseContext;
-			var state = exc.state;
-			var label = 'Exercise status: '; 
-			var text_width = 0;
-			var content = '';
-			var status_map = {};
-
-			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
-			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
-			status_map[exc.STATE.WAITING] = {color:"#999900",content:""};
-			status_map[exc.STATE.READY] = {color:"#000000",content:""};
-
-			// status indicator label
-			ctx.save();
-			ctx.font = notater.getTextFont();
-			ctx.fillStyle = "#000000";
-			ctx.fillText(label, x, y);
-			text_width = ctx.measureText(label).width;
-			ctx.restore();
-
-			// status indicator text
-			ctx.save();
-			ctx.font = notater.getTextFont();
-			content = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
-			ctx.fillStyle = status_map[state].color;
-			ctx.fillText(content, x + text_width + 5, y);
-			text_width += ctx.measureText(content).width + 5;
-			ctx.restore();
-
-			// status indicator icon
-			ctx.save();
-			ctx.font = notater.getIconFont();
-			ctx.fillStyle = status_map[state].color;
-			content = status_map[state].content;
-			ctx.fillText(content, x + text_width + 5, y);
-			ctx.restore();
 		}
 	});
 

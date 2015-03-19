@@ -14,7 +14,20 @@ window.appConfig={"exercise":{{exercise_json}}};
 {% block content %}
 <div id="container" class="js-fade-in fade" style="opacity: 0;">
     {% include "_header.html" %}
-    {% include "_harmonyui.html" %}
+	<div class="harmony-ui">
+		<div id="staff-area" class="staff-area-medium">
+			<div id="staff-toolbar">
+				<a class="icon-btn icon-btn-right icon-btn-camera js-btn-screenshot" href="#" target="_blank" alt="Screenshot"> </a>
+			</div>
+			<div style="height: 75%; overflow: hidden; overflow-y: hidden;">
+				<canvas id="staff"></canvas>
+			</div>
+			<div style="height: 25%">
+				<div id="staff-status"></div>
+			</div>
+		</div>
+		<div id="piano"></div>
+	</div>
     {% include "_footer.html" %}
 </div>
 <div class="js-fade-out fade ajax-loader ajax-loader-centered" style="top:33%;opacity: 1"></div>

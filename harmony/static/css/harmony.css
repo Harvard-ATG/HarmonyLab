@@ -11,6 +11,10 @@
 	font-family: 'LinLibertine';
 	src: url('../fonts/LinLibertine.ttf');
 }
+@font-face {
+	font-family: 'LinLibertineBold';
+	src: url('../fonts/LinLibertineRBah.ttf');
+}
 
 html {
 	font-family: LinLibertine, Helvetica, Verdana, Arial, sans-serif;
@@ -96,7 +100,6 @@ body {
 	-webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-	height:402px;
 	width: 100%;
 	background-color: rgb(238, 238, 221);
 	margin: 0 auto;
@@ -104,7 +107,12 @@ body {
 	z-index:0;
 	padding:0;
 	overflow:hidden;
-	overflow-y:auto;
+}
+.staff-area-small {
+	height: 302px;
+}
+.staff-area-medium {
+	height: 402px;
 }
 #staff-toolbar {
     position: absolute;
@@ -121,10 +129,39 @@ body {
 }
 #staff {
 	width: 100%;
-	height: 100%;
+	height: 500px;
 	position: static;
 	left: 0;
 	z-index: 1;
+}
+#staff-status {
+	width: 100%;
+	height: 100%;
+	border-top: 1px solid #000;
+	overflow: hidden;
+	overflow-y:auto;
+}
+.exercise-status {
+	padding: 10px;
+	font-size: 18px;
+	color: #333;
+	position: relative;
+}
+.exercise-status b {
+	font-family: LinLibertineBold;
+	font-size: 18px;
+}
+.exercise-status-next-btn {
+	position: absolute;
+	top: 10px;
+	right: 25px;
+}
+.exercise-status-next-btn,
+.exercise-status-next-btn:visited {
+	color: #000;
+}
+.exercise-status-next-btn:hover {
+	color: #aa0000;
 }
 
 #staff-text {
