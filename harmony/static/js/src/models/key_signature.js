@@ -67,7 +67,7 @@ define([
 	 * @fires change
 	 * @constructor
 	 */
-	var KeySignature = function(key) {
+	var KeySignature = function(key, keySignature) {
 		/**
 		 * Lock flag. When true, locks the key to the signature.
 		 * @type {boolean}
@@ -105,7 +105,7 @@ define([
 		 */
 		this.keyOfSignature = null;
 
-		this.init(key);
+		this.init(key, keySignature);
 	};
 
 	_.extend(KeySignature.prototype, {
@@ -115,11 +115,17 @@ define([
 		 * @param {string} key
 		 * @return undefined
 		 */
-		init: function(key) {
+		init: function(key, keySignature) {
 			key = key || DEFAULT_KEY;
 			this.setKey(key);
-			this.setKeyOfSignature(key);
-			this.setSignature(this.keyToSignature(key));
+			if(typeof keySignature == "string") {
+				this.setKeyOfSignature(this.signatureToKey(keySignature));
+				this.setSignature(keySignature);
+				this.lock = false;
+			} else {
+				this.setKeyOfSignature(key);
+				this.setSignature(this.keyToSignature(key));
+			}
 		},
 		/**
 		 * Change the key value. When lock is true, sets the signature to match
@@ -492,6 +498,18 @@ define([
 		 */
 		keyIsMinor: function(key) {
 			 return key.indexOf('i') === 0;
+		},
+		/**
+		 * Returns the key for a signature.
+		 *
+		 * @param {string} signature string of sharps or flats
+		 * @return {string} strint representing the key
+		 */
+		signatureToKey: function(signature) {
+			if(!(signature in KEY_SIGNATURE_MAP)) {
+				throw new Error("invalid signature: " + signature);
+			}
+			return KEY_SIGNATURE_MAP[signature];
 		},
 		/**
 		 * Returns list of note accidentals in the correct order to notate 

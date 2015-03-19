@@ -65,7 +65,7 @@ define([
 			grader: models.exerciseGrader,
 			definition: models.exerciseDefinition
 		});
-		models.keySignature = new KeySignature(models.exerciseDefinition.getKey());
+		models.keySignature = new KeySignature(models.exerciseDefinition.getKey(), models.exerciseDefinition.getKeySignature());
 		return models;
 	};
 
