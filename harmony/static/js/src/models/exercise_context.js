@@ -87,13 +87,17 @@ define([
 			switch(graded.result) {
 				case this.grader.STATE.CORRECT:
 					state = ExerciseContext.STATE.CORRECT;
+					this.done = true;
+					this.triggerNextExercise();
 					break;
 				case this.grader.STATE.INCORRECT:
 					state = ExerciseContext.STATE.INCORRECT;
+					this.done = false;
 					break;
 				case this.grader.STATE.PARTIAL:
 				default:
 					state = ExerciseContext.STATE.WAITING;
+					this.done = false;
 			}
 
 			this.graded = graded;
@@ -152,6 +156,66 @@ define([
 		 */
 		getDefinition: function() {
 			return this.definition;
+		},
+		/**
+		 * Advances to the next exercise.
+		 *
+		 * @return undefined
+		 */
+		goToNextExercise: function() {
+			var nextUrl = this.definition.getNextExercise();
+			if(nextUrl) {
+				window.location = nextUrl;
+			}
+		},
+		/**
+		 * Checks if the next exercise can be loaded.
+		 *
+		 * Returns true if any two "B" and "C" notes are played together on the
+		 * keyboard.
+		 *
+		 * @param {object} chord a Chord object
+		 * @return {boolean} true if "B" and "C" are played together, false otherwise.
+		 */
+		canGoToNextExercise: function(chord) {
+			var is_exercise_done = (this.done === true);
+			var trigger_notes = [71,72]; // the "B" and "C" above middle "C"
+			var wanted_notes = {};
+			var count_notes = 0;
+			var can_trigger_next = false;
+			var note_nums, i, len, note;
+
+			if(is_exercise_done) {
+				note_nums = chord.getSortedNotes();
+				for(i = 0, len = note_nums.length; i < len; i++) {
+					note_num = note_nums[i];
+					if(_.contains(trigger_notes, note_num) && !(note_num in wanted_notes)) {
+						wanted_notes[note_num] = true;
+						++count_notes;
+					}
+					if(count_notes == trigger_notes.length) {
+						can_trigger_next = true;
+						break;
+					}
+				}
+			}
+
+			return can_trigger_next;
+		},
+		/**
+		 * This will trigger the application to automatically advance
+		 * to the next exercise in the sequence if the user
+		 * has played a special combination of keys on the piano.
+		 *
+		 * This is intended as a shortcut for hitting the "next"
+		 * button on the UI.
+		 *
+		 * @return undefined
+		 */
+		triggerNextExercise: function() {
+			if(this.canGoToNextExercise(this.inputChords.current())) {
+				this.goToNextExercise();
+			}
 		},
 		/**
 		 * Creates a new set of display chords.
