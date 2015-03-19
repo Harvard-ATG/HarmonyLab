@@ -71,7 +71,7 @@ define([
 		 * Defines the default font size.
 		 * @type {string}
 		 */
-		defaultFontSize: "1.125em",
+		defaultFontSize: "18px",
 		/**
 		 * Initializes the notater.
 		 *
@@ -335,17 +335,14 @@ define([
 		 */
 		drawRoman: function(x, y) {
 			var notes = this.chord.getNoteNumbers();
-			var ctx = this.getContext();
 			var chord_entry = this.getAnalyzer().findChord(notes);
-			var label;
 
 			if(chord_entry) {
-				label = chord_entry.label;
-				this.parseAndDraw(label, x, y, function(text, x, y) {
+				this.parseAndDraw(chord_entry.label, x, y, function(text, x, y) {
 					text = this.convertSymbols(text);
 					var lines = this.wrapText(text);
 					this.drawTextLines(lines, x, y);
-					return ctx.measureText(lines[0]).width; // return the width of the first line
+					return this.getContext().measureText(lines[0]).width; // return the width of the first line
 				});
 			}
 		},
