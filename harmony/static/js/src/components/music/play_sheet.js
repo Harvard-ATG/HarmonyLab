@@ -72,6 +72,9 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
+			this.el = $("canvas#staff");
+			this.el[0].width= this.el.width();
+			this.el[0].height= this.el.height();
 			this.initRenderer();
 			this.initStaves();
 			this.initListeners();
@@ -83,14 +86,7 @@ define([
 		 */
 		initRenderer: function() {
 			var CANVAS = Vex.Flow.Renderer.Backends.CANVAS;
-
-			this.el = $('canvas#staff');
-			this.el[0].width = this.getWidth();
-			this.el[0].height = this.getHeight();
-
 			this.vexRenderer = new Vex.Flow.Renderer(this.el[0], CANVAS);
-
-			this.parentComponent.el.append(this.el);
 		},
 		/**
 		 * Initializes the staves that together will form the grand staff.
@@ -221,6 +217,7 @@ define([
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
 			stave.setNotater(stave_notater);
+			console.log(stave.maxWidth, this.getWidth());
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
 
@@ -274,7 +271,7 @@ define([
 		 * @return {number}
 		 */
 		getWidth: function() {
-			return this.parentComponent.getWidth();
+			return this.el.width();
 		},
 		/**
 		 * Returns the height of the sheet.
@@ -282,7 +279,7 @@ define([
 		 * @return {number}
 		 */
 		getHeight: function() {
-			return this.parentComponent.getHeight();
+			return this.el.height();
 		},
 		/**
 		 * Returns the analysis settings of the sheet.

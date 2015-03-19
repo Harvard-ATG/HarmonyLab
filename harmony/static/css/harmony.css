@@ -25,7 +25,7 @@ p { padding: .4em 0; }
 
 body {
   text-align: center;
-  background:#000;
+  background: url('../img/footer_lodyas.png') repeat;
 }
 #container {
 	width: 960px;
@@ -35,14 +35,35 @@ body {
 	position:relative;
 }
 .header {
-	background:#000 url(../img/harmony-logo.jpg) no-repeat;
-	margin-bottom: 20px;
-	padding: 10px 0px 10px 70px;
+	font-size: 18px;
+	background: #333;
+	padding: 15px 10px 15px 0;
+
 }
-.header > h1, .header > h2 {
-	color: white;
-	font-weight:normal; 
-	xpadding-top: 5px;
+.header ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+.header ul li {
+	display: inline;
+	margin-right: 10px;
+}
+.header ul li > span, 
+.header ul li > a,
+.header ul li > a:visited {
+	color: #fff;
+	text-decoration: none;
+	padding: .2em 1em;
+}
+.header ul li > span:hover, 
+.header ul li > a:hover {
+	cursor: pointer;
+	color: #333;
+	background-color: #fff;
+}
+.header ul li.right {
+	float: right;
 }
 .ajax-loader {
 	background: transparent url(../img/ajax-loader.gif) no-repeat;
@@ -76,7 +97,7 @@ body {
 	-moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
 	height:402px;
-	width: 540px;
+	width: 100%;
 	background-color: rgb(238, 238, 221);
 	margin: 0 auto;
 	position:relative;
@@ -98,7 +119,9 @@ body {
 #staff-text.hide+#staff-toolbar {
     top: 0px;
 }
-canvas#staff {
+#staff {
+	width: 100%;
+	height: 100%;
 	position: static;
 	left: 0;
 	z-index: 1;

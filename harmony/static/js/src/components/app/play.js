@@ -95,13 +95,14 @@ define([
 			},
 			function() {
 				var c = new MusicComponent({
+					el: $("#staff-area"),
 					sheet: new PlaySheetComponent({ 
 						chords: this.models.chords,
 						keySignature: this.models.keySignature
 					})
 				});
 				c.init(this);
-				c.renderTo("#staff-area");
+				c.render();
 				this.addComponent(c);
 			}
 		];

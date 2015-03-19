@@ -120,13 +120,14 @@ define([
 			},
 			function() {
 				var c = new MusicComponent({
+					el: $("#staff-area"),
 					sheet: new ExerciseSheetComponent({
 						exerciseContext: this.models.exerciseContext,
 						keySignature: this.models.keySignature
 					})
 				});
 				c.init(this);
-				c.renderTo("#staff-area");
+				c.render();
 				this.addComponent(c);
 			}
 		];
