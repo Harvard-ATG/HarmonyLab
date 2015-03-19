@@ -1,0 +1,16 @@
+{
+	"type": "matching",
+	"introText": "Complete the major triad above the given root (in close position).",
+	"reviewText": "Good job!",
+	"key": "jC_",
+	"chord": [
+		{"visible":[60],"hidden":[64,67]},
+		{"visible":[62],"hidden":[65,69]},
+		{"visible":[64],"hidden":[67,71]},
+		{"visible":[65],"hidden":[69,72]},
+		{"visible":[67],"hidden":[71,74]},
+		{"visible":[69],"hidden":[72,76]},
+		{"visible":[71],"hidden":[74,77]},
+		{"visible":[72],"hidden":[76,79]}
+	]
+}

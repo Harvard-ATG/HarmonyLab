@@ -33,7 +33,7 @@ class ExerciseView(View):
         return render(request, "exercise.html", context)
 
     def get_exercise(self, exercise_id):
-        return Exercise().load(exercise_id)
+        return Exercise(exercise_id).load()
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
     """
