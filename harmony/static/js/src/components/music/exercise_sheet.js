@@ -133,8 +133,10 @@ define([
 			var $statusEl = $("#staff-status");
 			var tpl = _.template([
 				'<div class="exercise-status">',
-					'<div class="exercise-status-text"><b>Prompt:</b> <%= prompt_text %></div>',
-					'<div class="exercise-status-text"><b>Status:</b> <span style="color:<%= status_color %>"><%= status_text %></span></div>',
+					'<div class="exercise-status-text"><b>Status:</b> <span style="color:<%= status_color %>"><%= status_text %> <%= status_icon %></span></div>',
+					'<% if (prompt_text !== "") { %>',
+						'<div class="exercise-status-text"><b>Prompt:</b> <%= prompt_text %></div>',
+					'<% } %>',
 					'<div class="exercise-status-next">',
 						'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
 							'<a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise</a>',
@@ -146,14 +148,17 @@ define([
 			var status_map = {};
 			var tpl_data = {};
 
-			status_map[exc.STATE.INCORRECT] = {color:"#990000",content:"\uf12a"};
-			status_map[exc.STATE.CORRECT] = {color:"#4C9900",content:"\uf122"};
-			status_map[exc.STATE.WAITING] = {color:"#999900",content:""};
-			status_map[exc.STATE.READY] = {color:"#000000",content:""};
+			status_map[exc.STATE.INCORRECT] = {color:"#990000",cls:"ion-close"};
+			status_map[exc.STATE.CORRECT] = {color:"#4C9900",cls:"ion-checkmark"};
+			status_map[exc.STATE.WAITING] = {color:"#999900",cls:""};
+			status_map[exc.STATE.READY] = {color:"#000000",cls:""};
 
 			tpl_data.status_text = exc.state.charAt(0).toUpperCase() + exc.state.slice(1).toLowerCase();
 			tpl_data.status_color = status_map[exc.state].color;
-			tpl_data.next_exercise = exc.definition.getNextExercise();
+			tpl_data.status_icon = status_map[exc.state].cls;
+			if(tpl_data.status_icon) {
+				tpl_data.status_icon = '<i class="'+tpl_data.status_icon+'"></i>';
+			}
 			tpl_data.prompt_text = "";
 
 			switch(exc.state) {
@@ -171,7 +176,6 @@ define([
 			}
 
 			html = tpl(tpl_data);
-
 			$statusEl.html(html);
 
 			return this;
