@@ -28,9 +28,11 @@ class RequirejsContext(object):
     
     def set_app_module(self, app_module_id):
         self.set_module_params('app/main', {'app_module': app_module_id})
+        return self
     
     def add_to_view(self, view_context):
         view_context['requirejs'] = self
+        return self
 
     def debug(self):
         if self._debug:
@@ -51,7 +53,7 @@ class RequirejsTemplateView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super(RequirejsTemplateView, self).get_context_data(**kwargs)
-        self.requirejs.set_app_module(getattr(self, 'requirejs_app'))
+        self.requirejs_context.set_app_module(getattr(self, 'requirejs_app'))
         self.requirejs_context.add_to_view(context)
         return context
 
