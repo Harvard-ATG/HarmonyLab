@@ -232,7 +232,6 @@ define(['lodash'], function(_) {
 				exercise.highlight = definition.highlight;
 			}
 
-			console.log("loaded exercise", exercise);
 			return exercise;
 		},
 		/**

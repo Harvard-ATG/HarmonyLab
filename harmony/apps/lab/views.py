@@ -8,32 +8,78 @@ from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from .exercise import Exercise
 
 import json
+import copy
 
-REQUIRE_JS_CONTEXT = {
-    'REQUIREJS_DEBUG': settings.REQUIREJS_DEBUG,
-    'REQUIREJS_CONFIG': json.dumps(settings.REQUIREJS_CONFIG)
-}
 
-class PlayView(TemplateView):
-    template_name = "play.html"
+class RequirejsContext(object):
+    def __init__(self, config, debug=True):
+        self._debug = debug
+        self._config = copy.deepcopy(config)
+    
+    def set_module_params(self, module_id, params):
+        module_config = {}
+        module_config.update(params)
+        if 'config' not in self._config:
+            self._config['config'] = {}
+        if module_id not in self._config['config']:
+            self._config['config'][module_id] = {}
+        self._config['config'][module_id].update(module_config)
+        return self
+    
+    def set_app_module(self, app_module_id):
+        self.set_module_params('app/main', {'app_module': app_module_id})
+    
+    def add_to_view(self, view_context):
+        view_context['requirejs'] = self
+
+    def debug(self):
+        if self._debug:
+            return True
+        return False
+
+    def config_json(self):
+        return json.dumps(self._config)
+    
+
+
+class RequirejsTemplateView(TemplateView):
+    requirejs_app = None
+
+    def __init__(self, *args, **kwargs):
+        super(RequirejsTemplateView, self).__init__(*args, **kwargs)
+        self.requirejs_context = RequirejsContext(settings.REQUIREJS_CONFIG, settings.REQUIREJS_DEBUG)
+    
     def get_context_data(self, **kwargs):
-        context = super(PlayView, self).get_context_data(**kwargs)
-        context.update(REQUIRE_JS_CONTEXT)
+        context = super(RequirejsTemplateView, self).get_context_data(**kwargs)
+        self.requirejs.set_app_module(getattr(self, 'requirejs_app'))
+        self.requirejs_context.add_to_view(context)
         return context
 
 
-class ExerciseView(View):
+
+class RequirejsView(View):
+    def __init__(self, *args, **kwargs):
+        super(RequirejsView, self).__init__(*args, **kwargs)
+        self.requirejs_context = RequirejsContext(settings.REQUIREJS_CONFIG, settings.REQUIREJS_DEBUG)
+
+
+
+class PlayView(RequirejsTemplateView):
+    template_name = "play.html"
+    requirejs_app = 'app/components/app/play'
+
+
+
+class ExerciseView(RequirejsView):
     def get(self, request, exercise_id, *args, **kwargs):
-        exercise = self.get_exercise(exercise_id)
-
         context = {}
-        context.update(REQUIRE_JS_CONTEXT)
-        context.update({"exercise_json": exercise.as_json()})
-
+        exercise = Exercise(exercise_id).load()
+        self.requirejs_context.set_app_module('app/components/app/exercise')
+        self.requirejs_context.set_module_params('app/components/app/exercise', exercise.as_dict())
+        self.requirejs_context.add_to_view(context)
         return render(request, "exercise.html", context)
 
-    def get_exercise(self, exercise_id):
-        return Exercise(exercise_id).load()
+
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
     """
@@ -43,8 +89,10 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
 
     def get_context_data(self, **kwargs):
         context = super(PlayView, self).get_context_data(**kwargs)
-        context.update(REQUIRE_JS_CONTEXT)
+        context.update(REQUIREJJS_CONTEXT)
         return context
+
+
 
 class LTIToolConfigView(View):
     """
@@ -122,7 +170,7 @@ class LTIToolConfigView(View):
         lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
         lti_tool_config.set_ext_param('canvas.instructure.com', 'course_navigation', {
             'enabled':'true', 
-			'default': 'disabled',
+            'default': 'disabled',
             'text':'Harmony Lab',
         })
         lti_tool_config.description = 'Harmony Lab is an application for music theory students and instructors.'

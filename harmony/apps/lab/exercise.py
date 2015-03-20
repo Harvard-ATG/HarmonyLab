@@ -11,7 +11,6 @@ class Exercise:
     def __init__(self, exercise_id):
         self.file = None
         self.data = None
-        self.json_data = None
         self.loaded = False
         self.exercise_base_path = os.path.join(Exercise.BASE_PATH, 'exercises', 'json')
         self.exercise_id = exercise_id
@@ -114,3 +113,7 @@ class Exercise:
         if pretty:
             return json.dumps(self.data, indent=4, separators=(',', ': '), sort_keys=True)
         return json.dumps(self.data)
+
+    def as_dict(self):
+        '''Returns the exercise data as a python dict.'''
+        return self.data

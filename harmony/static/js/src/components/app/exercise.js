@@ -1,4 +1,5 @@
 define([
+	'module',
 	'lodash',
 	'jquery',
 	'app/components/component',
@@ -16,6 +17,7 @@ define([
 	'app/models/exercise_grader',
 	'app/models/exercise_context'
 ], function(
+	module,
 	_,
 	$,
 	Component,
@@ -73,10 +75,11 @@ define([
 	 * Returns the exercise definition.
 	 */
 	AppExerciseComponent.prototype.getExerciseDefinition = function() {
-		if(!window.appConfig || !window.appConfig.exercise) { 
-			throw new Error("missing window.appConfig.exercise"); 
+		var exercise_config = module.config();
+		if(!exercise_config) { 
+			throw new Error("getExerciseDefinition(): missing exercise configuration data"); 
 		}
-		return window.appConfig.exercise;
+		return exercise_config; //$.extend(true, {}, exercise_config); // Return deep copy of the config
 	};
 
 	/**

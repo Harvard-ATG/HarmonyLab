@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <link href="{{ STATIC_URL }}css/ionicons.css" type="text/css" rel="stylesheet" />
-	<link href="{{ STATIC_URL }}css/jquery-ui.min.css" type="text/css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}css/jquery-ui.min.css" type="text/css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}css/harmony.css" type="text/css" rel="stylesheet" />
-	{% block css_extra %}{% endblock %}
+    {% block css_extra %}{% endblock %}
 </head>
 <body>
 	
@@ -14,11 +14,9 @@
 
 {% autoescape off %}
 <script src="{{ STATIC_URL }}js/lib/require.js"></script>
-<script>requirejs.config({{ REQUIREJS_CONFIG }});</script>
+<script>requirejs.config({{ requirejs.config_json }});</script>
 <script>window.appStaticUrl = '{{ STATIC_URL }}';</script>
-
-{% if REQUIREJS_DEBUG %}<script>requirejs.config({'urlArgs': 't='+(new Date().getTime())});</script>{% endif %}
-
+{% if requirejs.debug %}<script>requirejs.config({'urlArgs': 't='+(new Date().getTime())});</script>{% endif %}
 {% endautoescape %}
 
 {% endblock %}

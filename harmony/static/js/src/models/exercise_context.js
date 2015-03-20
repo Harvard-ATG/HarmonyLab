@@ -199,7 +199,6 @@ define([
 					}
 				}
 			}
-			console.log("can go to next", can_trigger_next, note_nums);
 
 			return can_trigger_next;
 		},

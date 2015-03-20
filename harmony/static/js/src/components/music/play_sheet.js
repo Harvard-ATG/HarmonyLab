@@ -217,7 +217,6 @@ define([
 			stave.setRenderer(this.vexRenderer);
 			stave.setKeySignature(this.keySignature);
 			stave.setNotater(stave_notater);
-			console.log(stave.maxWidth, this.getWidth());
 			stave.setMaxWidth(this.getWidth());
 			stave.updatePosition();
 
