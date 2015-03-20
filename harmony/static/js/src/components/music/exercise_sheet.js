@@ -159,6 +159,9 @@ define([
 			if(tpl_data.status_icon) {
 				tpl_data.status_icon = '<i class="'+tpl_data.status_icon+'"></i>';
 			}
+			if(exc.definition.getNextExercise()) {
+				tpl_data.next_exercise = exc.definition.getNextExercise();
+			}
 			tpl_data.prompt_text = "";
 
 			switch(exc.state) {
