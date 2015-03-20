@@ -1,0 +1,15 @@
+{
+    "chord": [
+        {
+            "hidden": [
+                66
+            ],
+            "visible": [
+                75
+            ]
+        }
+    ],
+    "introText": "Build a diminished 7th below the given pitch.",
+    "key": "jC_",
+    "type": "matching"
+}
