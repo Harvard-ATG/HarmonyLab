@@ -42,7 +42,7 @@ body {
 	font-size: 18px;
 	background: #333;
 	padding: 15px 10px 15px 0;
-
+	position: relative;
 }
 .header ul {
 	margin: 0;
@@ -68,6 +68,31 @@ body {
 }
 .header ul li.right {
 	float: right;
+}
+
+#settings {
+	display: none;
+	width: 100%;
+	background-color: rgb(238, 238, 221);
+	color: #000;
+	padding: 10px 20px;
+	margin-top: 15px;
+	z-index: 100;
+}
+#settings h3 {
+	border-bottom: 1px solid #333;
+	padding: 0 0 10px 0;
+	margin: 0 0 10px 0;
+}
+.settings-section {
+	padding: 0 0 10px 0;
+	margin: 0 0 10px 0;
+}
+.header ul.notation-checkboxes ul {
+	margin-left: 25px;
+}
+.header ul.notation-checkboxes li {
+	display: block;
 }
 .ajax-loader {
 	background: transparent url(../img/ajax-loader.gif) no-repeat;
@@ -241,199 +266,12 @@ body {
 .icon-btn-camera { background-position: -410px -50px; width: 50px; }
 .icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 
-.tab-nav {
-  margin-top: 0px;
-}
-.tab-nav li { 
-  margin-bottom: 1px;
-}
-.tab-content-wrapper {
-	position: relative;
-	font-size:.9em;
-}
-.tab-content-inner {
-	position: absolute;
-	top: 10px;
-	padding: 0;
-	margin: 0;
-}
-.right-panel-bed .tab-content-inner {
-	left: 10px;
-	text-align: left;
-}
-.left-panel-bed .tab-content-inner {
-	right: 10px;
-	text-align: right;
-}
-.tab-content-inner > .tab-row {
-	margin: 0 0 5px 0;
-	padding: 0;
-}
-
-.transcript-wrapper {
-	position: relative;
-}
-.transcript-wrapper > canvas {
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-/*--------------------------------------------------*/
-/* Left side tabs of staff area */
-.left-panel-bed {
-	width: 200px;
-	padding: 0 0;  
-	text-align: left;
-	position: absolute;
-}
-
-#tab-nav-1.tab-nav ul {
-	position: relative;
-	width: 200px;
-	margin-left: 145px;
-	margin-top: 0;
-	margin-bottom:0;
-	padding-left: 0;
-	list-style-type: none;
-}
-
-#tab-nav-1.tab-nav a {
-	display: block;
-	margin:88px -60px 0 -51px;
-	width: 200px;
-	float: left;
-	line-height: 24px;
-	text-align: center;
-	text-decoration: none;
-	color: #000;
-	
-	-webkit-transform: rotate(-90deg); 
-	-moz-transform: rotate(-90deg);
-	transform: rotate(-90deg);
-	
-	-webkit-border-top-left-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	border-top-left-radius: 5px;
-	
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-right-radius: 5px;
-
-}
-#tab-nav-1.tab-nav a.expanded {
-	background-position: 2px -204px;
-	width: 200px;
-}
-
-#tab-nav-1 .tab-content-wrapper {
-	width: 172px; 
-	height:192px; 
-	margin-left: 61px; 
-	padding: 4px;
-}
-
 .sig-lock {
 	background: url(../img/v-line.png) 1px 0 repeat-y; 
 	line-height: 3em;
 	margin-left:  50px;
 }
 
-.tab-content-inner .notation-checkboxes input {
-	margin: 2px 5px;
-}
-
-/*--------------------------------------------------*/
-/* Right side tabs of staff area */
-.right-panel-bed {
-	width: 200px;
-	position: absolute;
-	right: 210px;
-	top: 59px;
-	padding:15px 0;
-}
-
-#tab-nav-2.tab-nav ul {
-  float: left; 
-  margin-left: 0px;
-  margin-top: 0;
-  margin-bottom:0;
-  padding-left: 0;
-  list-style-type: none;
-}
-
-#tab-nav-2.tab-nav ul.notation-checkboxes {
-	float: none;
-	display: block;
-}
-#tab-nav-2 .tab-content-inner ul.notation-checkboxes ul {
-	margin-left: 25px;
-}
-#tab-nav-2 .tab-content-inner ul.notation-checkboxes li.separator {
-	border-top: 1px solid #999;
-	padding: 0px;
-}
-
-#tab-nav-2.tab-nav a {
-	display: block;
-	margin: 88px -112px 0 -50px;
-	width: 200px;
-	float: right;
-	line-height: 24px;
-	text-align: center;
-	text-decoration: none;
-	color: #000;
-	
-	-webkit-transform: rotate(90deg); 
-	-moz-transform: rotate(90deg);
-	transform: rotate(90deg);
-	
-	-webkit-border-top-left-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	border-top-left-radius: 5px;
-	
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-right-radius: 5px;
-
-}
-#tab-nav-1.tab-nav a:hover,
-#tab-nav-2.tab-nav a:hover {
-	background: url(../img/trans-bkg-hover.png) repeat;
-}
-
-#tab-nav-2.tab-nav a.expanded {
-	left: 338px;
-	position: absolute;
-}
-
-#tab-nav-2 .tab-content-wrapper {
-	width: 176px; 
-	height: 200px; 
-	padding: 0px;
-	margin-left: 24px; 
-}
-
-.tab-nav a, 
-.tab-content-wrapper {
-	background: url(../img/trans-bkg.png) repeat;
-	xopacity: 0.85;
-}
-
-.clr {	
-	clear: both;
-    content: ".";
-    display: block;
-    font-size: 0;
-    height: 0;
-    line-height: 0;
-    overflow: auto;
-    visibility: hidden;
-}
-
-.tab-content-inner select {
-	max-width: 125px;
-}
 
 /*--------------------------------------------------*/
 /* On-screen keyboard */
