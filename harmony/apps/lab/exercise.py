@@ -67,7 +67,8 @@ class Exercise:
             "name":name,
             "id": os.path.join(head, name),
             "parent": head,
-            "url": self.getExerciseUrl(os.path.join(head, name))
+            "url": self.getExerciseUrl(os.path.join(head, name)),
+            "selected": os.path.join(head, name) == self.exercise_id,
         } for name in sorted_exercise_list]
     
     def getFirstExercise(self):

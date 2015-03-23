@@ -171,7 +171,6 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 }
 .exercise-status-col2 {
 	width: 30%;
-	text-align: right;
 }
 .exercise-status-state {
 	background-color: rgba(0,0,0,.1);
@@ -181,18 +180,37 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 	text-transform: uppercase;
 	font-size: .9em;
 }
+ul.exercise-status-exercise-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+ul.exercise-status-exercise-list li {
+	float: left;
+	margin-right: 5px;
+}
+ul.exercise-status-exercise-list li a {
+	font-size: 1em;
+}
+ul.exercise-status-exercise-list li:not(.exercise-item) {
+	float: none;
+	clear: both;
+}
+ul.exercise-status-exercise-list li.exercise-item-active > a{
+	color: blue;
+}
 .exercise-status-next-btn {
-	text-decoration:none;
-	font-size: 1.5em;
+	display:block;
+	font-size: 1.5em !important;
 }
-.exercise-status-next-btn,
-.exercise-status-next-btn:visited {
-    color: #000;
+.exercise-status-area a,
+.exercise-status-area a:visited {
+	text-decoration: none;
+	color: #000;
 }
-.exercise-status-next-btn:hover {
-    color: #aa0000;
+.exercise-status-area a:hover {
+	color: #aa0000;
 }
-
 /*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */
 .icon-btn {
@@ -234,7 +252,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 	color: #999900;
 }
 .ioncustom-nextexercise {
-	margin: 0 10px;
+	margin: 0 5px;
 }
 
 

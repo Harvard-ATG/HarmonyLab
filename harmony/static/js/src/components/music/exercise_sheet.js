@@ -140,8 +140,15 @@ define([
 						'<% } %>',
 					'</div>',
 					'<div class="exercise-status-col exercise-status-col2">',
-						'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
-							'<a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise <i class="ion-chevron-right ioncustom-nextexercise"></i></a>',
+						'<% if (typeof(exercise_list) !== "undefined" && exercise_list.length > 0) { %>',
+							'<ul class="exercise-status-exercise-list">',
+							'<% _.forEach(exercise_list, function(exercise) { %>',
+								'<li class="exercise-item"><a href="<%- exercise.url %>"><i class="<% print(exercise.selected ? "ion-ios7-circle-outline" : "ion-record"); %>"></i></a></li>',
+							'<% }); %>',
+							'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
+								'<li><a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise <i class="ion-chevron-right ioncustom-nextexercise"></i></a></li>',
+							'<% } %>',
+							'</ul>',
 						'<% } %>',
 					'</div>',
 				'</div>'
@@ -155,6 +162,7 @@ define([
 			status_map[exc.STATE.WAITING] = {text:"waiting",color:"#999900",iconCls:""};
 			status_map[exc.STATE.READY] = {text:"ready",color:"#000000",iconCls:""};
 
+			tpl_data.exercise_list = exc.definition.getExerciseList();
 			tpl_data.status_text = status_map[exc.state].text;
 			tpl_data.status_color = status_map[exc.state].color;
 			tpl_data.status_icon = status_map[exc.state].iconCls;

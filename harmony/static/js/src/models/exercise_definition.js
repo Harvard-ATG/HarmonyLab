@@ -95,6 +95,14 @@ define(['lodash'], function(_) {
 		getNextExercise: function() {
 			return this.exercise.nextExercise;
 		},
+		/*
+		 * Returns the list of exercises in the set.
+		 *
+		 * @return {array}
+		 */
+		getExerciseList: function() {
+			return this.exercise.exerciseList.slice(0);
+		},
 		/**
 		 * Returns all the problems.
 		 *
@@ -218,6 +226,12 @@ define(['lodash'], function(_) {
 			exercise.nextExercise = false;
 			if(definition.hasOwnProperty("nextExercise") && definition.nextExercise) {
 				exercise.nextExercise = definition.nextExercise;
+			}
+
+			// check for the exercise list
+			exercise.exerciseList = [];
+			if(definition.hasOwnProperty("exerciseList") && definition.exerciseList) {
+				exercise.exerciseList = definition.exerciseList.slice(0);
 			}
 
 			// get analysis options (see config.general.analysisSettings)
