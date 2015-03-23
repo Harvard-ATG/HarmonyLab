@@ -132,14 +132,16 @@ define([
 			var definition = exc.getDefinition();
 			var $statusEl = $("#staff-status");
 			var tpl = _.template([
-				'<div class="exercise-status">',
-					'<div class="exercise-status-text"><b>Status:</b> <span class="exercise-status-box" style="color:<%= status_color %>"><%= status_text %> <%= status_icon %></span></div>',
-					'<% if (prompt_text !== "") { %>',
-						'<div class="exercise-status-text"><b>Prompt:</b> <%= prompt_text %></div>',
-					'<% } %>',
-					'<div class="exercise-status-next">',
+				'<div class="exercise-status-area">',
+					'<div class="exercise-status-col exercise-status-col1">',
+						'<p><b>Status:</b> <span class="exercise-status-state" style="color:<%= status_color %>"><%= status_text %> <%= status_icon %></span></p>',
+						'<% if (prompt_text !== "") { %>',
+							'<p><b>Prompt:</b> <%= prompt_text %></p>',
+						'<% } %>',
+					'</div>',
+					'<div class="exercise-status-col exercise-status-col2">',
 						'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
-							'<a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise</a>',
+							'<a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise <i class="ion-chevron-right ioncustom-nextexercise"></i></a>',
 						'<% } %>',
 					'</div>',
 				'</div>'

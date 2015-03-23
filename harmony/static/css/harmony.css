@@ -27,7 +27,7 @@ html, body, h1, h2, h3, h4, div, p  {
     border-width: 0;
 }
 p { padding: .4em 0; }
-
+b {font-family: LinLibertineBold;}
 body { text-align: center; }
 body.theme-plain { background-color: #333; }
 body.theme-texture { background: url('../img/footer_lodyas.png') repeat; }
@@ -150,13 +150,30 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 
 /*--------------------------------------------------*/
 /* Exercise Status Styles */
-.exercise-status {
-    padding: 10px;
+.exercise-status-area {
+	padding: 5px 10px;
     font-size: 18px;
     color: #333;
-    position: relative;
 }
-.exercise-status-box {
+.exercise-status-area b {
+    font-size: 18px;
+}
+.exercise-status-col,
+.exercise-status-col {
+	display: inline-block;
+	vertical-align: top;
+}
+.exercise-status-col1 {
+	width: 70%;
+}
+.exercise-status-col p {
+	padding: .2em 0;
+}
+.exercise-status-col2 {
+	width: 30%;
+	text-align: right;
+}
+.exercise-status-state {
 	background-color: rgba(0,0,0,.1);
 	padding: 2px 4px;
 	border-radius: 4px;
@@ -164,14 +181,9 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 	text-transform: uppercase;
 	font-size: .9em;
 }
-.exercise-status b {
-    font-family: LinLibertineBold;
-    font-size: 18px;
-}
 .exercise-status-next-btn {
-    position: absolute;
-    top: 10px;
-    right: 25px;
+	text-decoration:none;
+	font-size: 1.5em;
 }
 .exercise-status-next-btn,
 .exercise-status-next-btn:visited {
@@ -220,6 +232,9 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 }
 .ioncustom-sigunlocked {
 	color: #999900;
+}
+.ioncustom-nextexercise {
+	margin: 0 10px;
 }
 
 
