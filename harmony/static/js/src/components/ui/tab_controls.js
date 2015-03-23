@@ -78,7 +78,7 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			var containerEl = $("#settings");
+			var containerEl = $(".header .settings");
 
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);
@@ -215,7 +215,7 @@ define([
 				var instrument_num = $(this).val();
 				that.broadcast(EVENTS.BROADCAST.INSTRUMENT, instrument_num);
 			});
-
+			
 			el.append(selectEl);
 		},
 		/**
@@ -250,10 +250,12 @@ define([
 		renderKeyboardShortcuts: function(containerEl) {
 			var that = this;
 			var el = $('.js-keyboardshortcuts', containerEl);
+			var inputEl = $('<input type="checkbox" name="keyboard_shortcuts" value="on" />');
+			el.append("Keyboard Shortcuts").append(inputEl).wrap("<label/>");
 
 			// toggle shortcuts on/off via gui control
-			el.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);
-			el.on('change', function() {
+			inputEl.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);
+			inputEl.on('change', function() {
 				var toggle = $(this).is(':checked') ? true : false;
 				that.broadcast(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, toggle);
 				$(this).blur(); // trigger blur so it loses focus
@@ -261,7 +263,7 @@ define([
 
 			// update gui control when toggled via ESC key
 			this.subscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, function(enabled) {
-				el[0].checked = enabled;
+				inputEl[0].checked = enabled;
 			});
 		},
 		/**

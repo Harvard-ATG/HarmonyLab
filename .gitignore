@@ -9,3 +9,4 @@
 /config/django_secret.txt
 /config/lti_oauth_credentials.txt
 /database/*.db
+/*.komodoproject

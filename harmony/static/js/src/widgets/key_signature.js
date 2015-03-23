@@ -27,8 +27,12 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 				} else if(target === that.signatureEl[0]) {
 					that.keySignature.changeSignatureKey($(target).val(), that.lock);
 					that.render();
-				} else if(target === that.lockEl.find('input')[0]) {
-					that.lock = that.lockEl.find('input').is(':checked'); 
+				} 
+			});
+			this.el.on('click', function(e) {
+				var target = e.target;
+				if(target == that.lockEl[0]) {
+					that._updateSignatureLock();
 				}
 			});
 
@@ -44,20 +48,36 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 			this._renderSignatureLock();
 			this._renderSignatureSelector();
 			this.el.empty();
-			this.el.append(this.keyEl, this.lockEl, this.signatureEl);
+			this.el.append(this.keyEl, this.lockContainerEl, this.signatureEl);
 			return this;
 		},
 		// renders the lock checkbox that is used to bind the key and signature
 		// together (change one and the other should change accordingly).
 		_renderSignatureLock: function() {
-			var input = document.createElement('input');
-			input.type = 'checkbox';
-			input.value = 'locked';
-			input.checked = this.lock ? true : false;
+			var lock = (this.lock ? true : false);
+			var lockCls = ['ion-locked','ion-unlocked'];
+			var lockContainerEl = $("<span/>"); 
+			var lockEl = $('<span class="'+(lock?lockCls[0]:lockCls[1])+'" data-lock="'+(lock?'yes':'no')+'"/>');
+			var style='style="margin: 0 10px"';
 
-			this.lockEl = $('<div class="sig-lock"></div>').append(input);
+			lockContainerEl.append('<span '+style+'class="ion-arrow-left-c"/>').append(lockEl).append('<span '+style+'class="ion-arrow-right-c"/>');
+
+			this.lockCls = lockCls; 
+			this.lockEl = lockEl;
+			this.lockContainerEl = lockContainerEl;
 	
 			return this;
+		},
+		// updates the signature lock based on the value of the 
+		_updateSignatureLock: function() {
+			var lockCls = this.lockCls.slice(0);
+
+			this.lock = (this.lockEl.data('lock') == "yes" ? false : true);
+			if(this.lock) {
+				lockCls.reverse();
+			}
+			this.lockEl.removeClass(lockCls[0]).addClass(lockCls[1]);
+			this.lockEl.data('lock', (this.lock?'yes':'no'));
 		},
 		// renders a selectable list of signatures
 		_renderSignatureSelector: function() {
