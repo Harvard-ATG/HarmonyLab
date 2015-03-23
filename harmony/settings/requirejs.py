@@ -32,11 +32,7 @@ def configure(ROOT_DIR, STATIC_URL):
         'paths': {
             'app': os.path.join(STATIC_URL, 'js', 'src'),
         },
-        'config': {
-            'app/router': {
-                'base_url': BASE_URL
-            }
-        }
+        'config': {}
     }
 
     try: 
