@@ -86,12 +86,12 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 .header {
     font-size: 18px;
     background: #333;
-    padding: 15px 10px 15px 0;
     position: relative;
 }
 .header ul {
     margin: 0;
     padding: 0;
+    padding: 15px 10px 15px 0;
     list-style-type: none;
 }
 .header ul li {
@@ -119,10 +119,8 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 /* Settings Styles */
 .settings {
     display: none;
-    width: 100%;
     padding: 10px 20px;
-    margin-top: 15px;
-    z-index: 100;
+    margin: 15px 0;
 }
 .settings h3 {
     border-bottom: 1px solid #333;
@@ -140,8 +138,11 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 	color: #666;
 	font-size: .9em;
 }
+.settings ul {
+	padding: 0;
+}
 .settings ul.notation-checkboxes ul {
-    margin-left: 25px;
+	margin-left: 25px;
 }
 .settings ul.notation-checkboxes li {
 	display: block;
@@ -191,7 +192,6 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 .icon-btn-help:hover { background-position: -310px -150px; width: 25px; }
 .icon-btn-camera { background-position: -410px -50px; width: 50px; }
 .icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
-
 .icon-sig-lock {
     background: url(../img/v-line.png) 1px 0 repeat-y; 
 }
@@ -202,6 +202,18 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 .sig-lock-inline {
 	margin: 0 15px;
 }
+
+/*--------------------------------------------------*/
+/* Classes to be used in conjunction with ionicons
+ * http://ionicons.com/ */
+
+.ioncustom-siglocked {
+	color: black;
+}
+.ioncustom-sigunlocked {
+	color: green;
+}
+
 
 
 /*--------------------------------------------------*/
