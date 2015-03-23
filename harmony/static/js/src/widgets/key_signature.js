@@ -9,7 +9,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 	var KeySignatureWidget = function(keySignature) {
 		this.lock = keySignature.locked();
 		this.keySignature = keySignature;
-		this.el = $('<div></div>');
+		this.el = $('<div class="widget-keysignature"></div>');
 		this.initListeners();
 	};
 
@@ -33,6 +33,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 				var target = e.target;
 				if(target == that.lockEl[0]) {
 					that._updateSignatureLock();
+					that.keySignature.changeSignatureLock(that.lock);
 				}
 			});
 

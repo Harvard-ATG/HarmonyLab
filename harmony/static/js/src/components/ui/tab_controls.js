@@ -78,22 +78,23 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			var containerEl = $(".header .settings");
+			var headerEl = $('.header');
+			var settingsEl = headerEl.find(".settings");
 
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);
 			$('.js-settings').on('click', function(e) {
 				e.preventDefault();
-				containerEl.slideToggle();
+				settingsEl.slideToggle();
 				return false;
 			});
 
-			this.initKeySignatureTab(containerEl);
-			this.initNotationTab(containerEl);
-			this.renderInstrumentSelect(containerEl);
-			this.renderKeyboardSizeSelect(containerEl);
-			this.renderKeyboardShortcuts(containerEl);
-			this.initMidiTab(containerEl);
+			this.initKeySignatureTab(headerEl);
+			this.initNotationTab(settingsEl);
+			this.renderInstrumentSelect(settingsEl);
+			this.renderKeyboardSizeSelect(settingsEl);
+			this.renderKeyboardShortcuts(settingsEl);
+			this.initMidiTab(settingsEl);
 		},
 		/**
 		 * Initializes the content of the midi.

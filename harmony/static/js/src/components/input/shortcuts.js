@@ -285,7 +285,6 @@ define([
 		 * @return undefined
 		 */
 		toggleNote: function(state, noteOffset) {
-			console.log("toggleNote", state, noteOffset);
 			var on_or_off = state ? 'on' : 'off';
 			var note_value = this.calculateNote(noteOffset);
 			this.broadcast(EVENTS.BROADCAST.NOTE, on_or_off, note_value);
