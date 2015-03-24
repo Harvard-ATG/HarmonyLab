@@ -87,6 +87,46 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     overflow: hidden;
     overflow-y:auto;
 }
+.content-area {
+    -webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+    -moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
+    background-color: rgb(238, 238, 221);
+    color: #000;
+}
+.content-area-slide-out {
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 350px;
+    z-index: 100;
+    text-align: left;
+    height: 100%;
+    padding: 10px 20px;
+}
+.content-area-section {
+    padding: 0 0 10px 0;
+    margin: 0 0 10px 0;
+}
+.content-area-row {
+    line-height: 1.5em;
+}
+ul.content-area-vertical-nav {
+    list-style-type: none;
+    font-size: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+.content-area-vertical-nav li {
+    border-bottom: 1px solid #333;
+    line-height: 1.5em;
+    margin-bottom: .25em;
+    display: block;
+}
+.content-area-vertical-nav a {
+    display: block;
+    width: 100%;
+}
 
 /*--------------------------------------------------*/
 /* Header Styles */
@@ -94,7 +134,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     font-size: 18px;
     background: #333;
     position: relative;
-	color: #fff;
+    color: #fff;
 }
 .header ul {
     margin: 0;
@@ -107,7 +147,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     margin-right: 10px;
 }
 .header ul li > .btn {
-	padding: .2em 1em;
+    padding: .2em 1em;
 }
 .header ul li.right {
     float: right;
@@ -116,26 +156,13 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 /*--------------------------------------------------*/
 /* Settings Styles */
 .settings {
-    display: none;
-    padding: 10px 20px;
-    position: absolute;
-    left: 0;
-    width: 350px;
-    z-index: 100;
-    text-align: left;
-    height: 100%;
+    
 }
+
 .settings h3 {
     border-bottom: 1px solid #333;
     padding: 0 0 10px 0;
     margin: 0 0 10px 0;
-}
-.settings-section {
-    padding: 0 0 10px 0;
-    margin: 0 0 10px 0;
-}
-.settings-row {
-	line-height: 1.5em;
 }
 .settings-help {
 	color: #666;
@@ -443,13 +470,6 @@ ul.exercise-status-exercise-list li.exercise-item-active > a{
     background: url(../img/keyboard-shortcut-legend4.png) no-repeat;
     width: 881px;
     height: 404px;
-}
-.content-area {
-    -webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-    -moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-    background-color: rgb(238, 238, 221);
-    color: #000;
 }
 .widget-keysignature {
 	display: inline;

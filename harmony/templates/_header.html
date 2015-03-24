@@ -1,9 +1,10 @@
 <div id="header" class="header">
 	<ul>
-		<li><a class="btn" href="{% url 'lab:index' %}">Harmony Lab</a></li>
-		<li><span class="btn js-settings">Settings</span></li>
+		<li><span class="btn js-mainnav"><i class="ion-navicon-round"></i> Harmony Lab</span></li>
+		<li><span class="btn js-settings"><i class="ion-gear-b"></i> Settings</span></li>
 		<li class="js-keysignature-widget"></li>
 		<li class="right"><span class="btn js-btn-info">Help</span></li>
 	</ul>
 </div>
 {% include "_settings.html" %}
+{% include "_mainnav.html" %}
