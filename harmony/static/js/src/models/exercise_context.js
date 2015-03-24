@@ -169,7 +169,7 @@ define([
 		 */
 		endTimer: function() {
 			var mins, seconds;
-			if(this.timer && this.timer.start) {
+			if(this.timer && this.timer.start && !this.timer.end) {
 				this.timer.end = (new Date().getTime() / 1000);
 				this.timer.duration = (this.timer.end - this.timer.start);
 				mins = Math.floor(this.timer.duration / 60);
