@@ -56,7 +56,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 		// together (change one and the other should change accordingly).
 		_renderSignatureLock: function() {
 			var lock = (this.lock ? true : false);
-			var lockCls = ['ion-locked ioncustom-siglocked','ion-unlocked ioncustom-sigunlocked'];
+			var lockCls = ['ion-locked ioncustom-siglocked btn','ion-unlocked ioncustom-sigunlocked'];
 			var lockContainerEl = $("<span/>"); 
 			var lockEl = $('<span class="'+(lock?lockCls[0]:lockCls[1])+'" data-lock="'+(lock?'yes':'no')+'"/>');
 			var style='style="margin: 0 10px"';

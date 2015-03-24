@@ -13,7 +13,11 @@
 }
 @font-face {
     font-family: 'LinLibertineBold';
-    src: url('../fonts/LinLibertineRBah.ttf');
+    src: url('../fonts/LinLibertine_RBah.ttf');
+}
+@font-face {
+    font-family: 'LinLibertineItalic';
+    src: url('../fonts/LinLibertine_RIah.ttf');
 }
 
 html {
@@ -26,8 +30,12 @@ html, body, h1, h2, h3, h4, div, p  {
     padding: 0; 
     border-width: 0;
 }
-p { padding: .4em 0; }
+
+p {padding: .4em 0; }
 b {font-family: LinLibertineBold;}
+i {font-family: LinLibertineItalic;}
+a,a:visited, .btn { color: inherit; text-decoration: none; }
+a:hover, .btn:hover { cursor: pointer; color: #aa0000; }
 body { text-align: center; }
 body.theme-plain { background-color: #333; }
 body.theme-texture { background: url('../img/footer_lodyas.png') repeat; }
@@ -87,6 +95,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     font-size: 18px;
     background: #333;
     position: relative;
+	color: #fff;
 }
 .header ul {
     margin: 0;
@@ -98,18 +107,8 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     display: inline;
     margin-right: 10px;
 }
-.header ul li > span, 
-.header ul li > a,
-.header ul li > a:visited {
-    color: #fff;
-    text-decoration: none;
-    padding: .2em 1em;
-}
-.header ul li > span:hover, 
-.header ul li > a:hover {
-    cursor: pointer;
-    color: #333;
-    background-color: #fff;
+.header ul li > .btn {
+	padding: .2em 1em;
 }
 .header ul li.right {
     float: right;
@@ -203,14 +202,6 @@ ul.exercise-status-exercise-list li.exercise-item-active > a{
 	display:block;
 	font-size: 1.5em !important;
 }
-.exercise-status-area a,
-.exercise-status-area a:visited {
-	text-decoration: none;
-	color: #000;
-}
-.exercise-status-area a:hover {
-	color: #aa0000;
-}
 /*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */
 .icon-btn {
@@ -247,9 +238,6 @@ ul.exercise-status-exercise-list li.exercise-item-active > a{
 
 .ioncustom-siglocked {
 	color: black;
-}
-.ioncustom-siglocked:hover {
-	color: #aa0000;
 }
 .ioncustom-sigunlocked {
 	color: #999900;
