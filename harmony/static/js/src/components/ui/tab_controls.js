@@ -136,7 +136,6 @@ define([
 							midiDevice[type=='input'?'selectInput':'selectOutput'](index);
 						});
 					}
-					$(device.selector).css('width', '100%');
 				});
 
 			};
