@@ -79,14 +79,14 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			var headerEl = $('.header');
-			var settingsEl = headerEl.find(".settings");
+			var headerEl = $('#header');
+			var settingsEl = $("#settings");
 
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);
 			$('.js-settings').on('click', function(e) {
 				e.preventDefault();
-				settingsEl.slideToggle();
+				settingsEl.animate({width:'toggle'}, 350); 
 				return false;
 			});
 

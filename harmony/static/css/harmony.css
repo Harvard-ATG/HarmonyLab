@@ -51,7 +51,6 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     margin: 0 auto;
     margin-bottom: 30px;
     text-align:left;
-    position:relative;
 }
 #staff-area {  
     width: 100%;
@@ -119,7 +118,12 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 .settings {
     display: none;
     padding: 10px 20px;
-    margin: 15px 0;
+    position: absolute;
+    left: 0;
+    width: 350px;
+    z-index: 100;
+    text-align: left;
+    height: 100%;
 }
 .settings h3 {
     border-bottom: 1px solid #333;
