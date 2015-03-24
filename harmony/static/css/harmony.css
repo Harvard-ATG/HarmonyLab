@@ -248,6 +248,9 @@ ul.exercise-status-exercise-list li.exercise-item-active > a{
 .ioncustom-siglocked {
 	color: black;
 }
+.ioncustom-siglocked:hover {
+	color: #aa0000;
+}
 .ioncustom-sigunlocked {
 	color: #999900;
 }
