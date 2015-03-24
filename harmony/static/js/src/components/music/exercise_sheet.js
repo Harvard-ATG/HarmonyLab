@@ -138,6 +138,9 @@ define([
 						'<% if (prompt_text !== "") { %>',
 							'<p><b>Prompt:</b> <%= prompt_text %></p>',
 						'<% } %>',
+						'<% if (typeof(time_to_complete) !== "undefined" && time_to_complete != "") { %>',
+							'<p><b>Time:</b> <%= time_to_complete %></p>',
+						'<% } %>',
 					'</div>',
 					'<div class="exercise-status-col exercise-status-col2">',
 						'<% if (typeof(exercise_list) !== "undefined" && exercise_list.length > 0) { %>',
@@ -178,6 +181,9 @@ define([
 				case exc.STATE.CORRECT:
 					if(exc.definition.hasReview()) {
 						tpl_data.prompt_text = exc.definition.getReview();
+					}
+					if(exc.hasTimer()) {
+						tpl_data.time_to_complete = exc.getExerciseDuration();
 					}
 					break;
 				case exc.STATE.READY:

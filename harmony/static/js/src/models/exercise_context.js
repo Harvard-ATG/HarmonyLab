@@ -36,10 +36,11 @@ define([
 
 		this.state = ExerciseContext.STATE.READY;
 		this.graded = false;
+		this.timer = null;
 		this.displayChords = this.createDisplayChords();
 		this.exerciseChords = this.createExerciseChords();
 
-		_.bindAll(this, ['grade']);
+		_.bindAll(this, ['grade', 'onFirstNoteBeginTimer']);
 
 		this.init();
 	};
@@ -70,6 +71,7 @@ define([
 		 * @return undefined
 		 */
 		initListeners: function() {
+			this.inputChords.bind("change", this.onFirstNoteBeginTimer);
 			this.inputChords.bind("change", this.grade);
 		},
 		/**
@@ -88,6 +90,7 @@ define([
 				case this.grader.STATE.CORRECT:
 					state = ExerciseContext.STATE.CORRECT;
 					this.done = true;
+					this.endTimer();
 					this.triggerNextExercise();
 					break;
 				case this.grader.STATE.INCORRECT:
@@ -107,6 +110,77 @@ define([
 			this.inputChords.goTo(graded.activeIndex);
 
 			this.trigger("graded");
+		},
+		/**
+		 * On the first note that is played, start the timer.
+		 *
+		 * @return undefined
+		 */
+		onFirstNoteBeginTimer: function() {
+			if(this.timer == null) {
+				this.beginTimer();
+			}
+		},
+		/**
+		 * Resets the timer.
+		 *
+		 * @return this
+		 */
+		resetTimer: function() {
+			this.timer = {};
+			this.timer.start = null;
+			this.timer.end = null;
+			this.timer.duration = null;
+			this.timer.durationString = "";
+			return this;
+		},
+		/**
+		 * Returns true if the timer is non-null.
+		 *
+		 * @return {boolean}
+		 */
+		hasTimer: function() {
+			return this.timer !== null;
+		},
+		/**
+		 * Returns the duration of the exercise as a string.
+		 *
+		 * @return {string}
+		 */
+		getExerciseDuration: function() {
+			return this.timer.durationString;
+		},
+		/**
+		 * Begins the timer.
+		 *
+		 * @return this
+		 */
+		beginTimer: function() {
+			if(this.timer === null) {
+				this.resetTimer();
+			}
+			this.timer.start = (new Date().getTime() / 1000);
+			return this;
+		},
+		/**
+		 * Begins the timer.
+		 *
+		 * @return this
+		 */
+		endTimer: function() {
+			var mins, seconds;
+			if(this.timer && this.timer.start) {
+				this.timer.end = (new Date().getTime() / 1000);
+				this.timer.duration = (this.timer.end - this.timer.start);
+				mins = Math.floor(this.timer.duration / 60);
+				seconds = (this.timer.duration - (mins * 60)).toFixed(1);
+				if(mins == 0) {
+					this.timer.durationString = seconds + " seconds";
+				} else {
+					this.timer.durationString = mins + " minutes and " + seconds + " seconds";
+				}
+			}
+			return this;
 		},
 		/**
 		 * Returns chords for display on screen.
