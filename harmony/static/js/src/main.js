@@ -1,4 +1,9 @@
-define(['module'], function(module) {
+define([
+	'module',
+	'app/components/app/play',
+	'app/components/app/exercise'
+], function(module) {
+
 	// The "main" module simply looks at the configure "app_module", 
 	// loads it with requirejs, and then executes the "ready" function. 
 	// The application module to load should be specified in the global 
