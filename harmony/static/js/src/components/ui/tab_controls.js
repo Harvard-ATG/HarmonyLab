@@ -63,6 +63,7 @@ define([
 		}
 		this.keySignature = settings.keySignature;
 		this.midiDevice = settings.midiDevice;
+		this.exerciseContext = settings.exerciseContext;
 
 		this.addComponent(new ModalComponent());
 
@@ -167,8 +168,10 @@ define([
 		initNotationTab: function(containerEl) {
 			var that = this;
 			var el = $('.js-analyze-widget', containerEl);
-			var analyze_widget = new AnalyzeWidget();
-			var highlight_widget = new HighlightWidget();
+			var analysisSettings = this.exerciseContext.getDefinition().getAnalysisSettings();
+			var analyze_widget = new AnalyzeWidget(analysisSettings);
+			var highlightSettings = this.exerciseContext.getDefinition().getHighlightSettings();
+			var highlight_widget = new HighlightWidget(highlightSettings);
 			var event_for = {
 				'highlight': EVENTS.BROADCAST.HIGHLIGHT_NOTES,
 				'analyze': EVENTS.BROADCAST.ANALYZE_NOTES

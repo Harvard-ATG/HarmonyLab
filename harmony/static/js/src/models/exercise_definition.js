@@ -104,6 +104,22 @@ define(['lodash'], function(_) {
 			return this.exercise.exerciseList.slice(0);
 		},
 		/**
+		 * Returns the analysis settings.
+		 *
+		 * @return {object}
+		 */
+		getAnalysisSettings: function() {
+			return this.exercise.analysis;
+		},
+		/**
+		 * Returns the highlight settings.
+		 *
+		 * @return {object}
+		 */
+		getHighlightSettings: function() {
+			return this.exercise.highlight;
+		},
+		/**
 		 * Returns all the problems.
 		 *
 		 * @return {array}

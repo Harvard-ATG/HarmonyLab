@@ -116,7 +116,8 @@ define([
 			function() {
 				var c = new TabControlsComponent({
 					keySignature: this.models.keySignature,
-					midiDevice: this.models.midiDevice
+					midiDevice: this.models.midiDevice,
+					exerciseContext: this.models.exerciseContext
 				});
 				c.init(this);
 				this.addComponent(c);
