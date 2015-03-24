@@ -1,0 +1,15 @@
+{
+    "chord": [
+        {
+            "hidden": [
+                74
+            ],
+            "visible": [
+                69
+            ]
+        }
+    ],
+    "introText": "Build an augmented 3rd above the given pitch.",
+    "key": "jC_",
+    "type": "matching"
+}
