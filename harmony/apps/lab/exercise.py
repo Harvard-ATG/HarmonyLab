@@ -14,16 +14,16 @@ class Exercise:
         self.loaded = False
         self.exercise_base_path = os.path.join(Exercise.BASE_PATH, 'exercises', 'json')
         self.exercise_id = exercise_id
-        self.exerciseList = self.getExerciseList()
 
-        # If a directory is given, try to set the exercise ID to the first one in the directory
-        if self.exerciseIdEndsWithSlash(exercise_id):
-            if len(self.exerciseList) > 0:
-                self.exercise_id = self.exerciseList[0]['id']
+        is_dir_without_trailing_slash = not self.exerciseIsFile() and not self.endsWithSlash(self.exercise_id)
+        if is_dir_without_trailing_slash:
+            self.exercise_id = '%s/' % self.exercise_id
 
-    def exerciseIdEndsWithSlash(self, exercise_id):
-        '''Returns true if the exercise id ends with a forward slash.'''
-        return exercise_id.split('/')[-1] == ''
+        self.exercise_list = self.getExerciseList()
+
+        if self.endsWithSlash(self.exercise_id): 
+            if len(self.exercise_list) > 0:
+                self.exercise_id = self.exercise_list[0]['id']
 
     def load(self):
         '''Loads the exercise file data and determines the exercise in the sequence.'''
@@ -40,7 +40,7 @@ class Exercise:
 
         self.data['nextExercise'] = self.getExerciseUrlFor('next')
         self.data['previousExercise'] = self.getExerciseUrlFor('previous')
-        self.data['exerciseList'] = self.exerciseList
+        self.data['exerciseList'] = self.exercise_list
 
         return self
 
@@ -61,7 +61,7 @@ class Exercise:
         filtered_exercise_list = [e.replace('.json', '') for e in exercise_list if e.endswith(".json")]
         sorted_exercise_list = sorted(filtered_exercise_list, key=lambda e: e.lower())
 
-        self.exerciseList = [{
+        self.exercise_list = [{
             "id": os.path.join(head, name),
             "name":name,
             "parent": head,
@@ -69,7 +69,7 @@ class Exercise:
             "selected": os.path.join(head, name) == self.exercise_id,
         } for name in sorted_exercise_list]
 
-        return self.exerciseList
+        return self.exercise_list
     
     def getFirstExercise(self):
         '''Returns the first exercise, or None.'''
@@ -127,6 +127,14 @@ class Exercise:
     def getExerciseUrl(self, exercise_id):
         '''Returns the URL for the exercise.'''
         return reverse('lab:exercise', kwargs={"exercise_id":exercise_id})  
+
+    def endsWithSlash(self, item):
+        '''Returns true if the item ends with a forward slash.'''
+        return item.split('/')[-1] == ''
+
+    def exerciseIsFile(self):
+        '''Returns true if the exercise id is a file.'''
+        return os.path.isfile(self.getExerciseFilePath())
 
     def as_json(self, pretty=False):
         '''Returns the exercise data as a JSON string.'''
