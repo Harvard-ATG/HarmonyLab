@@ -115,7 +115,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 ul.content-area-vertical-nav {
     list-style-type: none;
     font-size: 1.5em;
-    margin: 0 0 .25em 0;
+    margin: 0 0 .5em 0;
     padding: 0;
     border-bottom: 1px solid #333;
 }
@@ -168,13 +168,16 @@ ul.content-area-vertical-nav {
 	color: #666;
 	font-size: .9em;
 }
-.settings ul {
+.settings ul.notation-checkboxes {
+	margin: 0;
 	padding: 0;
 }
 .settings ul.notation-checkboxes ul {
-	margin-left: 25px;
+	margin: 0 0 0 25px;
 }
 .settings ul.notation-checkboxes li {
+	margin: 0;
+	padding: 0;
 	display: block;
 }
 
