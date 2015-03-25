@@ -94,6 +94,10 @@ define([
 				settingsEl.animate({width:'toggle'}, 350);
 				return false;
 			});
+			settingsEl.children(".accordion").accordion({
+				collapsible: true,
+				heightStyle: "content"
+			});
 			this.initKeySignatureTab(headerEl);
 			this.initNotationTab(settingsEl);
 			this.renderInstrumentSelect(settingsEl);
