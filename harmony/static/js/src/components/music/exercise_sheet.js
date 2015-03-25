@@ -146,7 +146,7 @@ define([
 						'<% if (typeof(exercise_list) !== "undefined" && exercise_list.length > 0) { %>',
 							'<ul class="exercise-status-exercise-list">',
 							'<% _.forEach(exercise_list, function(exercise) { %>',
-								'<li class="exercise-item"><a href="<%- exercise.url %>"><i class="<% print(exercise.selected ? "ion-ios7-circle-outline" : "ion-record"); %>"></i></a></li>',
+								'<li class="exercise-item <% print(exercise.selected ? "active" : "inactive"); %>"><a href="<%- exercise.url %>"><i class="ion-record"></i></a></li>',
 							'<% }); %>',
 							'<% if (typeof(next_exercise) !== "undefined" && next_exercise != "") { %>',
 								'<li><a class="exercise-status-next-btn" href="<%= next_exercise %>">Next Exercise <i class="ion-chevron-right ioncustom-nextexercise"></i></a></li>',

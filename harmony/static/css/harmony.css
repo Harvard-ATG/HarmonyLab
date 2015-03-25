@@ -114,11 +114,11 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
 ul.content-area-vertical-nav {
     list-style-type: none;
     font-size: 1.5em;
-    margin: 0;
+    margin: 0 0 .25em 0;
     padding: 0;
+    border-bottom: 1px solid #333;
 }
 .content-area-vertical-nav li {
-    border-bottom: 1px solid #333;
     line-height: 1.5em;
     margin-bottom: .25em;
     display: block;
@@ -160,8 +160,7 @@ ul.content-area-vertical-nav {
 }
 
 .settings h3 {
-    border-bottom: 1px solid #333;
-    padding: 0 0 10px 0;
+    padding: 0;
     margin: 0 0 10px 0;
 }
 .settings-help {
@@ -226,8 +225,14 @@ ul.exercise-status-exercise-list li:not(.exercise-item) {
 	float: none;
 	clear: both;
 }
-ul.exercise-status-exercise-list li.exercise-item-active > a{
-	color: blue;
+ul.exercise-status-exercise-list li.exercise-item.active  {
+	color: #333;
+}
+ul.exercise-status-exercise-list li.exercise-item.inactive  {
+	color: #bdbdbd;
+}
+ul.exercise-status-exercise-list li.exercise-item a:hover {
+	color: #aa0000;
 }
 .exercise-status-next-btn {
 	display:block;
