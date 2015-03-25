@@ -70,6 +70,9 @@ class PlayView(RequirejsTemplateView):
     template_name = "play.html"
     requirejs_app = 'app/components/app/play'
 
+class ManageView(RequirejsTemplateView):
+    template_name = "manage.html"
+    requirejs_app = 'app/components/app/manage'
 
 
 class ExerciseView(RequirejsView):
