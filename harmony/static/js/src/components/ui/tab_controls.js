@@ -86,21 +86,12 @@ define([
 		initComponent: function() {
 			var headerEl = $('#header');
 			var settingsEl = $("#settings");
-			var mainnavEl = $("#mainnav");
-			var zindex = 100;
 
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);
 			$('.js-settings').on('click', function(e) {
 				e.preventDefault();
-				settingsEl.css('z-index', ++zindex);
 				settingsEl.animate({width:'toggle'}, 350);
-				return false;
-			});
-			$('.js-mainnav').on('click', function(e) {
-				e.preventDefault();
-				mainnavEl.animate({width:'toggle'}, 350);
-				mainnavEl.css('z-index', ++zindex);
 				return false;
 			});
 			this.initKeySignatureTab(headerEl);

@@ -103,6 +103,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     text-align: left;
     height: 100%;
     padding: 10px 20px;
+	line-height: 1em;
 }
 .content-area-section {
     padding: 0 0 10px 0;
@@ -161,7 +162,7 @@ ul.content-area-vertical-nav {
 
 .settings h3 {
     padding: 0;
-    margin: 0 0 10px 0;
+    margin: 0;
 }
 .settings-help {
 	color: #666;
