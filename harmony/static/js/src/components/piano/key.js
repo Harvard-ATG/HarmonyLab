@@ -432,7 +432,7 @@ define([
 		 * @return {number}
 		 */
 		calculateHeight: function(keyboardHeight) {
-			return 0.75 * keyboardHeight;
+			return 0.6 * keyboardHeight;
 		},
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.

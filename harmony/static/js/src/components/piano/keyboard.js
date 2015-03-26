@@ -41,6 +41,7 @@ define([
 	_.extend(KeyboardComponent.prototype, {
 		defaultWidth: 870,
 		defaultHeight: 120,
+		defaultSmallHeight: 80,
 		defaultKeyWidth: 30,
 		numberOfKeys: 49,
 		initComponent: function() {
@@ -110,7 +111,7 @@ define([
 				layoutConfig.keyWidth = (this.defaultWidth / numWhiteKeys);
 			}
 
-			layoutConfig.height = this.defaultHeight;
+			layoutConfig.height = (window.screen.height <= 768 ? this.defaultSmallHeight: this.defaultHeight); 
 
 			return layoutConfig;
 		},

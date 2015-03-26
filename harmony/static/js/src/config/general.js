@@ -300,10 +300,9 @@ define({
 	chordBank: {
 		// This defines the number of chords that can be displayed
 		// on the sheet music at one time. It should be a positive
-		// integer in the range of 1-7. Chords are displayed
-		// in fixed-width areas spread across the sheet music,
-		// so generally numbers in the range of 3-5 work best.
-		displaySize: 6
+		// integer in the range of 1-10. Chords are displayed
+		// in fixed-width areas spread across the sheet music.
+		displaySize: 10 
 	},
 
 	// Defines the default analysis settings 

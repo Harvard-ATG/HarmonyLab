@@ -95,6 +95,30 @@ define(['lodash'], function(_) {
 		getNextExercise: function() {
 			return this.exercise.nextExercise;
 		},
+		/*
+		 * Returns the list of exercises in the set.
+		 *
+		 * @return {array}
+		 */
+		getExerciseList: function() {
+			return this.exercise.exerciseList.slice(0);
+		},
+		/**
+		 * Returns the analysis settings.
+		 *
+		 * @return {object}
+		 */
+		getAnalysisSettings: function() {
+			return this.exercise.analysis;
+		},
+		/**
+		 * Returns the highlight settings.
+		 *
+		 * @return {object}
+		 */
+		getHighlightSettings: function() {
+			return this.exercise.highlight;
+		},
 		/**
 		 * Returns all the problems.
 		 *
@@ -220,6 +244,12 @@ define(['lodash'], function(_) {
 				exercise.nextExercise = definition.nextExercise;
 			}
 
+			// check for the exercise list
+			exercise.exerciseList = [];
+			if(definition.hasOwnProperty("exerciseList") && definition.exerciseList) {
+				exercise.exerciseList = definition.exerciseList.slice(0);
+			}
+
 			// get analysis options (see config.general.analysisSettings)
 			exercise.analysis = {};
 			if(definition.hasOwnProperty("analysis") && definition.analysis) {
@@ -232,7 +262,6 @@ define(['lodash'], function(_) {
 				exercise.highlight = definition.highlight;
 			}
 
-			console.log("loaded exercise", exercise);
 			return exercise;
 		},
 		/**

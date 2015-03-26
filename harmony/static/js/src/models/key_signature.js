@@ -166,6 +166,19 @@ define([
 			this.trigger('change');
 		},
 		/**
+		 * Changes the "lock" status.
+		 *
+		 * @param {boolean} isLocked
+		 * @return undefined
+		 * @public
+		 */
+		changeSignatureLock: function(isLocked) {
+			if (typeof isLocked !== "boolean") {
+				throw new Error("invalid param isLocked: must be a boolean type: true|false")
+			}
+			this.lock = isLocked ? true : false;
+		},
+		/**
 		 * Returns true if the key and signature are locked together, false
 		 * otherwise.
 		 *
@@ -400,7 +413,7 @@ define([
 				index = 0;
 			}
 			var new_key = wheel[(wheel.length + index + direction) % wheel.length];
-			this.changeKey(new_key, true);
+			this.changeKey(new_key, this.locked());
 		},
 
 		//--------------------------------------------------

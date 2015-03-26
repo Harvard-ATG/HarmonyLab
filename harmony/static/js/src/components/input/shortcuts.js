@@ -84,7 +84,7 @@ define([
 			];
 
 			this.toggleMode = this.execIf([this.isKeyDown], this.toggleMode);
-			this.note = this.execIf([this.isEnabled], this.note);
+			this.toggleNote = this.execIf([this.isEnabled], this.toggleNote);
 
 			_.each(this.messages, function(msg) {
 				var fn = this[msg];

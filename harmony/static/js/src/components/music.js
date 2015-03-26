@@ -39,11 +39,6 @@ define([
 	var MusicComponent = function(settings) {
 		this.settings = settings || {};
 		/**
-		 * Defines the width/height for the music.
-		 * @type {object} 
-		 */
-		this.layout = {width:520, height:355};
-		/**
 		 * Defines the music element.
 		 * @type {jQuery}
 		 */
@@ -88,8 +83,6 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			this.el[0].width = this.getWidth(); 
-			this.el[0].height = this.getHeight(); 
 			this.initListeners();
 		},
 		/**
@@ -123,22 +116,12 @@ define([
 			return this;
 		},
 		/**
-		 * Renders the music to a selector.
-		 *
-		 * @return this;
-		 */
-		renderTo: function(selector) {
-			this.render();
-			$(selector).append(this.el);
-			return this;
-		},
-		/**
 		 * Returns the width.
 		 *
 		 * @return {number}
 		 */
 		getWidth: function() {
-			return this.layout.width;
+			return this.el.width(); 
 		},
 		/**
 		 * Returns the height.
@@ -146,7 +129,7 @@ define([
 		 * @return {number}
 		 */
 		getHeight: function() {
-			return this.layout.height;
+			return this.el.height();
 		},
 		/**
 		 * Handles a change to the highlight settings.

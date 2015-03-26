@@ -48,7 +48,7 @@ define([
 	var DEFAULT_KEYBOARD_SIZE = Config.get('general.defaultKeyboardSize');
 
 	/**
-	 * Defines a namespace for setting up tab behavior around the notation
+	 * Defines a namespace for settings.
 	 * canvas.
 	 *
 	 * @namespace
@@ -64,112 +64,54 @@ define([
 		this.keySignature = settings.keySignature;
 		this.midiDevice = settings.midiDevice;
 
+		if(settings.exerciseContext) { 
+			this.exerciseContext = settings.exerciseContext;
+		} else {
+			this.exerciseContext = false;
+		}
+
 		this.addComponent(new ModalComponent());
 
-		_.bindAll(this, ['initTab', 'onClickToggleTabs', 'onClickInfo']);
+		_.bindAll(this, ['onClickInfo']);
 	};
 
 	TabControlsComponent.prototype = new Component();
 
 	_.extend(TabControlsComponent.prototype, {
 		/**
-		 * Holds the tab elements.
-		 * @type {array}
-		 */
-		tabElements: [],
-		/**
-		 * Flag to indicate if tabs are all expanded or not.
-		 * @type {boolean}
-		 */
-		tabsExpanded: false,
-		/**
-		 * Initializes the tab expand/collapse behavior and other buttons.
+		 * Initializes the component.
 		 *
 		 * @return undefined
 		 */
 		initComponent: function() {
+			var headerEl = $('#header');
+			var settingsEl = $("#settings");
 
-			$('.js-tab').each(this.initTab);
-			$('.js-toggle-tabs')
-				.on('mousedown', this.cancelEvent) // fixes issue with unwated text selections on click
-				.on('click', this.onClickToggleTabs); // handles the expand/collapse behavior we want
-			
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 			$('.js-btn-info').on('click', this.onClickInfo);
-		},
-		/**
-		 * Initializes each tab so it can expand/collapse.
-		 *
-		 * @param {number} index
-		 * @param {object} el
-		 * @return undefined
-		 */
-		initTab: function(index, el) {
-			var $el = $(el);
-			var tab = {
-				'el': $el,
-				'animEl': $el.parent(),
-				'contentEl': $el.next().children(".tab-content-inner"),
-				'width': $el.next().width(),
-				'expanded': false
-			};
-
-			if($el.hasClass('js-tab-left')) {
-				tab.expand = this.makeExpander(tab, '-=', true);
-				tab.collapse = this.makeExpander(tab, '+=', false);
-			} else {
-				tab.expand = this.makeExpander(tab, '+=', true);
-				tab.collapse = this.makeExpander(tab, '-=', false);
-			}
-
-			$el.on('click', function(ev) {
-				tab[tab.expanded?'collapse':'expand']();
+			$('.js-settings').on('click', function(e) {
+				e.preventDefault();
+				settingsEl.animate({width:'toggle'}, 350);
 				return false;
 			});
-
-			this.initTabContent(tab);
-			this.tabElements.push(tab);
+			settingsEl.children(".accordion").accordion({
+				collapsible: true,
+				heightStyle: "content"
+			});
+			this.initKeySignatureTab(headerEl);
+			this.initNotationTab(settingsEl);
+			this.renderInstrumentSelect(settingsEl);
+			this.renderKeyboardSizeSelect(settingsEl);
+			this.renderKeyboardShortcuts(settingsEl);
+			this.initMidiTab(settingsEl);
 		},
 		/**
-		 * Initializes the content of the tab.
+		 * Initializes the content of the midi.
 		 *
-		 * @param {object} tab 
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initTabContent: function(tab) {
-			var initializer_for = {
-				"instruments": "initInstrumentsTab",
-				"midi": "initMidiTab",
-				"keysignature": "initKeySignatureTab",
-				"notation": "initNotationTab"
-			};
-
-			var tab_name = tab.el.data('tab-name');
-			var method = '';
-
-			if(initializer_for[tab_name]) {
-				method = initializer_for[tab_name];
-				this[method](tab);
-			}
-		},
-		/**
-		 * Initializes the content of the instruments tab.
-		 *
-		 * @param {object} tab
-		 * @return undefined
-		 */
-		initInstrumentsTab: function(tab) {
-			this.renderInstrumentSelect(tab);
-			this.renderKeyboardSizeSelect(tab);
-			this.renderKeyboardShortcuts(tab);
-		},
-		/**
-		 * Initializes the content of the midi tab.
-		 *
-		 * @param {object} tab
-		 * @return undefined
-		 */
-		initMidiTab: function(tab) {
+		initMidiTab: function(containerEl) {
 			var renderDevices = function(midiDevice) {
 				var inputs = midiDevice.getInputs();
 				var outputs = midiDevice.getOutputs();
@@ -179,11 +121,11 @@ define([
 				};
 				var devices = {
 					'input': {
-						'selector': $('.js-select-midi-input', tab.contentEl),
+						'selector': $('.js-select-midi-input', containerEl),
 						'options': _.map(inputs, makeOptions)
 					},
 					'output': {
-						'selector': $('.js-select-midi-output', tab.contentEl),
+						'selector': $('.js-select-midi-output', containerEl),
 						'readonly': true,
 						'options': _.map(outputs, makeOptions) }
 				};
@@ -203,40 +145,45 @@ define([
 							midiDevice[type=='input'?'selectInput':'selectOutput'](index);
 						});
 					}
-					$(device.selector).css('width', '100%');
 				});
 
 			};
 
-			$('.js-refresh-midi-devices', tab.contentEl).on('click', this.midiDevice.update);
+			$('.js-refresh-midi-devices', containerEl).on('click', this.midiDevice.update);
 
 			this.midiDevice.bind("updated", renderDevices);
 
 			renderDevices(this.midiDevice);
 		},
 		/**
-		 * Initializes the content of the key signature tab.
+		 * Initializes the content of the key signature.
 		 *
-		 * @param {object} tab
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initKeySignatureTab: function(tab) {
-			var el = $('.js-keysignature-widget', tab.contentEl); 
+		initKeySignatureTab: function(containerEl) {
+			var el = $('.js-keysignature-widget', containerEl); 
 			var widget = new KeySignatureWidget(this.keySignature);
 			widget.render();
 			el.append(widget.el);
 		},
 		/**
-		 * Initializes the content of the notation tab.
+		 * Initializes the content of the notation containerEl.
 		 *
-		 * @param {object} tab
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initNotationTab: function(tab) {
+		initNotationTab: function(containerEl) {
 			var that = this;
-			var el = $('.js-analyze-widget', tab.contentEl);
-			var analyze_widget = new AnalyzeWidget();
-			var highlight_widget = new HighlightWidget();
+			var el = $('.js-analyze-widget', containerEl);
+			var analysisSettings = {};
+			var highlightSettings = {};
+			if(this.exerciseContext) {
+				analysisSettings = this.exerciseContext.getDefinition().getAnalysisSettings();
+				highlightSettings = this.exerciseContext.getDefinition().getHighlightSettings();
+			}
+			var analyze_widget = new AnalyzeWidget(analysisSettings);
+			var highlight_widget = new HighlightWidget(highlightSettings);
 			var event_for = {
 				'highlight': EVENTS.BROADCAST.HIGHLIGHT_NOTES,
 				'analyze': EVENTS.BROADCAST.ANALYZE_NOTES
@@ -268,12 +215,12 @@ define([
 		/**
 		 * Renders the instrument selector.
 		 *
-		 * @param {object} tab
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderInstrumentSelect: function(tab) {
+		renderInstrumentSelect: function(containerEl) {
 			var that = this;
-			var el = $('.js-instrument', tab.contentEl);
+			var el = $('.js-instrument', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(instruments, function(inst) { %><option value="<%= inst.num %>"><%- inst.name %></option><% }); %>');
 			var options = tpl({ instruments: Instruments.getEnabled() });
@@ -283,18 +230,18 @@ define([
 				var instrument_num = $(this).val();
 				that.broadcast(EVENTS.BROADCAST.INSTRUMENT, instrument_num);
 			});
-
+			
 			el.append(selectEl);
 		},
 		/**
 		 * Renders the keyboard size selector.
 		 *
-		 * @param {object} tab
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderKeyboardSizeSelect: function(tab) {
+		renderKeyboardSizeSelect: function(containerEl) {
 			var that = this;
-			var el = $('.js-keyboardsize', tab.contentEl);
+			var el = $('.js-keyboardsize', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(sizes, function(size) { %><option value="<%= size %>"><%- size %></option><% }); %>');
 			var options = tpl({sizes: [25,37,49,88]})
@@ -312,16 +259,18 @@ define([
 		/**
 		 * Renders the keyboard shorcuts.
 		 *
-		 * @param {object} tab
+		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderKeyboardShortcuts: function(tab) {
+		renderKeyboardShortcuts: function(containerEl) {
 			var that = this;
-			var el = $('.js-keyboardshortcuts', tab.contentEl);
+			var el = $('.js-keyboardshortcuts', containerEl);
+			var inputEl = $('<input type="checkbox" name="keyboard_shortcuts" value="on" />');
+			el.append("Keyboard Shortcuts").append(inputEl).wrap("<label/>");
 
 			// toggle shortcuts on/off via gui control
-			el.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);
-			el.on('change', function() {
+			inputEl.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);
+			inputEl.on('change', function() {
 				var toggle = $(this).is(':checked') ? true : false;
 				that.broadcast(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, toggle);
 				$(this).blur(); // trigger blur so it loses focus
@@ -329,33 +278,8 @@ define([
 
 			// update gui control when toggled via ESC key
 			this.subscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, function(enabled) {
-				el[0].checked = enabled;
+				inputEl[0].checked = enabled;
 			});
-		},
-		/**
-		 * Expands or collapses *all* tabs.
-		 *
-		 * @param {object} evt
-		 * @return {boolean} false
-		 */
-		onClickToggleTabs: function(evt) {
-			var el = evt.target;
-			var cls = ['icon-btn-open','icon-btn-close'];
-			var tabsExpanded = this.tabsExpanded;
-
-			if($(el).hasClass('icon-btn-close')) {
-				cls.reverse();
-			}
-
-			$(el).removeClass(cls[0]).addClass(cls[1]);
-
-			$.each(this.tabElements, function(index, tab) {
-				tab[tabsExpanded?'collapse':'expand']();
-			});
-
-			this.tabsExpanded = !tabsExpanded;
-
-			return false;
 		},
 		/**
 		 * Handler to generate a screenshot/image of the staff area.
@@ -364,7 +288,6 @@ define([
 		 * @return {boolean} true
 		 */
 		onClickScreenshot: function(evt) {
-			// TODO: why is this here? nothing to do wih tabs
 			var $canvas = $('#staff-area canvas');
 			var $target = $(evt.target);
 			var data_url = $canvas[0].toDataURL();
@@ -379,37 +302,7 @@ define([
 		 * @return {boolean} false
 		 */
 		onClickInfo: function(evt) {
-			// TODO: why is this here? nothing to do with tabs 
 			this.trigger("modal", {title: APP_INFO_TITLE, content: APP_INFO_CONTENT});
-			return false;
-		},
-		/**
-		 * Utility function that returns a function to expand or collapse a tab.
-		 *
-		 * @param {object} tab
-		 * @param {string} dir '+=' or '-='
-		 * @param {boolean} expand 
-		 * @return {function}
-		 */
-		makeExpander: function(tab, dir, expand) {
-			var animOpts = {marginLeft: dir + tab.width};
-			return function() {
-				if(tab.expanded !== expand) {
-					tab.animEl.animate(animOpts, 0, 'swing', function() {
-						tab.el[expand?'addClass':'removeClass']('expanded');
-						tab.expanded = expand;
-					});
-				}
-				return false;
-			};
-		},
-		/**
-		 * Utility function to cancel an event.
-		 *
-		 * @param evt
-		 * @return {boolean} false
-		 */
-		cancelEvent: function(evt) {
 			return false;
 		}
 	});

@@ -52,6 +52,30 @@ define([
 
 	/**
 	 * Called before the sub-components are setup.
+	 *
+	 * Should return an array of methods that will
+	 * setup sub-components.
+	 * 
+	 * @return {object}
+	 */
+	AppComponent.prototype.getComponentMethods = function() {
+		return [function() {}];
+	};
+
+	/**
+	 * Called before the sub-components are setup.
+	 *
+	 * Should return a mapping of model names and
+	 * model objects..
+	 * 
+	 * @return {object}
+	 */
+	AppComponent.prototype.getModels = function() {
+		return {};
+	};
+
+	/**
+	 * Called before the sub-components are setup.
 	 * 
 	 * @return undefined
 	 */

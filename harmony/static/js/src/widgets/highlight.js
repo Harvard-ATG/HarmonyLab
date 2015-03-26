@@ -44,10 +44,11 @@ define([
 		]
 	}];
 
-	var HighlightWidget = function() {
+	var HighlightWidget = function(settings) {
+		settings = settings || {};
 		this.el = $('<div></div>');
 		this.items = ITEMS;
-		this.state = _.cloneDeep(HIGHLIGHT_SETTINGS); // make sure we have our own copy
+		this.state = _.merge(_.cloneDeep(HIGHLIGHT_SETTINGS), settings);
 	};
 
 	_.extend(HighlightWidget.prototype, {

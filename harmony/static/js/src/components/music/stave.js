@@ -91,7 +91,7 @@ define([
 		 * The margins for the stave.
 		 * @type {number}
 		 */
-		margin: {left: 30, right: 4},
+		margin: {left: 30, right: 30},
 		/**
 		 * Initializes the Stave.
 		 *
@@ -598,9 +598,7 @@ define([
 		 * @return {number}
 		 */
 		getYForClef: function(clef) {
-			var y = 75;
-			y += (clef === 'treble' ? 0 : 75);
-			return y;
+			return (clef === 'treble' ? 0 : 75) + 35;
 		},
 		/**
 		 * Returns true if this stave is the first bar in the sequence, false

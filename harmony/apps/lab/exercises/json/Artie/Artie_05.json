@@ -1,0 +1,24 @@
+{
+  "type": "matching",
+  "reviewText": "Good job!",
+  "introText": "Learn to play 57 C major chord in root position.",
+  "key": "jC_",
+  "chord": [[60,64,67]],
+  "analysis": {
+	"enabled": true,
+	"mode": {
+		"note_names": false,
+		"scale_degrees": false,
+		"solfege": false,
+		"roman_numerals": false,
+		"intervals": true
+	}
+  },
+  "highlight": {
+	"enabled": false,
+	"mode": {
+	  "roothighlight": true,
+	  "tritonehighlight": true
+	}
+  }
+}

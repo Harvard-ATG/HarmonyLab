@@ -38,10 +38,11 @@ define([
 		]
 	}];
 
-	var AnalyzeWidget = function() {
+	var AnalyzeWidget = function(settings) {
+		settings = settings || {};
 		this.el = $('<div></div>');
 		this.items = ITEMS;
-		this.state = _.cloneDeep(ANALYSIS_SETTINGS); // make sure we have our own copy
+		this.state = _.merge(_.cloneDeep(ANALYSIS_SETTINGS), settings);
 	};
 
 	_.extend(AnalyzeWidget.prototype, {
