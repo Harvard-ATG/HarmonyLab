@@ -89,6 +89,7 @@ define([
 			_.each(this.messages, function(msg) {
 				var fn = this[msg];
 				if(msg !== 'toggleNote' && msg !== 'toggleMode') {
+					this["_"+msg] = fn;
 					this[msg] = this.execIf([this.isEnabled, this.isKeyDown], fn);
 				}
 			}, this);
@@ -238,20 +239,23 @@ define([
 		 *
 		 * @return undefined
 		 */
-		retakeSustain: function(state) {
+		retakeSustain: function(state) {		
 			if(!state) {
 				return;
 			}
+			
+			var onTimeoutDepressSustain = _.bind(function() {
+				this._depressSustain();
+				this.retakeTimeoutID = null;
+			},this);
+			
 			this.retakeTimeoutID = this.retakeTimeoutID || null;
 			if(this.retakeTimeoutID !== null) {
 				window.clearTimeout(this.retakeTimeoutID);
 			}
 
-			this.releaseSustain();
-			window.setTimeout(_.bind(function() {
-				this.depressSustain();
-				this.retakeTimeoutID = null;
-			}, this), 100);
+			this._releaseSustain();
+			this.retakeTimeoutID = window.setTimeout(onTimeoutDepressSustain, 100);
 		},
 		/**
 		 * Clears all the notes.
