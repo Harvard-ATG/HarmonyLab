@@ -1,112 +1,226 @@
-// Input values and root values should be mod-12 elements (0123456789yz) where 0 = pc of keynote.
-// "5/18" means bass is pc 5 and remaining notes in collection are pc 1 and 8.
+// The input is a list of mod-12 integers that indicate the pitch classes 
+// present, taking pc 0 to be the keynote. "y" stands for pc 10 and "z" for 
+// pc 11. The initial integer, to the left of the forward slash, specifies 
+// the pitch class of the bass; the remaining pitch classes are listed in 
+// increasing numerical order.
+
+// Characters entered inside {} braces will be rendered as follows by the
+// font Sebastian-FigBass-Harvard.woff:
+//    Z, U --> figured bass characters 6, 7 on upper row
+//    e, r, t, z, u, d, ' --> figured bass characters 3, 4, 5, 6, 7, +, #
+//                            on main row
+//    2, 3, 4, 5 --> figured bass characters 2, 3, 4, 5 on lower row
+//    C, K --> flat, sharp signs to precede Roman numerals
+//    v, y --> diminished, half-diminished signs to follow Roman numerals
+
+// The priority field contains an interpretation of learning priorities.
+// (1 = learn first, 99 = learn last)
 
 /* global define: false */
+
 define({
-	"0/37": {"root": "0", "label": "i"},
-	"0/3": {"root": "0", "label": "i&3;", "nofifth": "true"},
-	"0/57": {"root": "0", "label": "i&54;", "comment": "four-three suspension in progress"},
-	"0/379": {"root": "0", "label": "i+6"},
-	"0/47": {"root": "0", "label": "i# or V/iv", "comment": "Picardy third if tonic"},
-	"3/07": {"root": "0", "label": "i&6;"},
-	"4/07": {"root": "0", "label": "V&6;/iv"},
-	"7/03": {"root": "7", "label": "&64;", "comment": "cadential six-four or passing six-four"},
-	"0/37y": {"root": "0", "label": "i&7;"},
-	"3/07y": {"root": "0", "label": "i&65;"},
-	"7/03y": {"root": "0", "label": "i&43;"},
-	"y/037": {"root": "0", "label": "i&42;"},
-	"0/47y": {"root": "0", "label": "V&7;/iv"},
-	"0/4y": {"root": "0", "label": "V&73;/iv", "nofifth": "true"},
-	"4/07y": {"root": "0", "label": "V&65;/iv"},
-	"7/04y": {"root": "0", "label": "V&43;/iv"},
-	"y/047": {"root": "0", "label": "V&42;/iv"},
-	"2/58": {"root": "2", "label": "ii&dim;", "warning": "true"},
-	"5/28": {"root": "2", "label": "ii&dim;&6;", "alternative": "vii&dim;&6;/III"},
-	"2/058": {"root": "2", "label": "ii&hdim;&7;"},
-	"5/028": {"root": "2", "label": "ii&hdim;&65;", "alternative": "iv+6"},
-	"8/025": {"root": "2", "label": "ii&hdim;&43;"},
-	"0/258": {"root": "2", "label": "ii&hdim;&42;"},
-	// II is a.k.a. V/V
-	"2/69": {"root": "2", "label": "II"},
-	"6/29": {"root": "2", "label": "II&6;"},
-	"2/069": {"root": "2", "label": "II&7;"},
-	"2/06": {"root": "2", "label": "II&73;", "nofifth": "true"},
-	"6/029": {"root": "2", "label": "II&65;"},
-	"9/026": {"root": "2", "label": "II&43;"},
-	"0/269": {"root": "2", "label": "II&42;"},
-	// #iv&dim; is a.k.a. vii&dim;/V
-	"9/06": {"root": "6", "label": "#iv&dim;&6;"},
-	"6/039": {"root": "6", "label": "#iv&dim;&7;"},
-	"9/036": {"root": "6", "label": "#iv&dim;&65;"},
-	"0/369": {"root": "6", "label": "#iv&dim;&43;"},
-	"3/069": {"root": "6", "label": "#iv&dim;&42;"},
-	"2/59": {"root": "2", "label": "! ii"},
-	"5/29": {"root": "2", "label": "! ii&6;"},
-	"2/059": {"root": "2", "label": "! ii&7;"},
-	"5/029": {"root": "2", "label": "! ii&65;"},
-	"9/025": {"root": "2", "label": "! ii&43;"},
-	"0/259": {"root": "2", "label": "! ii&42;"},
-	// N is a.k.a. bII
-	"5/18": {"root": "1", "label": "N&6;"},
-	"5/018": {"root": "1", "label": "N&65;"},
-	"3/7y": {"root": "3", "label": "III"},
-	"7/3y": {"root": "3", "label": "III&6;", "warning": "true"},
-	"3/17y": {"root": "3", "label": "V&7;/VI"},
-	"3/17": {"root": "3", "label": "V&73;/VI", "nofifth": "true"},
-	"7/13y": {"root": "3", "label": "V&65;/VI"},
-	"y/137": {"root": "3", "label": "V&43;/VI"},
-	"1/37y": {"root": "3", "label": "V&42;/VI"},
-	"5/08": {"root": "5", "label": "iv"},
-	"8/05": {"root": "5", "label": "iv&6;"},
-	"0/58": {"root": "0", "label": "&64;", "comment": "double appoggiatura, neighbor or pedal six-four"},
-	"5/038": {"root": "5", "label": "iv&7;"},
-	"8/035": {"root": "5", "label": "iv&65;", "comment": "usually resolves to VII, cf. IV&65;"},
-	"0/358": {"root": "5", "label": "iv&43;"},
-	"3/058": {"root": "5", "label": "iv&42;"},
-	"5/09": {"root": "5", "label": "IV", "raisedsubmediant": "true"},
-	"9/05": {"root": "5", "label": "IV&6;", "raisedsubmediant": "true"},
-	"5/039": {"root": "5", "label": "IV&7;", "raisedsubmediant": "true", "comment": "usually resolves to VII"},
-	"5/39": {"root": "5", "label": "IV&73;", "nofifth": "true", "raisedsubmediant": "true", "comment": "usually resolves to VII"},
-	"9/035": {"root": "5", "label": "IV&65;", "raisedsubmediant": "true", "comment": "usually resolves to V&65 but may also resolve to VII, cf. iv&65;"},
-	"0/359": {"root": "5", "label": "IV&43;", "raisedsubmediant": "true"},
-	"3/059": {"root": "5", "label": "IV&42;", "raisedsubmediant": "true"},
-	"7/2z": {"root": "7", "label": "V"},
-	"7/z": {"root": "7", "label": "V&3;", "nofifth": "true"},
-	"7/02": {"root": "7", "label": "V&54;", "comment": "four-three suspension in progress"},
-	"7/2y": {"root": "7", "label": "v", "warning": "true", "comment": "whereas v&6; is common, root-position minor dominant is rare"},
-	"z/27": {"root": "7", "label": "V&6;", "comment": "bass will ascend"},
-	"y/27": {"root": "7", "label": "v&6;", "comment": "bass will descend"},
-	"2/7z": {"root": "7", "label": "V&64;", "warning": "true", "comment": "often misused instead of vii&dim;&6; or V&43;"},
-	"7/25z": {"root": "7", "label": "V&7;"},
-	"7/5z": {"root": "7", "label": "V&73;", "nofifth": "true"},
-	"7/25": {"root": "7", "label": "V&75;", "nothird": "true"},
-	"z/257": {"root": "7", "label": "V&65;"},
-	"2/57z": {"root": "7", "label": "V&43;"},
-	"5/27z": {"root": "7", "label": "V&42;"},
-	"8/03": {"root": "8", "label": "VI"},
-	"0/38": {"root": "8", "label": "VI&6;", "warning": "true"},
-	"8/037": {"root": "8", "label": "VI&7;"},
-	"0/378": {"root": "8", "label": "VI&65;"},
-	"3/078": {"root": "8", "label": "VI&43;"},
-	"7/038": {"root": "8", "label": "VI&42;"},
-	// VII is often effectively V/III
-	"y/25": {"root": "y", "label": "VII"},
-	"2/5y": {"root": "y", "label": "VII&6;"},
-	"y/258": {"root": "y", "label": "VII&7;"},
-	"y/28": {"root": "y", "label": "VII&73;", "nofifth": "true"},
-	"2/58y": {"root": "y", "label": "VII&65;"},
-	"5/28y": {"root": "y", "label": "VII&43;"},
-	"8/25y": {"root": "y", "label": "VII&42;"},
-	"2/5z": {"root": "z", "label": "vii&dim;&6;"},
-	"2/05": {"root": "z", "label": "vii&dim;*", "comment": "seven-six suspension in progress", "alternative": "ii&hdim;&7; (no fifth)"},
-	"z/25": {"root": "z", "label": "vii&dim;[&53;]", "warning": "true", "comment": "vii&dim; is much rarer than V&6; (same bass) or vii&dim;&6; (same root)"},
-	"z/258": {"root": "z", "label": "vii&dim;&7;"},
-	"2/58z": {"root": "z", "label": "vii&dim;&65;"},
-	"5/28z": {"root": "z", "label": "vii&dim;&43;"},
-	"8/25z": {"root": "z", "label": "vii&dim;&42;"},
-	"8/06": {"root": "2", "label": "It. &6;"},
-	"8/026": {"root": "2", "label": "Fr. &6;"},
-	"8/036": {"root": "2", "label": "Ger. &6;"},
-	"6/038": {"root": "2", "label": "inverted Ger. &6;", "alternative": "in a different spelling, V&42;/bII"},
-	"8/26z": {"root": "2", "label": "Tristan chord!"}
+
+   // i
+
+   "0/37":  {"root": "0", "label": "i"},
+   "0/3":   {"root": "0", "label": "i{e}"},
+   "3/07":  {"root": "0", "label": "i{z}"},
+   "7/03":  {"root": "7", "label": "i{z4}"},
+
+   "0/37y": {"root": "0", "label": "i{u}"},
+   "3/07y": {"root": "0", "label": "i{z5}"},
+   "7/03y": {"root": "0", "label": "i{r3}"},
+   "y/037": {"root": "0", "label": "i{r2}"},
+
+   // i#
+
+   "0/47":  {"root": "0", "label": "i{'}"},
+   "0/4":   {"root": "0", "label": "i{'e}"},
+
+   // V/iv
+
+   "4/07":  {"root": "0", "label": "V{z}/iv"},
+   "7/04":  {"root": "0", "label": "V{z4}/iv"},
+
+   "0/47y": {"root": "0", "label": "V{u}/iv"},
+   "0/4y":  {"root": "0", "label": "V{u3}/iv"},
+   "4/07y": {"root": "0", "label": "V{z5}/iv"},
+   "7/04y": {"root": "0", "label": "V{r3}/iv"},
+   "y/047": {"root": "0", "label": "V{r2}/iv"},
+
+   // i+6
+
+   "0/379": {"root": "0", "label": "i{dz}"},
+
+   // bII (a.k.a. N)
+
+   "1/58":  {"root": "1", "label": "{C}II"},
+   "5/18":  {"root": "1", "label": "{C}II{z}"},
+   "8/15":  {"root": "1", "label": "{C}II{z4}"},
+
+   "1/058": {"root": "1", "label": "{C}II{u}"},
+   "5/018": {"root": "1", "label": "{C}II{z5}"},
+   "8/015": {"root": "1", "label": "{C}II{r3}"},
+   "0/158": {"root": "1", "label": "{C}II{r2}"},
+
+   // iio
+
+   "2/58":  {"root": "2", "label": "ii{v}"},
+   "5/28":  {"root": "2", "label": "ii{v z}"},
+   "8/25":  {"root": "2", "label": "ii{z4}"},
+
+   "2/058": {"root": "2", "label": "ii{y u}"},
+   "5/028": {"root": "2", "label": "ii{y z5}", "altLabel": "iv{dz}"},
+   "8/025": {"root": "2", "label": "ii{y r3}"},
+   "0/258": {"root": "2", "label": "ii{y r2}"},
+
+   // [!]ii
+   
+   "2/59":  {"root": "2", "label": "[!]ii"},
+   "5/29":  {"root": "2", "label": "[!]ii{z}"},
+
+   "2/059": {"root": "2", "label": "[!]ii{u}"},
+   "5/029": {"root": "2", "label": "[!]ii{z5}"},
+   "9/025": {"root": "2", "label": "[!]ii{r3}"},
+   "0/259": {"root": "2", "label": "[!]ii{r2}"},
+
+   // II (a.k.a. V/V)
+
+   "2/69":  {"root": "2", "label": "II"},
+   "6/29":  {"root": "2", "label": "II{z}"},
+   "9/26":  {"root": "2", "label": "II{z4}"},
+
+   "2/069": {"root": "2", "label": "II{u}"},
+   "2/06":  {"root": "2", "label": "II{u3}"},
+   "6/029": {"root": "2", "label": "II{z5}"},
+   "9/026": {"root": "2", "label": "II{r3}"},
+   "0/269": {"root": "2", "label": "II{r2}"},
+
+   // III
+
+   "3/7y":  {"root": "3", "label": "III"},
+   "7/3y":  {"root": "3", "label": "III{z}"},
+   "y/37":  {"root": "3", "label": "III{z4}"},
+
+   "3/27y":  {"root": "3", "label": "III{u}"},
+   "7/23y":  {"root": "3", "label": "III{z5}"},
+   "y/237":  {"root": "3", "label": "III{r3}"},
+   "2/37y":  {"root": "3", "label": "III{r2}"},
+
+   // V/VI
+
+   "3/17y": {"root": "3", "label": "V{u}/VI"},
+   "3/17":  {"root": "3", "label": "V{u3}/VI"},
+   "7/13y": {"root": "3", "label": "V{z5}/VI"},
+   "y/137": {"root": "3", "label": "V{r3}/VI"},
+   "1/37y": {"root": "3", "label": "V{r2}/VI"},
+
+   // viio/iv
+
+   "4/7y":  {"root": "4", "label": "vii{v}/iv"},
+   "7/4y":  {"root": "4", "label": "vii{v z}/iv"},
+
+   "4/17y": {"root": "4", "label": "vii{v u}/iv"},
+   "7/14y": {"root": "4", "label": "vii{v z5}/iv"},
+
+   // iv
+
+   "5/08":  {"root": "5", "label": "iv"},
+   "8/05":  {"root": "5", "label": "iv{z}"},
+   "0/58":  {"root": "5", "label": "iv{z4}"},
+
+   "5/038": {"root": "5", "label": "iv{u}"},
+   "8/035": {"root": "5", "label": "iv{z5}"},
+   "0/358": {"root": "5", "label": "iv{r3}"},
+   "3/058": {"root": "5", "label": "iv{r2}"},
+
+   // IV
+
+   "5/09":  {"root": "5", "label": "IV"},
+   "9/05":  {"root": "5", "label": "IV{z}"},
+   "0/59":  {"root": "5", "label": "IV{z4}"},
+
+   "5/039": {"root": "5", "label": "IV{u}"},
+   "5/39":  {"root": "5", "label": "IV{u3}"},
+   "9/035": {"root": "5", "label": "IV{z5}"},
+   "0/359": {"root": "5", "label": "IV{r3}"},
+   "3/059": {"root": "5", "label": "IV{r2}"},
+
+   // #ivo (a.k.a. viio/V)
+
+   "6/09":  {"root": "6", "label": "{K}iv{v}"},
+   "9/06":  {"root": "6", "label": "{K}iv{v z}"},
+   "0/69":  {"root": "6", "label": "{K}iv{v z4}"},
+
+   "6/039": {"root": "6", "label": "{K}iv{v u}"},
+   "9/036": {"root": "6", "label": "{K}iv{v z5}"},
+   "0/369": {"root": "6", "label": "{K}iv{v r3}"},
+   "3/069": {"root": "6", "label": "{K}iv{v r2}"},
+
+   // V
+   
+   "7/2z": {"root": "7", "label": "V"},
+   "7/z":  {"root": "7", "label": "V{e}"},
+   "z/27": {"root": "7", "label": "V{z}"},
+   "2/7z": {"root": "7", "label": "V{z4}"},
+   
+   "7/25z": {"root": "7", "label": "V{u}"},
+   "7/5z":  {"root": "7", "label": "V{u3}"},
+   "7/25":  {"root": "7", "label": "V{u5}"},
+   "z/257": {"root": "7", "label": "V{z5}"},
+   "2/57z": {"root": "7", "label": "V{r3}"},
+   "5/27z": {"root": "7", "label": "V{r2}"},
+
+   // v
+
+   "7/2y":  {"root": "7", "label": "[!]v"},
+   "y/27":  {"root": "7", "label": "v{z}"},
+
+   // VI
+
+   "8/03":  {"root": "8", "label": "VI"},
+   "0/38":  {"root": "8", "label": "VI{z}"},
+   "3/08":  {"root": "8", "label": "VI{z4}"},
+
+   "8/037": {"root": "8", "label": "VI{u}"},
+   "0/378": {"root": "8", "label": "VI{z5}"},
+   "3/078": {"root": "8", "label": "VI{r3}"},
+   "7/038": {"root": "8", "label": "VI{r2}"},
+
+   // VII
+
+   "y/25":  {"root": "y", "label": "VII"},
+   "2/5y":  {"root": "y", "label": "VII{z}"},
+   "5/2y":  {"root": "y", "label": "VII{z4}"},
+
+   "y/258": {"root": "y", "label": "VII{u}"},
+   "y/28":  {"root": "y", "label": "VII{u3}"},
+   "2/58y": {"root": "y", "label": "VII{z5}"},
+   "5/28y": {"root": "y", "label": "VII{r3}"},
+   "8/25y": {"root": "y", "label": "VII{r2}"},
+
+   // viio
+
+   "z/25":  {"root": "z", "label": "vii{v}"},
+   "2/5z":  {"root": "z", "label": "vii{v z}"},
+   "5/2z":  {"root": "z", "label": "vii{v z4}"},
+
+   "z/258": {"root": "z", "label": "vii{v u}"},
+   "z/28":  {"root": "z", "label": "vii{v u3}"},
+   "z/58":  {"root": "z", "label": "vii{v u5}"},
+   "2/58z": {"root": "z", "label": "vii{v z5}"},
+   "5/28z": {"root": "z", "label": "vii{v r3}"},
+   "8/25z": {"root": "z", "label": "vii{v r2}"},
+
+   // augmented-sixth chords
+
+   "8/06":  {"root": "2", "label": "It.{z}"},
+   "8/026": {"root": "2", "label": "Fr.{z}"},
+   "8/036": {"root": "2", "label": "Ger.{z}"},
+   "6/038": {"root": "2", "label": "Ger.{u}"},
+
+   // Tristan chord
+   
+   "8/26z": {"root": "2", "label": "..."}
+
 });
