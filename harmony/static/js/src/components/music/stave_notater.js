@@ -374,14 +374,15 @@ define([
 		drawMetronomeMark: function(x, y) {
 			var ctx = this.getContext();
 			var tempo = this.getTempo();
-			var metronomeImg = METRONOME_IMG;
+			var img = METRONOME_IMG;
+			
 
 			if(tempo) {
-				if(metronomeImg && metronomeImg.complete) {
-					ctx.drawImage(metronomeImg, x, y - 28);
-					ctx.fillText(tempo, x, y);
+				if(img && img.complete) {
+					ctx.drawImage(img, x, y - 17);
+					ctx.fillText(tempo, x + img.width, y);
 				} else {
-					metronomeImg.onload = _.partial(this.drawMetronomeMark, x, y);
+					img.onload = _.partial(this.drawMetronomeMark, x, y);
 				}
 			}
 		},
