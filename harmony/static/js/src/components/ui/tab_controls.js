@@ -71,8 +71,11 @@ define([
 		}
 
 		this.addComponent(new ModalComponent());
+		
+		this.headerEl = $('#header');
+		this.settingsEl = $("#settings");
 
-		_.bindAll(this, ['onClickInfo']);
+		_.bindAll(this, ['onClickInfo', 'onClickSettings', 'onClickOutsideSettingsMenu']);
 	};
 
 	TabControlsComponent.prototype = new Component();
@@ -84,34 +87,37 @@ define([
 		 * @return undefined
 		 */
 		initComponent: function() {
-			var headerEl = $('#header');
-			var settingsEl = $("#settings");
 
+			$('.js-settings', this.headerEl).on('click', this.onClickSettings);
+			$('.js-btn-info', this.headerEl).on('click', this.onClickInfo);
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
-			$('.js-btn-info').on('click', this.onClickInfo);
-			$('.js-settings').on('click', function(e) {
-				e.preventDefault();
-				settingsEl.animate({width:'toggle'}, 350);
-				return false;
-			});
-			settingsEl.children(".accordion").accordion({
+
+			this.initSettingsMenu();
+			this.initKeySignatureTab();
+			this.initNotationTab();
+			this.renderInstrumentSelect();
+			this.renderKeyboardSizeSelect();
+			this.renderKeyboardShortcuts();
+			this.initMidiTab();
+		},
+		/**
+		 * Initializes the slide-out menu.
+		 * 
+		 * @return undefined
+		 */
+		initSettingsMenu: function() {
+			this.settingsEl.children(".accordion").accordion({
 				collapsible: true,
 				heightStyle: "content"
 			});
-			this.initKeySignatureTab(headerEl);
-			this.initNotationTab(settingsEl);
-			this.renderInstrumentSelect(settingsEl);
-			this.renderKeyboardSizeSelect(settingsEl);
-			this.renderKeyboardShortcuts(settingsEl);
-			this.initMidiTab(settingsEl);
 		},
 		/**
 		 * Initializes the content of the midi.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initMidiTab: function(containerEl) {
+		initMidiTab: function() {
+			var containerEl = this.settingsEl;
 			var renderDevices = function(midiDevice) {
 				var inputs = midiDevice.getInputs();
 				var outputs = midiDevice.getOutputs();
@@ -158,10 +164,10 @@ define([
 		/**
 		 * Initializes the content of the key signature.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initKeySignatureTab: function(containerEl) {
+		initKeySignatureTab: function() {
+			var containerEl = this.headerEl;
 			var el = $('.js-keysignature-widget', containerEl); 
 			var widget = new KeySignatureWidget(this.keySignature);
 			widget.render();
@@ -170,11 +176,11 @@ define([
 		/**
 		 * Initializes the content of the notation containerEl.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		initNotationTab: function(containerEl) {
+		initNotationTab: function() {
 			var that = this;
+			var containerEl = this.settingsEl;
 			var el = $('.js-analyze-widget', containerEl);
 			var analysisSettings = {};
 			var highlightSettings = {};
@@ -215,11 +221,11 @@ define([
 		/**
 		 * Renders the instrument selector.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderInstrumentSelect: function(containerEl) {
+		renderInstrumentSelect: function() {
 			var that = this;
+			var containerEl = this.settingsEl;
 			var el = $('.js-instrument', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(instruments, function(inst) { %><option value="<%= inst.num %>"><%- inst.name %></option><% }); %>');
@@ -236,11 +242,11 @@ define([
 		/**
 		 * Renders the keyboard size selector.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderKeyboardSizeSelect: function(containerEl) {
+		renderKeyboardSizeSelect: function() {
 			var that = this;
+			var containerEl = this.settingsEl;
 			var el = $('.js-keyboardsize', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(sizes, function(size) { %><option value="<%= size %>"><%- size %></option><% }); %>');
@@ -259,11 +265,11 @@ define([
 		/**
 		 * Renders the keyboard shorcuts.
 		 *
-		 * @param {object} containerEl
 		 * @return undefined
 		 */
-		renderKeyboardShortcuts: function(containerEl) {
+		renderKeyboardShortcuts: function() {
 			var that = this;
+			var containerEl = this.settingsEl;
 			var el = $('.js-keyboardshortcuts', containerEl);
 			var inputEl = $('<input type="checkbox" name="keyboard_shortcuts" value="on" />');
 			el.append("Keyboard Shortcuts").append(inputEl).wrap("<label/>");
@@ -279,6 +285,22 @@ define([
 			// update gui control when toggled via ESC key
 			this.subscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, function(enabled) {
 				inputEl[0].checked = enabled;
+			});
+		},
+		/**
+		 * Shows or hides the settings menu (slide out).
+		 *
+		 * @return undefined
+		 */
+		toggleSettingsMenu: function(state) {
+			var that = this;
+			this.settingsEl.animate({
+				width: (state?"show":"hide")
+			}, {
+				duration: 350,
+				complete: function() {
+					$(window)[state?'on':'off']('click', that.onClickOutsideSettingsMenu);
+				}
 			});
 		},
 		/**
@@ -304,6 +326,28 @@ define([
 		onClickInfo: function(evt) {
 			this.trigger("modal", {title: APP_INFO_TITLE, content: APP_INFO_CONTENT});
 			return false;
+		},
+		/**
+		 * Handles clicking ont he settings button.
+		 *
+		 * @return undefined
+		 */
+		onClickSettings: function(evt) {
+			this.settingsToggleState = !this.settingsToggleState;
+			this.toggleSettingsMenu(this.settingsToggleState);
+			evt.preventDefault();
+		},
+		/**
+		 * Handles closing the settings menu when clicking outside the menu.
+		 *
+		 * @return undefined
+		 */
+		onClickOutsideSettingsMenu: function(evt) {
+			var isOutside = $(evt.target).closest(this.settingsEl).length == 0;
+			if (isOutside) {
+				this.settingsToggleState = false;
+				this.toggleSettingsMenu(this.settingsToggleState);
+			}
 		}
 	});
 
