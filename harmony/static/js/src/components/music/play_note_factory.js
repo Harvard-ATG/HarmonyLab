@@ -51,7 +51,7 @@ define([
 			 * Color for banked notes. 
 			 * @type {string}
 			 */
-			this.bankedColor = 'rgb(0,0,128)'; // dark blue
+			this.bankedColor = 'rgb(0,0,0)'; 
 
 			_.bindAll(this, ['createModifiers']);
 
