@@ -362,6 +362,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			}
 		} else {
 			entry = this.getOrderedPitchClasses(notes);
+			console.log("getOrderedPitchClasses()", "notes", notes, "entry", entry);
 			chords = this.jChords;
 			if(this.Piano.key.indexOf('i') !== -1) {
 				chords = this.iChords; // minor
@@ -369,6 +370,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			if(chords[entry]) {
 				root = chords[entry]["root"];
 			}
+			console.log("chords[entry]=", chords[entry]);
 			if(validate_root_type(root) && this.pitchClasses.indexOf(root) !== -1) {
 				root = this.pitchClasses.indexOf(root);
 				root = (root + this.Piano.keynotePC) % 12;
@@ -420,11 +422,10 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		uniquePitches = uniquePitches.slice(1);
 		uniquePitches.sort(this.sortNoteNumbers);
 
+		// remember pitch classes 10 = y, 11 = z 
 		for (i = 0, len = uniquePitches.length; i < len; i++) {
 			intervals.push(this.pitchClasses[uniquePitches[i]]);
 		}
-
-		intervals.sort(this.sortNoteNumbers);
 		
 		if (this.Piano.key != "h") {
 			entry = bass + "/" + intervals.join('');
@@ -447,7 +448,6 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			intervals.push(this.pitchClasses[(12 + uniquePitches[i] - bass) % 12]);
 		}
 
-		intervals.sort(this.sortNoteNumbers);
 		entry = intervals.join('');
 
 		return entry;
