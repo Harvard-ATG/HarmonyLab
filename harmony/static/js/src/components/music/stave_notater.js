@@ -84,6 +84,7 @@ define([
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
+			this.preloadFont("Sebastian");
 			_.bindAll(this, 'drawMetronomeMark');
 		},
 		/**
@@ -197,6 +198,25 @@ define([
 				size = "36px";
 			}
 			return size + " Sebastian";
+		},
+		/**
+		 * Preload font if it hasn't already been loaded by the browser, so 
+		 * it's available to Canvas when needed.
+		 *
+		 * This is mostly used for loading the figured bass font "Sebastian"
+		 * because the first time the canvas context font is set to "Sebastian", 
+		 * it won't render properly because it takes time to load the font, but 
+		 * canvas must render immediately. This fixes the issue where the first
+		 * time the font is used, it doesn't work. 
+		 *
+		 * @return undefined
+		 */
+		preloadFont: function(fontFamily) {
+			var div = document.createElement("div");
+			div.style.fontFamily = fontFamily;
+			div.innerHTML = "z4"; // doesn't seem to load the font without some text 
+			document.getElementsByTagName("body")[0].appendChild(div);
+			div.parentNode.removeChild(div);
 		},
 		/**
 		 * Returns the X position for notating.
