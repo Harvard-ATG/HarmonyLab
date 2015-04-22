@@ -1,6 +1,6 @@
 {
 	"type": "matching",
-	"introText": "Complete the major triad above the given root (in close position).",
+	"introText": "Complete the diatonic triad (in close position) above the given root.",
 	"reviewText": "Good job!",
 	"key": "jC_",
 	"chord": [{"visible":[60],"hidden":[64,67]}]
