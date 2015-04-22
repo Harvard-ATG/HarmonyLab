@@ -472,7 +472,6 @@ define([
 			var ctx = this.getContext();
 			var re =  /([^{}]+|(\{[^{}]+\}))/g;
 			var m, text, emWidth = ctx.measureText("m").width;
-			var padding = emWidth / 2;
 
 			while ((m = re.exec(str)) != null) {
 				if (m.index === re.lastIndex) {
@@ -488,11 +487,11 @@ define([
 					ctx.save();
 					ctx.font = this.getFiguredBassFont();
 					x += callback.call(this, text, x, y);
-					x += padding; 
+					x += emWidth / 3; 
 					ctx.restore();
 				} else {
 					x += callback.call(this, text, x, y);
-					x += padding;
+					x += emWidth / 2;
 				}
 			}
 
