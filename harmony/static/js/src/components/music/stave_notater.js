@@ -24,6 +24,8 @@ define([
 		img.src = util.staticUrl('img/metronome-black.png');
 		return img;
 	})();
+	
+	var PRELOADED_FONT = {};
 
 	/**
 	 * This is an abstract class that defines the interface for the
@@ -212,11 +214,14 @@ define([
 		 * @return undefined
 		 */
 		preloadFont: function(fontFamily) {
+			if (PRELOADED_FONT[fontFamily]) {
+				return;
+			}
 			var div = document.createElement("div");
 			div.style.fontFamily = fontFamily;
-			div.innerHTML = "z4"; // doesn't seem to load the font without some text 
+			div.innerHTML = "&nbsp;"; // doesn't seem to load the font without some text 
 			document.getElementsByTagName("body")[0].appendChild(div);
-			div.parentNode.removeChild(div);
+			PRELOADED_FONT[fontFamily] = true;
 		},
 		/**
 		 * Returns the X position for notating.
