@@ -1,7 +1,7 @@
 // The input is a list of mod-12 integers that indicate the intervals formed
 // above the bass in terms of semitones. "y" stands for 10 and "z" for 11.
 // Use "&R" for name of root and "&X" for name of bass pitch in label output.
-// Use {v} for diminished sign and {y} for half-diminished sign.
+// Use $ for diminished sign and % for half-diminished sign.
 
 /* global define: false */
 
@@ -27,11 +27,11 @@ define({
 
    // diminished triad
 
-      "36": {"label": "&R{v}", "spellbass": "iE_", "stepwise": "24", 
+      "36": {"label": "&R$", "spellbass": "iE_", "stepwise": "24", 
              "root": "0", "rootstepwise": "0"},
-      "39": {"label": "&R{v}/&X", "spellbass": "iG_", "stepwise": "25", 
+      "39": {"label": "&R$/&X", "spellbass": "iG_", "stepwise": "25", 
              "root": "9", "rootstepwise": "5"},
-      "69": {"label": "&R{v}/&X", "spellbass": "iBb", "stepwise": "25", 
+      "69": {"label": "&R$/&X", "spellbass": "iBb", "stepwise": "25", 
              "root": "6", "rootstepwise": "3"},
 
    // augmented triad, assuming root position
@@ -77,22 +77,22 @@ define({
 
    // half-diminished tetrad
 
-      "36y": {"label": "&R{y u}", "spellbass": "iE_", "stepwise": "246", 
+      "36y": {"label": "&R%{u}", "spellbass": "iE_", "stepwise": "246", 
               "root": "0", "rootstepwise": "0"},
-      "379": {"label": "&R{y u}/&X", "spellbass": "iG_", "stepwise": "245",
+      "379": {"label": "&R%{u}/&X", "spellbass": "iG_", "stepwise": "245",
               "root": "9", "rootstepwise": "5"},
-      "469": {"label": "&R{y u}/&X", "spellbass": "iBb", "stepwise": "235",
+      "469": {"label": "&R%{u}/&X", "spellbass": "iBb", "stepwise": "235",
               "root": "6", "rootstepwise": "3"},
-      "258": {"label": "&R{y u}/&X", "spellbass": "iD_", "stepwise": "135",
+      "258": {"label": "&R%{u}/&X", "spellbass": "iD_", "stepwise": "135",
               "root": "2", "rootstepwise": "1"},
 
    // diminished tetrad, assuming root position
 
-      "369": {"label": "&R{v u}", "spellbass": "iF#", "stepwise": "246", 
+      "369": {"label": "&R${u}", "spellbass": "iF#", "stepwise": "246", 
               "root": "0", "rootstepwise": "0"},
 
       // or not making that assumption:
-      // "369": {"label": "{v u}", spellbass": "___", "stepwise": "___", 
+      // "369": {"label": "${u}", spellbass": "___", "stepwise": "___", 
       //         "root": "_", "rootstepwise": "_"},
 
    // major tetrad
