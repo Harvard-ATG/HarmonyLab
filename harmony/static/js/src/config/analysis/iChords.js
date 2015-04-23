@@ -11,7 +11,9 @@
 //                            on main row
 //    2, 3, 4, 5 --> figured bass characters 2, 3, 4, 5 on lower row
 //    C, K --> flat, sharp signs to precede Roman numerals
-//    v, y --> diminished, half-diminished signs to follow Roman numerals
+
+// The diminished and half-diminished signs are used in the place of $ and %
+// in the main font LinLibertine-Harvard.woff.
 
 // The priority field contains an interpretation of learning priorities.
 // (1 = learn first, 99 = learn last)
@@ -65,14 +67,15 @@ define({
 
    // iio
 
-   "2/58":  {"root": "2", "label": "ii{v}"},
-   "5/28":  {"root": "2", "label": "ii{v z}"},
+   "2/58":  {"root": "2", "label": "ii$"},
+   "5/28":  {"root": "2", "label": "ii${z}"},
    "8/25":  {"root": "2", "label": "ii{z4}"},
 
-   "2/058": {"root": "2", "label": "ii{y u}"},
-   "5/028": {"root": "2", "label": "ii{y z5}", "altLabel": "iv{dz}"},
-   "8/025": {"root": "2", "label": "ii{y r3}"},
-   "0/258": {"root": "2", "label": "ii{y r2}"},
+   "2/058": {"root": "2", "label": "ii%{u}"},
+   "5/028": {"root": "2", "label": "ii%{z5}", "altLabel": "iv{dz}"},
+   "5/02":  {"root": "2", "label": "ii%{z5}"},
+   "8/025": {"root": "2", "label": "ii%{r3}"},
+   "0/258": {"root": "2", "label": "ii%{r2}"},
 
    // [!]ii
    
@@ -117,11 +120,11 @@ define({
 
    // viio/iv
 
-   "4/7y":  {"root": "4", "label": "vii{v}/iv"},
-   "7/4y":  {"root": "4", "label": "vii{v z}/iv"},
+   "4/7y":  {"root": "4", "label": "vii$/iv"},
+   "7/4y":  {"root": "4", "label": "vii${z}/iv"},
 
-   "4/17y": {"root": "4", "label": "vii{v u}/iv"},
-   "7/14y": {"root": "4", "label": "vii{v z5}/iv"},
+   "4/17y": {"root": "4", "label": "vii${u}/iv"},
+   "7/14y": {"root": "4", "label": "vii${z5}/iv"},
 
    // iv
 
@@ -148,14 +151,14 @@ define({
 
    // #ivo (a.k.a. viio/V)
 
-   "6/09":  {"root": "6", "label": "{K}iv{v}"},
-   "9/06":  {"root": "6", "label": "{K}iv{v z}"},
-   "0/69":  {"root": "6", "label": "{K}iv{v z4}"},
+   "6/09":  {"root": "6", "label": "{K}iv$"},
+   "9/06":  {"root": "6", "label": "{K}iv${z}"},
+   "0/69":  {"root": "6", "label": "{K}iv${z4}"},
 
-   "6/039": {"root": "6", "label": "{K}iv{v u}"},
-   "9/036": {"root": "6", "label": "{K}iv{v z5}"},
-   "0/369": {"root": "6", "label": "{K}iv{v r3}"},
-   "3/069": {"root": "6", "label": "{K}iv{v r2}"},
+   "6/039": {"root": "6", "label": "{K}iv${u}"},
+   "9/036": {"root": "6", "label": "{K}iv${z5}"},
+   "0/369": {"root": "6", "label": "{K}iv${r3}"},
+   "3/069": {"root": "6", "label": "{K}iv${r2}"},
 
    // V
    
@@ -201,16 +204,16 @@ define({
 
    // viio
 
-   "z/25":  {"root": "z", "label": "vii{v}"},
-   "2/5z":  {"root": "z", "label": "vii{v z}"},
-   "5/2z":  {"root": "z", "label": "vii{v z4}"},
+   "z/25":  {"root": "z", "label": "vii$"},
+   "2/5z":  {"root": "z", "label": "vii${z}"},
+   "5/2z":  {"root": "z", "label": "vii${z4}"},
 
-   "z/258": {"root": "z", "label": "vii{v u}"},
-   "z/28":  {"root": "z", "label": "vii{v u3}"},
-   "z/58":  {"root": "z", "label": "vii{v u5}"},
-   "2/58z": {"root": "z", "label": "vii{v z5}"},
-   "5/28z": {"root": "z", "label": "vii{v r3}"},
-   "8/25z": {"root": "z", "label": "vii{v r2}"},
+   "z/258": {"root": "z", "label": "vii${u}"},
+   "z/28":  {"root": "z", "label": "vii${u3}"},
+   "z/58":  {"root": "z", "label": "vii${u5}"},
+   "2/58z": {"root": "z", "label": "vii${z5}"},
+   "5/28z": {"root": "z", "label": "vii${r3}"},
+   "8/25z": {"root": "z", "label": "vii${r2}"},
 
    // augmented-sixth chords
 

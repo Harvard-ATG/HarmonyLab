@@ -11,7 +11,9 @@
 //                            on main row
 //    2, 3, 4, 5 --> figured bass characters 2, 3, 4, 5 on lower row
 //    C, K --> flat, sharp signs to precede Roman numerals
-//    v, y --> diminished, half-diminished signs to follow Roman numerals
+
+// The diminished and half-diminished signs are used in the place of $ and %
+// in the main font LinLibertine-Harvard.woff.
 
 // The priority field contains an interpretation of learning priorities.
 // (1 = learn first, 99 = learn last)
@@ -42,14 +44,14 @@ define({
 
    // viio/ii
    
-   "1/47":  {"root": "1", "label": "vii{v}/ii", "priority": "90"},
-   "4/17":  {"root": "1", "label": "vii{v z}/ii", "priority": "80"},
-   "7/47":  {"root": "1", "label": "vii{v z4}/ii", "priority": "90"},
+   "1/47":  {"root": "1", "label": "vii$/ii", "priority": "90"},
+   "4/17":  {"root": "1", "label": "vii${z}/ii", "priority": "80"},
+   "7/47":  {"root": "1", "label": "vii${z4}/ii", "priority": "90"},
 
-   "1/47y": {"root": "1", "label": "vii{v u}/ii", "priority": "80"},
-   "4/17y": {"root": "1", "label": "vii{v z5}/ii", "priority": "90"},
-   "7/14y": {"root": "1", "label": "vii{v r3}/ii", "priority": "90"},
-   "y/147": {"root": "1", "label": "vii{v r2}/ii", "priority": "90"},
+   "1/47y": {"root": "1", "label": "vii${u}/ii", "priority": "80"},
+   "4/17y": {"root": "1", "label": "vii${z5}/ii", "priority": "90"},
+   "7/14y": {"root": "1", "label": "vii${r3}/ii", "priority": "90"},
+   "y/147": {"root": "1", "label": "vii${r2}/ii", "priority": "90"},
    
    // ii
    
@@ -59,6 +61,7 @@ define({
    
    "2/059": {"root": "2", "label": "ii{u}", "priority": "7"},
    "5/029": {"root": "2", "label": "ii{z5}", "priority": "7"},
+   "5/02":  {"root": "2", "label": "ii{z5}", "priority": "7"},
    "9/025": {"root": "2", "label": "ii{r3}", "priority": "60"},
    "0/259": {"root": "2", "label": "ii{r2}", "priority": "60"},
    
@@ -110,14 +113,14 @@ define({
    
    // #ivo (a.k.a. viio/V)
    
-   "6/09":  {"root": "6", "label": "{K}iv{v}", "priority": "80"},
-   "9/06":  {"root": "6", "label": "{K}iv{v z}", "priority": "80"},
-   "0/69":  {"root": "6", "label": "{K}iv{v z4}", "priority": "80"},
+   "6/09":  {"root": "6", "label": "{K}iv$", "priority": "80"},
+   "9/06":  {"root": "6", "label": "{K}iv${z}", "priority": "80"},
+   "0/69":  {"root": "6", "label": "{K}iv${z4}", "priority": "80"},
    
-   "6/049": {"root": "6", "label": "{K}iv{y u}", "priority": "80"},
-   "9/046": {"root": "6", "label": "{K}iv{y z5}", "priority": "80"},
-   "0/469": {"root": "6", "label": "{K}iv{y r3}", "priority": "80"},
-   "4/069": {"root": "6", "label": "{K}iv{y r2}", "priority": "80"},
+   "6/049": {"root": "6", "label": "{K}iv%{u}", "priority": "80"},
+   "9/046": {"root": "6", "label": "{K}iv%{z5}", "priority": "80"},
+   "0/469": {"root": "6", "label": "{K}iv%{r3}", "priority": "80"},
+   "4/069": {"root": "6", "label": "{K}iv%{r2}", "priority": "80"},
    
    // V
    
@@ -135,14 +138,14 @@ define({
 
    // viio/vi
    
-   "8/2z":  {"root": "1", "label": "vii{v}/vi", "priority": "90"},
-   "z/28":  {"root": "1", "label": "vii{v z}/vi", "priority": "80"},
-   "2/8z":  {"root": "1", "label": "vii{v z4}/vi", "priority": "90"},
+   "8/2z":  {"root": "1", "label": "vii$/vi", "priority": "90"},
+   "z/28":  {"root": "1", "label": "vii${z}/vi", "priority": "80"},
+   "2/8z":  {"root": "1", "label": "vii${z4}/vi", "priority": "90"},
 
-   "8/25z": {"root": "1", "label": "vii{v u}/vi", "priority": "80"},
-   "z/258": {"root": "1", "label": "vii{v z5}/vi", "priority": "90"},
-   "2/58z": {"root": "1", "label": "vii{v r3}/vi", "priority": "90"},
-   "5/28z": {"root": "1", "label": "vii{v r2}/vi", "priority": "90"},
+   "8/25z": {"root": "1", "label": "vii${u}/vi", "priority": "80"},
+   "z/258": {"root": "1", "label": "vii${z5}/vi", "priority": "90"},
+   "2/58z": {"root": "1", "label": "vii${r3}/vi", "priority": "90"},
+   "5/28z": {"root": "1", "label": "vii${r2}/vi", "priority": "90"},
    
    // vi
    
@@ -169,14 +172,14 @@ define({
    
    // viio
       
-   "z/25":  {"root": "z", "label": "vii{v}", "priority": "90"},
-   "2/5z":  {"root": "z", "label": "vii{v z}", "priority": "5"},
-   "5/2z":  {"root": "z", "label": "vii{v z4}", "priority": "90"},
+   "z/25":  {"root": "z", "label": "vii$", "priority": "90"},
+   "2/5z":  {"root": "z", "label": "vii${z}", "priority": "5"},
+   "5/2z":  {"root": "z", "label": "vii${z4}", "priority": "90"},
 
-   "z/259": {"root": "z", "label": "vii{y u}", "priority": "80"},
-   "2/59z": {"root": "z", "label": "vii{y z5}", "priority": "90"},
-   "5/29z": {"root": "z", "label": "vii{y r3}", "priority": "90"},
-   "9/25z": {"root": "z", "label": "vii{y r2}", "priority": "90"},
+   "z/259": {"root": "z", "label": "vii%{u}", "priority": "80"},
+   "2/59z": {"root": "z", "label": "vii%{z5}", "priority": "90"},
+   "5/29z": {"root": "z", "label": "vii%{r3}", "priority": "90"},
+   "9/25z": {"root": "z", "label": "vii%{r2}", "priority": "90"},
    
    // NOTE: the following chords through the end of the table will be
    // respelled. See relevant code. Further examples of modal mixture cannot
