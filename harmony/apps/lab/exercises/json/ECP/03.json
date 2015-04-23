@@ -1,7 +1,10 @@
 {
   "type": "matching",
-  "reviewText": "Good job!",
-  "introText": "This three-part routine outlines one of tonal music’s most important cadences. William Caplin calls this the <i>expanded cadential progression</i>.",
+  "reviewText": "",
+
+  "analysis": {"enabled": false, "mode": {"note_names": false, "scale_degrees": false, "solfege": false, "roman_numerals": true, "intervals": false}}, "highlight": {"enabled": true, "mode": {"roothighlight": true, "tritonehighlight": false}},
+
+  "introText": "Can you repeat the progression you just played? Notice the root of each chord, now highlighted in red.",
   "key": "jC_",
-  "chord": [[52,60,72],[53,62,72],[55,62,71],[48,64,72]]
+  "chord": [[52,67,72],{"visible":[],"hidden":[53,62,72]},{"visible":[],"hidden":[55,62,71]},{"visible":[],"hidden":[48,64,72]}]
 }

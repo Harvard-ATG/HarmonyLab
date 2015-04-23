@@ -1,7 +1,10 @@
 {
   "type": "matching",
-  "reviewText": "Good job!",
-  "introText": "This four-part routine represents one of tonal music’s most important cadences. William Caplin calls this the <i>expanded cadential progression</i>.",
-  "key": "iD_",
-  "chord": [[53,65,69,74],[55,64,70,74],[57,64,69,73],[50,65,69,74]]
+  "reviewText": "",
+
+  "analysis": {"enabled": false, "mode": {"note_names": false, "scale_degrees": false, "solfege": false, "roman_numerals": true, "intervals": false}}, "highlight": {"enabled": false, "mode": {"roothighlight": true, "tritonehighlight": false}},
+
+  "introText": "Now match this three-part realization. Memorize the upper parts!",
+  "key": "jC_",
+  "chord": [[52,67,72],[53,62,72],[55,62,71],[48,64,72]]
 }

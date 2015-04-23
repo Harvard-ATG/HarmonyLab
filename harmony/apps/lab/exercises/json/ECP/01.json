@@ -1,7 +1,10 @@
 {
   "type": "matching",
-  "reviewText": "Good job!",
-  "introText": "This four-part routine represents one of tonal music’s most important cadences. William Caplin calls this the <i>expanded cadential progression</i>.",
+  "reviewText": "",
+
+  "analysis": {"enabled": true, "mode": {"note_names": false, "scale_degrees": false, "solfege": true, "roman_numerals": false, "intervals": false}}, "highlight": {"enabled": false, "mode": {"roothighlight": true, "tritonehighlight": false}},
+
+  "introText": "Match this common cadential bassline on your keyboard.",
   "key": "jC_",
-  "chord": [[52,64,67,72],[53,62,69,72],[55,62,67,71],[48,64,67,72]]
+  "chord": [[52],[53],[55],[48]]
 }

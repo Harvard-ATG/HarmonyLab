@@ -1,7 +1,10 @@
 {
   "type": "matching",
-  "reviewText": "Good job!",
-  "introText": "This three-part routine outlines one of tonal music’s most important cadences. William Caplin calls this the <i>expanded cadential progression</i>.",
-  "key": "iD_",
-  "chord": [[53,62,74],[55,64,74],[57,64,73],[50,65,74]]
+  "reviewText": "",
+
+  "analysis": {"enabled": false, "mode": {"note_names": false, "scale_degrees": false, "solfege": false, "roman_numerals": true, "intervals": false}}, "highlight": {"enabled": true, "mode": {"roothighlight": true, "tritonehighlight": false}},
+
+  "introText": "Now repeat the progression in D major, transposing up a major second.",
+  "key": "jD_",
+  "chord": [[54,69,74],{"visible":[],"hidden":[55,64,74]},{"visible":[],"hidden":[57,64,73]},{"visible":[],"hidden":[50,66,74]}]
 }
