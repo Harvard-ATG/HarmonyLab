@@ -38,6 +38,9 @@ define([
 	 */
 	var MusicComponent = function(settings) {
 		this.settings = settings || {};
+		this.settings.analysisSettings = this.settings.analysisSettings || {};
+		this.settings.highlightSettings = this.settings.highlightSettings || {};
+
 		/**
 		 * Defines the music element.
 		 * @type {jQuery}
@@ -47,19 +50,12 @@ define([
 		 * Configuration settings for highlighting notes on the sheet music.
 		 * @type {object}
 		 */
-		this.highlightConfig = {
-			enabled: HIGHLIGHT_SETTINGS.enabled,
-			mode: HIGHLIGHT_SETTINGS.mode
-		};
+		this.highlightConfig = _.extend({}, HIGHLIGHT_SETTINGS, this.settings.highlightSettings);
 		/**
 		 * Configuration settings for analyzing notes on the sheet music.
 		 * @type {object}
 		 */
-		this.analyzeConfig = {
-			enabled: ANALYSIS_SETTINGS.enabled,
-			mode: ANALYSIS_SETTINGS.mode,
-			tempo: false,
-		};
+		this.analyzeConfig = _.extend({tempo:false}, ANALYSIS_SETTINGS, this.settings.analysisSettings);
 
 		if(!("sheet" in this.settings)) {
 			throw new Error("missing settings.sheet parameter");

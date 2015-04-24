@@ -128,7 +128,9 @@ define([
 					sheet: new ExerciseSheetComponent({
 						exerciseContext: this.models.exerciseContext,
 						keySignature: this.models.keySignature
-					})
+					}),
+					analysisSettings: this.models.exerciseContext.getDefinition().getAnalysisSettings(),
+					highlightSettings: this.models.exerciseContext.getDefinition().getHighlightSettings()
 				});
 				c.init(this);
 				c.render();
