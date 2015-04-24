@@ -440,12 +440,17 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		
 		bass = uniquePitches[0] % 12;
 		uniquePitches = uniquePitches.slice(1);
-		uniquePitches.sort(this.sortNoteNumbers);
 
 		for (i = 0, len = uniquePitches.length; i < len; i++) {
-			intervals.push(this.pitchClasses[(12 + uniquePitches[i] - bass) % 12]);
+			intervals.push((12 + uniquePitches[i] - bass) % 12);
 		}
-
+		
+		intervals.sort(this.sortNoteNumbers);
+		
+		for(i = 0, len = intervals.length; i < len; i++) {
+			intervals[i] = this.pitchClasses[intervals[i]];
+		}
+		
 		entry = intervals.join('');
 
 		return entry;
