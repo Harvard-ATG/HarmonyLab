@@ -25,3 +25,13 @@ $ ./manage.py syncdb
 $ ./manage.py runserver
 ```
 You should now be able to run the application on your localhost at ```http://127.0.0.1:8000```. 
+
+# Supported Web Browsers
+
+1. Firefox 
+2. Safari 
+3. Chrome**
+
+** The Jazz Midi Plugin may not work (i.e. no sound output or MIDI keyboard input) if you are running Chrome v42 or later because Chrome [disabled NPAPI by default](https://threatpost.com/google-shuts-off-npapi-in-chrome/112295). You can temporarily re-enable support for NPAPI via flags: ```chrome://flags/#enable-npapi```
+
+
