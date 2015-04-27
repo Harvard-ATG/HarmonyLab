@@ -48,8 +48,6 @@ define([
 		}
 
 		this.afterSetup();
-		this.broadcast("notification", {type:"info", "title": "foo!", "description": "bar!"});
-		this.broadcast("notification", {type:"success", "title": "lorem ipsum dolor imet", "description": "foo bar!"});
 	};
 
 	/**
