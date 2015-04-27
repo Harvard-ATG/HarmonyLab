@@ -57,7 +57,7 @@ define({
    
    "2/59":  {"root": "2", "label": "ii", "priority": "1"},
    "5/29":  {"root": "2", "label": "ii{z}", "priority": "4"},
-   "5/29":  {"root": "2", "label": "ii{z4}", "priority": "90"},
+   "9/25":  {"root": "2", "label": "ii{z4}", "priority": "90"},
    
    "2/059": {"root": "2", "label": "ii{u}", "priority": "7"},
    "5/029": {"root": "2", "label": "ii{z5}", "priority": "7"},
