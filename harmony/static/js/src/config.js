@@ -4,6 +4,7 @@
 define([
 	'lodash', 
 	'app/config/general',
+	'app/config/error_text',
 	'app/config/help_text',
 	'app/config/highlight',
 	'app/config/instruments',
@@ -17,7 +18,8 @@ define([
 	'app/config/analysis/jDegrees'
 ], function(
 	_, 
-	ConfigGeneral, 
+	ConfigGeneral,
+	ConfigErrorText,
 	ConfigHelpText,
 	ConfigHighlight,
 	ConfigInstruments,
@@ -47,6 +49,7 @@ define([
 		/** @private **/
 		__config: {
 			'general': ConfigGeneral,
+			'errorText': ConfigErrorText,
 			'helpText': ConfigHelpText,
 			'highlight': ConfigHighlight,
 			'instruments': ConfigInstruments,

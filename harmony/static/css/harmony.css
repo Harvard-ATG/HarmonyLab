@@ -156,10 +156,8 @@ ul.content-area-vertical-nav {
 
 /*--------------------------------------------------*/
 /* Settings Styles */
-.settings {
-    
+.settings {   
 }
-
 .settings h3 {
     padding: 0;
     margin: 0;
@@ -180,6 +178,57 @@ ul.content-area-vertical-nav {
 	padding: 0;
 	display: block;
 }
+
+/*--------------------------------------------------*/
+/* Notifications Styles */
+.notifications {
+	color: #000;
+}
+.notification {
+	padding: 10px;
+	border-bottom: 1px solid #333;
+	position: relative;
+}
+.notification.info {
+	background-color: #d9edf7;
+}
+.notification.error {
+	background-color: #f2dede;
+}
+.notification.success {
+	background-color: #dff0d8;
+}
+.notification:last-child {
+	border-bottom: none;
+}
+.notification .title {
+	font-weight: bold;
+	margin-right: .5em;
+}
+.notification .btn, .notification a {
+	cursor: pointer;
+	color: #0099cc;
+}
+.notification .btn:hover, .notification a:hover {
+	color: #aa0000;
+}
+.notification .btn {
+	border: 1px solid #666;
+	padding: 2px 4px;
+}
+.notification .moredetails {
+	margin-right: 10px;
+}
+.notification .details {
+	display: none;
+	margin-top: 3px;
+}
+.notification .delete {
+	position: absolute;
+	top: 8px;
+	right: 25px;
+}
+
 
 /*--------------------------------------------------*/
 /* Exercise Status Styles */
@@ -206,9 +255,7 @@ ul.content-area-vertical-nav {
 	width: 30%;
 }
 .exercise-status-state {
-	background-color: rgba(0,0,0,.1);
 	padding: 2px 4px;
-	border-radius: 4px;
 	margin: 0 5px;
 	text-transform: uppercase;
 	font-size: .9em;

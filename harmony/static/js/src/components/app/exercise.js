@@ -8,6 +8,7 @@ define([
 	'app/components/music',
 	'app/components/music/exercise_sheet',
 	'app/components/midi',
+	'app/components/notifications',
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
 	'app/models/key_signature',
@@ -26,6 +27,7 @@ define([
 	MusicComponent,
 	ExerciseSheetComponent,
 	MidiComponent,
+	NotificationsComponent,
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
 	KeySignature,
@@ -90,6 +92,12 @@ define([
 	 */
 	AppExerciseComponent.prototype.getComponentMethods = function() {
 		var methods = [
+			function () {
+				var c = new NotificationsComponent();
+				c.init(this);
+				c.renderTo("#notifications");
+				this.addComponent(c);
+			},
 			function() {
 				var c = new PianoComponent({
 					toolbarConfig: {metronome: false}

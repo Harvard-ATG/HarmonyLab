@@ -3,15 +3,13 @@ define([
 	'jazzmidibridge',
 	'app/config',
 	'app/components/events',
-	'app/components/component',
-	'app/components/ui/modal'
+	'app/components/component'
 ], function(
 	_, 
 	JMB,
 	Config,
 	EVENTS,
-	Component,
-	ModalComponent
+	Component
 ) {
 
 	/**
@@ -48,17 +46,17 @@ define([
 		}
 	};
 	/**
-	 * Defines the title of the jazz midi error modal.
+	 * Defines the title of the jazz midi error.
 	 * @type {string} 
 	 * @const
 	 */
-	var JAZZ_MIDI_ERROR_TITLE = Config.get("helpText.jazzMidiError.title");
+	var JAZZ_MIDI_ERROR_TITLE = Config.get("errorText.jazzMidiPluginError.title");
 	/**
-	 * Defines the content of the jazz midi error modal.
+	 * Defines the content of the jazz midi error.
 	 * @type {string} 
 	 * @const
 	 */
-	var JAZZ_MIDI_ERROR_CONTENT = Config.get("helpText.jazzMidiError.content");
+	var JAZZ_MIDI_ERROR_CONTENT = Config.get("errorText.jazzMidiPluginError.description");
 
 
 	/**
@@ -128,8 +126,6 @@ define([
 			'onJMBInit',
 			'onJMBError'
 		]);
-
-		this.addComponent(new ModalComponent());
 	};
 
 	MidiComponent.prototype = new Component();
@@ -179,7 +175,11 @@ define([
 		 * @return undefined
 		 */
 		onJMBError: function() {
-			this.trigger("modal", {title: JAZZ_MIDI_ERROR_TITLE, content: JAZZ_MIDI_ERROR_CONTENT});
+			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+				type: "error",
+				title: JAZZ_MIDI_ERROR_TITLE,
+				description: JAZZ_MIDI_ERROR_CONTENT
+			});
 			this.initListeners();
 		},
 		/**

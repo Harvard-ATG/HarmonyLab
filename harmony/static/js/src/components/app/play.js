@@ -7,6 +7,7 @@ define([
 	'app/components/music',
 	'app/components/music/play_sheet',
 	'app/components/midi',
+	'app/components/notifications',
 	'app/components/input/shortcuts',
 	'app/components/ui/tab_controls',
 	'app/models/chord_bank',
@@ -21,6 +22,7 @@ define([
 	MusicComponent,
 	PlaySheetComponent,
 	MidiComponent,
+	NotificationsComponent,
 	KeyboardShortcutsComponent,
 	TabControlsComponent,
 	ChordBank,
@@ -62,6 +64,12 @@ define([
 	 */
 	AppPlayComponent.prototype.getComponentMethods = function() {
 		var methods = [
+			function () {
+				var c = new NotificationsComponent();
+				c.init(this);
+				c.renderTo("#notifications");
+				this.addComponent(c);
+			},
 			function() {
 				var c = new PianoComponent({
 					toolbarConfig: {metronome: true}
