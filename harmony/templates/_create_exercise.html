@@ -1,0 +1,68 @@
+<form>
+    <fieldset>
+        <legend>Exercise</legend>
+        
+        <div>
+            <label>Name</label>
+            <input type="text" name="exercise_name">
+        </div>
+        
+        <div>
+            <label>Prompt</label>
+            <textarea name="exercise_prompt" style="width: 100%"></textarea>
+        </div>
+
+        <div>
+            <label>Key</label>
+            <select name="exercise_key">
+                <option>Default</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>Key signature</label>
+            <select name="exercise_key_signature">
+                <option>Default</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>Chord(s)</label>
+            <div>
+            Visible: <input type="text" name="exercise_chord0_visible">
+            Hidden: <input type="text" name="exercise_chord0_visible">
+            </div>
+            <span id="add_chord">[+] Add chord</span>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Settings</legend>
+        <div>
+            <label>Analysis</label>
+            <div>
+                <input type="radio" name="analysis_settings" value="1" checked="checked"> Enabled
+                <input type="radio" name="analysis_settings" value="0"> Disabled 
+            </div>
+        </div>
+        <div>
+            <label>Highlighting</label>
+            <div>
+                <input type="radio" name="highlight_settings" value="1" checked="checked"> Enabled
+                <input type="radio" name="highlight_settings" value="0"> Disabled                
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Organize</legend>
+        <div>
+            <div>
+                <label>Save to folder</label>
+                <select>
+                    <option>/foo/bar</option>
+                </select>
+            </div>
+            <span id="add_folder">[+] Add folder</span>
+        </div>
+    </fieldset>
+    <input type="submit" value="Submit exercise" />
+</form>
