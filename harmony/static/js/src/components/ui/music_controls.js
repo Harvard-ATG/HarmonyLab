@@ -53,7 +53,7 @@ define([
 	 *
 	 * @namespace
 	 */
-	var TabControlsComponent = function(settings) {
+	var MusicControlsComponent = function(settings) {
 		this.settings = settings || {};
 		if(!("keySignature" in settings)) {
 			throw new Error("missing keySignature setting");
@@ -72,15 +72,15 @@ define([
 
 		this.addComponent(new ModalComponent());
 		
-		this.headerEl = $('#header');
-		this.settingsEl = $("#settings");
+		this.headerEl = $(settings.headerEl);
+		this.containerEl = $(settings.containerEl);
 
-		_.bindAll(this, ['onClickInfo', 'onClickSettings', 'onClickOutsideSettingsMenu']);
+		_.bindAll(this, ['onClickInfo']);
 	};
 
-	TabControlsComponent.prototype = new Component();
+	MusicControlsComponent.prototype = new Component();
 
-	_.extend(TabControlsComponent.prototype, {
+	_.extend(MusicControlsComponent.prototype, {
 		/**
 		 * Initializes the component.
 		 *
@@ -88,11 +88,10 @@ define([
 		 */
 		initComponent: function() {
 
-			$('.js-settings', this.headerEl).on('click', this.onClickSettings);
 			$('.js-btn-info', this.headerEl).on('click', this.onClickInfo);
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 
-			this.initSettingsMenu();
+			this.initControlsLayout();
 			this.initKeySignatureTab();
 			this.initNotationTab();
 			this.renderInstrumentSelect();
@@ -101,12 +100,12 @@ define([
 			this.initMidiTab();
 		},
 		/**
-		 * Initializes the slide-out menu.
+		 * Initializes the controls layout. 
 		 * 
 		 * @return undefined
 		 */
-		initSettingsMenu: function() {
-			this.settingsEl.children(".accordion").accordion({
+		initControlsLayout: function() {
+			this.containerEl.children(".accordion").accordion({
 				collapsible: true,
 				heightStyle: "content"
 			});
@@ -117,7 +116,7 @@ define([
 		 * @return undefined
 		 */
 		initMidiTab: function() {
-			var containerEl = this.settingsEl;
+			var containerEl = this.containerEl;
 			var renderDevices = function(midiDevice) {
 				var inputs = midiDevice.getInputs();
 				var outputs = midiDevice.getOutputs();
@@ -180,7 +179,7 @@ define([
 		 */
 		initNotationTab: function() {
 			var that = this;
-			var containerEl = this.settingsEl;
+			var containerEl = this.containerEl;
 			var el = $('.js-analyze-widget', containerEl);
 			var analysisSettings = {};
 			var highlightSettings = {};
@@ -225,7 +224,7 @@ define([
 		 */
 		renderInstrumentSelect: function() {
 			var that = this;
-			var containerEl = this.settingsEl;
+			var containerEl = this.containerEl;
 			var el = $('.js-instrument', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(instruments, function(inst) { %><option value="<%= inst.num %>"><%- inst.name %></option><% }); %>');
@@ -246,7 +245,7 @@ define([
 		 */
 		renderKeyboardSizeSelect: function() {
 			var that = this;
-			var containerEl = this.settingsEl;
+			var containerEl = this.containerEl;
 			var el = $('.js-keyboardsize', containerEl);
 			var selectEl = $("<select/>");
 			var tpl = _.template('<% _.forEach(sizes, function(size) { %><option value="<%= size %>"><%- size %></option><% }); %>');
@@ -269,7 +268,7 @@ define([
 		 */
 		renderKeyboardShortcuts: function() {
 			var that = this;
-			var containerEl = this.settingsEl;
+			var containerEl = this.containerEl;
 			var el = $('.js-keyboardshortcuts', containerEl);
 			var inputEl = $('<input type="checkbox" name="keyboard_shortcuts" value="on" />');
 			el.append("Keyboard Shortcuts").append(inputEl).wrap("<label/>");
@@ -285,22 +284,6 @@ define([
 			// update gui control when toggled via ESC key
 			this.subscribe(EVENTS.BROADCAST.TOGGLE_SHORTCUTS, function(enabled) {
 				inputEl[0].checked = enabled;
-			});
-		},
-		/**
-		 * Shows or hides the settings menu (slide out).
-		 *
-		 * @return undefined
-		 */
-		toggleSettingsMenu: function(state) {
-			var that = this;
-			this.settingsEl.animate({
-				width: (state?"show":"hide")
-			}, {
-				duration: 350,
-				complete: function() {
-					$(window)[state?'on':'off']('click', that.onClickOutsideSettingsMenu);
-				}
 			});
 		},
 		/**
@@ -326,30 +309,8 @@ define([
 		onClickInfo: function(evt) {
 			this.trigger("modal", {title: APP_INFO_TITLE, content: APP_INFO_CONTENT});
 			return false;
-		},
-		/**
-		 * Handles clicking ont he settings button.
-		 *
-		 * @return undefined
-		 */
-		onClickSettings: function(evt) {
-			this.settingsToggleState = !this.settingsToggleState;
-			this.toggleSettingsMenu(this.settingsToggleState);
-			evt.preventDefault();
-		},
-		/**
-		 * Handles closing the settings menu when clicking outside the menu.
-		 *
-		 * @return undefined
-		 */
-		onClickOutsideSettingsMenu: function(evt) {
-			var isOutside = $(evt.target).closest(this.settingsEl).length == 0;
-			if (isOutside) {
-				this.settingsToggleState = false;
-				this.toggleSettingsMenu(this.settingsToggleState);
-			}
 		}
 	});
 
-	return TabControlsComponent;
+	return MusicControlsComponent;
 });

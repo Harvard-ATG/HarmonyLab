@@ -1,0 +1,20 @@
+<div id="mainmenu" class="content-area content-area-slide-out settings">
+	{% comment%}
+	<!--
+	<h3>Key & Signature</h3>
+	<div class="content-area-section">
+		<<div class="content-area-row js-keysignature-widget"></div>
+		<div class="content-area-row settings-help"><i>Click the "lock" icon to change the key independently from the signature and vice versa.</i></div>
+	</div>
+	-->
+	{% endcomment %}
+	<ul class="content-area-vertical-nav">
+		<li><a href="{% url 'lab:index' %}"><i class="ion-home"></i> Home</a></li>
+		{% if has_manage_perm %}
+			<li><a href="{% url 'lab:manage' %}">Manage</a></li>
+		{% endif %}
+	</ul>
+	
+    {% block menu_content %}
+    {% endblock %}
+</div>

@@ -1,13 +1,19 @@
 {% extends "__base.html" %}
 
 {% block js_extra %}
-<script>require(['app/main']);</script>
+<script>
+require(['app/main']);
+</script>
 {% endblock %}
 
 {% block content %}
 <div id="container">
+	{% include "_header.html" %}
+	{% include "_menu.html" %}
+	{% include "_notifications.html" %}
 	<div class="content-area">
-		Testing
+		Management stuff here.
 	</div>
+	{% include "_footer.html" %}
 </div>
 {% endblock %}

@@ -9,7 +9,8 @@ define([
 	'app/components/midi',
 	'app/components/notifications',
 	'app/components/input/shortcuts',
-	'app/components/ui/tab_controls',
+	'app/components/ui/main_menu',
+	'app/components/ui/music_controls',
 	'app/models/chord_bank',
 	'app/models/key_signature',
 	'app/models/midi_device'
@@ -24,7 +25,8 @@ define([
 	MidiComponent,
 	NotificationsComponent,
 	KeyboardShortcutsComponent,
-	TabControlsComponent,
+	MainMenuComponent,
+	MusicControlsComponent,
 	ChordBank,
 	KeySignature,
 	MidiDevice
@@ -94,7 +96,18 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				var c = new TabControlsComponent({
+				var c = new MainMenuComponent({
+					headerEl: "#header",
+					menuEl: "#mainmenu",
+					menuSelector: ".js-btn-menu"
+				});
+				c.init(this);
+				this.addComponent(c);
+			},
+			function() {
+				var c = new MusicControlsComponent({
+					headerEl: "#header",
+					containerEl: "#mainmenu",
 					keySignature: this.models.keySignature,
 					midiDevice: this.models.midiDevice
 				});

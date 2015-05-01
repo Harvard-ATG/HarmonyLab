@@ -1,0 +1,27 @@
+{% extends "_menu.html" %}
+{% block menu_content %}
+<div class="accordion">
+    <h3>Notation</h3>
+    <div class="content-area-section">
+        <div class="content-area-row js-analyze-widget"></div>
+    </div>
+
+    <h3>Instrument</h3>
+    <div class="content-area-section">
+        <div class="content-area-row js-instrument"></div>
+        <div class="content-area-row js-keyboardsize"></div>
+        <div class="content-area-row js-keyboardshortcuts"></div>
+    </div>
+
+    <h3>MIDI Source</h3>
+    <div class="content-area-section">
+        <div class="content-area-row">
+            <div class="label">MIDI in:</div>
+            <select class="js-select-midi-input" name="select_midi_input"></select>
+            <div class="label">MIDI out:</div>
+            <select class="js-select-midi-output" name="select_midi_output"></select><br/>
+            <button class="js-refresh-midi-devices">Refresh</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

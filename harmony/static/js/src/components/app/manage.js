@@ -2,12 +2,16 @@ define([
 	'module',
 	'lodash',
 	'jquery',
-	'app/components/app'
+	'app/components/app',
+	'app/components/ui/main_menu',
+	'app/components/notifications',
 ], function(
 	module,
 	_,
 	$,
-	AppComponent
+	AppComponent,
+	MainMenuComponent,
+	NotificationsComponent
 ) {
 
 	/**
@@ -32,6 +36,36 @@ define([
 	};
 
 	//AppManageComponent.prototype.getModels = function() {};
+	
+	/**
+	 * Returns an array of functions that will create and initialize
+	 * each sub-component of the application.
+	 *
+	 * @return {array} of functions
+	 */
+	AppManageComponent.prototype.getComponentMethods = function() {
+		var methods = [
+			function () {
+				var c = new NotificationsComponent();
+				c.init(this);
+				c.renderTo("#notifications");
+				this.addComponent(c);
+			},
+			function() {
+				var c = new MainMenuComponent({
+					headerEl: "#header",
+					menuEl: "#mainmenu",
+					menuSelector: ".js-btn-menu"
+				});
+				c.init(this);
+				this.addComponent(c);
+			},
+			function() {
+				// form component here?
+			}
+		];
+		return methods;
+	};
 
 	AppManageComponent.prototype.initComponent = function() {
 		AppComponent.prototype.initComponent.apply(this, arguments);

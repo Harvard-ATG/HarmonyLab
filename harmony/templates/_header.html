@@ -1,9 +1,6 @@
 <div id="header" class="header">
 	<ul>
-		<li><span class="btn js-settings"><i class="ion-gear-b"></i> Harmony Lab</span></li>
-		<li class="js-keysignature-widget"></li>
-		<li class="right"><span class="btn js-btn-info">Help</span></li>
+		<li><span class="btn js-btn-menu"><i class="ion-navicon-round"></i> Harmony Lab</span></li>
+		{% block header_extra %}{% endblock %}
 	</ul>
 </div>
-{% include "_settings.html" %}
-<div id="notifications" class="notifications"></div>

@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import "pure.css";
 @font-face {
     font-family: 'FiguredBassMHGPL';
     src: url('../fonts/FiguredBassMHGPL.otf');
@@ -117,7 +118,6 @@ ul.content-area-vertical-nav {
     font-size: 1.5em;
     margin: 0 0 .5em 0;
     padding: 0;
-    border-bottom: 1px solid #333;
 }
 .content-area-vertical-nav li {
     line-height: 1.5em;

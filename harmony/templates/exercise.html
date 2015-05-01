@@ -6,7 +6,9 @@
 
 {% block content %}
 <div id="container" class="js-fade-in fade" style="opacity: 0;">
-    {% include "_header.html" %}
+    {% include "_header_music.html" %}
+	{% include "_menu_music.html" %}
+	{% include "_notifications.html" %}
 	<div class="harmony-ui">
 		<div id="staff-area" class="staff-area-medium content-area">
 			<div id="staff-toolbar">
@@ -24,5 +26,4 @@
     {% include "_footer.html" %}
 </div>
 <div class="js-fade-out fade ajax-loader ajax-loader-centered" style="top:33%;opacity: 1"></div>
-</div>
 {% endblock %}

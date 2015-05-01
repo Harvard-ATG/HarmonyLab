@@ -10,7 +10,8 @@ define([
 	'app/components/midi',
 	'app/components/notifications',
 	'app/components/input/shortcuts',
-	'app/components/ui/tab_controls',
+	'app/components/ui/main_menu',
+	'app/components/ui/music_controls',
 	'app/models/key_signature',
 	'app/models/midi_device',
 	'app/models/exercise_chord_bank',
@@ -29,7 +30,8 @@ define([
 	MidiComponent,
 	NotificationsComponent,
 	KeyboardShortcutsComponent,
-	TabControlsComponent,
+	MainMenuComponent,
+	MusicControlsComponent,
 	KeySignature,
 	MidiDevice,
 	ExerciseChordBank,
@@ -122,7 +124,18 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				var c = new TabControlsComponent({
+				var c = new MainMenuComponent({
+					headerEl: "#header",
+					menuEl: "#mainmenu",
+					menuSelector: ".js-btn-menu"
+				});
+				c.init(this);
+				this.addComponent(c);
+			},
+			function() {
+				var c = new MusicControlsComponent({
+					headerEl: "#header",
+					containerEl: "#mainmenu",
 					keySignature: this.models.keySignature,
 					midiDevice: this.models.midiDevice,
 					exerciseContext: this.models.exerciseContext
@@ -131,14 +144,15 @@ define([
 				this.addComponent(c);
 			},
 			function() {
+				var definition = this.models.exerciseContext.getDefinition();
 				var c = new MusicComponent({
 					el: $("#staff-area"),
 					sheet: new ExerciseSheetComponent({
 						exerciseContext: this.models.exerciseContext,
 						keySignature: this.models.keySignature
 					}),
-					analysisSettings: this.models.exerciseContext.getDefinition().getAnalysisSettings(),
-					highlightSettings: this.models.exerciseContext.getDefinition().getHighlightSettings()
+					analysisSettings: definition.getAnalysisSettings(),
+					highlightSettings: definition.getHighlightSettings()
 				});
 				c.init(this);
 				c.render();
