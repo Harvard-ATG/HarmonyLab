@@ -5,13 +5,15 @@ define([
 	'app/components/app',
 	'app/components/ui/main_menu',
 	'app/components/notifications',
+	'app/components/form/exercise_form'
 ], function(
 	module,
 	_,
 	$,
 	AppComponent,
 	MainMenuComponent,
-	NotificationsComponent
+	NotificationsComponent,
+	ExerciseFormComponent
 ) {
 
 	/**
@@ -26,16 +28,27 @@ define([
 	var AppManageComponent = function(settings) {
 		AppComponent.call(this, settings);
 	};
+	
 
 	AppManageComponent.prototype = new AppComponent();
+	
 
 	AppManageComponent.ready = function() {
 		var app = new AppManageComponent();
 		app.init();
 		console.log("initialized manage component");
 	};
+	
+	AppManageComponent.prototype.init = function() {
+		$('#managetabs').tabs();
+		AppComponent.prototype.init.call(this);
+	};
 
-	//AppManageComponent.prototype.getModels = function() {};
+	/**
+	 * Executed after the component is setup.
+	 */
+	AppManageComponent.prototype.afterSetup = function() {
+	};
 	
 	/**
 	 * Returns an array of functions that will create and initialize
@@ -61,7 +74,11 @@ define([
 				this.addComponent(c);
 			},
 			function() {
-				// form component here?
+				var c = new ExerciseFormComponent({
+					el: "#exerciseform" 
+				});
+				c.init(this);
+				this.addComponent(c);
 			}
 		];
 		return methods;

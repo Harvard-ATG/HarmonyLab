@@ -83,6 +83,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 		// renders a selectable list of signatures
 		_renderSignatureSelector: function() {
 			var select = document.createElement('select');
+			select.name = "keysignature";
 			var selected_signature = this.keySignature.getSignatureSpec();
 
 			_.each(KEY_SIGNATURE_MAP, function(key, signature) {
@@ -101,6 +102,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 		// renders a selectable list of keys
 		_renderKeySelector: function() {
 			var select = document.createElement('select');
+			select.name = "key";
 			var selected_key = this.keySignature.getKey();
 
 			_.each(KEY_DISPLAY_GROUPS, function(keyList, index) {

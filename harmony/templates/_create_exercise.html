@@ -1,4 +1,4 @@
-<form>
+<form id="exerciseform">
     <fieldset>
         <legend>Exercise</legend>
         
@@ -12,45 +12,20 @@
             <textarea name="exercise_prompt" style="width: 100%"></textarea>
         </div>
 
-        <div>
-            <label>Key</label>
-            <select name="exercise_key">
-                <option>Default</option>
-            </select>
-        </div>
-        
-        <div>
-            <label>Key signature</label>
-            <select name="exercise_key_signature">
-                <option>Default</option>
-            </select>
+        <div class="js-keysignature-widget">
+            Key:
         </div>
         
         <div>
             <label>Chord(s)</label>
-            <div>
-            Visible: <input type="text" name="exercise_chord0_visible">
-            Hidden: <input type="text" name="exercise_chord0_visible">
+            <div id="chord_list">
             </div>
-            <span id="add_chord">[+] Add chord</span>
+            <span data-chord="0" id="add_chord">[+] Add chord</span>
         </div>
     </fieldset>
     <fieldset>
         <legend>Settings</legend>
-        <div>
-            <label>Analysis</label>
-            <div>
-                <input type="radio" name="analysis_settings" value="1" checked="checked"> Enabled
-                <input type="radio" name="analysis_settings" value="0"> Disabled 
-            </div>
-        </div>
-        <div>
-            <label>Highlighting</label>
-            <div>
-                <input type="radio" name="highlight_settings" value="1" checked="checked"> Enabled
-                <input type="radio" name="highlight_settings" value="0"> Disabled                
-            </div>
-        </div>
+        <div class="js-settings-widget"></div>
     </fieldset>
     <fieldset>
         <legend>Organize</legend>
