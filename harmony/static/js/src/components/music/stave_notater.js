@@ -4,13 +4,15 @@ define([
 	'vexflow',
 	'microevent',
 	'app/util',
-	'app/utils/analyze'
+	'app/utils/analyze',
+	'app/utils/fontparser'
 ], function(
 	_, 
 	Vex, 
 	MicroEvent,
 	util, 
-	Analyze
+	Analyze,
+	FontParser
 ) {
 	"use strict";
 
@@ -444,22 +446,9 @@ define([
 		},
 		/**
 		 * Parses a string of text to find out which font to use, and then draws
-		 * the resulting text tokens with the necessary font. 
-		 *
-		 * There are only two fonts:
-		 * 		1. the standard text font (i.e. Helvetica, etc).
-		 *		2. "Sebastian" which is a special font for rendering figured bass notation 
-		 *		   (FiguredBassMHGPL is another such font, but we're using Sebastian).
-		 * 
-		 * Text that uses font #2 should be wrapped in brackets: "{TEXT}".
-		 *
-		 * This is very similar to the way templating engines work except all we're doing is
-		 * substituting a different font instead of a different value for the text, that way
-		 * the text is rendered correctly.
-		 *
-		 * Example: 
-		 * 		Source string = "foo{5e}bar{6q}++" 
-		 * 		Parsed result = ["foo", "{5e}", "bar", "{6q}", "++"]
+		 * the resulting text tokens with the necessary font. Text that
+		 * should be rendered with the figured bass font should be wrapped in
+		 * curly brackets: "foo{text}bar"
 		 *
 		 * @param {string} str  - the string to draw
 		 * @param {number} x - the x coordinate to draw 
@@ -468,32 +457,24 @@ define([
 		 * @return undefined
 		 */
 		parseAndDraw: function(str, x, y, callback) {
+			var that = this;
+			var figuredBassFont = this.getFiguredBassFont();
 			var ctx = this.getContext();
-			var re =  /([^{}]+|(\{[^{}]+\}))/g;
-			var m, text, emWidth = ctx.measureText("m").width;
-
-			while ((m = re.exec(str)) != null) {
-				if (m.index === re.lastIndex) {
-					re.lastIndex++;
-				}
-				text = m[1];
-				if(text == "" || typeof text == "undefined") {
-					continue;
-				}
-
-				if(text.charAt(0) == "{" && text.charAt(text.length-1) == "}") {
-					text = text.substr(1, text.length-2); // extract the TEXT in "{TEXT}"
+			var padding = ctx.measureText("m").width; // get width of "m" to use for padding
+			
+			FontParser.parse(str, function(text, is_font_token) {
+				//console.log("parse font", text, is_font_token);
+				if (is_font_token) {
 					ctx.save();
-					ctx.font = this.getFiguredBassFont();
-					x += callback.call(this, text, x, y);
-					x += emWidth / 3; 
+					ctx.font = figuredBassFont;
+					x += callback.call(that, text, x, y);
+					x += padding / 3;
 					ctx.restore();
 				} else {
-					x += callback.call(this, text, x, y);
-					x += emWidth / 2;
-				}
-			}
-
+					x += callback.call(that, text, x, y);
+					x += padding / 2;					
+				}				
+			});
 		},
 		/**
 		 * Notates the stave.

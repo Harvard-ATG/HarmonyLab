@@ -1,0 +1,27 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Play exactly the same progression again.",
+  "key": "jC_",
+  "chord": [
+    {"visible":[47,77],"hidden":[67,74]},
+    {"visible":[48,76],"hidden":[67,72]}
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false
+    }
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false
+    }
+  }
+}

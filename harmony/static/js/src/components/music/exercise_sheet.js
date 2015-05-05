@@ -6,6 +6,7 @@ define([
 	'vexflow',
 	'app/config',
 	'app/components/component',
+	'app/utils/fontparser',
 	'./stave',
 	'./stave_notater',
 	'./exercise_note_factory'
@@ -16,6 +17,7 @@ define([
 	Vex, 
 	Config,
 	Component,
+	FontParser,
 	Stave, 
 	StaveNotater,
 	ExerciseNoteFactory
@@ -159,6 +161,7 @@ define([
 			var html = '';
 			var status_map = {};
 			var tpl_data = {};
+			var parsed_prompt_html;
 
 			status_map[exc.STATE.INCORRECT] = {text:"incorrect",color:"#990000",iconCls:"ion-close"};
 			status_map[exc.STATE.CORRECT] = {text:"correct",color:"#4C9900",iconCls:"ion-checkmark"};
@@ -193,7 +196,10 @@ define([
 					}
 					break;
 			}
-
+			
+			// parse the prompt text in case there are any tokens that should use the figured bass font
+			tpl_data.prompt_text = FontParser.parseHTMLFiguredBass(tpl_data.prompt_text);
+	
 			html = tpl(tpl_data);
 			$statusEl.html(html);
 

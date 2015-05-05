@@ -44,6 +44,13 @@ body.theme-downlights { background:#000 url('../img/Harmony-bkg.jpg') center no-
 body.theme-concert {background:#000 url('../img/Harmony1-bkg.jpg') center no-repeat;}
 body.theme-smoothblue {background:#000 url('../img/bluelights.jpg') center no-repeat;}
 body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-repeat;}
+.figuredbass {
+	font-family: Sebastian;
+	font-size: 32px;
+	margin-left: -12px;
+	margin-right: 6px;
+	line-height: 18px;
+}
 
 /*--------------------------------------------------*/
 /* Structural/Layout */

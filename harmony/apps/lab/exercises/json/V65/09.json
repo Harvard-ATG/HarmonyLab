@@ -1,0 +1,27 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Preserving the same structure in each hand, complete the progression in the key shown.",
+  "key": "jF_",
+  "chord": [
+    {"visible":[52,60,67,70],"hidden":[]},
+    {"visible":[],"hidden":[53,60,65,69]}
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false
+    }
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false
+    }
+  }
+}
