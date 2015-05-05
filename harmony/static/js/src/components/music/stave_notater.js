@@ -86,7 +86,6 @@ define([
 		init: function(config) {
 			this.config = config;
 			this.initConfig();
-			this.preloadFont("Sebastian");
 			_.bindAll(this, 'drawMetronomeMark');
 		},
 		/**
