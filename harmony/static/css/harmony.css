@@ -558,3 +558,10 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 	background-color: rgba(255,255,255,0.2);
 	padding: 5px 5px 8px 5px;
 }
+.figuredbass {
+	font-family: Sebastian;
+	font-size: 32px;
+	margin-left: -12px;
+	margin-right: 6px;
+	line-height: 18px;
+}
