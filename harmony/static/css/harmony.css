@@ -185,6 +185,21 @@ ul.content-area-vertical-nav {
 	padding: 0;
 	display: block;
 }
+.settings .settings-notation div {
+	display: block;
+	padding: 4px 8px;
+}
+.settings .settings-notation label {
+	margin: 0 10px 0 0;
+	display: block;
+}
+.settings .settings-notation legend {
+	border: 1px solid #c0c0c0;
+	padding: 2px 10px;
+}
+.settings .settings-notation div:not(:last-child) {
+	border-bottom: 1px solid #c0c0c0;
+}
 
 /*--------------------------------------------------*/
 /* Notifications Styles */
