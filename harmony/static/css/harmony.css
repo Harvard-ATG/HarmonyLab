@@ -179,6 +179,10 @@ fieldset.settings-notation {
 .settings-notation ol {
 	margin: 0;
 }
+.settings-notation ul {
+	margin: 0;
+	list-style-type: none;
+}
 .settings-notation label {
 	margin: 0 10px 0 0;
 	display: block;

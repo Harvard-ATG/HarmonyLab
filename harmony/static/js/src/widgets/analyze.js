@@ -72,12 +72,12 @@ define([
 				});
 			},
 			harmonic_analysis_intervals: function(e) {
-				var opt = "intervals";
+				var opt = e.target.value;
 				this.state.mode.intervals = e.target.checked;
 				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
 			},
 			harmonic_analysis_roman_numerals: function(e) {
-				var opt = "roman_numerals"
+				var opt = e.target.value;
 				this.state.mode[opt] = e.target.checked;
 				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
 			}
