@@ -6,10 +6,16 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 	var KEY_DISPLAY_GROUPS = Config.get('general.keyDisplayGroups');
 	var KEY_SIGNATURE_MAP = Config.get('general.keySignatureMap');
 
-	var KeySignatureWidget = function(keySignature) {
+	var KeySignatureWidget = function(keySignature, settings) {
+		this.settings = settings || {};
+		this.settings = _.merge({
+			widgetCls: "widget-keysignature widget-keysignature-header",
+			lockedCls: "ioncustom-siglocked",
+			unlockedCls: "ioncustom-sigunlocked"
+		}, settings);
 		this.lock = keySignature.locked();
 		this.keySignature = keySignature;
-		this.el = $('<div class="widget-keysignature"></div>');
+		this.el = $('<div class="'+this.settings.widgetCls+'"></div>');
 		this.initListeners();
 	};
 
@@ -56,7 +62,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 		// together (change one and the other should change accordingly).
 		_renderSignatureLock: function() {
 			var lock = (this.lock ? true : false);
-			var lockCls = ['ion-locked ioncustom-siglocked btn','ion-unlocked ioncustom-sigunlocked'];
+			var lockCls = ['btn ion-locked '+this.settings.lockedCls,'btn ion-unlocked '+this.settings.unlockedCls];
 			var lockContainerEl = $("<span/>"); 
 			var lockEl = $('<span class="'+(lock?lockCls[0]:lockCls[1])+'" data-lock="'+(lock?'yes':'no')+'"/>');
 			var style='style="margin: 0 10px"';

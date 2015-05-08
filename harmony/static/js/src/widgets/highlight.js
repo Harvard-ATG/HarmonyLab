@@ -82,6 +82,9 @@ define([
 			});
 
 			return this;
+		},
+		getState: function() {
+			return this.state;
 		}
 	});
 

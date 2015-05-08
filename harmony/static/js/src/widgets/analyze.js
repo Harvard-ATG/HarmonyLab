@@ -106,9 +106,13 @@ define([
 
 			return this;
 		},
+		getState: function() {
+			return this.state;
+		},
 		_eitherModeTrue: function(a, b) {
 			return this.state.mode[a] || this.state.mode[b];
-		}
+		},
+
 	});
 
 	MicroEvent.mixin(AnalyzeWidget);

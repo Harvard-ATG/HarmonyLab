@@ -21,7 +21,9 @@ define([
     
     var ExerciseFormComponent = function(settings) {
         this.settings = settings || {};
-        console.log("form component loaded");
+		this.widgets = {};
+		this.$el = $("#exerciseform");
+        console.log("form component loaded", this);
     };
     
     ExerciseFormComponent.prototype = new Component();
@@ -36,53 +38,92 @@ define([
 		this.initSettingsFields();
 		this.initListeners();
 	};
-	
-	ExerciseFormComponent.prototype.initKeySignatureField = function() {
-		var $el = $('.js-keysignature-widget');
-		var keySignature = new KeySignature();
-		var widget = new KeySignatureWidget(keySignature);
-		widget.render();
-		$el.append(widget.el);
-	};
-	
-	ExerciseFormComponent.prototype.initSettingsFields = function() {
-		var $el = $('.js-settings-widget');
-		var analyze_widget = new AnalyzeWidget();
-		var highlight_widget = new HighlightWidget();
-		$el.append(highlight_widget.render().el, analyze_widget.render().el);
-		console.log($el, analyze_widget, highlight_widget);
-	};
-	
-	ExerciseFormComponent.prototype.addChord = function(chord_num) {
-		$("#chord_list").append([
-			'<div>',
-				'<span>',
-					'<b>Chord #'+chord_num+'</b>',
-				'</span>',
-				'<span>',
-					'Visible: <input type="text" name="exercise_chord'+chord_num+'_visible">',
-					'Hidden: <input type="text" name="exercise_chord'+chord_num+'_hidden">',
-				'</span>',
-			'</div>',					 
-		].join(''));
-	};	
-    
-	/**
-	 * Initializes listeners.
+
+ 	/**
+	 * Initializes the form listeners.
 	 *
 	 * @return undefined
-	 */
+	 */   
 	ExerciseFormComponent.prototype.initListeners = function() {
 		var that = this;
-		$("#add_chord").on('click', function() {
-			var chord_num = Number($(this).data('chord'));
-			if (isNaN(chord_num)) {
-				chord_num = 0;
-			}
-			that.addChord(chord_num);
-			chord_num++;
-			$(this).data('chord', chord_num);
+		this.$el.on("submit", function(e) {
+			var data = that.collectFormData();
+			console.log("submit", data);
+			e.preventDefault();
 		});
+	};
+	
+	/**
+	 * Initializes the key signature field.
+	 *
+	 * @return undefined
+	 */	
+	ExerciseFormComponent.prototype.initKeySignatureField = function() {
+		var $el = this.$el.find('.js-keysignature-widget');
+		var keySignature = new KeySignature();
+		var widget = new KeySignatureWidget(keySignature, {
+			widgetCls: "widget-keysignature",
+			lockedCls: "",
+			unlockedCls: ""
+		});
+		widget.render();
+		
+		$el.append(widget.el);
+		
+		this.widgets.keySignature = widget;
+	};
+
+	/**
+	 * Initializes the analysis and highlight settings fields.
+	 *
+	 * @return undefined
+	 */	
+	ExerciseFormComponent.prototype.initSettingsFields = function() {
+		var $el = this.$el.find('.js-settings-widget');
+		var analyze_widget = new AnalyzeWidget();
+		var highlight_widget = new HighlightWidget();
+
+		analyze_widget.render();
+		highlight_widget.render();
+		
+		$el.append(highlight_widget.el, analyze_widget.el);
+		
+		this.widgets.analyze = analyze_widget;
+		this.widgets.highlight = highlight_widget;
+	};
+
+	/**
+	 * Collects all the data from the form suitable for sending
+	 * to the server.
+	 *
+	 * @return object
+	 */		
+	ExerciseFormComponent.prototype.collectFormData = function() {
+		var prompt = this.$el.find('textarea[name=exercise_prompt]').val();
+		var key = this.widgets.keySignature.keySignature.getKey();
+		var key_signature = this.widgets.keySignature.keySignature.getSignatureSpec();
+		var chords = this.$el.find('input[name=exercise_chords]').val();
+		var analysis_settings = this.widgets.analyze.getState();
+		var highlight_settings = this.widgets.highlight.getState();
+		var exercise_group = this.$el.find('input[name=exercise_group]').val();
+		var new_exercise_group = this.$el.find('input[name=new_exercise_group]').val();
+		new_exercise_group = new_exercise_group.replace(/\s+/, '');
+		
+		if (new_exercise_group) {
+			exercise_group = new_exercise_group;
+		}
+		
+		var data = {
+			"prompt": prompt,
+			"key": key,
+			"keySignature": key_signature,
+			"chords": chords,
+			"exercise_group": exercise_group,
+			"analysisSettings": analysis_settings,
+			"highlightSettings": highlight_settings
+		};
+		
+		return data;
 	};
     
     return ExerciseFormComponent;   

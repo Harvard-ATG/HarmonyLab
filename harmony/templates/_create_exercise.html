@@ -1,26 +1,17 @@
-<form id="exerciseform">
+<form id="exerciseform" class="exerciseform">
     <fieldset>
         <legend>Exercise</legend>
-        
         <div>
-            <label>Name</label>
-            <input type="text" name="exercise_name">
+            <label for="exercise_prompt">Prompt</label>
+            <textarea name="exercise_prompt" style="min-width: 450px"></textarea>
         </div>
-        
         <div>
-            <label>Prompt</label>
-            <textarea name="exercise_prompt" style="width: 100%"></textarea>
+            <label for="key">Key:</label>
+            <div class="js-keysignature-widget"></div>
         </div>
-
-        <div class="js-keysignature-widget">
-            Key:
-        </div>
-        
         <div>
-            <label>Chord(s)</label>
-            <div id="chord_list">
-            </div>
-            <span data-chord="0" id="add_chord">[+] Add chord</span>
+            <label for="exercise_chord">Chord(s)</label>
+            <input type="text" name="exercise_chords" style="min-width:450px" len>
         </div>
     </fieldset>
     <fieldset>
@@ -30,14 +21,16 @@
     <fieldset>
         <legend>Organize</legend>
         <div>
-            <div>
-                <label>Save to folder</label>
-                <select>
-                    <option>/foo/bar</option>
-                </select>
-            </div>
-            <span id="add_folder">[+] Add folder</span>
+            <label>Save to exercise group</label>
+            <select name="exercise_group">
+                <option value="">----</option>
+            </select>
+            or 
+           <input type="text" name="new_exercise_group" id="new_exercise_group" placeholder="Enter group name...">
         </div>
     </fieldset>
-    <input type="submit" value="Submit exercise" />
+    <div>
+        <input id="submit_exercise" type="submit" value="Submit exercise" />
+        <button id="cancel">Cancel</button>
+    </div>
 </form>

@@ -308,6 +308,15 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 	font-size: 1.5em !important;
 }
 /*--------------------------------------------------*/
+/* Exercise form */
+.exerciseform label {
+	display: block;
+}
+.exerciseform div {
+	margin: 5px 0;
+}
+
+/*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */
 .icon-btn {
     background: url(../img/icon-btn-sprite.png) no-repeat;
@@ -541,6 +550,7 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 }
 .modal-close-btn:hover { background: #00d9ff; }
 
+
 /*--------------------------------------------------*/
 /* Utilities */
 
@@ -573,6 +583,8 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 }
 .widget-keysignature {
 	display: inline;
+}
+.widget-keysignature-header {
 	background-color: rgba(255,255,255,0.2);
 	padding: 5px 5px 8px 5px;
 }
