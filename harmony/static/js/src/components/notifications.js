@@ -26,7 +26,8 @@ define([
 	 * @return undefined
 	 */
 	NotificationsComponent.prototype.initComponent = function() {
-		this.el = $('<div class="notifications-wrapper"></div>');
+		this.el = $('<div class="notifications-wrapper" style="display:none"></div>');
+		this.alertEl = $("#notificationAlerts");
 		this.initListeners();
 	};
     
@@ -36,8 +37,12 @@ define([
 	 * @return undefined
 	 */
 	NotificationsComponent.prototype.initListeners = function() {
+		var that = this;
 		this.subscribe(EVENTS.BROADCAST.NOTIFICATION, this.onNotification);
         this.el.on("click", this.onClickDetails);
+		this.alertEl.on("click", function(e) {
+			that.el.toggle(400);
+		});
 	};
 
 	/**
@@ -57,7 +62,8 @@ define([
     NotificationsComponent.prototype.onNotification = function(msg) {
         //console.log("notification event", msg);
         this.messages.push(msg);
-        this.el.append(this.getMessageEl(msg));
+        this.el.append(this.getMessageEl(msg, this.messages.length-1));
+		this.renderAlert();
     };
 
 	/**
@@ -67,10 +73,14 @@ define([
 	 */   
     NotificationsComponent.prototype.onClickDetails = function(evt) {
         var $target = $(evt.target);
+		var $notification = $target.closest('.notification');
+		
         if ($target.hasClass("moredetails")) {
-            $target.closest(".notification").find('.details').toggle(400);
+            $notification.find('.details').toggle(400);
         } else if ($target.hasClass("delete")) {
-            $target.closest(".notification").remove();
+            $notification.remove();
+			this.messages[parseInt($notification.data('id'))].deleted = true;
+			this.renderAlert();
         }
     };
 
@@ -79,9 +89,9 @@ define([
 	 *
 	 * @return jQuery
 	 */   
-    NotificationsComponent.prototype.getMessageEl = function(msg) {
+    NotificationsComponent.prototype.getMessageEl = function(msg, id) {
         var title = msg.title || "";
-        var $n = $('<div class="notification"></div>');
+        var $n = $('<div class="notification" data-id='+id+'></div>');
         
         $n.addClass(msg.type || "info")
         $n.html('<span class="title"><b>'+title+'</b></span> <span class="btn delete" alt="Dismiss Notification">Dismiss</span>');
@@ -93,6 +103,19 @@ define([
 
         return $n;
     };
+
+	/**
+	 * Updates the alert icon.
+	 *
+	 * @return jQuery
+	 */   	
+	NotificationsComponent.prototype.renderAlert = function() {
+		var num_messages = $.grep(this.messages, function(m, i) {
+			return !m.deleted;
+		}).length;
+		
+		this.alertEl.html(num_messages > 0 ? '<i class="ion-alert-circled"></i>' : '');
+	};
     
     return NotificationsComponent;   
 });

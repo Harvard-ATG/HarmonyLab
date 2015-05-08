@@ -97,7 +97,7 @@ define([
 			function () {
 				var c = new NotificationsComponent();
 				c.init(this);
-				c.renderTo("#notifications");
+				c.renderTo("#notifications", "#notificationAlerts");
 				this.addComponent(c);
 			},
 			function() {

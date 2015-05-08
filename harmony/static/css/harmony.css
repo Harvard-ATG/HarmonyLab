@@ -246,7 +246,9 @@ fieldset.settings-notation {
 	top: 8px;
 	right: 25px;
 }
-
+.notificationAlerts {
+	 color: #f2dede;
+}
 
 /*--------------------------------------------------*/
 /* Exercise Status Styles */
