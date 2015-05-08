@@ -9,160 +9,105 @@ define([
 
 	var ANALYSIS_SETTINGS = Config.get('general.analysisSettings');
 
-	var ITEMS = [{
-		'label': 'Analyze', 
-		'value': 'analyze',
-		'items': [
-			[{
-				'label': 'Note names',
-				'value': 'analyze.note_names',
-			},{
-				'label': 'Scientific Pitch',
-				'value': 'analyze.scientific_pitch'
-			}],
-			[{
-				'label': 'Scale degrees',
-				'value': 'analyze.scale_degrees',
-			},{
-				'label': 'Solfege',
-				'value': 'analyze.solfege'
-			}],
-			[{
-				'label': 'Intervals',
-				'value': 'analyze.intervals'
-			}],
-			[{
-				'label': 'Roman numerals',
-				'value': 'analyze.roman_numerals'
-			}],
-		]
-	}];
-
 	var AnalyzeWidget = function(settings) {
 		settings = settings || {};
 		this.el = $('<div></div>');
-		this.items = ITEMS;
 		this.state = _.merge(_.cloneDeep(ANALYSIS_SETTINGS), settings);
+		this.init();
 	};
 
 	_.extend(AnalyzeWidget.prototype, {
-		listTpl: _.template('<ul class="notation-checkboxes"><%= items %></ul>'),
-		itemTpl: _.template(
-			'<li class="<%= cls %>">'+
-				'<label>'+
-					'<input type="checkbox" class="js-notation-checkbox" name="<%= label %>" value="<%= value %>" <%= checked %> />'+
-					'<%= label %>'+
-				'</label>'+
-				'<%= itemlist %>'+
-			'</li>'
-		),
-		colorTpl: _.template('<span style="margin-left: 5px; color: <%= color %>">&#9834;</span>'),
+		templateHTML: [
+			'<fieldset class="settings-notation">',
+				'<legend><label><input type="checkbox" name="analysis_enabled" value="1"> Analysis Enabled</label></legend>',
+				'<ol>',
+				'<li><span>Note names:</span>',
+					'<label><input type="radio" name="note_analysis" value="note_names"> Note Names</label>',
+					'<label><input type="radio" name="note_analysis" value="scientific_pitch"> Scientific Pitch</label>',
+					'<label><input type="radio" name="note_analysis" value="neither"> Neither</label>',
+				'</li>',
+				'<li><span>Melodic analysis:</span>',
+					'<label><input type="radio" name="melodic_analysis" value="scale_degrees"> Scale Degrees</label>',
+					'<label><input type="radio" name="melodic_analysis" value="solfege" /> Solfege</label>',
+					'<label><input type="radio" name="melodic_analysis" value="neither"> Neither</label>',
+				'</li>',
+				'<li><span>Harmonic analysis:</span>',
+					'<label><input type="checkbox" name="harmonic_analysis_intervals" value="intervals"> Intervals</label>',						
+					'<label><input type="checkbox" name="harmonic_analysis_roman_numerals" value="roman_numerals"> Roman Numerals</label>',						
+				'</li>',
+				'</ol>',
+			'</fieldset>'
+		].join(''),
+		init: function() {
+			this.initListeners();
+		},
 		initListeners: function() {
 			var that = this;
-			this.el.on('change', 'li', null, function(e) {
-				var currentTarget = e.currentTarget;
-				var target = e.target;
-				var $children = $(currentTarget).children('ul');
-				var val = $(target).val();
-				var checked = $(target).is(':checked');
-				var parsed_val;
-
-				if($children.length > 0) {
-					$children.find('input').attr('disabled', (checked ? null : 'disabled'));
+			this.el.on('change', 'input', null, function(e) {
+				var target_name = e.target.name;
+				if (target_name in that.handlers) {
+					that.handlers[target_name].call(that, e);
 				}
-
-				if(val.indexOf('.') === -1) {
-					that.state.enabled = checked;
-					that.trigger('changeCategory', val, checked);
-				} else {
-					parsed_val = that.parseValue(val);
-					that.state.mode[parsed_val.option] = checked;
-					that.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
-					that.uncheckRelated(target);
-				}
-
 				e.stopPropagation();
-				e.preventDefault();
-
-				return false;
 			});
-			return this;
 		},
-		parseValue: function(val) {
-			var valDot = val.indexOf('.');
-			var valCat = val.substr(0, valDot);
-			var valOpt = val.substr(valDot + 1);
-			return {category: valCat, option: valOpt};
-		},
-		uncheckRelated: function(target) {
-			var $target = $(target);
-			var value = $(target).val();
-			var items = ITEMS[0].items;
-			var group = [];
-			var i, j, len, len2;
-
-			for(i = 0, len = items.length; i < len; i++) {
-				for(j = 0, len2 = items[i].length; j < len2; j++) {
-					if(items[i][j].value === value) {
-						group = items[i];
-						break;
-					}
-				}
+		handlers: {
+			analysis_enabled: function(e) {
+				this.state.enabled = e.target.checked;
+				this.trigger('changeCategory', 'analyze', this.state.enabled);
+				this.el.find('input').not('input[name=analysis_enabled]').attr('disabled', !this.state.enabled);
+			},
+			note_analysis: function(e) {
+				var that = this;
+				$.each(['note_names', 'scientific_pitch'], function(index, opt) {
+					that.state.mode[opt] = (e.target.value == opt ? true : false);
+					that.trigger('changeOption', 'analyze', opt, that.state.mode[opt]);
+				});
+			},
+			melodic_analysis: function(e) {
+				var that = this;
+				$.each(['scale_degrees', 'solfege'], function(index, opt) {
+					that.state.mode[opt] = (e.target.value == opt ? true : false);
+					that.trigger('changeOption', 'analyze', opt, that.state.mode[opt]);
+				});
+			},
+			harmonic_analysis_intervals: function(e) {
+				var opt = "intervals";
+				this.state.mode.intervals = e.target.checked;
+				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
+			},
+			harmonic_analysis_roman_numerals: function(e) {
+				var opt = "roman_numerals"
+				this.state.mode[opt] = e.target.checked;
+				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
 			}
-
-			_.each(group, function(related) {
-				var selector, parsed_val, checked = false;
-				if(related.value !== value) {
-					selector = 'input[value="'+related.value+'"]';
-					parsed_val = this.parseValue(related.value);
-					$(selector, this.el).attr('checked', checked);
-					this.state.mode[parsed_val.option] = checked;
-					this.trigger('changeOption', parsed_val.category, parsed_val.option, checked);
-				}
-			}, this);
 		},
 		render: function() {
-			var content = this.listTpl({ items: this.renderItems(this.items) });
-			var enabled = this.state.enabled;
-
-			this.el.remove();
-			this.el.append(content);
-			this.el.find('ul').each(function(index, el) {
-				var $parents = $(el).parents('ul');
-				if(!enabled && $parents.length > 0) {
-					$(el).find('input').attr('disabled', 'disabled');
-				}
+			var that = this;
+			
+			// update the element content
+			this.el.html(this.templateHTML);
+			
+			// update the input states
+			this.el.find('input[name=analysis_enabled]')[0].checked = this.state.enabled;
+			$.each(this.state.mode, function(key, val) {
+				var $input = that.el.find('input[value='+key+']');
+				$input.attr('checked', val ? true : false);
+				$input.attr('disabled', !that.state.enabled);
 			});
-			this.initListeners();
+			
+			// set the "neither" option
+			if (!this._eitherModeTrue('note_names', 'scientific_pitch')) { 
+				this.el.find('input[value=neither][name=note_analysis]').attr('checked', true).attr('disabled', !this.state.enabled);
+			}
+			if (!this._eitherModeTrue('scale_degrees', 'solfege')) {
+				this.el.find('input[value=neither][name=melodic_analysis]').attr('checked', true).attr('disabled', !this.state.enabled);
+			}
+
 			return this;
 		},
-		renderGroups: function(groups) {
-			return _.map(groups, function(group, index) {
-				var separator = index > 0 ? true : false;
-				return this.renderItems(group, separator);
-			}, this).join('');
-		},
-		renderItems: function(items, separator) {
-			return _.map(items, function(item, index) {
-				var itemlist = item.items ? this.listTpl({ items: this.renderGroups(item.items) }) : ""; 
-				var prop = item.value.replace('analyze.','');
-				var checked;
-
-				if(prop === 'analyze') {
-					checked = this.state.enabled;
-				} else {
-					checked = this.state.mode[prop];
-				}
-
-				var html = this.itemTpl({
-					cls: (index === 0 && separator ? 'separator' : ''),
-					label: item.label,
-					value: item.value,
-					checked: (checked ? 'checked' : ''),
-					itemlist: itemlist
-				});
-				return html;
-			}, this).join('');
+		_eitherModeTrue: function(a, b) {
+			return this.state.mode[a] || this.state.mode[b];
 		}
 	});
 

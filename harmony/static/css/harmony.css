@@ -103,6 +103,7 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     z-index: 100;
     text-align: left;
     height: 100%;
+	min-height: 700px;
     padding: 10px 20px;
 	line-height: 1em;
 }
@@ -166,17 +167,30 @@ ul.content-area-vertical-nav {
 	color: #666;
 	font-size: .9em;
 }
-.settings ul.notation-checkboxes {
-	margin: 0;
-	padding: 0;
+fieldset.settings-notation {
+	border: none;
+	border-top: 1px solid #c0c0c0;
+	width: auto;
 }
-.settings ul.notation-checkboxes ul {
-	margin: 0 0 0 25px;
-}
-.settings ul.notation-checkboxes li {
-	margin: 0;
-	padding: 0;
+.settings-notation div {
 	display: block;
+	padding: 4px 8px;
+}
+.settings-notation ol {
+	margin: 0;
+}
+.settings-notation label {
+	margin: 0 10px 0 0;
+	display: block;
+}
+.settings-notation legend {
+	padding: 2px 10px;
+}
+.settings-notation li>span {
+	display: inline-block;
+}
+.settings-notation li:not(:last-child) {
+	/*border-bottom: 1px solid #c0c0c0;*/
 }
 
 /*--------------------------------------------------*/
