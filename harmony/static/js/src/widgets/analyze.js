@@ -13,33 +13,101 @@ define([
 		settings = settings || {};
 		this.el = $('<div></div>');
 		this.state = _.merge(_.cloneDeep(ANALYSIS_SETTINGS), settings);
+		this.init();
 	};
 
 	_.extend(AnalyzeWidget.prototype, {
+		templateHTML: [
+			'<fieldset class="settings-notation">',
+				'<legend><label><input type="checkbox" name="analysis_enabled" value="1"> Analysis Enabled</label></legend>',
+				'<ol>',
+				'<li><span>Note names:</span>',
+					'<label><input type="radio" name="note_analysis" value="note_names"> Note Names</label>',
+					'<label><input type="radio" name="note_analysis" value="scientific_pitch"> Scientific Pitch</label>',
+					'<label><input type="radio" name="note_analysis" value="neither"> Neither</label>',
+				'</li>',
+				'<li><span>Melodic analysis:</span>',
+					'<label><input type="radio" name="melodic_analysis" value="scale_degrees"> Scale Degrees</label>',
+					'<label><input type="radio" name="melodic_analysis" value="solfege" /> Solfege</label>',
+					'<label><input type="radio" name="melodic_analysis" value="neither"> Neither</label>',
+				'</li>',
+				'<li><span>Harmonic analysis:</span>',
+					'<label><input type="checkbox" name="harmonic_analysis_intervals" value="intervals"> Intervals</label>',						
+					'<label><input type="checkbox" name="harmonic_analysis_roman_numerals" value="roman_numerals"> Roman Numerals</label>',						
+				'</li>',
+				'</ol>',
+			'</fieldset>'
+		].join(''),
+		init: function() {
+			this.initListeners();
+		},
+		initListeners: function() {
+			var that = this;
+			this.el.on('change', 'input', null, function(e) {
+				var target_name = e.target.name;
+				if (target_name in that.handlers) {
+					that.handlers[target_name].call(that, e);
+				}
+				e.stopPropagation();
+			});
+		},
+		handlers: {
+			analysis_enabled: function(e) {
+				this.state.enabled = e.target.checked;
+				this.trigger('changeCategory', 'analyze', this.state.enabled);
+				this.el.find('input').not('input[name=analysis_enabled]').attr('disabled', !this.state.enabled);
+			},
+			note_analysis: function(e) {
+				var that = this;
+				$.each(['note_names', 'scientific_pitch'], function(index, opt) {
+					that.state.mode[opt] = (e.target.value == opt ? true : false);
+					that.trigger('changeOption', 'analyze', opt, that.state.mode[opt]);
+				});
+			},
+			melodic_analysis: function(e) {
+				var that = this;
+				$.each(['scale_degrees', 'solfege'], function(index, opt) {
+					that.state.mode[opt] = (e.target.value == opt ? true : false);
+					that.trigger('changeOption', 'analyze', opt, that.state.mode[opt]);
+				});
+			},
+			harmonic_analysis_intervals: function(e) {
+				var opt = "intervals";
+				this.state.mode.intervals = e.target.checked;
+				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
+			},
+			harmonic_analysis_roman_numerals: function(e) {
+				var opt = "roman_numerals"
+				this.state.mode[opt] = e.target.checked;
+				this.trigger('changeOption', 'analyze', opt, this.state.mode[opt]);
+			}
+		},
 		render: function() {
-			this.el.append([
-				
-				'<fieldset class="settings-notation">',
-					'<legend><label><input type="checkbox" name="analysis_enabled" value="1"> Analysis Enabled</label></legend>',
-					'<ol>',
-					'<li>',
-						'<label><input type="radio" name="pitch_notation" value="note_names"> Note Names</label>',
-						'<label><input type="radio" name="pitch_notation" value="scientific_pitch"> Scientific Pitch</label>',
-					'</li>',
-					'<li>',
-						'<label><input type="radio" name="scale_notation" value="scale_degrees"> Scale Degrees</label>',
-						'<label><input type="radio" name="scale_notation" value="solfege" /> Solfege</label>',						
-					'</li>',
-					'<li>',
-						'<label><input type="checkbox" name="intervals" value="note_names"> Intervals</label>',						
-					'</li>',
-					'<li>',
-						'<label><input type="checkbox" name="chord_notation" value="roman_numerals"> Roman Numerals</label>',						
-					'</li>',
-					'</ol>',
-				'</fieldset>'
-			].join(''));
+			var that = this;
+			
+			// update the element content
+			this.el.html(this.templateHTML);
+			
+			// update the input states
+			this.el.find('input[name=analysis_enabled]')[0].checked = this.state.enabled;
+			$.each(this.state.mode, function(key, val) {
+				var $input = that.el.find('input[value='+key+']');
+				$input.attr('checked', val ? true : false);
+				$input.attr('disabled', !that.state.enabled);
+			});
+			
+			// set the "neither" option
+			if (!this._eitherModeTrue('note_names', 'scientific_pitch')) { 
+				this.el.find('input[value=neither][name=note_analysis]').attr('checked', true).attr('disabled', !this.state.enabled);
+			}
+			if (!this._eitherModeTrue('scale_degrees', 'solfege')) {
+				this.el.find('input[value=neither][name=melodic_analysis]').attr('checked', true).attr('disabled', !this.state.enabled);
+			}
+
 			return this;
+		},
+		_eitherModeTrue: function(a, b) {
+			return this.state.mode[a] || this.state.mode[b];
 		}
 	});
 
