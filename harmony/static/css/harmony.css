@@ -35,6 +35,7 @@ html, body, h1, h2, h3, h4, div, p  {
 p {padding: .4em 0; }
 b {font-family: LinLibertineBold;}
 i {font-family: LinLibertineItalic;}
+button, input, optgroup, select, textarea { color: #000; }
 a,a:visited, .btn { color: inherit; text-decoration: none; }
 a:hover, .btn:hover { cursor: pointer; color: #aa0000; }
 body { text-align: center; }
@@ -445,7 +446,7 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
     float: left;
     display: block;
     /*background: url(../img/pedal-sprite.png) no-repeat;*/
-	background-color: #333;
+	background-color: #adadad;
 	border: 1px solid #000;
     width: 40px; 
 	margin-right: 10px;
