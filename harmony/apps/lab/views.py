@@ -84,6 +84,15 @@ class ExerciseView(RequirejsView):
         self.requirejs_context.add_to_view(context)
         return render(request, "exercise.html", context)
 
+class APIView(View):
+    api_version = 1
+    def get(self, request, resource_id):
+        return HttpResponse(self.api_version)
+        return HttpResponse(self.api_version)
+    def post(self, request, resource_id):
+        return HttpResponse(self.api_version)
+    def put(self, request, resource_id):
+        return HttpResponse(self.api_version)
 
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
