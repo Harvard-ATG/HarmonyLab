@@ -1,7 +1,8 @@
 define([
 	'module',
 	'app/components/app/play',
-	'app/components/app/exercise'
+	'app/components/app/exercise',
+	'app/components/app/manage'
 ], function(module) {
 
 	// The "main" module simply looks at the configure "app_module", 

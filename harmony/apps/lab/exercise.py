@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.conf import settings
 import os.path
 import json
 
@@ -6,13 +7,13 @@ class ExerciseError(Exception):
     pass
 
 class Exercise:
-    BASE_PATH = os.path.dirname(os.path.realpath(__file__))
+    BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises')
     
     def __init__(self, exercise_id):
         self.file = None
         self.data = {}
         self.loaded = False
-        self.exercise_base_path = os.path.join(Exercise.BASE_PATH, 'exercises', 'json')
+        self.exercise_base_path = os.path.join(Exercise.BASE_PATH, 'json')
         self.exercise_id = exercise_id
 
         is_dir_without_trailing_slash = not self.exerciseIsFile() and not self.endsWithSlash(self.exercise_id)

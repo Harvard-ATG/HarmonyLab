@@ -1,0 +1,28 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "And another.",
+  "key": "iF#",
+  "chord": [
+    {"visible":[49,65,71],"hidden":[]},
+    {"visible":[42],"hidden":[69,66]},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}
