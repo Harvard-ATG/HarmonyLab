@@ -12,129 +12,131 @@ s/[ \t]*$//
 s/^\\absolute [^<]*/  "chord": [/
 s/} % end/  \],/
 
-/</s/>([0-9]*) *</>\1\n  </g
+/</ s/>([0-9]*) *</>\1,\
+  </g
 
 # NB in future HarmonyLab may require duration information be preserved
-/</s/ *<([ a-g',si\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[],},/g
+/</ s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[]}/g
 
-# organize X-ed out notes into hidden category for HarmonyLab
-:loop;/xNote/{s/"visible":\[([ a-g',si\\xNote]*)\\xNote ([a-g',si]*)([ a-g',si\\xNote]*)\],"hidden":\[([ a-g',si\\xNote]*)\]/"visible":\[\1\3],"hidden":[\2 \4]/;b loop}
+# organize Xed out notes into hidden category for HarmonyLab
+:loop;/xNote/{s/"visible":\[([ a-gs',]*)\\xNote  *([a-gs',]*)([ a-gs',\\xNote]*)\],"hidden":\[([ a-gs',\\xNote]*)\]/"visible":\[\1\3],"hidden":[\2 \4]/;b loop}
 
-# generate MIDI numbers, pass one (enharmonics) ...
-/"visible"/ s/\bcf'/b/g
-/"visible"/ s/\bcf/b,/g
-/"visible"/ s/\bdf/cs/g
-/"visible"/ s/\bds/ef/g
-/"visible"/ s/\bes/f/g
-/"visible"/ s/\bff/e/g
-/"visible"/ s/\bgf/fs/g
-/"visible"/ s/\baf/gs/g
-/"visible"/ s/\bas/bf/g
-/"visible"/ s/\bbs,/c/g
-/"visible"/ s/\bbs/c'/g
+# generate MIDI numbers, pass one of two (enharmonics)
+/"visible"/ s/([[ ])cf'/\1b/g
+/"visible"/ s/([[ ])cf/\1b,/g
+/"visible"/ s/([[ ])df/\1cs/g
+/"visible"/ s/([[ ])ds/\1ef/g
+/"visible"/ s/([[ ])es/\1f/g
+/"visible"/ s/([[ ])ff/\1e/g
+/"visible"/ s/([[ ])gf/\1fs/g
+/"visible"/ s/([[ ])af/\1gs/g
+/"visible"/ s/([[ ])as/\1bf/g
+/"visible"/ s/([[ ])bs,/\1c/g
+/"visible"/ s/([[ ])bs/\1c'/g
 
-# generate MIDI numbers, pass two
-/"visible"/  s/\bc'''''/108/g
+# generate MIDI numbers, pass two of two
+/"visible"/  s/([[ ])c'''''/\1108/g
 
-/"visible"/  s/\bc''''/96/g
-/"visible"/ s/\bcs''''/97/g
-/"visible"/  s/\bd''''/98/g
-/"visible"/ s/\bef''''/99/g
-/"visible"/  s/\be''''/100/g
-/"visible"/  s/\bf''''/101/g
-/"visible"/ s/\bfs''''/102/g
-/"visible"/  s/\bg''''/103/g
-/"visible"/ s/\bgs''''/104/g
-/"visible"/  s/\ba''''/105/g
-/"visible"/ s/\bbf''''/106/g
-/"visible"/  s/\bb''''/107/g
+/"visible"/  s/([[ ])c''''/\196/g
+/"visible"/ s/([[ ])cs''''/\197/g
+/"visible"/  s/([[ ])d''''/\198/g
+/"visible"/ s/([[ ])ef''''/\199/g
+/"visible"/  s/([[ ])e''''/\1100/g
+/"visible"/  s/([[ ])f''''/\1101/g
+/"visible"/ s/([[ ])fs''''/\1102/g
+/"visible"/  s/([[ ])g''''/\1103/g
+/"visible"/ s/([[ ])gs''''/\1104/g
+/"visible"/  s/([[ ])a''''/\1105/g
+/"visible"/ s/([[ ])bf''''/\1106/g
+/"visible"/  s/([[ ])b''''/\1107/g
 
-/"visible"/  s/\bc'''/84/g
-/"visible"/ s/\bcs'''/85/g
-/"visible"/  s/\bd'''/86/g
-/"visible"/ s/\bef'''/87/g
-/"visible"/  s/\be'''/88/g
-/"visible"/  s/\bf'''/89/g
-/"visible"/ s/\bfs'''/90/g
-/"visible"/  s/\bg'''/91/g
-/"visible"/ s/\bgs'''/92/g
-/"visible"/  s/\ba'''/93/g
-/"visible"/ s/\bbf'''/94/g
-/"visible"/  s/\bb'''/95/g
+/"visible"/  s/([[ ])c'''/\184/g
+/"visible"/ s/([[ ])cs'''/\185/g
+/"visible"/  s/([[ ])d'''/\186/g
+/"visible"/ s/([[ ])ef'''/\187/g
+/"visible"/  s/([[ ])e'''/\188/g
+/"visible"/  s/([[ ])f'''/\189/g
+/"visible"/ s/([[ ])fs'''/\190/g
+/"visible"/  s/([[ ])g'''/\191/g
+/"visible"/ s/([[ ])gs'''/\192/g
+/"visible"/  s/([[ ])a'''/\193/g
+/"visible"/ s/([[ ])bf'''/\194/g
+/"visible"/  s/([[ ])b'''/\195/g
 
-/"visible"/  s/\bc''/72/g
-/"visible"/ s/\bcs''/73/g
-/"visible"/  s/\bd''/74/g
-/"visible"/ s/\bef''/75/g
-/"visible"/  s/\be''/76/g
-/"visible"/  s/\bf''/77/g
-/"visible"/ s/\bfs''/78/g
-/"visible"/  s/\bg''/79/g
-/"visible"/ s/\bgs''/80/g
-/"visible"/  s/\ba''/81/g
-/"visible"/ s/\bbf''/82/g
-/"visible"/  s/\bb''/83/g
+/"visible"/  s/([[ ])c''/\172/g
+/"visible"/ s/([[ ])cs''/\173/g
+/"visible"/  s/([[ ])d''/\174/g
+/"visible"/ s/([[ ])ef''/\175/g
+/"visible"/  s/([[ ])e''/\176/g
+/"visible"/  s/([[ ])f''/\177/g
+/"visible"/ s/([[ ])fs''/\178/g
+/"visible"/  s/([[ ])g''/\179/g
+/"visible"/ s/([[ ])gs''/\180/g
+/"visible"/  s/([[ ])a''/\181/g
+/"visible"/ s/([[ ])bf''/\182/g
+/"visible"/  s/([[ ])b''/\183/g
 
-/"visible"/  s/\bc'/60/g
-/"visible"/ s/\bcs'/61/g
-/"visible"/  s/\bd'/62/g
-/"visible"/ s/\bef'/63/g
-/"visible"/  s/\be'/64/g
-/"visible"/  s/\bf'/65/g
-/"visible"/ s/\bfs'/66/g
-/"visible"/  s/\bg'/67/g
-/"visible"/ s/\bgs'/68/g
-/"visible"/  s/\ba'/69/g
-/"visible"/ s/\bbf'/70/g
-/"visible"/  s/\bb'/71/g
+/"visible"/  s/([[ ])c'/\160/g
+/"visible"/ s/([[ ])cs'/\161/g
+/"visible"/  s/([[ ])d'/\162/g
+/"visible"/ s/([[ ])ef'/\163/g
+/"visible"/  s/([[ ])e'/\164/g
+/"visible"/  s/([[ ])f'/\165/g
+/"visible"/ s/([[ ])fs'/\166/g
+/"visible"/  s/([[ ])g'/\167/g
+/"visible"/ s/([[ ])gs'/\168/g
+/"visible"/  s/([[ ])a'/\169/g
+/"visible"/ s/([[ ])bf'/\170/g
+/"visible"/  s/([[ ])b'/\171/g
 
-/"visible"/  s/\ba,,,/21/g
-/"visible"/ s/\bbf,,,/22/g
-/"visible"/  s/\bb,,,/23/g
+/"visible"/  s/([[ ])a,,,/\121/g
+/"visible"/ s/([[ ])bf,,,/\122/g
+/"visible"/  s/([[ ])b,,,/\123/g
 
-/"visible"/  s/\bc,,/24/g
-/"visible"/ s/\bcs,,/25/g
-/"visible"/  s/\bd,,/26/g
-/"visible"/ s/\bef,,/27/g
-/"visible"/  s/\be,,/28/g
-/"visible"/  s/\bf,,/29/g
-/"visible"/ s/\bfs,,/30/g
-/"visible"/  s/\bg,,/31/g
-/"visible"/ s/\bgs,,/32/g
-/"visible"/  s/\ba,,/33/g
-/"visible"/ s/\bbf,,/34/g
-/"visible"/  s/\bb,,/35/g
+/"visible"/  s/([[ ])c,,/\124/g
+/"visible"/ s/([[ ])cs,,/\125/g
+/"visible"/  s/([[ ])d,,/\126/g
+/"visible"/ s/([[ ])ef,,/\127/g
+/"visible"/  s/([[ ])e,,/\128/g
+/"visible"/  s/([[ ])f,,/\129/g
+/"visible"/ s/([[ ])fs,,/\130/g
+/"visible"/  s/([[ ])g,,/\131/g
+/"visible"/ s/([[ ])gs,,/\132/g
+/"visible"/  s/([[ ])a,,/\133/g
+/"visible"/ s/([[ ])bf,,/\134/g
+/"visible"/  s/([[ ])b,,/\135/g
 
-/"visible"/  s/\bc,/36/g
-/"visible"/ s/\bcs,/37/g
-/"visible"/  s/\bd,/38/g
-/"visible"/ s/\bef,/39/g
-/"visible"/  s/\be,/40/g
-/"visible"/  s/\bf,/41/g
-/"visible"/ s/\bfs,/42/g
-/"visible"/  s/\bg,/43/g
-/"visible"/ s/\bgs,/44/g
-/"visible"/  s/\ba,/45/g
-/"visible"/ s/\bbf,/46/g
-/"visible"/  s/\bb,/47/g
+/"visible"/  s/([[ ])c,/\136/g
+/"visible"/ s/([[ ])cs,/\137/g
+/"visible"/  s/([[ ])d,/\138/g
+/"visible"/ s/([[ ])ef,/\139/g
+/"visible"/  s/([[ ])e,/\140/g
+/"visible"/  s/([[ ])f,/\141/g
+/"visible"/ s/([[ ])fs,/\142/g
+/"visible"/  s/([[ ])g,/\143/g
+/"visible"/ s/([[ ])gs,/\144/g
+/"visible"/  s/([[ ])a,/\145/g
+/"visible"/ s/([[ ])bf,/\146/g
+/"visible"/  s/([[ ])b,/\147/g
 
-/"visible"/  s/\bc\b/48/g
-/"visible"/ s/\bcs\b/49/g
-/"visible"/  s/\bd\b/50/g
-/"visible"/ s/\bef\b/51/g
-/"visible"/  s/\be\b/52/g
-/"visible"/  s/\bf\b/53/g
-/"visible"/ s/\bfs\b/54/g
-/"visible"/  s/\bg\b/55/g
-/"visible"/ s/\bgs\b/56/g
-/"visible"/  s/\ba\b/57/g
-/"visible"/ s/\bbf\b/58/g
-/"visible"/  s/\bb\b/59/g
+/"visible"/  s/([[ ])c([] ])/\148\2/g
+/"visible"/ s/([[ ])cs([] ])/\149\2/g
+/"visible"/  s/([[ ])d([] ])/\150\2/g
+/"visible"/ s/([[ ])ef([] ])/\151\2/g
+/"visible"/  s/([[ ])e([] ])/\152\2/g
+/"visible"/  s/([[ ])f([] ])/\153\2/g
+/"visible"/ s/([[ ])fs([] ])/\154\2/g
+/"visible"/  s/([[ ])g([] ])/\155\2/g
+/"visible"/ s/([[ ])gs([] ])/\156\2/g
+/"visible"/  s/([[ ])a([] ])/\157\2/g
+/"visible"/  s/([[ ])a([] ])/\157\2/g
+/"visible"/ s/([[ ])bf([] ])/\158\2/g
+/"visible"/  s/([[ ])b([] ])/\159\2/g
 
-/"visible"/ s/\b([0-9]+)\b +\b([0-9]+)\b/\1,\2/g
-/"visible"/ s/\b([0-9]+)\b +\b([0-9]+)\b/\1,\2/g
-/"visible"/ s/\[ +/[/g
-/"visible"/ s/ +\]/]/g
+/"visible"/ s/([0-9][0-9]*)  *([0-9][0-9]*)/\1,\2/g
+/"visible"/ s/([0-9][0-9]*)  *([0-9][0-9]*)/\1,\2/g
+/"visible"/ s/\[  */[/g
+/"visible"/ s/  *\]/]/g
 
 # remove commenting-out of HarmonyLab options
 /HarmonyLab options/d
@@ -142,39 +144,20 @@ s/} % end/  \],/
 /^%}$/d
 
 # translate exercise annotation
-/markup/{N;N;s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "introText": "\1",/}
+/markup/{
+N
+N
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "introText": "\1",/;
+}
 
 # translate key statement
-/theKey/{N;N;s/theKey += +\{ +\\key\n *([a-gs]+) +\\major\n *}/  "key": "j\1",/;s/theKey += +\{ +\\key\n *([a-gs]+) +\\minor\n *}/  "key": "i\1",/}
+/theKey/{
+N
+N
+s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major\n *}/  "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor\n *}/  "key": "i\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([b|#]*) *\n *}/  "key": "j\1",\
+  "keySignature": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([b|#]*) *\n *}/  "key": "i\1",\
+  "keySignature": "\2",/;s/theKey *= *\{ *\n *% *([b|#]*) *\n *}/  "key": "h__",\
+  "keySignature": "\1",/;
+}
 
-s/"jcf"/"jCb"/
-s/"jgf"/"jGb"/
-s/"jdf"/"jDb"/
-s/"jaf"/"jAb"/
-s/"jef"/"jEb"/
-s/"jbf"/"jBb"/
-s/"jf"/"jF_"/
-s/"jc"/"jC_"/
-s/"jg"/"jG_"/
-s/"jd"/"jD_"/
-s/"ja"/"jA_"/
-s/"je"/"jE_"/
-s/"jb"/"jB_"/
-s/"jfs"/"jF#"/
-s/"jcs"/"jC#"/
-
-s/"iaf"/"iAb"/
-s/"ief"/"iEb"/
-s/"ibf"/"iBb"/
-s/"if"/"iF_"/
-s/"ic"/"iC_"/
-s/"ig"/"iG_"/
-s/"id"/"iD_"/
-s/"ia"/"iA_"/
-s/"ie"/"iE_"/
-s/"ib"/"iB_"/
-s/"ifs"/"iF#"/
-s/"ics"/"iC#"/
-s/"igs"/"iG#"/
-s/"ids"/"iD#"/
-s/"ias"/"iA#"/
+/"key"/ s/"jcf"/"jCb"/;s/"jgf"/"jGb"/;s/"jdf"/"jDb"/;s/"jaf"/"jAb"/;s/"jef"/"jEb"/;s/"jbf"/"jBb"/;s/"jf"/"jF_"/;s/"jc"/"jC_"/;s/"jg"/"jG_"/;s/"jd"/"jD_"/;s/"ja"/"jA_"/;s/"je"/"jE_"/;s/"jb"/"jB_"/;s/"jfs"/"jF#"/;s/"jcs"/"jC#"/;s/"iaf"/"iAb"/;s/"ief"/"iEb"/;s/"ibf"/"iBb"/;s/"if"/"iF_"/;s/"ic"/"iC_"/;s/"ig"/"iG_"/;s/"id"/"iD_"/;s/"ia"/"iA_"/;s/"ie"/"iE_"/;s/"ib"/"iB_"/;s/"ifs"/"iF#"/;s/"ics"/"iC#"/;s/"igs"/"iG#"/;s/"ids"/"iD#"/;s/"ias"/"iA#"/

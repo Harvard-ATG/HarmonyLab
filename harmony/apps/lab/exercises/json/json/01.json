@@ -1,0 +1,33 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Match this three-part drill, which demonstrates the resolution of dominant harmonies including scale degree 4. Here, V{u3} appears as a substitute of vii${6}, since the resolution of a 7-6 suspension is accompanied by a bass motion.",
+  "key": "jC_",
+  "chord": [
+    {"visible":[47,67,77],"hidden":[]},
+    {"visible":[48,67,76],"hidden":[]},
+    {"visible":[53,67,71],"hidden":[]},
+    {"visible":[52,67,72],"hidden":[]},
+    {"visible":[50,65,72],"hidden":[]},
+    {"visible":[55,65,71],"hidden":[]},
+    {"visible":[48,64,72],"hidden":[]},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": true,
+    },
+  },
+}
