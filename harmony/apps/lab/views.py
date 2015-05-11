@@ -86,13 +86,21 @@ class ExerciseView(RequirejsView):
 
 class APIView(View):
     api_version = 1
-    def get(self, request, resource_id):
-        return HttpResponse(self.api_version)
-        return HttpResponse(self.api_version)
-    def post(self, request, resource_id):
-        return HttpResponse(self.api_version)
-    def put(self, request, resource_id):
-        return HttpResponse(self.api_version)
+    def get(self, request):
+        return HttpResponse(json.dumps({
+            'url': reverse('lab:api'),
+            'version': self.api_version
+        }))
+
+class APIExerciseView(View):
+    def get(self, request):
+        return HttpResponse('get')
+    def post(self, request):
+        return HttpResponse('post')
+    def put(self, request):
+        return HttpResponse('put')
+    def delete(self, request):
+        return HttpResponse('delete')
 
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
