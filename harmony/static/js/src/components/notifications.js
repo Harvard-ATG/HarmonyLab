@@ -29,7 +29,7 @@ define([
 	 */
 	NotificationsComponent.prototype.initComponent = function() {
 		this.el = $('<div class="notifications-wrapper"></div>');
-		if (this.defaultHidden) {
+		if (this.settings.defaultHidden) {
 			this.el.hide();
 		}
 		this.alertEl = $("#notificationAlerts");
