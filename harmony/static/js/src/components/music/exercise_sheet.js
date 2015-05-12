@@ -111,6 +111,7 @@ define([
 			//this.getInputChords().bind('change', this.render);
 			this.getInputChords().bind('change', this.onChordsUpdate);
 			this.getInputChords().bind('clear', this.onChordsUpdate);
+			this.exerciseContext.bind('goto', this.onGoToExercise);
 		},
 		/**
 		 * Renders the grand staff and everything on it.
@@ -418,6 +419,14 @@ define([
 		onChordsUpdate: function() {
 			this.updateStaves();
 			this.render();
+		},
+		/**
+		 * Handles navigating to the next exercise.
+		 *
+		 * @return undefined
+		 */
+		onGoToExercise: function(target) {
+			window.location = target.url;
 		}
 	});
 

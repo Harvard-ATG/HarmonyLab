@@ -1,10 +1,12 @@
 define([
 	'lodash',
+	'jquery',
 	'microevent',
 	'./exercise_chord',
 	'./exercise_chord_bank'
 ], function(
 	_,
+	$,
 	MicroEvent,
 	ExerciseChord,
 	ExerciseChordBank
@@ -238,8 +240,9 @@ define([
 		 */
 		goToNextExercise: function() {
 			var nextUrl = this.definition.getNextExercise();
+			var target = {"action": "next", "url": nextUrl};
 			if(nextUrl) {
-				window.location = nextUrl;
+				this.trigger('goto', target);
 			}
 		},
 		/**
