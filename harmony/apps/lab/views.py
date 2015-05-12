@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView, RedirectView
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.utils.decorators import method_decorator
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 #from .exercise import Exercise
-from .objects import ExerciseRepository
+from .objects import ExerciseRepository, ExerciseFile
 
 import json
 import copy
@@ -71,9 +74,18 @@ class PlayView(RequirejsTemplateView):
     template_name = "play.html"
     requirejs_app = 'app/components/app/play'
 
-class ManageView(RequirejsTemplateView):
-    template_name = "manage.html"
-    requirejs_app = 'app/components/app/manage'
+class ManageView(RequirejsView):
+    def get(self, request):
+        context = {}
+        manage_params = {
+            "exercise_api_url": reverse('lab:api-exercise')
+        }
+
+        self.requirejs_context.set_app_module('app/components/app/manage')
+        self.requirejs_context.set_module_params('app/components/app/manage', manage_params)
+        self.requirejs_context.add_to_view(context)
+        
+        return render(request, "manage.html", context)
 
 
 class ExerciseView(RequirejsView):
@@ -104,6 +116,7 @@ class ExerciseView(RequirejsView):
         self.requirejs_context.set_app_module('app/components/app/exercise')
         self.requirejs_context.set_module_params('app/components/app/exercise', exercise_context)
         self.requirejs_context.add_to_view(context)
+        
         return render(request, "exercise.html", context)
 
 class APIView(View):
@@ -115,12 +128,44 @@ class APIView(View):
         }))
 
 class APIExerciseView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(APIExerciseView, self).dispatch(*args, **kwargs)
+    
     def get(self, request):
-        return HttpResponse('get')
+        course_name = request.GET.get('course_name', None)
+        group_name = request.GET.get('group_name', None)
+        exercise_name = request.GET.get('exercise_name', None)
+        
+        er = ExerciseRepository(course_name)
+        if exercise_name is not None and group_name is not None:
+            exercise = er.findExercise(group_name, exercise_name)
+            if exercise is None:
+                raise Http404("Exercise does not exist.")
+            exercise.load()
+            data = exercise.asDict()
+        elif exercise_name is None and group_name is not None:
+            group = er.findGroup(group_name)
+            if group is None:
+                raise Http404("Exercise group does not exist.")
+            data = group.asDict()
+        else:
+            data = er.asDict()
+
+        return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+ 
+#    @method_decorator(login_required)   
     def post(self, request):
-        return HttpResponse('post')
+        ef = ExerciseFile.create({
+            "data": json.loads(request.POST['exercise'])
+        })
+        if ef.is_valid():
+            ef.save()
+        return HttpResponse(json.dumps(ef.data), mimetype='application/json')
+    
     def put(self, request):
         return HttpResponse('put')
+    
     def delete(self, request):
         return HttpResponse('delete')
 

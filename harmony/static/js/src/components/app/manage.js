@@ -15,6 +15,8 @@ define([
 	NotificationsComponent,
 	ExerciseFormComponent
 ) {
+	
+	var EXERCISE_API_URL = module.config().exercise_api_url;
 
 	/**
 	 * AppManageComponent class.
@@ -59,7 +61,7 @@ define([
 	AppManageComponent.prototype.getComponentMethods = function() {
 		var methods = [
 			function () {
-				var c = new NotificationsComponent();
+				var c = new NotificationsComponent({defaultHidden:false});
 				c.init(this);
 				c.renderTo("#notifications");
 				this.addComponent(c);
@@ -75,7 +77,8 @@ define([
 			},
 			function() {
 				var c = new ExerciseFormComponent({
-					el: "#exerciseform" 
+					el: "#exerciseform",
+					exercise_api_url: EXERCISE_API_URL
 				});
 				c.init(this);
 				this.addComponent(c);

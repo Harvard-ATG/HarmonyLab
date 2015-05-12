@@ -49,7 +49,33 @@ define([
 		this.$el.on("submit", function(e) {
 			var data = that.collectFormData();
 			console.log("submit", data);
+			that.submit(data);
 			e.preventDefault();
+		});
+	};
+	
+	ExerciseFormComponent.prototype.submit = function(data) {
+		var url = this.settings.exercise_api_url;
+		var that = this;
+
+		$.ajax({
+			"url": url,
+			"type": "POST",
+			"data": JSON.stringify(data),
+			"contentType": 'contentType: "application/json; charset=utf-8',
+			"dataType": "json"
+		}).done(function(response, textStatus, jqXHR) {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+				title: "Exercise Saved",
+				description: "Exercise saved successfully!",
+				type: "success"
+			});
+		}).fail(function(jqXHR, textStatus) {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+				title: "Error",
+				description: "Exercise not saved: " + textStatus,
+				type: "error"
+			});
 		});
 	};
 	
@@ -118,10 +144,15 @@ define([
 			"key": key,
 			"keySignature": key_signature,
 			"chords": chords,
-			"exercise_group": exercise_group,
+			"group_name": exercise_group,
 			"analysisSettings": analysis_settings,
 			"highlightSettings": highlight_settings
 		};
+
+		// only include the keySignature if it's unlocked
+		if (this.widgets.keySignature.keySignature.locked()) {
+			delete data.keySignature;
+		}
 		
 		return data;
 	};

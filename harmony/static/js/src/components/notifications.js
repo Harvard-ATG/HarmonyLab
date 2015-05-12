@@ -12,7 +12,9 @@ define([
     "use strict";
     
     var NotificationsComponent = function(settings) {
-        this.settings = settings || {};
+        this.settings = _.extend({
+			defaultHidden: true,
+		}, settings || {});
         this.messages = [];
         _.bindAll(this, ['onNotification', 'onClickDetails']);
         //console.log("notifications component loaded");
@@ -26,7 +28,10 @@ define([
 	 * @return undefined
 	 */
 	NotificationsComponent.prototype.initComponent = function() {
-		this.el = $('<div class="notifications-wrapper" style="display:none"></div>');
+		this.el = $('<div class="notifications-wrapper"></div>');
+		if (this.defaultHidden) {
+			this.el.hide();
+		}
 		this.alertEl = $("#notificationAlerts");
 		this.initListeners();
 	};
