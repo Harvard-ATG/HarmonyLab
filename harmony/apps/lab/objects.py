@@ -234,7 +234,6 @@ class ExerciseGroup:
             exercise_list.append({
                 "id": d['id'],
                 "name": d['name'], 
-                "parent": d['parent'],
                 "url": d['url'],
                 "selected": d['selected']
             })
