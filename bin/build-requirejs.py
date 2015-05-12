@@ -41,8 +41,8 @@ ROOT_DIR = common.ROOT_DIR
 BUILD_CONFIG = os.path.join(PROJECT_ROOT, 'static', 'js', 'conf', 'requirejs.json')
 BUILD_OUTPUT_DIR = os.path.join(PROJECT_ROOT, 'static', 'js', 'build')
 BUILD_OUTPUT_FILE = os.path.join(BUILD_OUTPUT_DIR, 'main-built.js')
-BUILD_DATA_DIR = os.path.join(ROOT_DIR, 'data')
-BUILD_DATA_FILE = os.path.join(BUILD_DATA_DIR, 'requirejs-build.json')
+BUILD_DATA_DIR = os.path.join(ROOT_DIR, 'data', 'requirejs')
+BUILD_DATA_FILE = os.path.join(BUILD_DATA_DIR, 'build.json')
 
 for d in [BUILD_DATA_DIR, BUILD_OUTPUT_DIR]:
     if os.path.exists(d):

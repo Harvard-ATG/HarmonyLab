@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 # (combined and minified) version of the project, if it exists. It expects to
 # find the build file here:
 #
-#   data/requirejs-build.json:
+#   data/requirejs/build.json:
 #
 # The contents should be JSON like this:
 #   
@@ -37,7 +37,7 @@ def configure(ROOT_DIR, STATIC_URL):
 
     try: 
         REQUIREJS_BUILD = None
-        REQUIREJS_BUILD_FILE = os.path.join(ROOT_DIR, 'data', 'requirejs-build.json')
+        REQUIREJS_BUILD_FILE = os.path.join(ROOT_DIR, 'data', 'requirejs', 'build.json')
         if os.path.isfile(REQUIREJS_BUILD_FILE):
             with open(REQUIREJS_BUILD_FILE, 'r') as f:
                 REQUIREJS_BUILD = json.loads(f.read())

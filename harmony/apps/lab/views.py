@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.generic import View, TemplateView, RedirectView
 from django.core.urlresolvers import reverse
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
-from .exercise import Exercise
+#from .exercise import Exercise
+from .objects import ExerciseRepository
 
 import json
 import copy
@@ -76,11 +77,32 @@ class ManageView(RequirejsTemplateView):
 
 
 class ExerciseView(RequirejsView):
-    def get(self, request, exercise_id, *args, **kwargs):
+    def get(self, request, group_name, exercise_name=None):
         context = {}
-        exercise = Exercise(exercise_id).load()
+
+        er = ExerciseRepository()
+        if exercise_name is None:
+            group = er.findGroup(group_name)
+            if group is None:
+                raise Http404("Exercise group does not exist.")
+            exercise = group.first()
+        else:
+            exercise = er.findExercise(group_name, exercise_name)
+            if exercise is None:
+                raise Http404("Exercise does not exist.")
+
+        exercise.load()
+        exercise.selected = True
+        exercise_context = {}
+        exercise_context.update(exercise.asDict())
+        exercise_context.update({
+            "nextExercise": exercise.nextUrl(),
+            "previousExercise": exercise.previousUrl(),
+            "exerciseList": exercise.group.getList()
+        })
+
         self.requirejs_context.set_app_module('app/components/app/exercise')
-        self.requirejs_context.set_module_params('app/components/app/exercise', exercise.as_dict())
+        self.requirejs_context.set_module_params('app/components/app/exercise', exercise_context)
         self.requirejs_context.add_to_view(context)
         return render(request, "exercise.html", context)
 
