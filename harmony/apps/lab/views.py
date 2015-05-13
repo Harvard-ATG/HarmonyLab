@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView, RedirectView
 from django.core.urlresolvers import reverse
@@ -74,14 +75,32 @@ class PlayView(RequirejsTemplateView):
     template_name = "play.html"
     requirejs_app = 'app/components/app/play'
 
+    def get_context_data(self, **kwargs):
+        context = super(PlayView, self).get_context_data(**kwargs)
+        if "LTI_LAUNCH" in self.request.session:
+            roles = self.request.session["LTI_LAUNCH"].get("roles", [])
+            has_manage_perm = "Instructor" in roles
+            context['has_manage_perm'] = has_manage_perm
+        return context
+
+
 class ManageView(RequirejsView, LoginRequiredMixin):
     def get(self, request):
-        course_name= request.session["LTI_LAUNCH"].get("context_id")
-        er = ExerciseFileRepository(course_name=course_name)
+        context = {}
         
-        context = {
-            "course_label": request.session["LTI_LAUNCH"].get("context_label")
-        }
+        course_name = ''
+        if "LTI_LAUNCH" in request.session:
+            course_name = request.session["LTI_LAUNCH"].get("context_id", None)
+            context['course_label'] = request.session["LTI_LAUNCH"].get("context_label")
+        else:
+            raise Http404;
+        
+        roles = self.request.session["LTI_LAUNCH"].get("roles", [])
+        has_manage_perm = "Instructor" in roles
+        if not has_manage_perm:
+            raise PermissionDenied
+        
+        er = ExerciseFileRepository(course_name=course_name)
 
         manage_params = {
             "exercise_api_url": reverse('lab:api-exercise')+'?course_name='+course_name,
@@ -98,8 +117,13 @@ class ManageView(RequirejsView, LoginRequiredMixin):
 class ExerciseView(RequirejsView):
     def get(self, request, course_name, group_name, exercise_name=None):
         context = {}
+
+        if "LTI_LAUNCH" in self.request.session:
+            roles = self.request.session["LTI_LAUNCH"].get("roles", [])
+            has_manage_perm = "Instructor" in roles
+            context['has_manage_perm'] = has_manage_perm
         
-        if course_name == "all":
+        if course_name == "none":
             course_name = None
 
         er = ExerciseFileRepository(course_name=course_name)
@@ -170,6 +194,14 @@ class APIExerciseView(CsrfExemptMixin, View):
  
     @method_decorator(login_required)   
     def post(self, request):
+        if not ("LTI_LAUNCH" in request.session):
+            raise Http404
+
+        roles = self.request.session["LTI_LAUNCH"].get("roles", [])
+        has_manage_perm = "Instructor" in roles
+        if not has_manage_perm:
+            raise PermissionDenied
+            
         course_name= request.session["LTI_LAUNCH"].get("context_id")
         exercise_data = request.POST.get('exercise', None)
         data = json.loads(exercise_data)

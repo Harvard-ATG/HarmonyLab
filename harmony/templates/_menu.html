@@ -11,7 +11,7 @@
 	<ul class="content-area-vertical-nav">
 		<li><a href="{% url 'lab:index' %}"><i class="ion-home"></i> Home</a></li>
 		{% if has_manage_perm %}
-			<li><a href="{% url 'lab:manage' %}">Manage</a></li>
+			<li><a href="{% url 'lab:manage' %}"><i class="ion-edit"></i> Manage</a></li>
 		{% endif %}
 	</ul>
 	
