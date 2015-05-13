@@ -318,6 +318,32 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 .exerciseform div {
 	margin: 5px 0;
 }
+ul.exercise-groups {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+ul.exercise-groups > li {
+	margin: 5px 0;
+	clear: both;
+}
+ul.exercise-groups li > a,
+ul.exercise-groups li > span {
+	padding: .5em 1em;
+	border: 1px solid #000;
+	background-color: #fff;
+	display: block;
+}
+ul.exercise-groups li > a:hover,
+ul.exercise-groups li > span:hover {
+	background-color: #ccc;
+}
+ul.exercise-groups li ul {
+	list-style-type: none;
+}
+ul.exercise-groups li li {
+	float: left;
+}
 
 /*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */

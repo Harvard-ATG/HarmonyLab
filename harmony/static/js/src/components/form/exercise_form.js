@@ -23,7 +23,6 @@ define([
 		this.settings = settings || {};
 		this.widgets = {};
 		this.$el = $("#exerciseform");
-		console.log("form component loaded", this);
 	};
     
 	ExerciseFormComponent.prototype = new Component();
@@ -47,43 +46,119 @@ define([
 	 */   
 	ExerciseFormComponent.prototype.initListeners = function() {
 		var that = this;
-		this.$el.on("submit", function(e) {
-			var data = that.collectFormData();
-			console.log("submit", data);
-			that.submit(data);
-			e.preventDefault();
+		var $new_exercise_group = $("#new_exercise_group");
+		var $select_group = $("select[name=exercise_group]");
+
+		$select_group.on('change', function(e) {
+			$new_exercise_group.val("");
 		});
 		
-		$("#new_exercise_group").on('change keyup', function(e) {
-			var $select = $("select[name=exercise_group]");
-			var input = $(this).val().replace(/\s+/, '');
+		$new_exercise_group.on('change keyup', function(e) {
 			var opt, opt_selected = false;
+			var input = $(this).val().replace(/\s+/, '');
+			var $options = $select_group.find('option').removeAttr('selected');
 
-			$(this).val(input);
-			
-			var $options = $select.find('option').removeAttr('selected');
+			if (input !== $(this).val()) {
+				$(this).val(input);
+			}
 
 			for(var i = 0, len = $options.length; i < len; i++) {
 				opt = $options[i];
 				if (opt.value.substr(0, input.length) == input) {
-					$(opt).attr('selected', 'selected');
+					opt.selected = true;
 					opt_selected = true;
 					break;
 				}
 			}
 			
 			if (!opt_selected) {
-				$($options[0]).attr('selected', 'selected');
+				$options[0].selected = true;
 			}
-		});
+		});	
 		
-		$("select[name=exercise_group").on('change', function(e) {
-			$("#new_exercise_group").val("");
+		this.$el.on("submit", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			var data = that.collectFormData();
+			if (that.validate(data)) {
+				that.submit(data);
+			}
+
+			return false;
 		});
 	};
+
+	/**
+	 * Returns the URL for submitting the form data.
+	 *
+	 * @return string
+	 */
+	ExerciseFormComponent.prototype.getSubmitUrl = function() {
+		return this.settings.config.exercise_api_url
+	};
 	
+	/**
+	 * Returns an array of groups (names and urls).
+	 *
+	 * @return array 
+	 */	
+	ExerciseFormComponent.prototype.getGroupList = function() {
+		return this.settings.config.group_list;
+	};
+
+	/**
+	 * Returns true if the data is valid, false otherwise.
+	 *
+	 * Triggers one or more notifications if the data is invalid.
+	 *
+	 * @param {object} data the data that is being submitted
+	 * @return boolean 
+	 */		
+	ExerciseFormComponent.prototype.validate = function(data) {
+		var is_valid = true;
+
+		if (!data.group_name) {
+			is_valid = false;
+			this.notify({
+				title: "Error: Missing Group",
+				description: "Please select or enter the group name for this exercise.",
+				type: "error"
+			});
+			$("#fieldset_groups").css('border-color', 'red').one('click', function(evt) {
+				$(this).css('border-color', '');
+			});
+		}
+		
+		return is_valid;
+	};
+	
+	/**
+	 * Triggers a notification.
+	 *
+	 * @param {object} msg
+	 * @param {string} msg.title
+	 * @param {string} msg.description
+	 * @param {string} msg.type success|info|error
+	 * @return undefined
+	 */
+	ExerciseFormComponent.prototype.notify = function(msg) {
+		this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			title: msg.title,
+			description: msg.description,
+			type: msg.type
+		});		
+	}
+	
+	/**
+	 * Submits the form data via AJAX.
+	 *
+	 * Shows a "success" notification if it succeeds.
+	 *
+	 * @return undefined
+	 */
 	ExerciseFormComponent.prototype.submit = function(data) {
-		var url = this.settings.config.exercise_api_url;
+		var url = this.getSubmitUrl();
 		var that = this;
 
 		$.ajax({
@@ -92,18 +167,21 @@ define([
 			"data": {'exercise': JSON.stringify(data)},
 			"dataType": "json"
 		}).done(function(response, textStatus, jqXHR) {
-			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			that.notify({
 				title: "Exercise Saved",
 				description: "Exercise saved successfully!",
 				type: "success"
 			});
+			that.trigger("afterSubmit", response);
 		}).fail(function(jqXHR, textStatus) {
-			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			that.notify({
 				title: "Error",
-				description: "Exercise not saved: " + textStatus,
+				description: "There was an error saving the exercise ("+textStatus+").",
 				type: "error"
 			});
 		});
+		
+		return false;
 	};
 	
 	/**
@@ -145,19 +223,27 @@ define([
 		this.widgets.highlight = highlight_widget;
 	};
 
+	/**
+	 * Initializes the list of group names in the select drop-down.
+	 *
+	 * @return undefined
+	 */
 	ExerciseFormComponent.prototype.initGroupNames = function() {
-		console.log(this.settings);
-		this.updateGroupNames(this.settings.config.group_names);
+		this.updateGroupNames(this.getGroupList());
 	};
 
-	ExerciseFormComponent.prototype.updateGroupNames = function(group_names) {
+	/**
+	 * Updates the list of group names in the drop-down.
+	 *
+	 * @return undefined
+	 */
+	ExerciseFormComponent.prototype.updateGroupNames = function(group_list) {
 		var $select = $('select[name="exercise_group"]');
 		$select.html('');
 		$select.append('<option value="">----</option>');
-		$.each(group_names, function(index, group_name) { 
-			$select.append('<option value="'+group_name+'">'+group_name+'</option>');
+		$.each(group_list, function(index, group_list) { 
+			$select.append('<option value="'+group_list.name+'">'+group_list.name+'</option>');
 		});
-		console.log(group_names, $select.html());
 	};
 
 	/**

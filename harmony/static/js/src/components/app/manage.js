@@ -27,6 +27,7 @@ define([
 	 */
 	var AppManageComponent = function(settings) {
 		AppComponent.call(this, settings);
+		_.bindAll(this, ['onAfterSubmit']);
 	};
 	
 
@@ -80,6 +81,7 @@ define([
 				});
 				c.init(this);
 				this.addComponent(c);
+				c.bind("afterSubmit", this.onAfterSubmit);
 			}
 		];
 		return methods;
@@ -88,7 +90,49 @@ define([
 	AppManageComponent.prototype.initComponent = function() {
 		AppComponent.prototype.initComponent.apply(this, arguments);
 		console.log("init component manage");
+		$("#tabs").tabs();
+		this.updateExerciseList();
 	};
+	
+	AppManageComponent.prototype.updateExerciseList = function() {
+		var config = module.config();
+		var exercise_api_url = config.exercise_api_url;
+		var $el = $("#tab-exercise-list");
+		
+		$.ajax(exercise_api_url,{
+			method: "GET"
+		}).done(function(response, textStatus, jqXHR) {
+			var groups = response.data.groups;
+			var $ul = $('<ul class="exercise-groups"></ul>');
+			
+			if (groups.length > 0) {
+				$.each(groups, function(i, group) {
+					var $li = $('<li>' + '<a href="'+group.url+'" target="_blank">'+group.name+'</a></li>');
+					if (group.data.exercises.length > 0) {
+						$li.append("<ul></ul>");
+						$.each(group.data.exercises, function(j, exercise) {
+							$li.children('ul').append('<li>'+'<a href="'+exercise.url+'" target="_blank">'+exercise.name+'</a></li>')
+						});
+					}
+					$ul.append($li);
+				});
+				
+				$el.html("").append($ul);				
+			} else {
+				$el.html("No exercises found.");
+			}
+
+			
+		}).fail(function(jqXHR, textStatus) {
+			$el.html("").append("Error loading exercise list.");
+		});
+	};
+	
+	AppManageComponent.prototype.onAfterSubmit = function() {
+		this.updateExerciseList();	
+	};
+	
+
 
 	return AppManageComponent;
 });

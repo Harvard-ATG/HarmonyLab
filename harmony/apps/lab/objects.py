@@ -14,7 +14,7 @@ class ExerciseRepository(object):
         self.groups = []
         self.exercises = []
 
-    def getGroupNames(self):
+    def getGroupList(self):
         raise Exception("subclass responsibility")
 
     def findGroup(self, group):
@@ -55,20 +55,23 @@ class ExerciseFileRepository(ExerciseRepository):
         super(ExerciseFileRepository, self).__init__(*args, **kwargs)
         self.findFiles()
 
-    @classmethod
-    def getBasePath(cls, course_name):
+    @staticmethod
+    def getBasePath(course_name):
         if course_name is None:
             return ExerciseFileRepository.BASE_PATH
         return os.path.join(ExerciseFileRepository.BASE_PATH, "course", course_name)
 
-    def getGroupNames(self):
+    def getGroupList(self):
         '''Returns a list of group names.'''
         path_to_exercises = ExerciseFileRepository.getBasePath(self.course_name)
         groups = []
         for root, dirs, files in os.walk(path_to_exercises):
             group_name = string.replace(root, path_to_exercises, '')
-            groups.append(ExerciseGroup(group_name))
-        return sorted([g.name for g in groups if len(g.name)>0], key=lambda g: g.lower())
+            groups.append(ExerciseGroup(group_name, course_name=self.course_name))
+        return sorted([{
+            "name": g.name,
+            "url": g.url()} for g in groups if len(g.name) > 0
+        ], key=lambda g:g['name'].lower())
 
     def findGroup(self, group_name):
         '''Returns a single group (group names should be distinct).'''
@@ -99,7 +102,7 @@ class ExerciseFileRepository(ExerciseRepository):
 
         for root, dirs, files in os.walk(path_to_exercises):
             group_name = string.replace(root, path_to_exercises, '')
-            exercise_group = ExerciseGroup(group_name)
+            exercise_group = ExerciseGroup(group_name, course_name=self.course_name)
             exercises = []  
 
             sorted_files = sorted(files, key=lambda e: e.lower())
@@ -134,7 +137,7 @@ class Exercise:
 
     @classmethod
     def fromJSON(cls, data):
-        return Exercise(json.loads(data))
+        return cls(json.loads(data))
 
 class ExerciseFile:
     def __init__(self, file_name, group, group_path):
@@ -192,6 +195,7 @@ class ExerciseFile:
 
     def url(self):
         return reverse('lab:exercise', kwargs={
+            "course_name": self.group.course_name,
             "group_name": self.group.name, 
             "exercise_name": self.name
         })
@@ -218,8 +222,8 @@ class ExerciseFile:
     def __repr__(self):
         return self.__str__()
 
-    @classmethod
-    def getNextFileName(cls, group_path, group_size):
+    @staticmethod
+    def getNextFileName(group_path, group_size):
         max_tries = 99
         n = group_size + 1
         file_name = "%s.json" % str(n).zfill(2)
@@ -232,8 +236,8 @@ class ExerciseFile:
 
         return file_name
     
-    @classmethod
-    def create(cls, data, **kwargs):
+    @staticmethod
+    def create(data, **kwargs):
         group_name = data['group_name']
         course_name = kwargs.get("course_name", None)
         exercise = kwargs.get("exercise", None)
@@ -242,7 +246,7 @@ class ExerciseFile:
         er = ExerciseFileRepository(course_name=course_name)
         group = er.findGroup(group_name)
         if group is None:
-            group = ExerciseGroup(group_name)
+            group = ExerciseGroup(group_name, course_name=course_name)
 
         group_size = group.size()
         group_path = os.path.join(ExerciseFileRepository.getBasePath(course_name), group_name)
@@ -258,52 +262,56 @@ class ExerciseFile:
         return ef
 
 class ExerciseGroup:
-    def __init__(self, group_name):
+    def __init__(self, group_name, *args, **kwargs):
         self.name = group_name
+        self.course_name = kwargs.get("course_name", None)
         if self.name.startswith('/'):
             self.name = self.name[1:]
-        self.group = []
+        self.exercises = []
         
     def size(self):
-        return len(self.group)    
+        return len(self.exercises)    
 
     def add(self, exercises):
-        self.group.extend(exercises)
+        self.exercises.extend(exercises)
         return self
 
+    def url(self):
+        return reverse('lab:exercise-group', kwargs={"group_name": self.name, "course_name": self.course_name})
+
     def first(self):
-        if len(self.group) > 0:
-            return self.group[0]
+        if len(self.exercises) > 0:
+            return self.exercises[0]
         return None
 
     def last(self):
-        if len(self.group) > 0:
-            return self.group[-1]
+        if len(self.exercises) > 0:
+            return self.exercises[-1]
         return None
 
     def next(self, exercise):
-        if exercise in self.group:
-            index = self.group.index(exercise)
-            if index < len(self.group) - 1:
-                return self.group[index + 1]
+        if exercise in self.exercises:
+            index = self.exercises.index(exercise)
+            if index < len(self.exercises) - 1:
+                return self.exercises[index + 1]
         return None
 
     def previous(self, exercise):
-        if exercise in self.group:
-            index = self.group.index(exercise)
+        if exercise in self.exercises:
+            index = self.exercises.index(exercise)
             if index > 0:
-                return self.group[index - 1]
+                return self.exercises[index - 1]
         return None
 
     def findExercise(self, exercise_name):
-        for e in self.group:
+        for e in self.exercises:
             if exercise_name == e.name:
                 return e
         return None
 
     def getList(self):
         exercise_list = []
-        for e in self.group:
+        for e in self.exercises:
             d = e.asDict()
             exercise_list.append({
                 "id": d['id'],
@@ -318,14 +326,15 @@ class ExerciseGroup:
 
     def asDict(self):
         return {
-            "name": self.name, 
+            "name": self.name,
+            "url": self.url(),
             "data": {
-                "exercises": [e.asDict() for e in self.group]
+                "exercises": [e.asDict() for e in self.exercises]
             }
         }
 
     def __str__(self):
-        return '[' + ', '.join([str(e) for e in self.group]) + ']'
+        return '[' + ', '.join([str(e) for e in self.exercises]) + ']'
 
     def __repr__(self):
         return self.__str__()

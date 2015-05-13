@@ -66,6 +66,9 @@ define([
 	 */   
     NotificationsComponent.prototype.onNotification = function(msg) {
         //console.log("notification event", msg);
+		if (msg.action == "clearall") {
+			this.clearAll();
+		}
         this.messages.push(msg);
         this.el.append(this.getMessageEl(msg, this.messages.length-1));
 		this.renderAlert();
@@ -120,6 +123,16 @@ define([
 		}).length;
 		
 		this.alertEl.html(num_messages > 0 ? '<i class="ion-alert-circled"></i>' : '');
+	};
+	
+	/**
+	 * Clears all notifications.
+	 *
+	 * @return jQuery
+	 */   	
+	NotificationsComponent.prototype.clearAll = function() {
+		this.messages = [];
+		this.el.html('');
 	};
     
     return NotificationsComponent;   

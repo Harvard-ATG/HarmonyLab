@@ -74,14 +74,18 @@ class PlayView(RequirejsTemplateView):
     template_name = "play.html"
     requirejs_app = 'app/components/app/play'
 
-class ManageView(RequirejsView):
+class ManageView(RequirejsView, LoginRequiredMixin):
     def get(self, request):
-        context = {}
-        course_name=None
+        course_name= request.session["LTI_LAUNCH"].get("context_id")
         er = ExerciseFileRepository(course_name=course_name)
+        
+        context = {
+            "course_label": request.session["LTI_LAUNCH"].get("context_label")
+        }
+
         manage_params = {
-            "exercise_api_url": reverse('lab:api-exercise'),
-            "group_names": er.getGroupNames(),
+            "exercise_api_url": reverse('lab:api-exercise')+'?course_name='+course_name,
+            "group_list": er.getGroupList(),
         }
 
         self.requirejs_context.set_app_module('app/components/app/manage')
@@ -92,10 +96,13 @@ class ManageView(RequirejsView):
 
 
 class ExerciseView(RequirejsView):
-    def get(self, request, group_name, exercise_name=None):
+    def get(self, request, course_name, group_name, exercise_name=None):
         context = {}
+        
+        if course_name == "all":
+            course_name = None
 
-        er = ExerciseFileRepository(course_name=None)
+        er = ExerciseFileRepository(course_name=course_name)
         if exercise_name is None:
             group = er.findGroup(group_name)
             if group is None:
@@ -134,7 +141,7 @@ class APIGroupView(CsrfExemptMixin, View):
     def get(self, request):
         course_name = request.GET.get('course_name', None)
         er = ExerciseFileRepository(course_name=course_name)
-        data = er.getGroupNames()
+        data = er.getGroupList()
         json_data = json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
         return HttpResponse(json_data, mimetype='application/json')
 
@@ -161,13 +168,14 @@ class APIExerciseView(CsrfExemptMixin, View):
 
         return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
  
-#    @method_decorator(login_required)   
+    @method_decorator(login_required)   
     def post(self, request):
+        course_name= request.session["LTI_LAUNCH"].get("context_id")
         exercise_data = request.POST.get('exercise', None)
         data = json.loads(exercise_data)
         exercise = Exercise(data)
         if exercise.isValid():
-            ExerciseFile.create(data, course_name=None, exercise=exercise)
+            ExerciseFile.create(data, course_name=course_name, exercise=exercise)
         return HttpResponse(json.dumps(exercise.getData()), mimetype='application/json')
     
     def put(self, request):
