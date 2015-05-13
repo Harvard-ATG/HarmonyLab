@@ -167,7 +167,7 @@ class APIExerciseView(CsrfExemptMixin, View):
         data = json.loads(exercise_data)
         exercise = Exercise(data)
         if exercise.isValid():
-            ExerciseFile.create(data, course=None, exercise=exercise)
+            ExerciseFile.create(data, course_name=None, exercise=exercise)
         return HttpResponse(json.dumps(exercise.getData()), mimetype='application/json')
     
     def put(self, request):

@@ -137,17 +137,20 @@ class Exercise:
         return Exercise(json.loads(data))
 
 class ExerciseFile:
-    def __init__(self, file_name, group, group_path=None):
+    def __init__(self, file_name, group, group_path):
         self.file_name = file_name
         self.group_path = group_path
         self.name = file_name.replace('.json', '')
         self.group = group
         self.exercise = None
         self.selected = False
-
+        
+    def getPathToFile(self, ):
+        return os.path.join(self.group_path, self.file_name)
+    
     def load(self):
         try:
-            with open(os.path.join(self.group_path, self.file_name)) as f:
+            with open(self.getPathToFile()) as f:
                 data = f.read().strip()
                 self.exercise = Exercise.fromJSON(data) 
         except IOError as e:
@@ -162,7 +165,9 @@ class ExerciseFile:
             return False
 
         try:
-            with open(os.path.join(self.group_path, self.file_name), 'w') as f:
+            if not os.path.exists(self.group_path):
+                os.makedirs(self.group_path)
+            with open(self.getPathToFile(), 'w') as f:
                 f.write(self.exercise.asJSON())
         except IOError as e:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
@@ -214,36 +219,40 @@ class ExerciseFile:
         return self.__str__()
 
     @classmethod
-    def getNextFileName(group, group_path):
-        max_n = 99
-        n = group.size() + 1
-
+    def getNextFileName(cls, group_path, group_size):
+        max_tries = 99
+        n = group_size + 1
         file_name = "%s.json" % str(n).zfill(2)
 
         while os.path.exists(os.path.join(group_path, file_name)):
             n += 1
-            if n > max_n:
-                raise Exception("unable to secure exercise file name")
+            if n > max_tries:
+                raise Exception("unable to get next exercise file name after %d tries" % max_tries)
             file_name = "%s.json" % str(n).zfill(2)
-            group_path = os.path.join(base_path, group.name)
 
         return file_name
     
     @classmethod
     def create(cls, data, **kwargs):
-        course = kwargs.get("course", None)
+        group_name = data['group_name']
+        course_name = kwargs.get("course_name", None)
         exercise = kwargs.get("exercise", None)
         file_name = kwargs.get('file_name', None)
-        group_path = os.path.join(ExerciseFileRepository.getBasePath(course), group.name)
+        
+        er = ExerciseFileRepository(course_name=course_name)
+        group = er.findGroup(group_name)
+        if group is None:
+            group = ExerciseGroup(group_name)
 
-        er = ExerciseFileRepository(course)
-        group = er.findGroup(data['group_name'])
-        group_name = group.name
+        group_size = group.size()
+        group_path = os.path.join(ExerciseFileRepository.getBasePath(course_name), group_name)
 
         if file_name is None:
-            file_name = ExerciseFile.getNextFileName(group, group_path)
+            file_name = ExerciseFile.getNextFileName(group_path, group_size)
         
-        ef = ExerciseFile(file_name, group_name, group_path)
+        ef = ExerciseFile(file_name, group, group_path)
+        ef.exercise = exercise
+        print course_name, file_name, group_path, ef.getPathToFile()
         ef.save()
 
         return ef

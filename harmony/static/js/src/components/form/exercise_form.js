@@ -53,6 +53,33 @@ define([
 			that.submit(data);
 			e.preventDefault();
 		});
+		
+		$("#new_exercise_group").on('change keyup', function(e) {
+			var $select = $("select[name=exercise_group]");
+			var input = $(this).val().replace(/\s+/, '');
+			var opt, opt_selected = false;
+
+			$(this).val(input);
+			
+			var $options = $select.find('option').removeAttr('selected');
+
+			for(var i = 0, len = $options.length; i < len; i++) {
+				opt = $options[i];
+				if (opt.value.substr(0, input.length) == input) {
+					$(opt).attr('selected', 'selected');
+					opt_selected = true;
+					break;
+				}
+			}
+			
+			if (!opt_selected) {
+				$($options[0]).attr('selected', 'selected');
+			}
+		});
+		
+		$("select[name=exercise_group").on('change', function(e) {
+			$("#new_exercise_group").val("");
+		});
 	};
 	
 	ExerciseFormComponent.prototype.submit = function(data) {
@@ -63,7 +90,6 @@ define([
 			"url": url,
 			"method": "POST",
 			"data": {'exercise': JSON.stringify(data)},
-			"contentType": 'contentType: application/json; charset=utf-8',
 			"dataType": "json"
 		}).done(function(response, textStatus, jqXHR) {
 			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
@@ -147,7 +173,7 @@ define([
 		var chords = this.$el.find('input[name=exercise_chords]').val();
 		var analysis_settings = this.widgets.analyze.getState();
 		var highlight_settings = this.widgets.highlight.getState();
-		var exercise_group = this.$el.find('input[name=exercise_group]').val();
+		var exercise_group = this.$el.find('select[name=exercise_group]').val();
 		var new_exercise_group = this.$el.find('input[name=new_exercise_group]').val();
 		new_exercise_group = new_exercise_group.replace(/\s+/, '');
 		
