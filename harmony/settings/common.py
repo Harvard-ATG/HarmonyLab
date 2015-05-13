@@ -100,16 +100,17 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'cached_auth.Middleware',
     'django_auth_lti.middleware.LTIAuthMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
     'django_auth_lti.backends.LTIAuthBackend',
 )
 
@@ -138,11 +139,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #'django_openid_auth',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-	'harmony.apps.lab',
-	'harmony.apps.jasmine',
+    'harmony.apps.lab',
+    'harmony.apps.jasmine',
 )
 
 DATABASES = {

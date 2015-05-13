@@ -20,13 +20,13 @@ define([
     "use strict";
     
     var ExerciseFormComponent = function(settings) {
-        this.settings = settings || {};
+		this.settings = settings || {};
 		this.widgets = {};
 		this.$el = $("#exerciseform");
-        console.log("form component loaded", this);
-    };
+		console.log("form component loaded", this);
+	};
     
-    ExerciseFormComponent.prototype = new Component();
+	ExerciseFormComponent.prototype = new Component();
 
 	/**
 	 * Initializes the component.
@@ -36,6 +36,7 @@ define([
 	ExerciseFormComponent.prototype.initComponent = function() {
 		this.initKeySignatureField();
 		this.initSettingsFields();
+		this.initGroupNames();
 		this.initListeners();
 	};
 
@@ -55,14 +56,14 @@ define([
 	};
 	
 	ExerciseFormComponent.prototype.submit = function(data) {
-		var url = this.settings.exercise_api_url;
+		var url = this.settings.config.exercise_api_url;
 		var that = this;
 
 		$.ajax({
 			"url": url,
-			"type": "POST",
-			"data": JSON.stringify(data),
-			"contentType": 'contentType: "application/json; charset=utf-8',
+			"method": "POST",
+			"data": {'exercise': JSON.stringify(data)},
+			"contentType": 'contentType: application/json; charset=utf-8',
 			"dataType": "json"
 		}).done(function(response, textStatus, jqXHR) {
 			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
@@ -116,6 +117,21 @@ define([
 		
 		this.widgets.analyze = analyze_widget;
 		this.widgets.highlight = highlight_widget;
+	};
+
+	ExerciseFormComponent.prototype.initGroupNames = function() {
+		console.log(this.settings);
+		this.updateGroupNames(this.settings.config.group_names);
+	};
+
+	ExerciseFormComponent.prototype.updateGroupNames = function(group_names) {
+		var $select = $('select[name="exercise_group"]');
+		$select.html('');
+		$select.append('<option value="">----</option>');
+		$.each(group_names, function(index, group_name) { 
+			$select.append('<option value="'+group_name+'">'+group_name+'</option>');
+		});
+		console.log(group_names, $select.html());
 	};
 
 	/**

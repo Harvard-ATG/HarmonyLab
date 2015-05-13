@@ -8,59 +8,27 @@ import json
 class ExerciseFileError(Exception):
     pass
 
-class ExerciseRepository:
-    BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises', 'json')
-
-    def __init__(self, course_name=None):
-        self.course_name = None
+class ExerciseRepository(object):
+    def __init__(self, *args, **kwargs):
+        self.course_name = kwargs.get('course_name', None)
         self.groups = []
         self.exercises = []
-        self.search()
+
+    def getGroupNames(self):
+        raise Exception("subclass responsibility")
 
     def findGroup(self, group):
-        for g in self.groups:
-            if group == g.name:
-                return g
-        return None
+        raise Exception("subclass responsibility")
 
-    def findExercise(self, group, exercise):
-        group = self.findGroup(group)
-        if group is not None:
-            return group.findExercise(exercise)
-        return None
+    def findExercise(self, exercise):
+        raise Exception("subclass responsibility")
+
+    def findExerciseByGroup(self, group, exercise):
+        raise Exception("subclass responsibility")
 
     def reset(self):
         self.exercises = []
         self.groups = []
-
-    def search(self):
-        self.reset()
-
-        path_to_exercises = self.getPathToExercises()
-        print path_to_exercises
-
-        for root, dirs, files in os.walk(path_to_exercises):
-            group_name = string.replace(root, self.BASE_PATH, '')
-            exercise_group = ExerciseGroup(group_name)
-            exercises = []  
-
-            sorted_files = sorted(files, key=lambda e: e.lower())
-            for file_name in sorted_files:
-                if file_name.endswith('.json'):
-                    full_path = os.path.join(root, file_name)
-                    exercise_file = ExerciseFile(full_path, file_name, exercise_group)
-                    exercises.append(exercise_file)
-
-            if len(exercises) > 0:
-                exercise_group.add(exercises)
-                self.groups.append(exercise_group)
-                self.exercises.extend(exercises)
-
-    def getPathToExercises(self):
-        p = self.BASE_PATH
-        if self.course_name is not None:
-            p = os.path.join(p, self.course_name)
-        return p
 
     def asDict(self):
         return {
@@ -80,39 +48,122 @@ class ExerciseRepository:
     def __repr__(self):
         return self.__str__()
 
-class ExerciseFile:
-    def __init__(self, full_path, file_name, exercise_group):
-        self.full_path = full_path
-        self.group = exercise_group
-        self.file_name = file_name
-        self.name = file_name.replace('.json', '')
-        self.data = None
-        self.selected = False
+class ExerciseFileRepository(ExerciseRepository):
+    BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises', 'json')
 
-    def is_valid(self):
-        if self.data is None:
-            return False
-        for key in ['key', 'chord', 'introText', 'type']:
-            if not (key in self.data):
-                return False
+    def __init__(self, *args, **kwargs):
+        super(ExerciseFileRepository, self).__init__(*args, **kwargs)
+        self.findFiles()
+
+    @classmethod
+    def getBasePath(cls, course_name):
+        if course_name is None:
+            return ExerciseFileRepository.BASE_PATH
+        return os.path.join(ExerciseFileRepository.BASE_PATH, "course", course_name)
+
+    def getGroupNames(self):
+        '''Returns a list of group names.'''
+        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_name)
+        groups = []
+        for root, dirs, files in os.walk(path_to_exercises):
+            group_name = string.replace(root, path_to_exercises, '')
+            groups.append(ExerciseGroup(group_name))
+        return sorted([g.name for g in groups if len(g.name)>0], key=lambda g: g.lower())
+
+    def findGroup(self, group_name):
+        '''Returns a single group (group names should be distinct).'''
+        for g in self.groups:
+            if group_name == g.name:
+                return g
+        return None
+
+    def findExercise(self, exercise_name):
+        '''Returns an array of exercise matches (exercise names are not distinct).'''
+        result = []
+        for e in self.exercises:
+            if exercise_name == e.name:
+                result.append(e)
+        return result
+
+    def findExerciseByGroup(self, group_name, exercise_name):
+        '''Returns a single exercise (group+exercise is unique).'''
+        group = self.findGroup(group_name)
+        if group is not None:
+            return group.findExercise(exercise_name)
+        return None
+
+    def findFiles(self):
+        self.reset()
+
+        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_name)
+
+        for root, dirs, files in os.walk(path_to_exercises):
+            group_name = string.replace(root, path_to_exercises, '')
+            exercise_group = ExerciseGroup(group_name)
+            exercises = []  
+
+            sorted_files = sorted(files, key=lambda e: e.lower())
+            for file_name in sorted_files:
+                if file_name.endswith('.json'):
+                    exercise_file = ExerciseFile(file_name, exercise_group, root)
+                    exercises.append(exercise_file)
+
+            if len(exercises) > 0:
+                exercise_group.add(exercises)
+                self.groups.append(exercise_group)
+                self.exercises.extend(exercises)
+
+class Exercise:
+    def __init__(self, data, meta=None):
+        self.data = {}
+        self.meta = {}
+        self.errors = {}
+
+        self.data.update(data)
+        if meta is not None:
+            self.meta.update(meta)
+
+    def isValid(self):
+        return True
+
+    def getData(self):
+        return self.data
+
+    def asJSON(self):
+        return json.dumps(self.data, sort_keys=True, indent=4, separators=(',', ': '))
+
+    @classmethod
+    def fromJSON(cls, data):
+        return Exercise(json.loads(data))
+
+class ExerciseFile:
+    def __init__(self, file_name, group, group_path=None):
+        self.file_name = file_name
+        self.group_path = group_path
+        self.name = file_name.replace('.json', '')
+        self.group = group
+        self.exercise = None
+        self.selected = False
 
     def load(self):
         try:
-            with open(self.full_path) as f:
+            with open(os.path.join(self.group_path, self.file_name)) as f:
                 data = f.read().strip()
-                self.data = json.loads(data)
+                self.exercise = Exercise.fromJSON(data) 
         except IOError as e:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
         return True
 
     def save(self):
-        if not self.is_valid():
+        if self.exercise is None:
+            raise ExerciseFileError("No exercise attached to file.")
+
+        if not self.exercise.isValid():
             return False
 
         try:
-            with open(self.full_path, 'w') as f:
-                json_data = json.dumps(self.data, sort_keys=True, indent=4, separators=(',', ': '))
-                f.write(json_data)
+            with open(os.path.join(self.group_path, self.file_name), 'w') as f:
+                f.write(self.exercise.asJSON())
         except IOError as e:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
 
@@ -145,8 +196,8 @@ class ExerciseFile:
 
     def asDict(self):
         d = {}
-        if self.data is not None:
-            d.update(self.data)
+        if self.exercise is not None:
+            d.update(self.exercise.getData())
         d.update({
             "id": os.path.join(self.group.name, self.name),
             "name": self.name, 
@@ -161,27 +212,41 @@ class ExerciseFile:
 
     def __repr__(self):
         return self.__str__()
-    
+
     @classmethod
-    def create(cls, data):
-        er = ExerciseRepository()
-        group = er.findGroup(data['group_name'])
-        
+    def getNextFileName(group, group_path):
         max_n = 99
         n = group.size() + 1
+
         file_name = "%s.json" % str(n).zfill(2)
-        full_path = os.path.join(ExerciseRepository.BASE_PATH, group.name, file_name)
-        while os.path.exists(full_path):
+
+        while os.path.exists(os.path.join(group_path, file_name)):
             n += 1
             if n > max_n:
-                break
+                raise Exception("unable to secure exercise file name")
             file_name = "%s.json" % str(n).zfill(2)
-            full_path = os.path.join(ExerciseRepository.BASE_PATH, group.name, file_name)
+            group_path = os.path.join(base_path, group.name)
 
-        ef = ExerciseFile(full_path, file_name, group.name)
-        ef.data = data
+        return file_name
+    
+    @classmethod
+    def create(cls, data, **kwargs):
+        course = kwargs.get("course", None)
+        exercise = kwargs.get("exercise", None)
+        file_name = kwargs.get('file_name', None)
+        group_path = os.path.join(ExerciseFileRepository.getBasePath(course), group.name)
 
-        return ef    
+        er = ExerciseFileRepository(course)
+        group = er.findGroup(data['group_name'])
+        group_name = group.name
+
+        if file_name is None:
+            file_name = ExerciseFile.getNextFileName(group, group_path)
+        
+        ef = ExerciseFile(file_name, group_name, group_path)
+        ef.save()
+
+        return ef
 
 class ExerciseGroup:
     def __init__(self, group_name):

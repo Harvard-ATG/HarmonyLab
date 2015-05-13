@@ -16,8 +16,6 @@ define([
 	ExerciseFormComponent
 ) {
 	
-	var EXERCISE_API_URL = module.config().exercise_api_url;
-
 	/**
 	 * AppManageComponent class.
 	 *
@@ -78,7 +76,7 @@ define([
 			function() {
 				var c = new ExerciseFormComponent({
 					el: "#exerciseform",
-					exercise_api_url: EXERCISE_API_URL
+					config: module.config()
 				});
 				c.init(this);
 				this.addComponent(c);

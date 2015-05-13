@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 #from .exercise import Exercise
-from .objects import ExerciseRepository, ExerciseFile
+from .objects import ExerciseFileRepository, ExerciseFile, Exercise
 
 import json
 import copy
@@ -77,8 +77,11 @@ class PlayView(RequirejsTemplateView):
 class ManageView(RequirejsView):
     def get(self, request):
         context = {}
+        course_name=None
+        er = ExerciseFileRepository(course_name=course_name)
         manage_params = {
-            "exercise_api_url": reverse('lab:api-exercise')
+            "exercise_api_url": reverse('lab:api-exercise'),
+            "group_names": er.getGroupNames(),
         }
 
         self.requirejs_context.set_app_module('app/components/app/manage')
@@ -92,14 +95,14 @@ class ExerciseView(RequirejsView):
     def get(self, request, group_name, exercise_name=None):
         context = {}
 
-        er = ExerciseRepository()
+        er = ExerciseFileRepository(course_name=None)
         if exercise_name is None:
             group = er.findGroup(group_name)
             if group is None:
                 raise Http404("Exercise group does not exist.")
             exercise = group.first()
         else:
-            exercise = er.findExercise(group_name, exercise_name)
+            exercise = er.findExerciseByGroup(group_name, exercise_name)
             if exercise is None:
                 raise Http404("Exercise does not exist.")
 
@@ -127,19 +130,23 @@ class APIView(View):
             'version': self.api_version
         }))
 
-class APIExerciseView(View):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super(APIExerciseView, self).dispatch(*args, **kwargs)
-    
+class APIGroupView(CsrfExemptMixin, View):
+    def get(self, request):
+        course_name = request.GET.get('course_name', None)
+        er = ExerciseFileRepository(course_name=course_name)
+        data = er.getGroupNames()
+        json_data = json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
+        return HttpResponse(json_data, mimetype='application/json')
+
+class APIExerciseView(CsrfExemptMixin, View):
     def get(self, request):
         course_name = request.GET.get('course_name', None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
         
-        er = ExerciseRepository(course_name)
+        er = ExerciseFileRepository(course_name=course_name)
         if exercise_name is not None and group_name is not None:
-            exercise = er.findExercise(group_name, exercise_name)
+            exercise = er.findExerciseByGroup(group_name, exercise_name)
             if exercise is None:
                 raise Http404("Exercise does not exist.")
             exercise.load()
@@ -156,12 +163,12 @@ class APIExerciseView(View):
  
 #    @method_decorator(login_required)   
     def post(self, request):
-        ef = ExerciseFile.create({
-            "data": json.loads(request.POST['exercise'])
-        })
-        if ef.is_valid():
-            ef.save()
-        return HttpResponse(json.dumps(ef.data), mimetype='application/json')
+        exercise_data = request.POST.get('exercise', None)
+        data = json.loads(exercise_data)
+        exercise = Exercise(data)
+        if exercise.isValid():
+            ExerciseFile.create(data, course=None, exercise=exercise)
+        return HttpResponse(json.dumps(exercise.getData()), mimetype='application/json')
     
     def put(self, request):
         return HttpResponse('put')
@@ -170,18 +177,14 @@ class APIExerciseView(View):
         return HttpResponse('delete')
 
 
-class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, RedirectView):
-    """
-    LTI consumers will POST to this view.
-    """
-    pattern_name = 'lab:index'
+class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        '''Handles the LTI launch request and redirects to the main page. '''
+        return redirect('lab:index')
 
-    def get_context_data(self, **kwargs):
-        context = super(PlayView, self).get_context_data(**kwargs)
-        context.update(REQUIREJJS_CONTEXT)
-        return context
-
-
+    def get(self, request, *args, **kwargs):
+        '''Shows an error message because LTI launch requests must be POSTed.'''
+        return HttpResponse('Invalid LTI launch request.', content_type='text/html', status=200)
 
 class LTIToolConfigView(View):
     """
