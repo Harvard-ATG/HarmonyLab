@@ -9,7 +9,7 @@ from ..views import LTIToolConfigView
 class ToolConfigViewTest(unittest.TestCase):
     def setUp(self):
         self.view = LTIToolConfigView()
-        self.view.request = RequestFactory().get('/lti-tool-config')
+        self.view.request = RequestFactory().get('/lti-config')
         self.view.request.session = {}
 
     def test_launch_secure_launch_url(self):

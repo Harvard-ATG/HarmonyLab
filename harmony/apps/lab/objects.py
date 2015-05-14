@@ -4,6 +4,7 @@ import os
 import os.path
 import string
 import json
+import re
 
 class ExerciseFileError(Exception):
     pass
@@ -121,23 +122,128 @@ class Exercise:
         self.data = {}
         self.meta = {}
         self.errors = {}
+        self.is_valid = True
 
         self.data.update(data)
         if meta is not None:
             self.meta.update(meta)
+        
+        self.processData()
+        
+    def processData(self):
+        if "lilypond_chords" in self.data:
+            self.lilypond = ExerciseLilyPond(self.data['lilypond_chords'])
+        if self.lilypond.isValid():
+            self.data['chords'] = self.lilypond.toMIDI()
+        else:
+            self.is_valid = False
+            self.errors['lilypond_chords'] = "Invalid LilyPond entered for chords."
+        return self
 
     def isValid(self):
-        return True
+        return self.is_valid
 
     def getData(self):
         return self.data
 
     def asJSON(self):
-        return json.dumps(self.data, sort_keys=True, indent=4, separators=(',', ': '))
+        return json.dumps(self.getData(), sort_keys=True, indent=4, separators=(',', ': '))
 
     @classmethod
     def fromJSON(cls, data):
         return cls(json.loads(data))
+   
+
+class ExerciseLilyPond:
+    def __init__(self, lilypondString, *args, **kwargs):
+        self.lpstring = lilypondString
+        self.midi = self.parse()
+        self.is_valid = True
+        self.errors = {}
+
+    def parseChords(self, lpstring):
+        chords = re.findall('<([^>]+)>', lpstring.strip())
+        # re.findall('<([^>]+)>', "<e c' g' bf'>1\n<f \xNote c' \xNote f' a'>1")
+        print chords
+        return chords
+    
+    def parseChord(self, chordstring, start_octave=4):
+        hidden_note_token = r"\xnote"
+        chordstring = chordstring.lower() # make sure chord string is all lower case
+        chordstring = chordstring.replace(hidden_note_token + " ", hidden_note_token) # eliminate whitespace between \xNote and note
+        
+        notes = ['c','d','e','f','g','a','b']
+        up, down = ("'", ",")
+        sharp, flat = ("is", "es")
+        midi_chord = {"visible": [], "hidden": []}
+
+        pitches = re.split('\s+', chordstring)
+        for pitch_entry in pitches:
+            
+            # check if this is a "hidden" note in the chord (assumes note)
+            midi_entry = midi_chord['visible']
+            if pitch_entry.startswith(hidden_note_token):
+                midi_entry = midi_chord['hidden']
+                pitch_entry = pitch_entry.replace(hidden_note_token, '')
+
+            # check if the note is named, otherwise halt with an error
+            tokens = list(pitch_entry)
+            if not (tokens[0] in notes):
+                self.is_valid = False
+                #if "invalid pitch" in self.errors:
+                #    self.errors["invalid pitch"].append("Invalid pitch %s in chord %s: missing note letter" % (pitch_entry, chordstring))    
+                #else:
+                #    self.errors["invalid pitch"] = []
+                break
+            
+            # now look for changes in the octave
+            octave = start_octave
+            octave_change = 0
+            octaves = re.findall('('+up+'|'+down+'|\d)', pitch_entry)
+            if octaves is not None:
+                for o in octaves:
+                    if o == up:
+                        octave_change += 1
+                    elif o == down:
+                        octave_change -= 1
+                    else:
+                        octave = int(o)
+                        octave_change = 0
+                        break
+            
+            # now look for change in the pitch by accidentals
+            pitch_change = 0  
+            accidentals = re.findall('('+sharp+'|'+flat+')', pitch_entry)
+            if accidentals is not None:
+                for acc in accidentals:
+                    if acc == sharp:
+                        pitch_change += 1
+                    elif acc == flat:
+                        pitch_change -= 1
+            
+            # now calculate the midi note number and add to the midi entry
+            octave += octave_change
+            pitch = notes.index(tokens[0]) + pitch_change
+            midi_pitch = (octave * 12) + pitch
+            midi_entry.append(midi_pitch)
+            print "pitchentry = %s midientry = %s" %(pitch_entry, midi_pitch)
+        
+        return (midi_chord, octave)
+
+    def parse(self):
+        octave = 4
+        midi_chords = []
+        for chordstring in self.parseChords(self.lpstring):
+            midi_chord, octave = self.parseChord(chordstring, octave)
+            midi_chords.append(midi_chord)
+        return midi_chords
+  
+    def isValid(self):
+        return self.is_valid
+    
+    def toMIDI(self):
+        return self.midi
+
 
 class ExerciseFile:
     def __init__(self, file_name, group, group_path):
@@ -338,7 +444,4 @@ class ExerciseGroup:
 
     def __repr__(self):
         return self.__str__()
-
-class ExerciseLilyPond:
-    pass
 

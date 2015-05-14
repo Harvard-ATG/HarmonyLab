@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView, RedirectView
 from django.core.urlresolvers import reverse
+from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
 from ims_lti_py.tool_config import ToolConfig
@@ -326,3 +327,10 @@ class LTIToolConfigView(View):
         self.set_extra_params(lti_tool_config)
         return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
 
+
+def logout_view(request):
+    logout(request)
+    return redirect("lab:logged-out")
+
+def logged_out_view(request):
+    return HttpResponse('Logged out successfully.')

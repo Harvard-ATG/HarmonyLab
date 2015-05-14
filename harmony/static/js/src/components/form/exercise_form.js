@@ -48,6 +48,8 @@ define([
 		var that = this;
 		var $new_exercise_group = $("#new_exercise_group");
 		var $select_group = $("select[name=exercise_group]");
+		var $exercise_chords = $("textarea[name=exercise_chords]");
+		var $exercise_prompt = $("textarea[name=exercise_prompt]");
 
 		$select_group.on('change', function(e) {
 			$new_exercise_group.val("");
@@ -55,7 +57,7 @@ define([
 		
 		$new_exercise_group.on('change keyup', function(e) {
 			var opt, opt_selected = false;
-			var input = $(this).val().replace(/\s+/, '');
+			var input = that.cleanGroupName($(this).val());
 			var $options = $select_group.find('option').removeAttr('selected');
 
 			if (input !== $(this).val()) {
@@ -247,6 +249,18 @@ define([
 	};
 
 	/**
+	 * Returns the group name cleaned.
+	 *
+	 * @return string
+	 */		
+	ExerciseFormComponent.prototype.cleanGroupName = function(name) {
+		name = name.replace(/\s+/, ''); // remove non-word characters
+		name = name.replace('/', '-')
+		name = name.replace(/\W+/, ''); // remove non word chars 
+		return name;
+	};
+
+	/**
 	 * Collects all the data from the form suitable for sending
 	 * to the server.
 	 *
@@ -256,12 +270,12 @@ define([
 		var prompt = this.$el.find('textarea[name=exercise_prompt]').val();
 		var key = this.widgets.keySignature.keySignature.getKey();
 		var key_signature = this.widgets.keySignature.keySignature.getSignatureSpec();
-		var chords = this.$el.find('input[name=exercise_chords]').val();
+		var chords = this.$el.find('textarea[name=exercise_chords]').val();
 		var analysis_settings = this.widgets.analyze.getState();
 		var highlight_settings = this.widgets.highlight.getState();
 		var exercise_group = this.$el.find('select[name=exercise_group]').val();
 		var new_exercise_group = this.$el.find('input[name=new_exercise_group]').val();
-		new_exercise_group = new_exercise_group.replace(/\s+/, '');
+		new_exercise_group = this.cleanGroupName(new_exercise_group);
 		
 		if (new_exercise_group) {
 			exercise_group = new_exercise_group;
@@ -271,7 +285,7 @@ define([
 			"prompt": prompt,
 			"key": key,
 			"keySignature": key_signature,
-			"chords": chords,
+			"lilypond_chords": chords,
 			"group_name": exercise_group,
 			"analysisSettings": analysis_settings,
 			"highlightSettings": highlight_settings

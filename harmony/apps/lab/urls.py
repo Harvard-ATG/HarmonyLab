@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url
-from .views import PlayView, ExerciseView, ManageView
-from .views import APIView, APIExerciseView, APIGroupView
-from .views import LTIToolConfigView, LTILaunchView
+import views
+from views import PlayView, ExerciseView, ManageView
+from views import APIView, APIExerciseView, APIGroupView
+from views import LTIToolConfigView, LTILaunchView
 
 urlpatterns = patterns(
     '',
@@ -13,5 +14,7 @@ urlpatterns = patterns(
     url(r'^exercise/(?P<course_name>\w+)/(?P<group_name>\w+(?:/\D\w*)?)$', ExerciseView.as_view(), name="exercise-group"),
     url(r'^manage$', ManageView.as_view(), name="manage"),
     url(r'^lti-launch$', LTILaunchView.as_view(), name='lti-launch'),
-    url(r'^lti-tool-config$', LTIToolConfigView.as_view(), name='lti-tool-config'),
+    url(r'^lti-config$', LTIToolConfigView.as_view(), name='lti-config'),
+    url(r'^logout$', views.logout_view, name="logout"),
+    url(r'^logged-out$', views.logged_out_view, name="logged-out"),
 )
