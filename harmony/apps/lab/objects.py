@@ -172,6 +172,7 @@ class ExerciseLilyPond:
         chordstring = chordstring.lower() # make sure chord string is all lower case
         chordstring = chordstring.replace(hidden_note_token + " ", hidden_note_token) # eliminate whitespace between \xNote and note
         
+        octave = start_octave
         notes = ['c','d','e','f','g','a','b']
         up, down = ("'", ",")
         sharp, flat = ("is", "es")
@@ -196,20 +197,33 @@ class ExerciseLilyPond:
                 #    self.errors["invalid pitch"] = []
                 break
             
-            # now look for changes in the octave
-            octave = start_octave
+            # now look for changes in the octave.
+            # remember: changing one note's octave will effect all subsequent notes
             octave_change = 0
+            octave_changed = False
             octaves = re.findall('('+up+'|'+down+'|\d)', pitch_entry)
             if octaves is not None:
                 for o in octaves:
                     if o == up:
                         octave_change += 1
+                        octave_changed = True
                     elif o == down:
                         octave_change -= 1
+                        octave_changed = True
                     else:
                         octave = int(o)
+                        octave_changed = True
                         octave_change = 0
                         break
+
+            # calculate the octave so the note is within an interval of a fifth
+            # if there was no octave changing mark (relative or absolute)
+            # this is per-lilypond's documentation:
+            # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
+            if not octave_changed:
+                distance = (octave * 12 + notes.index(tokens[0])) % 12
+                if distance > 7:
+                    1 # do something
             
             # now look for change in the pitch by accidentals
             pitch_change = 0  
