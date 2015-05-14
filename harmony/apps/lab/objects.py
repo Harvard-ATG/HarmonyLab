@@ -1,4 +1,4 @@
-from django.conf import settings
+Wfrom django.conf import settings
 from django.core.urlresolvers import reverse
 import os
 import os.path
@@ -157,14 +157,14 @@ class Exercise:
 class ExerciseLilyPond:
     def __init__(self, lilypondString, *args, **kwargs):
         self.lpstring = lilypondString
-        self.midi = self.parse()
-        self.is_valid = True
         self.errors = {}
+        self.is_valid = True
+        self.midi = self.parse()
 
     def parseChords(self, lpstring):
         chords = re.findall('<([^>]+)>', lpstring.strip())
         # re.findall('<([^>]+)>', "<e c' g' bf'>1\n<f \xNote c' \xNote f' a'>1")
-        print chords
+        # print chords
         return chords
     
     def parseChord(self, chordstring, start_octave=4):
@@ -177,9 +177,10 @@ class ExerciseLilyPond:
         up, down = ("'", ",")
         sharp, flat = ("is", "es")
         midi_chord = {"visible": [], "hidden": []}
+        previous_pitch = None
 
-        pitches = re.split('\s+', chordstring)
-        for pitch_entry in pitches:
+        pitch_entries = re.split('\s+', chordstring)
+        for pitch_entry in pitch_entries:
             
             # check if this is a "hidden" note in the chord (assumes note)
             midi_entry = midi_chord['visible']
@@ -191,10 +192,10 @@ class ExerciseLilyPond:
             tokens = list(pitch_entry)
             if not (tokens[0] in notes):
                 self.is_valid = False
-                #if "invalid pitch" in self.errors:
-                #    self.errors["invalid pitch"].append("Invalid pitch %s in chord %s: missing note letter" % (pitch_entry, chordstring))    
-                #else:
-                #    self.errors["invalid pitch"] = []
+                if "missing note" in self.errors:
+                    self.errors["missing note"].append("Invalid pitch %s in chord %s: missing note name" % (pitch_entry, chordstring))    
+                else:
+                    self.errors["missing note"] = []
                 break
             
             # now look for changes in the octave.
@@ -220,10 +221,10 @@ class ExerciseLilyPond:
             # if there was no octave changing mark (relative or absolute)
             # this is per-lilypond's documentation:
             # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
-            if not octave_changed:
-                distance = (octave * 12 + notes.index(tokens[0])) % 12
+            if not octave_changed and previous_pitch is not None:
+                distance = previous_pitch - notes.index(tokens[0])
                 if distance > 7:
-                    1 # do something
+                    True
             
             # now look for change in the pitch by accidentals
             pitch_change = 0  
@@ -238,6 +239,7 @@ class ExerciseLilyPond:
             # now calculate the midi note number and add to the midi entry
             octave += octave_change
             pitch = notes.index(tokens[0]) + pitch_change
+            previous_pitch = pitch
             midi_pitch = (octave * 12) + pitch
             midi_entry.append(midi_pitch)
             print "pitchentry = %s midientry = %s" %(pitch_entry, midi_pitch)
