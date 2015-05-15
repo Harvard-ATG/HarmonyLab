@@ -1,4 +1,4 @@
-Wfrom django.conf import settings
+from django.conf import settings
 from django.core.urlresolvers import reverse
 import os
 import os.path
