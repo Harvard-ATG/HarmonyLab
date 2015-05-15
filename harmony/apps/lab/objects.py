@@ -200,10 +200,22 @@ class ExerciseLilyPond:
                 else:
                     self.errors["missing note"] = []
                 break
-            
-            # now look for changes in the octave.
-            # remember: changing one note's octave will effect all subsequent notes
+
+            # calculate the octave so the note is within an interval of a fifth
+            # before any octave changing mark (relative or absolute)
+            # this is per-lilypond's documentation:
+            # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
             octave_change = 0
+            if previous_note is not None:
+                distance = previous_note - notes.index(tokens[0])
+                if abs(distance) >= 5:
+                    if distance < 0:
+                        octave_change -= 1
+                    else:
+                        octave_change += 1
+
+            # now look for octave changing marks
+            # remember: changing one note's octave will effect all subsequent notes
             octave_changed = False
             octaves = re.findall('('+up+'|'+down+'|\d)', pitch_entry)
             if octaves is not None:
@@ -219,18 +231,6 @@ class ExerciseLilyPond:
                         octave_changed = True
                         octave_change = 0
                         break
-
-            # calculate the octave so the note is within an interval of a fifth
-            # if there was no octave changing mark (relative or absolute)
-            # this is per-lilypond's documentation:
-            # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
-            if not octave_changed and previous_note is not None:
-                distance = previous_note - notes.index(tokens[0])
-                if abs(distance) >= 5:
-                    if distance < 0:
-                        octave -= 1
-                    else:
-                        octave += 1
             
             # now look for change in the pitch by accidentals
             pitch_change = 0  
@@ -468,4 +468,3 @@ class ExerciseGroup:
 
     def __repr__(self):
         return self.__str__()
-
