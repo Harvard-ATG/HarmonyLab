@@ -5,6 +5,8 @@ import os.path
 import string
 import json
 import re
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 class ExerciseFileError(Exception):
     pass
@@ -168,37 +170,41 @@ class ExerciseLilyPond:
         return chords
     
     def parseChord(self, chordstring, start_octave=4):
-        hidden_note_token = r"\xnote"
-        chordstring = chordstring.lower() # make sure chord string is all lower case
-        chordstring = chordstring.replace(hidden_note_token + " ", hidden_note_token) # eliminate whitespace between \xNote and note
-        
-        octave = start_octave
-        first_note_octave = None
+        # constants for parsing
         note_tuples = [('c',0),('d',2),('e',4),('f',5),('g',7),('a',9),('b',11)]
         notes = [n[0] for n in note_tuples]
         note_pitch = dict(note_tuples)
         up, down = ("'", ",")
-        sharp, flat = ("is", "es")
+        sharp, flat = ("s", "f")
+        hidden_note_symbol = "x"
+
+        # normalize the chord string 
+        chordstring = re.sub(r'\\(x)Note\s*', r'\1', chordstring) # replace '\xNote' with just 'x'
+        chordstring = chordstring.lower() # normalize to lower case
+
+        # mutable variables used during parsing
+        saved_octaves = [start_octave]
         midi_chord = {"visible": [], "hidden": []}
         previous_note = None
-
+        
+        # parse each pitch entry in the chord and translate to MIDI
         pitch_entries = re.split('\s+', chordstring)
         for idx, pitch_entry in enumerate(pitch_entries):
-            
-            # check if this is a "hidden" note in the chord (assumes note)
-            midi_entry = midi_chord['visible']
-            if pitch_entry.startswith(hidden_note_token):
-                midi_entry = midi_chord['hidden']
-                pitch_entry = pitch_entry.replace(hidden_note_token, '')
+            tokens = list(pitch_entry) # convert entry to sequence of characters
 
-            # check if the note is named, otherwise halt with an error
-            tokens = list(pitch_entry)
-            if not (tokens[0] in notes):
+            # check if this is a "hidden" note
+            midi_entry = midi_chord['visible']
+            if tokens[0] == hidden_note_symbol:
+                midi_entry = midi_chord['hidden']
+                tokens = tokens[1:]
+
+            # check if the first character is a valid note name,
+            # otherwise record an error and skip the rest of the parsing
+            note_name = tokens[0]
+            tokens = tokens[1:]
+            if not (note_name in notes):
                 self.is_valid = False
-                if "missing note" in self.errors:
-                    self.errors["missing note"].append("Invalid pitch %s in chord %s: missing note name" % (pitch_entry, chordstring))    
-                else:
-                    self.errors["missing note"] = []
+                self.errors.append("Pitch [%s] in chord [%s] is invalid: missing or invalid note name: %s" % (pitch_entry, chordstring, note_name))
                 break
 
             # calculate the octave so the note is within an interval of a fifth
@@ -206,9 +212,14 @@ class ExerciseLilyPond:
             # this is per-lilypond's documentation:
             # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
             octave_change = 0
+            distance = None
             if previous_note is not None:
-                distance = previous_note - notes.index(tokens[0])
-                if abs(distance) >= 5:
+                distance = notes.index(previous_note) - notes.index(note_name)
+                if distance < 0:
+                    distance -= 1
+                else:
+                    distance += 1
+                if abs(distance) > 5:
                     if distance < 0:
                         octave_change -= 1
                     else:
@@ -216,43 +227,51 @@ class ExerciseLilyPond:
 
             # now look for octave changing marks
             # remember: changing one note's octave will effect all subsequent notes
-            octave_changed = False
-            octaves = re.findall('('+up+'|'+down+'|\d)', pitch_entry)
+            octaves = re.findall('('+up+'|'+down+'|\d)', ''.join(tokens))
             if octaves is not None:
                 for o in octaves:
                     if o == up:
                         octave_change += 1
-                        octave_changed = True
                     elif o == down:
                         octave_change -= 1
-                        octave_changed = True
                     else:
                         octave = int(o)
-                        octave_changed = True
                         octave_change = 0
                         break
             
             # now look for change in the pitch by accidentals
             pitch_change = 0  
-            accidentals = re.findall('('+sharp+'|'+flat+')', pitch_entry)
+            accidentals = re.findall('('+sharp+'|'+flat+')', ''.join(tokens))
             if accidentals is not None:
                 for acc in accidentals:
                     if acc == sharp:
                         pitch_change += 1
                     elif acc == flat:
                         pitch_change -= 1
-            
+
             # now calculate the midi note number and add to the midi entry
-            octave += octave_change
-            if idx == 0:
-                first_note_octave = octave
-            pitch = note_pitch[tokens[0]] + pitch_change
-            previous_note = notes.index(tokens[0])
-            midi_pitch = (octave * 12) + pitch
+            octave = saved_octaves[0] + octave_change
+            saved_octaves.append(octave)
+            midi_pitch = (octave * 12) + note_pitch[note_name] + pitch_change
             midi_entry.append(midi_pitch)
-            print "pitchentry = %s midientry = %s" %(pitch_entry, midi_pitch)
+            debug_data = {
+                "chordstring": chordstring,
+                "pitchentry": pitch_entry,
+                "octave": octave,
+                "octave_change": octave_change,
+                "octaves": octaves,
+                "saved_octaves": saved_octaves,
+                "accidentals": accidentals,
+                "pitch_change": pitch_change,
+                "midi_pitch": midi_pitch,
+                "midi_entry": midi_entry,
+                "previous_note": previous_note,
+                "distance": distance,
+            }
+            #pp.pprint(debug_data)
+            previous_note = note_name
         
-        return (midi_chord, first_note_octave)
+        return (midi_chord, saved_octaves[1])
 
     def parse(self):
         octave = 4
