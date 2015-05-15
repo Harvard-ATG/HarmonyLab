@@ -177,7 +177,7 @@ class ExerciseLilyPond:
         up, down = ("'", ",")
         sharp, flat = ("is", "es")
         midi_chord = {"visible": [], "hidden": []}
-        previous_pitch = None
+        previous_note = None
 
         pitch_entries = re.split('\s+', chordstring)
         for pitch_entry in pitch_entries:
@@ -221,10 +221,13 @@ class ExerciseLilyPond:
             # if there was no octave changing mark (relative or absolute)
             # this is per-lilypond's documentation:
             # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
-            if not octave_changed and previous_pitch is not None:
-                distance = previous_pitch - notes.index(tokens[0])
-                if distance > 7:
-                    True
+            if not octave_changed and previous_note is not None:
+                distance = previous_note - notes.index(tokens[0])
+                if abs(distance) > 5:
+                    if distance < 0:
+                        octave -= 1
+                    else:
+                        octave += 1
             
             # now look for change in the pitch by accidentals
             pitch_change = 0  
@@ -239,7 +242,7 @@ class ExerciseLilyPond:
             # now calculate the midi note number and add to the midi entry
             octave += octave_change
             pitch = notes.index(tokens[0]) + pitch_change
-            previous_pitch = pitch
+            previous_note = notes.index(tokens[0])
             midi_pitch = (octave * 12) + pitch
             midi_entry.append(midi_pitch)
             print "pitchentry = %s midientry = %s" %(pitch_entry, midi_pitch)
