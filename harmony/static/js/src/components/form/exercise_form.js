@@ -162,6 +162,7 @@ define([
 	ExerciseFormComponent.prototype.submit = function(data) {
 		var url = this.getSubmitUrl();
 		var that = this;
+		var errors = ''
 
 		$.ajax({
 			"url": url,
@@ -169,11 +170,24 @@ define([
 			"data": {'exercise': JSON.stringify(data)},
 			"dataType": "json"
 		}).done(function(response, textStatus, jqXHR) {
-			that.notify({
-				title: "Exercise Saved",
-				description: "Exercise saved successfully!",
-				type: "success"
-			});
+			if (response.status == "success") {
+				that.notify({
+					title: "Exercise Saved",
+					description: '<a href="'+response.data.url+'">Exercise</a> saved successfully!',
+					type: "success"
+				});
+			} else if(response.status == "error") {
+				errors = '';
+				$.each(response.errors, function(idx, val) {
+					errors += "<p>" + val + "</p>";
+				});
+				that.notify({
+					title: "Error",
+					description: "<p>" + response.message + "</p><p>" + errors + "</p>",
+					type: "error"
+				});
+			}
+
 			that.trigger("afterSubmit", response);
 		}).fail(function(jqXHR, textStatus) {
 			that.notify({
@@ -282,13 +296,13 @@ define([
 		}
 		
 		var data = {
-			"prompt": prompt,
+			"introText": prompt,
 			"key": key,
 			"keySignature": key_signature,
 			"lilypond_chords": chords,
 			"group_name": exercise_group,
-			"analysisSettings": analysis_settings,
-			"highlightSettings": highlight_settings
+			"analysis": analysis_settings,
+			"highlight": highlight_settings
 		};
 
 		// only include the keySignature if it's unlocked

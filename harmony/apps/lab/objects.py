@@ -123,7 +123,7 @@ class Exercise:
     def __init__(self, data, meta=None):
         self.data = {}
         self.meta = {}
-        self.errors = {}
+        self.errors = []
         self.is_valid = True
 
         self.data.update(data)
@@ -133,13 +133,17 @@ class Exercise:
         self.processData()
         
     def processData(self):
+        if not "type" in self.data:
+            self.data['type'] = "matching"
+
         if "lilypond_chords" in self.data:
             self.lilypond = ExerciseLilyPond(self.data['lilypond_chords'])
+
         if self.lilypond.isValid():
-            self.data['chords'] = self.lilypond.toMIDI()
+            self.data['chord'] = self.lilypond.toMIDI()
         else:
             self.is_valid = False
-            self.errors['lilypond_chords'] = "Invalid LilyPond entered for chords."
+            self.errors.extend(list(self.lilypond.errors))
         return self
 
     def isValid(self):
@@ -159,7 +163,7 @@ class Exercise:
 class ExerciseLilyPond:
     def __init__(self, lilypondString, *args, **kwargs):
         self.lpstring = lilypondString
-        self.errors = {}
+        self.errors = []
         self.is_valid = True
         self.midi = self.parse()
 
@@ -176,10 +180,10 @@ class ExerciseLilyPond:
         note_pitch = dict(note_tuples)
         up, down = ("'", ",")
         sharp, flat = ("s", "f")
-        hidden_note_symbol = "x"
+        hidden_note_symbol = r"x"
 
         # normalize the chord string 
-        chordstring = re.sub(r'\\(x)Note\s*', r'\1', chordstring) # replace '\xNote' with just 'x'
+        chordstring = re.sub(r'\\xNote\s*', hidden_note_symbol, chordstring) # replace '\xNote' with just 'x'
         chordstring = chordstring.lower() # normalize to lower case
 
         # mutable variables used during parsing
@@ -200,11 +204,19 @@ class ExerciseLilyPond:
 
             # check if the first character is a valid note name,
             # otherwise record an error and skip the rest of the parsing
+            if len(tokens) == 0 or not (tokens[0] in notes):
+                self.is_valid = False
+                self.errors.append("Pitch [%s] in chord [%s] is invalid: missing or invalid note name" % (pitch_entry, chordstring))
+                break
+            
             note_name = tokens[0]
             tokens = tokens[1:]
-            if not (note_name in notes):
+            
+            # check that all subsequent characters are either octave changing marks, or accidentals
+            check_rest = re.sub('|'.join([up,down,sharp,flat,'\d']), '', ''.join(tokens))
+            if len(check_rest) > 0:
                 self.is_valid = False
-                self.errors.append("Pitch [%s] in chord [%s] is invalid: missing or invalid note name: %s" % (pitch_entry, chordstring, note_name))
+                self.errors.append("Pitch entry [%s] in chord [%s] contains unrecognized symbols: %s" % (pitch_entry, chordstring, check_rest))
                 break
 
             # calculate the octave so the note is within an interval of a fifth
@@ -271,6 +283,8 @@ class ExerciseLilyPond:
             #pp.pprint(debug_data)
             previous_note = note_name
         
+        if len(saved_octaves) == 1:
+            return (midi_chord, saved_octaves[0])
         return (midi_chord, saved_octaves[1])
 
     def parse(self):

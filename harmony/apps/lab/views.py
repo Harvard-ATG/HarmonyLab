@@ -207,9 +207,18 @@ class APIExerciseView(CsrfExemptMixin, View):
         exercise_data = request.POST.get('exercise', None)
         data = json.loads(exercise_data)
         exercise = Exercise(data)
+
+        result = {}
         if exercise.isValid():
-            ExerciseFile.create(data, course_name=course_name, exercise=exercise)
-        return HttpResponse(json.dumps(exercise.getData()), mimetype='application/json')
+            ef = ExerciseFile.create(data, course_name=course_name, exercise=exercise)
+            result['status'] = "success"
+            result['message'] = "Exercise created successfully!"
+            result['data'] = {"exercise": exercise.getData(), "url": ef.url()}
+        else:
+            result['status'] = "error"
+            result['message'] = "Exercise failed to save."
+            result['errors'] = exercise.errors
+        return HttpResponse(json.dumps(result), mimetype='application/json')
     
     def put(self, request):
         return HttpResponse('put')
