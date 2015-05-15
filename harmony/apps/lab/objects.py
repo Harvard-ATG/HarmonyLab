@@ -173,7 +173,9 @@ class ExerciseLilyPond:
         chordstring = chordstring.replace(hidden_note_token + " ", hidden_note_token) # eliminate whitespace between \xNote and note
         
         octave = start_octave
-        notes = ['c','d','e','f','g','a','b']
+        note_tuples = [('c',0),('d',2),('e',4),('f',5),('g',7),('a',9),('b',11)]
+        notes = [n[0] for n in note_tuples]
+        note_pitch = dict(note_tuples)
         up, down = ("'", ",")
         sharp, flat = ("is", "es")
         midi_chord = {"visible": [], "hidden": []}
@@ -241,7 +243,7 @@ class ExerciseLilyPond:
             
             # now calculate the midi note number and add to the midi entry
             octave += octave_change
-            pitch = notes.index(tokens[0]) + pitch_change
+            pitch = note_pitch[tokens[0]] + pitch_change
             previous_note = notes.index(tokens[0])
             midi_pitch = (octave * 12) + pitch
             midi_entry.append(midi_pitch)
