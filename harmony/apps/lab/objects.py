@@ -173,6 +173,7 @@ class ExerciseLilyPond:
         chordstring = chordstring.replace(hidden_note_token + " ", hidden_note_token) # eliminate whitespace between \xNote and note
         
         octave = start_octave
+        first_note_octave = None
         note_tuples = [('c',0),('d',2),('e',4),('f',5),('g',7),('a',9),('b',11)]
         notes = [n[0] for n in note_tuples]
         note_pitch = dict(note_tuples)
@@ -182,7 +183,7 @@ class ExerciseLilyPond:
         previous_note = None
 
         pitch_entries = re.split('\s+', chordstring)
-        for pitch_entry in pitch_entries:
+        for idx, pitch_entry in enumerate(pitch_entries):
             
             # check if this is a "hidden" note in the chord (assumes note)
             midi_entry = midi_chord['visible']
@@ -225,7 +226,7 @@ class ExerciseLilyPond:
             # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
             if not octave_changed and previous_note is not None:
                 distance = previous_note - notes.index(tokens[0])
-                if abs(distance) > 5:
+                if abs(distance) >= 5:
                     if distance < 0:
                         octave -= 1
                     else:
@@ -243,13 +244,15 @@ class ExerciseLilyPond:
             
             # now calculate the midi note number and add to the midi entry
             octave += octave_change
+            if idx == 0:
+                first_note_octave = octave
             pitch = note_pitch[tokens[0]] + pitch_change
             previous_note = notes.index(tokens[0])
             midi_pitch = (octave * 12) + pitch
             midi_entry.append(midi_pitch)
             print "pitchentry = %s midientry = %s" %(pitch_entry, midi_pitch)
         
-        return (midi_chord, octave)
+        return (midi_chord, first_note_octave)
 
     def parse(self):
         octave = 4
