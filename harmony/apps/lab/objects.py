@@ -8,9 +8,6 @@ import re
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-class ExerciseFileError(Exception):
-    pass
-
 class ExerciseRepository(object):
     def __init__(self, *args, **kwargs):
         self.course_name = kwargs.get('course_name', None)
@@ -158,7 +155,9 @@ class Exercise:
     @classmethod
     def fromJSON(cls, data):
         return cls(json.loads(data))
-   
+
+class ExerciseLilyPondError(Exception):
+    pass
 
 class ExerciseLilyPond:
     def __init__(self, lilypondString, *args, **kwargs):
@@ -174,6 +173,10 @@ class ExerciseLilyPond:
         return chords
     
     def parseChord(self, chordstring, start_octave=4):
+        # NOTE:
+        # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
+        # parsing notes in "absolute" octave mode - each note must be specified absolutely
+
         # constants for parsing
         note_tuples = [('c',0),('d',2),('e',4),('f',5),('g',7),('a',9),('b',11)]
         notes = [n[0] for n in note_tuples]
@@ -187,13 +190,12 @@ class ExerciseLilyPond:
         chordstring = chordstring.lower() # normalize to lower case
 
         # mutable variables used during parsing
-        saved_octaves = [start_octave]
         midi_chord = {"visible": [], "hidden": []}
-        previous_note = None
         
         # parse each pitch entry in the chord and translate to MIDI
         pitch_entries = re.split('\s+', chordstring)
         for idx, pitch_entry in enumerate(pitch_entries):
+            octave = start_octave
             tokens = list(pitch_entry) # convert entry to sequence of characters
 
             # check if this is a "hidden" note
@@ -207,7 +209,7 @@ class ExerciseLilyPond:
             if len(tokens) == 0 or not (tokens[0] in notes):
                 self.is_valid = False
                 self.errors.append("Pitch [%s] in chord [%s] is invalid: missing or invalid note name" % (pitch_entry, chordstring))
-                break
+                raise ExerciseLilyPondError("Error parsing LilyPond chord: %s" % chordstring)
             
             note_name = tokens[0]
             tokens = tokens[1:]
@@ -217,28 +219,10 @@ class ExerciseLilyPond:
             if len(check_rest) > 0:
                 self.is_valid = False
                 self.errors.append("Pitch entry [%s] in chord [%s] contains unrecognized symbols: %s" % (pitch_entry, chordstring, check_rest))
-                break
+                raise ExerciseLilyPondError("Error parsing LilyPond chord: %s" % chordstring)
 
-            # calculate the octave so the note is within an interval of a fifth
-            # before any octave changing mark (relative or absolute)
-            # this is per-lilypond's documentation:
-            # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
+            # look for octave changing marks
             octave_change = 0
-            distance = None
-            if previous_note is not None:
-                distance = notes.index(previous_note) - notes.index(note_name)
-                if distance < 0:
-                    distance -= 1
-                else:
-                    distance += 1
-                if abs(distance) > 5:
-                    if distance < 0:
-                        octave_change -= 1
-                    else:
-                        octave_change += 1
-
-            # now look for octave changing marks
-            # remember: changing one note's octave will effect all subsequent notes
             octaves = re.findall('('+up+'|'+down+'|\d)', ''.join(tokens))
             if octaves is not None:
                 for o in octaves:
@@ -248,10 +232,8 @@ class ExerciseLilyPond:
                         octave_change -= 1
                     else:
                         octave = int(o)
-                        octave_change = 0
-                        break
             
-            # now look for change in the pitch by accidentals
+            # look for change in the pitch by accidentals
             pitch_change = 0  
             accidentals = re.findall('('+sharp+'|'+flat+')', ''.join(tokens))
             if accidentals is not None:
@@ -261,38 +243,22 @@ class ExerciseLilyPond:
                     elif acc == flat:
                         pitch_change -= 1
 
-            # now calculate the midi note number and add to the midi entry
-            octave = saved_octaves[0] + octave_change
-            saved_octaves.append(octave)
+            # calculate the midi note number and add to the midi entry
+            octave += octave_change
             midi_pitch = (octave * 12) + note_pitch[note_name] + pitch_change
             midi_entry.append(midi_pitch)
-            debug_data = {
-                "chordstring": chordstring,
-                "pitchentry": pitch_entry,
-                "octave": octave,
-                "octave_change": octave_change,
-                "octaves": octaves,
-                "saved_octaves": saved_octaves,
-                "accidentals": accidentals,
-                "pitch_change": pitch_change,
-                "midi_pitch": midi_pitch,
-                "midi_entry": midi_entry,
-                "previous_note": previous_note,
-                "distance": distance,
-            }
-            #pp.pprint(debug_data)
-            previous_note = note_name
-        
-        if len(saved_octaves) == 1:
-            return (midi_chord, saved_octaves[0])
-        return (midi_chord, saved_octaves[1])
+
+        return midi_chord
 
     def parse(self):
         octave = 4
         midi_chords = []
-        for chordstring in self.parseChords(self.lpstring):
-            midi_chord, octave = self.parseChord(chordstring, octave)
-            midi_chords.append(midi_chord)
+        try:
+            for chordstring in self.parseChords(self.lpstring):
+                midi_chord = self.parseChord(chordstring, octave)
+                midi_chords.append(midi_chord)
+        except ExerciseLilyPondError as e:
+            return []
         return midi_chords
   
     def isValid(self):
@@ -301,6 +267,8 @@ class ExerciseLilyPond:
     def toMIDI(self):
         return self.midi
 
+class ExerciseFileError(Exception):
+    pass
 
 class ExerciseFile:
     def __init__(self, file_name, group, group_path):
