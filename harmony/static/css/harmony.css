@@ -318,6 +318,13 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 .exerciseform div {
 	margin: 5px 0;
 }
+.exerciseform .help {
+	font-size: .95em;
+	color: #333;
+	background-color: rgba(153, 153, 153, 0.38);
+	margin: .5em 0;
+	padding: .5em;
+}
 ul.exercise-groups {
 	list-style-type: none;
 	margin: 0;

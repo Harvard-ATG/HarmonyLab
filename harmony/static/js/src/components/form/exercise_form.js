@@ -50,6 +50,11 @@ define([
 		var $select_group = $("select[name=exercise_group]");
 		var $exercise_chords = $("textarea[name=exercise_chords]");
 		var $exercise_prompt = $("textarea[name=exercise_prompt]");
+		
+		$(".exercise_chord_help_btn").on('mousedown', function(e) {
+			$(".exercise_chord_help").toggle();
+			e.preventDefault();
+		})
 
 		$select_group.on('change', function(e) {
 			$new_exercise_group.val("");
@@ -119,17 +124,30 @@ define([
 	 */		
 	ExerciseFormComponent.prototype.validate = function(data) {
 		var is_valid = true;
+		var highlight_error = function(el) {
+			$(el).css({'border-color': 'red', 'background-color': '#f2dede'}).one('click', function(evt) {
+				$(this).css({'border-color': '', 'background-color': ''});
+			});
+		};
 
 		if (!data.group_name) {
 			is_valid = false;
 			this.notify({
-				title: "Error: Missing Group",
+				title: "Error: Group Name",
 				description: "Please select or enter the group name for this exercise.",
 				type: "error"
 			});
-			$("#fieldset_groups").css('border-color', 'red').one('click', function(evt) {
-				$(this).css('border-color', '');
+			highlight_error($("#fieldset_groups"));
+		}
+		
+		if (!/<[^>]+>/.test(data.lilypond_chords)) {
+			is_valid = false;
+			this.notify({
+				title: "Error: Chords",
+				description: "Please enter at least one chord enclosed in angle brackes.",
+				type: "error"
 			});
+			highlight_error($("textarea[name=exercise_chords]"));
 		}
 		
 		return is_valid;
@@ -268,10 +286,7 @@ define([
 	 * @return string
 	 */		
 	ExerciseFormComponent.prototype.cleanGroupName = function(name) {
-		name = name.replace(/\s+/, ''); // remove non-word characters
-		name = name.replace('/', '-')
-		name = name.replace(/\W+/, ''); // remove non word chars 
-		return name;
+		return name.replace(/[^a-zA-Z0-9_\-.]/, ''); // remove non-word characters and "-", "."
 	};
 
 	/**

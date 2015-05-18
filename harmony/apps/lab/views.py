@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 #from .exercise import Exercise
-from .objects import ExerciseFileRepository, ExerciseFile, Exercise
+from .objects import ExerciseRepository
 
 import json
 import copy
@@ -89,9 +89,9 @@ class ManageView(RequirejsView, LoginRequiredMixin):
     def get(self, request):
         context = {}
         
-        course_name = ''
+        course_id = ''
         if "LTI_LAUNCH" in request.session:
-            course_name = request.session["LTI_LAUNCH"].get("context_id", None)
+            course_id = request.session["LTI_LAUNCH"].get("context_id", None)
             context['course_label'] = request.session["LTI_LAUNCH"].get("context_label")
         else:
             raise Http404;
@@ -101,10 +101,10 @@ class ManageView(RequirejsView, LoginRequiredMixin):
         if not has_manage_perm:
             raise PermissionDenied
         
-        er = ExerciseFileRepository(course_name=course_name)
+        er = ExerciseRepository.create(course_id=course_id)
 
         manage_params = {
-            "exercise_api_url": reverse('lab:api-exercise')+'?course_name='+course_name,
+            "exercise_api_url": reverse('lab:api-exercises')+'?course_id='+course_id,
             "group_list": er.getGroupList(),
         }
 
@@ -116,18 +116,15 @@ class ManageView(RequirejsView, LoginRequiredMixin):
 
 
 class ExerciseView(RequirejsView):
-    def get(self, request, course_name, group_name, exercise_name=None):
+    def get(self, request, course_id=None, group_name=None, exercise_name=None):
         context = {}
 
         if "LTI_LAUNCH" in self.request.session:
             roles = self.request.session["LTI_LAUNCH"].get("roles", [])
             has_manage_perm = "Instructor" in roles
             context['has_manage_perm'] = has_manage_perm
-        
-        if course_name == "none":
-            course_name = None
 
-        er = ExerciseFileRepository(course_name=course_name)
+        er = ExerciseRepository.create(course_id=course_id)
         if exercise_name is None:
             group = er.findGroup(group_name)
             if group is None:
@@ -164,19 +161,19 @@ class APIView(View):
 
 class APIGroupView(CsrfExemptMixin, View):
     def get(self, request):
-        course_name = request.GET.get('course_name', None)
-        er = ExerciseFileRepository(course_name=course_name)
+        course_id = request.GET.get('course_id', None)
+        er = ExerciseRepository.create(course_id=course_id)
         data = er.getGroupList()
         json_data = json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-        return HttpResponse(json_data, mimetype='application/json')
+        return HttpResponse(json_data, content_type='application/json')
 
 class APIExerciseView(CsrfExemptMixin, View):
     def get(self, request):
-        course_name = request.GET.get('course_name', None)
+        course_id = request.GET.get('course_id', None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
         
-        er = ExerciseFileRepository(course_name=course_name)
+        er = ExerciseRepository.create(course_id=course_id)
         if exercise_name is not None and group_name is not None:
             exercise = er.findExerciseByGroup(group_name, exercise_name)
             if exercise is None:
@@ -191,7 +188,7 @@ class APIExerciseView(CsrfExemptMixin, View):
         else:
             data = er.asDict()
 
-        return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+        return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), content_type='application/json')
  
     @method_decorator(login_required)   
     def post(self, request):
@@ -203,22 +200,11 @@ class APIExerciseView(CsrfExemptMixin, View):
         if not has_manage_perm:
             raise PermissionDenied
             
-        course_name= request.session["LTI_LAUNCH"].get("context_id")
-        exercise_data = request.POST.get('exercise', None)
-        data = json.loads(exercise_data)
-        exercise = Exercise(data)
+        course_id= request.session["LTI_LAUNCH"].get("context_id")
+        exercise_data = json.loads(request.POST.get('exercise', None))
+        result = ExerciseRepository.create(course_id=course_id).createExercise(exercise_data)
 
-        result = {}
-        if exercise.isValid():
-            ef = ExerciseFile.create(data, course_name=course_name, exercise=exercise)
-            result['status'] = "success"
-            result['message'] = "Exercise created successfully!"
-            result['data'] = {"exercise": exercise.getData(), "url": ef.url()}
-        else:
-            result['status'] = "error"
-            result['message'] = "Exercise failed to save."
-            result['errors'] = exercise.errors
-        return HttpResponse(json.dumps(result), mimetype='application/json')
+        return HttpResponse(json.dumps(result), content_type='application/json')
     
     def put(self, request):
         return HttpResponse('put')

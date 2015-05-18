@@ -1,1 +1,8 @@
 .
+./trioDrills
+./V65
+./majorScalesTreble
+./intervals
+./chromaticChords
+./ECP
+./minorScalesTreble

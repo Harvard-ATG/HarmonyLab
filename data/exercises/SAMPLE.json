@@ -3,10 +3,9 @@
   "reviewText": "",
   "introText": "Complete the resolution of V{z5}.",
   "key": "jF_",
-  "keySignature": "b",
   "chord": [
-    {"visible":[52,60,67,70],"hidden":[]},
-    {"visible":[53,69],"hidden":[65,60]}
+    {"visible":[52,60,67,70],"hidden":[],},
+    {"visible":[53,69],"hidden":[60,65],},
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false
-    }
+      "intervals": false,
+    },
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false
-    }
-  }
+      "tritonehighlight": false,
+    },
+  },
 }

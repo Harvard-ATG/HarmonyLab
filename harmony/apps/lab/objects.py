@@ -5,12 +5,13 @@ import os.path
 import string
 import json
 import re
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
+import logging
+
+log = logging.getLogger(__name__)
 
 class ExerciseRepository(object):
     def __init__(self, *args, **kwargs):
-        self.course_name = kwargs.get('course_name', None)
+        self.course_id = kwargs.get('course_id', None)
         self.groups = []
         self.exercises = []
 
@@ -32,7 +33,7 @@ class ExerciseRepository(object):
 
     def asDict(self):
         return {
-            "course_name": self.course_name,
+            "course_id": self.course_id,
             "data": {
                 "exercises": [e.asDict() for e in self.exercises],
                 "groups": [g.asDict() for g in self.groups]
@@ -47,6 +48,15 @@ class ExerciseRepository(object):
 
     def __repr__(self):
         return self.__str__()
+    
+    @staticmethod
+    def create(*args, **kwargs):
+        repositories = {"file": ExerciseFileRepository}
+        repositoryType = kwargs.pop('repositoryType', "file")
+        if not (repositoryType in repositories):
+            raise "Invalid repository type"
+        return repositories[repositoryType](*args, **kwargs)
+    
 
 class ExerciseFileRepository(ExerciseRepository):
     BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises', 'json')
@@ -56,18 +66,18 @@ class ExerciseFileRepository(ExerciseRepository):
         self.findFiles()
 
     @staticmethod
-    def getBasePath(course_name):
-        if course_name is None:
-            return ExerciseFileRepository.BASE_PATH
-        return os.path.join(ExerciseFileRepository.BASE_PATH, "course", course_name)
+    def getBasePath(course_id):
+        if course_id is None:
+            return os.path.join(ExerciseFileRepository.BASE_PATH, "all")
+        return os.path.join(ExerciseFileRepository.BASE_PATH, "course", course_id)
 
     def getGroupList(self):
         '''Returns a list of group names.'''
-        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_name)
+        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_id)
         groups = []
         for root, dirs, files in os.walk(path_to_exercises):
             group_name = string.replace(root, path_to_exercises, '')
-            groups.append(ExerciseGroup(group_name, course_name=self.course_name))
+            groups.append(ExerciseGroup(group_name, course_id=self.course_id))
         return sorted([{
             "name": g.name,
             "url": g.url()} for g in groups if len(g.name) > 0
@@ -98,11 +108,11 @@ class ExerciseFileRepository(ExerciseRepository):
     def findFiles(self):
         self.reset()
 
-        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_name)
+        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_id)
 
         for root, dirs, files in os.walk(path_to_exercises):
             group_name = string.replace(root, path_to_exercises, '')
-            exercise_group = ExerciseGroup(group_name, course_name=self.course_name)
+            exercise_group = ExerciseGroup(group_name, course_id=self.course_id)
             exercises = []  
 
             sorted_files = sorted(files, key=lambda e: e.lower())
@@ -115,17 +125,29 @@ class ExerciseFileRepository(ExerciseRepository):
                 exercise_group.add(exercises)
                 self.groups.append(exercise_group)
                 self.exercises.extend(exercises)
+    
+    def createExercise(self, data):
+        exercise = Exercise(data)
+        group_name = data.pop('group_name', None)
+        result = {}
+        if exercise.isValid():
+            ef = ExerciseFile.create(course_id=self.course_id, group_name=group_name, exercise=exercise)
+            result['status'] = "success"
+            result['message'] = "Exercise created successfully!"
+            result['data'] = {"exercise": exercise.getData(), "url": ef.url()}
+        else:
+            result['status'] = "error"
+            result['message'] = "Exercise failed to save."
+            result['errors'] = exercise.errors
+        return result
 
 class Exercise:
     def __init__(self, data, meta=None):
         self.data = {}
-        self.meta = {}
         self.errors = []
         self.is_valid = True
 
         self.data.update(data)
-        if meta is not None:
-            self.meta.update(meta)
         
         self.processData()
         
@@ -135,12 +157,11 @@ class Exercise:
 
         if "lilypond_chords" in self.data:
             self.lilypond = ExerciseLilyPond(self.data['lilypond_chords'])
-
-        if self.lilypond.isValid():
-            self.data['chord'] = self.lilypond.toMIDI()
-        else:
-            self.is_valid = False
-            self.errors.extend(list(self.lilypond.errors))
+            if self.lilypond.isValid():
+                    self.data['chord'] = self.lilypond.toMIDI()
+            else:
+                self.is_valid = False
+                self.errors.extend(list(self.lilypond.errors))
         return self
 
     def isValid(self):
@@ -169,7 +190,6 @@ class ExerciseLilyPond:
     def parseChords(self, lpstring):
         chords = re.findall('<([^>]+)>', lpstring.strip())
         # re.findall('<([^>]+)>', "<e c' g' bf'>1\n<f \xNote c' \xNote f' a'>1")
-        # print chords
         return chords
     
     def parseChord(self, chordstring, start_octave=4):
@@ -325,10 +345,15 @@ class ExerciseFile:
         return self.group.previous(self)
 
     def url(self):
-        return reverse('lab:exercise', kwargs={
-            "course_name": self.group.course_name,
-            "group_name": self.group.name, 
-            "exercise_name": self.name
+        if self.group.course_id is None:
+            return reverse('lab:exercises', kwargs={
+                "group_name": self.group.name, 
+                "exercise_name": self.name
+            })
+        return reverse('lab:course-exercises', kwargs={
+                "course_id": self.group.course_id,
+                "group_name": self.group.name, 
+                "exercise_name": self.name           
         })
 
     def asJSON(self):
@@ -368,34 +393,35 @@ class ExerciseFile:
         return file_name
     
     @staticmethod
-    def create(data, **kwargs):
-        group_name = data['group_name']
-        course_name = kwargs.get("course_name", None)
-        exercise = kwargs.get("exercise", None)
+    def create(**kwargs):
+        course_id = kwargs.get("course_id", None)
+        group_name = kwargs.get('group_name', None)
         file_name = kwargs.get('file_name', None)
+        exercise = kwargs.get("exercise", None)
         
-        er = ExerciseFileRepository(course_name=course_name)
+        er = ExerciseFileRepository(course_id=course_id)
         group = er.findGroup(group_name)
         if group is None:
-            group = ExerciseGroup(group_name, course_name=course_name)
+            group_name = re.sub(r'[^a-zA-Z0-9._\-]', r'', group_name) # scrub group name
+            group = ExerciseGroup(group_name, course_id=course_id)
 
         group_size = group.size()
-        group_path = os.path.join(ExerciseFileRepository.getBasePath(course_name), group_name)
+        group_path = os.path.join(ExerciseFileRepository.getBasePath(course_id), group_name)
 
         if file_name is None:
             file_name = ExerciseFile.getNextFileName(group_path, group_size)
         
         ef = ExerciseFile(file_name, group, group_path)
         ef.exercise = exercise
-        print course_name, file_name, group_path, ef.getPathToFile()
         ef.save()
+        log.info("Created exercise. Course: %s Group: %s File: %s Path: %s" % (course_id, group_path, file_name, ef.getPathToFile()))
 
         return ef
 
 class ExerciseGroup:
     def __init__(self, group_name, *args, **kwargs):
         self.name = group_name
-        self.course_name = kwargs.get("course_name", None)
+        self.course_id = kwargs.get("course_id", None)
         if self.name.startswith('/'):
             self.name = self.name[1:]
         self.exercises = []
@@ -408,7 +434,9 @@ class ExerciseGroup:
         return self
 
     def url(self):
-        return reverse('lab:exercise-group', kwargs={"group_name": self.name, "course_name": self.course_name})
+        if self.course_id is None:
+            return reverse('lab:exercise-groups', kwargs={"group_name": self.name})
+        return reverse('lab:course-exercise-groups', kwargs={"group_name": self.name, "course_id": self.course_id})
 
     def first(self):
         if len(self.exercises) > 0:
