@@ -207,7 +207,7 @@ class ExerciseLilyPond:
 
         # normalize the chord string 
         chordstring = re.sub(r'\\xNote\s*', hidden_note_symbol, chordstring) # replace '\xNote' with just 'x'
-        chordstring = chordstring.lower() # normalize to lower case
+        chordstring = chordstring.lower().strip() # normalize to lower case
 
         # mutable variables used during parsing
         midi_chord = {"visible": [], "hidden": []}
