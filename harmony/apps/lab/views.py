@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
 
 from django_auth_lti.decorators import lti_role_required
+from django_auth_lti.verification import has_lti_roles
 from django_auth_lti import const
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
@@ -81,10 +82,9 @@ class PlayView(RequirejsTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PlayView, self).get_context_data(**kwargs)
-        if "LTI_LAUNCH" in self.request.session:
-            roles = self.request.session["LTI_LAUNCH"].get("roles", [])
-            has_manage_perm = "Instructor" in roles
-            context['has_manage_perm'] = has_manage_perm
+        context['has_manage_perm'] = False
+        if hasattr(self.request, 'LTI'): 
+            context['has_manage_perm'] = has_lti_roles(self.request, [const.ADMINISTRATOR,const.INSTRUCTOR])
         return context
 
 
@@ -113,11 +113,10 @@ class ManageView(RequirejsView, LoginRequiredMixin):
 class ExerciseView(RequirejsView):
     def get(self, request, course_id=None, group_name=None, exercise_name=None):
         context = {}
-
-        if "LTI_LAUNCH" in self.request.session:
-            roles = self.request.session["LTI_LAUNCH"].get("roles", [])
-            has_manage_perm = "Instructor" in roles
-            context['has_manage_perm'] = has_manage_perm
+        
+        context['has_manage_perm'] = False
+        if hasattr(request, 'LTI'): 
+            context['has_manage_perm'] = has_lti_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
 
         er = ExerciseRepository.create(course_id=course_id)
         if exercise_name is None:
