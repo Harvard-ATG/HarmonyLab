@@ -4,12 +4,10 @@
   "introText": "The same cadence in four parts, now in A minor. Memorize this also!",
   "key": "iA_",
   "chord": [
-
-    {"visible":[48,60,64,69],"hidden":[],},
-    {"visible":[50,59,65,69],"hidden":[],},
-    {"visible":[52,59,64,68],"hidden":[],},
-    {"visible":[45,60,64,69],"hidden":[],},
-
+    {"visible":[48,60,64,69],"hidden":[]},
+    {"visible":[50,59,65,69],"hidden":[]},
+    {"visible":[52,59,64,68],"hidden":[]},
+    {"visible":[45,60,64,69],"hidden":[]}
   ],
   "analysis": {
     "enabled": false,
@@ -18,14 +16,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

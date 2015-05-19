@@ -4,20 +4,19 @@
   "introText": "In the same vein, complete a series of V{z5} resolutions that form an ascending sequence.",
   "key": "jC_",
   "chord": [
-    {"visible":[52,72],"hidden":[70,67],},
-    {"visible":[53,72],"hidden":[69,65],},
-    {"visible":[54,74],"hidden":[72,69],},
-    {"visible":[55,74],"hidden":[71,67],},
-    {"visible":[56,76],"hidden":[74,71],},
-    {"visible":[57,76],"hidden":[72,69],},
-    {"visible":[57,72,76,77],"hidden":[],},
-    {"visible":[59,67,74,77],"hidden":[],},
-    {"visible":[60,67,72,76],"hidden":[],},
-    {"visible":[52,67,72,76],"hidden":[],},
-    {"visible":[53,69,72,74],"hidden":[],},
-    {"visible":[55,67,71,74],"hidden":[],},
-    {"visible":[48,64,72,72],"hidden":[],},
-
+    {"visible":[52,72],"hidden":[70,67]},
+    {"visible":[53,72],"hidden":[69,65]},
+    {"visible":[54,74],"hidden":[72,69]},
+    {"visible":[55,74],"hidden":[71,67]},
+    {"visible":[56,76],"hidden":[74,71]},
+    {"visible":[57,76],"hidden":[72,69]},
+    {"visible":[57,72,76,77],"hidden":[]},
+    {"visible":[59,67,74,77],"hidden":[]},
+    {"visible":[60,67,72,76],"hidden":[]},
+    {"visible":[52,67,72,76],"hidden":[]},
+    {"visible":[53,69,72,74],"hidden":[]},
+    {"visible":[55,67,71,74],"hidden":[]},
+    {"visible":[48,64,72,72],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -26,14 +25,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

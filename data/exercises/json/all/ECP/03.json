@@ -4,11 +4,10 @@
   "introText": "Can you repeat the progression you just played? Notice the root of each chord, now highlighted in red.",
   "key": "jC_",
   "chord": [
-
-    {"visible":[52,67,72],"hidden":[],},
-    {"visible":[],"hidden":[72,62,53],},
-    {"visible":[],"hidden":[71,62,55],},
-    {"visible":[],"hidden":[72,64,48],},
+    {"visible":[52,67,72],"hidden":[]},
+    {"visible":[],"hidden":[72,62,53]},
+    {"visible":[],"hidden":[71,62,55]},
+    {"visible":[],"hidden":[72,64,48]}
 
   ],
   "analysis": {
@@ -18,14 +17,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": true,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

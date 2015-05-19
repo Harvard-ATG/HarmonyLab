@@ -4,9 +4,8 @@
   "introText": "Complete the progression in the specified key. Match the given soprano and bass parts, and add alto and tenor parts with the right hand.",
   "key": "jF_",
   "chord": [
-    {"visible":[52,79],"hidden":[72,70],},
-    {"visible":[53,77],"hidden":[72,69],},
-
+    {"visible":[52,79],"hidden":[72,70]},
+    {"visible":[53,77],"hidden":[72,69]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

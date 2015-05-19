@@ -4,9 +4,8 @@
   "introText": "Preserving the same structure in each hand, complete the progression in the key shown.",
   "key": "jG_",
   "chord": [
-    {"visible":[54,62,69,72],"hidden":[],},
-    {"visible":[],"hidden":[71,67,62,55],},
-
+    {"visible":[54,62,69,72],"hidden":[]},
+    {"visible":[],"hidden":[71,67,62,55]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

@@ -4,12 +4,10 @@
   "introText": "Keeping the bass and alto parts where they were, take the soprano part down an octave to the tenor register.",
   "key": "iD_",
   "chord": [
-
-    {"visible":[],"hidden":[69,62,53],},
-    {"visible":[],"hidden":[64,62,55],},
-    {"visible":[],"hidden":[64,61,57],},
-    {"visible":[],"hidden":[65,62,50],},
-
+    {"visible":[],"hidden":[69,62,53]},
+    {"visible":[],"hidden":[64,62,55]},
+    {"visible":[],"hidden":[64,61,57]},
+    {"visible":[],"hidden":[65,62,50]}
   ],
   "analysis": {
     "enabled": true,
@@ -18,14 +16,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

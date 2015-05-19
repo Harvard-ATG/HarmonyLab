@@ -4,15 +4,14 @@
   "introText": "In the same vein, complete a series of V{z5} resolutions that form a descending sequence.",
   "key": "jC_",
   "chord": [
-    {"visible":[56,74],"hidden":[71,64],},
-    {"visible":[57,72],"hidden":[69,64],},
-    {"visible":[54,72],"hidden":[69,62],},
-    {"visible":[55,71],"hidden":[67,62],},
-    {"visible":[52,70],"hidden":[67,60],},
-    {"visible":[53,69],"hidden":[65,60],},
-    {"visible":[55,59,62,67],"hidden":[],},
-    {"visible":[48,60,64,67],"hidden":[],},
-
+    {"visible":[56,74],"hidden":[71,64]},
+    {"visible":[57,72],"hidden":[69,64]},
+    {"visible":[54,72],"hidden":[69,62]},
+    {"visible":[55,71],"hidden":[67,62]},
+    {"visible":[52,70],"hidden":[67,60]},
+    {"visible":[53,69],"hidden":[65,60]},
+    {"visible":[55,59,62,67],"hidden":[]},
+    {"visible":[48,60,64,67],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -21,14 +20,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

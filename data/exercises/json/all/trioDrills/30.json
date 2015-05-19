@@ -4,15 +4,15 @@
   "introText": "Here is another trio drill.",
   "key": "jG_",
   "chord": [
-    {"visible":[48,67,76],"hidden":[],},
-    {"visible":[47,67,74],"hidden":[],},
-    {"visible":[45,67,72],"hidden":[],},
-    {"visible":[45,64,72],"hidden":[],},
-    {"visible":[50,66,72],"hidden":[],},
-    {"visible":[50,67,71],"hidden":[],},
-    {"visible":[38,67,69],"hidden":[],},
-    {"visible":[38,66,69],"hidden":[],},
-    {"visible":[43,67,71],"hidden":[],},
+    {"visible":[48,67,76],"hidden":[]},
+    {"visible":[47,67,74],"hidden":[]},
+    {"visible":[45,67,72],"hidden":[]},
+    {"visible":[45,64,72],"hidden":[]},
+    {"visible":[50,66,72],"hidden":[]},
+    {"visible":[50,67,71],"hidden":[]},
+    {"visible":[38,67,69],"hidden":[]},
+    {"visible":[38,66,69],"hidden":[]},
+    {"visible":[43,67,71],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -22,14 +22,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": true,
     "mode": {
       "roothighlight": false,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

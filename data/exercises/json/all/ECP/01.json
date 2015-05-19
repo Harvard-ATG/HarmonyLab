@@ -4,12 +4,10 @@
   "introText": "Match this common cadential bassline on your keyboard.",
   "key": "jC_",
   "chord": [
-
-    {"visible":[52],"hidden":[],},
-    {"visible":[53],"hidden":[],},
-    {"visible":[55],"hidden":[],},
-    {"visible":[48],"hidden":[],},
-
+    {"visible":[52],"hidden":[]},
+    {"visible":[53],"hidden":[]},
+    {"visible":[55],"hidden":[]},
+    {"visible":[48],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -18,14 +16,14 @@
       "scale_degrees": false,
       "solfege": true,
       "roman_numerals": false,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

@@ -4,9 +4,8 @@
   "introText": "Translate the progression to D minor.",
   "key": "iD_",
   "chord": [
-    {"visible":[49,69,76,79],"hidden":[],},
-    {"visible":[],"hidden":[77,74,69,50],},
-
+    {"visible":[49,69,76,79],"hidden":[]},
+    {"visible":[],"hidden":[77,74,69,50]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

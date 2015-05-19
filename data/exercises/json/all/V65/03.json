@@ -4,9 +4,8 @@
   "introText": "Match the outer parts; from memory, complete the inner parts with the right hand.",
   "key": "jC_",
   "chord": [
-    {"visible":[47,77],"hidden":[74,67],},
-    {"visible":[48,76],"hidden":[72,67],},
-
+    {"visible":[47,77],"hidden":[74,67]},
+    {"visible":[48,76],"hidden":[72,67]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

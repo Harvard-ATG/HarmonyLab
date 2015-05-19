@@ -4,9 +4,8 @@
   "introText": "Complete the progression in the specified key. Match the given soprano and bass parts, and add alto and tenor parts with the right hand.",
   "key": "iE_",
   "chord": [
-    {"visible":[51,78],"hidden":[71,69],},
-    {"visible":[52,76],"hidden":[71,67],},
-
+    {"visible":[51,78],"hidden":[71,69]},
+    {"visible":[52,76],"hidden":[71,67]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

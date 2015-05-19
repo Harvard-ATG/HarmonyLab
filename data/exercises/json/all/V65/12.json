@@ -4,15 +4,14 @@
   "introText": "You should now be able to resolve V{z5} in three different configurations in any given key. Before practicing this, review the four elements of the voice leading by playing the four note-pairs in succession.",
   "key": "jC_",
   "chord": [
-    {"visible":[47],"hidden":[],},
-    {"visible":[48],"hidden":[],},
-    {"visible":[77],"hidden":[],},
-    {"visible":[76],"hidden":[],},
-    {"visible":[67],"hidden":[],},
-    {"visible":[67],"hidden":[],},
-    {"visible":[74],"hidden":[],},
-    {"visible":[72],"hidden":[],},
-
+    {"visible":[47],"hidden":[]},
+    {"visible":[48],"hidden":[]},
+    {"visible":[77],"hidden":[]},
+    {"visible":[76],"hidden":[]},
+    {"visible":[67],"hidden":[]},
+    {"visible":[67],"hidden":[]},
+    {"visible":[74],"hidden":[]},
+    {"visible":[72],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -21,14 +20,14 @@
       "scale_degrees": true,
       "solfege": false,
       "roman_numerals": false,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

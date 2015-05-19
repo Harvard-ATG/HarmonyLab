@@ -4,9 +4,8 @@
   "introText": "Repeat the same progression and memorize it! Get ready to repeat without the notation.",
   "key": "jC_",
   "chord": [
-    {"visible":[47,67,74,77],"hidden":[],},
-    {"visible":[48,67,72,76],"hidden":[],},
-
+    {"visible":[47,67,74,77],"hidden":[]},
+    {"visible":[48,67,72,76],"hidden":[]}
   ],
   "analysis": {
     "enabled": true,
@@ -15,14 +14,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }

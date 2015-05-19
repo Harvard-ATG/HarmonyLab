@@ -4,12 +4,10 @@
   "introText": "How does the same progression sound in the parallel minor, D minor? The Roman numeral analysis will help.",
   "key": "iD_",
   "chord": [
-
-    {"visible":[74],"hidden":[69,53],},
-    {"visible":[74],"hidden":[64,55],},
-    {"visible":[73],"hidden":[64,57],},
-    {"visible":[74],"hidden":[65,50],},
-
+    {"visible":[74],"hidden":[69,53]},
+    {"visible":[74],"hidden":[64,55]},
+    {"visible":[73],"hidden":[64,57]},
+    {"visible":[74],"hidden":[65,50]}
   ],
   "analysis": {
     "enabled": true,
@@ -18,14 +16,14 @@
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 }
