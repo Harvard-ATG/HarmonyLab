@@ -27,6 +27,15 @@ class ExerciseRepository(object):
     def findExerciseByGroup(self, group, exercise):
         raise Exception("subclass responsibility")
 
+    def createExercise(self, data):
+        raise Exception("subclass responsibility")
+
+    def deleteExercise(self, group_name, exercise_name):
+        raise Exception("subclass responsibility")
+
+    def deleteGroup(self, group_name):
+        raise Exception("subclass responsibility")
+
     def reset(self):
         self.exercises = []
         self.groups = []
@@ -121,7 +130,7 @@ class ExerciseFileRepository(ExerciseRepository):
                 exercise_group.add(exercise_files)
                 self.groups.append(exercise_group)
                 self.exercises.extend(exercise_files)
-    
+
     def createExercise(self, data):
         exercise = Exercise(data)
         group_name = data.pop('group_name', None)

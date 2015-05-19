@@ -2,6 +2,10 @@ import unittest
 
 from ..objects import ExerciseLilyPond
 
+class ExerciseRepositoryTest(unittest.TestCase):
+    def setUp(self):
+        pass
+
 class ExerciseLilyPondTest(unittest.TestCase):
     def setUp(self):
         pass
