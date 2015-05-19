@@ -106,6 +106,7 @@ define([
 		 */
 		initControlsLayout: function() {
 			this.containerEl.children(".accordion").accordion({
+				active: false,
 				collapsible: true,
 				heightStyle: "content"
 			});
