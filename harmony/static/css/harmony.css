@@ -325,32 +325,43 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 	margin: .5em 0;
 	padding: .5em;
 }
-ul.exercise-groups {
+ul.exercise-groups, ul.exercise-groups ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 }
-ul.exercise-groups > li {
-	margin: 5px 0;
-	clear: both;
+ul.exercise-groups {
 }
-ul.exercise-groups li > a,
-ul.exercise-groups li > span {
-	padding: .5em 1em;
-	border: 1px solid #000;
-	background-color: #fff;
+ul.exercise-groups .btn {
+	padding: .5em;
+}
+ul.exercise-groups > li {
 	display: block;
 }
-ul.exercise-groups li > a:hover,
-ul.exercise-groups li > span:hover {
-	background-color: #ccc;
+ul.exercise-groups > li li {
+	padding-left: 2em;
 }
-ul.exercise-groups li ul {
-	list-style-type: none;
+ul.exercise-groups .group {
+	display: block;
+	border-bottom: 1px solid #666;
+	font-size: 125%;
 }
-ul.exercise-groups li li {
-	float: left;
+ul.exercise-groups .btn.btn-group,
+ul.exercise-groups .btn.btn-exercise,
+ul.exercise-groups .actions{
+	display: inline-block;
 }
+ul.exercise-groups .actions {
+	
+}
+ul.exercise-groups li.even {
+	background-color: inherit;
+}
+ul.exercise-groups li.odd {
+	background-color: rgba(0,0,0,.1);
+}
+
+
 
 /*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */

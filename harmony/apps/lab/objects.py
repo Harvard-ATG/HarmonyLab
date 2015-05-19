@@ -113,18 +113,18 @@ class ExerciseFileRepository(ExerciseRepository):
         for root, dirs, files in os.walk(path_to_exercises):
             group_name = string.replace(root, path_to_exercises, '')
             exercise_group = ExerciseGroup(group_name, course_id=self.course_id)
-            exercises = []  
+            exercise_files = []  
 
             sorted_files = sorted(files, key=lambda e: e.lower())
             for file_name in sorted_files:
                 if file_name.endswith('.json'):
                     exercise_file = ExerciseFile(file_name, exercise_group, root)
-                    exercises.append(exercise_file)
+                    exercise_files.append(exercise_file)
 
-            if len(exercises) > 0:
-                exercise_group.add(exercises)
+            if len(exercise_files) > 0:
+                exercise_group.add(exercise_files)
                 self.groups.append(exercise_group)
-                self.exercises.extend(exercises)
+                self.exercises.extend(exercise_files)
     
     def createExercise(self, data):
         exercise = Exercise(data)
@@ -140,6 +140,24 @@ class ExerciseFileRepository(ExerciseRepository):
             result['message'] = "Exercise failed to save."
             result['errors'] = exercise.errors
         return result
+    
+    def deleteExercise(self, group_name, exercise_name):
+        exercise = self.findExerciseByGroup(group_name, exercise_name)
+        if exercise is not None:
+            try:
+                exercise.delete()
+            except OSError as e:
+                return (False, str(e))
+        return (True, "Deleted exercise %s of group %s" % (exercise_name, group_name))
+
+    def deleteGroup(self, group_name):
+        group = self.findGroup(group_name)
+        if group is not None:
+            try:
+                group.delete()
+            except OSError as e:
+                return (False, str(e))
+        return (True, "Deleted exercise group %s" % (group_name))
 
 class Exercise:
     def __init__(self, data, meta=None):
@@ -327,6 +345,17 @@ class ExerciseFile:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
 
         return True
+    
+    def delete(self):
+        if not os.path.exists(self.getPathToFile()):
+            return False
+        os.remove(self.getPathToFile())
+        try:
+            os.rmdir(self.group_path)
+            log.info("Removed group directory because it was empty: %s" % self.group_path)
+        except OSError:
+            pass
+        return True
 
     def next(self):
         return self.group.next(self)
@@ -432,6 +461,10 @@ class ExerciseGroup:
     def add(self, exercises):
         self.exercises.extend(exercises)
         return self
+    
+    def delete(self):
+        for exercise in self.exercises:
+            exercise.delete()
 
     def url(self):
         if self.course_id is None:

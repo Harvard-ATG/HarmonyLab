@@ -8,9 +8,12 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
+
+from django_auth_lti.decorators import lti_role_required
+from django_auth_lti import const
 from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
-#from .exercise import Exercise
+
 from .objects import ExerciseRepository
 
 import json
@@ -86,23 +89,15 @@ class PlayView(RequirejsTemplateView):
 
 
 class ManageView(RequirejsView, LoginRequiredMixin):
+    #@method_decorator(login_required)
+    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def get(self, request):
-        context = {}
-        
-        course_id = ''
-        if "LTI_LAUNCH" in request.session:
-            course_id = request.session["LTI_LAUNCH"].get("context_id", None)
-            context['course_label'] = request.session["LTI_LAUNCH"].get("context_label")
-        else:
-            raise Http404;
-        
-        roles = self.request.session["LTI_LAUNCH"].get("roles", [])
-        has_manage_perm = "Instructor" in roles
-        if not has_manage_perm:
-            raise PermissionDenied
-        
+        course_id = request.LTI.get("context_id", None)
         er = ExerciseRepository.create(course_id=course_id)
-
+        
+        context = {
+            "course_label": request.LTI.get("context_label", "")
+        }
         manage_params = {
             "exercise_api_url": reverse('lab:api-exercises')+'?course_id='+course_id,
             "group_list": er.getGroupList(),
@@ -190,27 +185,36 @@ class APIExerciseView(CsrfExemptMixin, View):
 
         return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), content_type='application/json')
  
-    @method_decorator(login_required)   
+    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def post(self, request):
-        if not ("LTI_LAUNCH" in request.session):
-            raise Http404
-
-        roles = self.request.session["LTI_LAUNCH"].get("roles", [])
-        has_manage_perm = "Instructor" in roles
-        if not has_manage_perm:
-            raise PermissionDenied
-            
-        course_id= request.session["LTI_LAUNCH"].get("context_id")
+        course_id= request.LTI.get("context_id")
         exercise_data = json.loads(request.POST.get('exercise', None))
         result = ExerciseRepository.create(course_id=course_id).createExercise(exercise_data)
 
         return HttpResponse(json.dumps(result), content_type='application/json')
     
-    def put(self, request):
-        return HttpResponse('put')
-    
+    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def delete(self, request):
-        return HttpResponse('delete')
+        course_id = request.LTI.get("context_id")
+        group_name = request.GET.get('group_name', None)
+        exercise_name = request.GET.get('exercise_name', None)
+
+        er = ExerciseRepository.create(course_id=course_id)
+        deleted, description = (False, "No action taken")
+        if group_name is not None and exercise_name is not None:
+            deleted, description = er.deleteExercise(group_name, exercise_name)
+        elif group_name is not None:
+            deleted, description = er.deleteGroup(group_name)
+
+        result = {}
+        if deleted:
+            result['status'] = "success"
+            result['description'] = description
+        else:
+            result['status'] = "failure"
+            result['description'] = "Error: %s" % description
+            
+        return HttpResponse(json.dumps(result), content_type='application/json')
 
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
@@ -329,3 +333,6 @@ def logout_view(request):
 
 def logged_out_view(request):
     return HttpResponse('Logged out successfully.')
+
+def not_authorized(request):
+    return HttpResponse('Unauthorized', status=401)

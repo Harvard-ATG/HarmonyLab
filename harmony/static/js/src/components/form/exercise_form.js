@@ -22,7 +22,11 @@ define([
     var ExerciseFormComponent = function(settings) {
 		this.settings = settings || {};
 		this.widgets = {};
-		this.$el = $("#exerciseform");
+		this.$el = $(settings.el || "#exerciseform");
+		this.$new_exercise_group = $("input[name=new_exercise_group]", this.$el);
+		this.$select_group = $("select[name=exercise_group]", this.$el);
+		this.$exercise_chords = $("textarea[name=exercise_chords]", this.$el);
+		this.$exercise_prompt = $("textarea[name=exercise_prompt]", this.$el);
 	};
     
 	ExerciseFormComponent.prototype = new Component();
@@ -46,10 +50,10 @@ define([
 	 */   
 	ExerciseFormComponent.prototype.initListeners = function() {
 		var that = this;
-		var $new_exercise_group = $("#new_exercise_group");
-		var $select_group = $("select[name=exercise_group]");
-		var $exercise_chords = $("textarea[name=exercise_chords]");
-		var $exercise_prompt = $("textarea[name=exercise_prompt]");
+		var $new_exercise_group = this.$new_exercise_group;
+		var $select_group = this.$select_group;
+		var $exercise_chords = this.$exercise_chords;
+		var $exercise_prompt = this.$exercise_prompt;
 		
 		$(".exercise_chord_help_btn").on('mousedown', function(e) {
 			$(".exercise_chord_help").toggle();
@@ -147,7 +151,7 @@ define([
 				description: "Please enter at least one chord enclosed in angle brackes.",
 				type: "error"
 			});
-			highlight_error($("textarea[name=exercise_chords]"));
+			highlight_error(this.$exercise_chords);
 		}
 		
 		return is_valid;
@@ -186,24 +190,44 @@ define([
 			"url": url,
 			"method": "POST",
 			"data": {'exercise': JSON.stringify(data)},
-			"dataType": "json"
+			"dataType": "json",
+			"statusCode": {
+				"403": function() {
+					that.notify({
+						title: "Permission Denied",
+						description: "<p>You must be logged in as an instructor or administrator to submit an exercise.</p>",
+						type: "error"
+					});					
+				},
+				"500": function() {
+					that.notify({
+						title: "Server Error",
+						description: "<p>An error ocurred on the server while attempting to save the exercise.</p>",
+						type: "error"
+					});						
+				}
+			}
 		}).done(function(response, textStatus, jqXHR) {
-			if (response.status == "success") {
-				that.notify({
-					title: "Exercise Saved",
-					description: '<a href="'+response.data.url+'">Exercise</a> saved successfully!',
-					type: "success"
-				});
-			} else if(response.status == "error") {
-				errors = '';
-				$.each(response.errors, function(idx, val) {
-					errors += "<p>" + val + "</p>";
-				});
-				that.notify({
-					title: "Error",
-					description: "<p>" + response.message + "</p><p>" + errors + "</p>",
-					type: "error"
-				});
+			if ("status" in response) {
+				if (response.status == "success") {
+					that.notify({
+						title: "Exercise Saved",
+						description: 'Exercise saved successfully! <a href="'+response.data.url+'">Click to view exercise</a>.',
+						type: "success"
+					});
+				} else if(response.status == "error") {
+					errors = '';
+					$.each(response.errors, function(idx, val) {
+						errors += "<p>" + val + "</p>";
+					});
+					that.notify({
+						title: "Error",
+						description: "<p>" + response.message + "</p><p>" + errors + "</p>",
+						type: "error"
+					});
+				}
+			} else {
+				console.log("Unrecognized resopnse status:", response, textStatus);
 			}
 
 			that.trigger("afterSubmit", response);
@@ -272,9 +296,8 @@ define([
 	 * @return undefined
 	 */
 	ExerciseFormComponent.prototype.updateGroupNames = function(group_list) {
-		var $select = $('select[name="exercise_group"]');
-		$select.html('');
-		$select.append('<option value="">----</option>');
+		var $select = this.$select_group;
+		$select.html('').append('<option value="">----</option>');
 		$.each(group_list, function(index, group_list) { 
 			$select.append('<option value="'+group_list.name+'">'+group_list.name+'</option>');
 		});
@@ -296,15 +319,14 @@ define([
 	 * @return object
 	 */		
 	ExerciseFormComponent.prototype.collectFormData = function() {
-		var prompt = this.$el.find('textarea[name=exercise_prompt]').val();
+		var prompt = this.$exercise_prompt.val();
 		var key = this.widgets.keySignature.keySignature.getKey();
 		var key_signature = this.widgets.keySignature.keySignature.getSignatureSpec();
-		var chords = this.$el.find('textarea[name=exercise_chords]').val();
+		var chords = this.$exercise_chords.val();
 		var analysis_settings = this.widgets.analyze.getState();
 		var highlight_settings = this.widgets.highlight.getState();
-		var exercise_group = this.$el.find('select[name=exercise_group]').val();
-		var new_exercise_group = this.$el.find('input[name=new_exercise_group]').val();
-		new_exercise_group = this.cleanGroupName(new_exercise_group);
+		var exercise_group = this.$select_group.val();
+		var new_exercise_group = this.cleanGroupName(this.$new_exercise_group.val());
 		
 		if (new_exercise_group) {
 			exercise_group = new_exercise_group;

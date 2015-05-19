@@ -2,6 +2,7 @@ define([
 	'module',
 	'lodash',
 	'jquery',
+	'app/components/events',
 	'app/components/app',
 	'app/components/ui/main_menu',
 	'app/components/notifications',
@@ -10,6 +11,7 @@ define([
 	module,
 	_,
 	$,
+	EVENTS,
 	AppComponent,
 	MainMenuComponent,
 	NotificationsComponent,
@@ -90,42 +92,130 @@ define([
 	AppManageComponent.prototype.initComponent = function() {
 		AppComponent.prototype.initComponent.apply(this, arguments);
 		console.log("init component manage");
-		$("#tabs").tabs();
+
+		this.$exerciseList = $("#tab-exercise-list");
+		this.initListeners();
 		this.updateExerciseList();
+	};
+
+	AppManageComponent.prototype.initListeners = function() {
+		var that = this;
+		var config = module.config();
+		var exercise_api_url = config.exercise_api_url;
+
+		var handleToggle = function(evt, $el) {
+			toggleCls = $el.data('toggle-cls').split(' ');
+			$el.closest(".group").next('ul').slideToggle({duration:400,easing:"easeOutCubic"});
+			$el.removeClass(toggleCls[0]).addClass(toggleCls[1])
+			toggleCls.reverse();
+			$el.data('toggle-cls', toggleCls.join(' '));
+		};
+
+		var handleDelete = function(evt, $el) {
+			var data = {
+				exercise_name: $el.data('exercise-name'),
+				group_name: $el.data('group-name')
+			};
+			var confirmed = confirm("Are you sure you want to delete this exercise or group of exercises?");
+			if (!confirmed) {
+				return false;
+			}
+			var delete_url = exercise_api_url + "&group_name="+data.group_name;
+			if (data.exercise_name) {
+				delete_url+="&exercise_name="+data.exercise_name
+			}
+			
+			$.ajax({
+				url:delete_url,
+				method: "DELETE",
+				dataType: "json",
+			}).done(function(response, textStatus, jqXHR) {
+				that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+					title: response.description,
+					type: "success"
+				});
+				that.updateExerciseList();
+			}).fail(function(jqXHR, textStatus) {
+				that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+					title: "Error deleting exercise item ("+textStatus+")",
+					type: "error"
+				});	
+			});
+		};
+		
+		this.$exerciseList.on("mousedown", function(e) {
+			var $target = $(e.target);
+			if ($target.is("[data-toggle-cls]")) {
+				handleToggle(e, $target);
+			} else if ($target.is('.btn-toggle')) {
+				handleToggle(e, $target.find('[data-toggle-cls]'));
+			} else if ($target.is(".btn-delete")) {
+				handleDelete(e, $target);
+			}
+		});
+		this.$exerciseList.on("mouseover mouseout", function(e) {
+			var $target = $(e.target);
+			if ($target.closest(".js-row").length > 0) {
+				$target.closest(".js-row").find(".actions").first().toggle();
+			}
+		});
 	};
 	
 	AppManageComponent.prototype.updateExerciseList = function() {
+		var that = this;
 		var config = module.config();
+		var $el = this.$exerciseList;
 		var exercise_api_url = config.exercise_api_url;
-		var $el = $("#tab-exercise-list");
 		
 		$.ajax(exercise_api_url,{
 			method: "GET"
 		}).done(function(response, textStatus, jqXHR) {
-			var groups = response.data.groups;
-			var $ul = $('<ul class="exercise-groups"></ul>');
-			
-			if (groups.length > 0) {
-				$.each(groups, function(i, group) {
-					var $li = $('<li>' + '<a href="'+group.url+'" target="_blank">'+group.name+'</a></li>');
-					if (group.data.exercises.length > 0) {
-						$li.append("<ul></ul>");
-						$.each(group.data.exercises, function(j, exercise) {
-							$li.children('ul').append('<li>'+'<a href="'+exercise.url+'" target="_blank">'+exercise.name+'</a></li>')
-						});
-					}
-					$ul.append($li);
-				});
-				
-				$el.html("").append($ul);				
-			} else {
-				$el.html("No exercises found.");
-			}
-
-			
+			that.renderExerciseList(response.data);	
 		}).fail(function(jqXHR, textStatus) {
 			$el.html("").append("Error loading exercise list.");
 		});
+	};
+	
+	AppManageComponent.prototype.renderExerciseList = function(data) {
+		var $ul = $('<ul class="exercise-groups"></ul>');
+		var $el = this.$exerciseList;
+		var groups = data.groups;
+
+		if (groups.length == 0) {
+			$el.html("No exercises found.");
+		} else {
+			$.each(groups, function(i, group) {
+				var $li = $([
+					'<li class="js-row">',
+						'<div class="group">',
+							'<span class="btn btn-toggle"><i class="ion-arrow-down-b" data-toggle-cls="ion-arrow-down-b ion-arrow-right-b">&nbsp;</i></span>',
+							'<a class="btn btn-group" href="'+group.url+'" target="_blank">Group: <b>'+group.name+'</b></a>',
+							'<div class="actions" style="display:none">',
+								'<i class="ion-close-circled btn btn-delete" data-group-name="'+group.name+'"></i>',
+							'</div>',
+						'</div>',
+					'</li>'
+				].join(''));
+				if (group.data.exercises.length > 0) {
+					$li.append("<ul></ul>");
+					$.each(group.data.exercises, function(j, exercise) {
+						var $childLi = $([
+							'<li class="js-row">',
+								'<a class="btn btn-exercise" href="'+exercise.url+'" target="_blank">Exercise: <b>'+exercise.name+'</b></a>',
+								'<div class="actions" style="display:none">',
+									'<i class="ion-close-circled btn btn-delete" data-exercise-name="'+exercise.name+'" data-group-name="'+group.name+'"></i>',
+								'</div>',
+							'</li>'
+						].join(''));
+						$childLi.addClass(j % 2 == 0 ? "odd" : "even");
+						$li.children('ul').append($childLi);
+					});
+				}
+				$ul.append($li);
+			});
+			
+			$el.html("").append($ul);				
+		}
 	};
 	
 	AppManageComponent.prototype.onAfterSubmit = function() {
