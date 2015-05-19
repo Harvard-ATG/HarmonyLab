@@ -360,8 +360,20 @@ ul.exercise-groups li.even {
 ul.exercise-groups li.odd {
 	background-color: rgba(0,0,0,.1);
 }
-
-
+ul.menu-group-list {
+	list-style: disc;
+	margin: .5em 0;
+	max-height: 250px;
+	overflow: auto;
+}
+ul.menu-group-list a {
+	display: block;
+	padding: .25em;
+}
+ul.menu-group-list li {
+	margin: 0;
+	padding: 0;
+}
 
 /*--------------------------------------------------*/
 /* Custom Icons for this project by Jeff Martini */

@@ -82,43 +82,27 @@ class PlayView(RequirejsTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PlayView, self).get_context_data(**kwargs)
+
         context['has_manage_perm'] = False
+        context['group_list'] = []
         if hasattr(self.request, 'LTI'): 
+            course_id = self.request.LTI.get("context_id", None)
+            er = ExerciseRepository.create(course_id=course_id)
+            context['group_list'] = er.getGroupList()
             context['has_manage_perm'] = has_lti_roles(self.request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+
         return context
-
-
-class ManageView(RequirejsView, LoginRequiredMixin):
-    #@method_decorator(login_required)
-    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
-    def get(self, request):
-        course_id = request.LTI.get("context_id", None)
-        er = ExerciseRepository.create(course_id=course_id)
-        
-        context = {
-            "course_label": request.LTI.get("context_label", "")
-        }
-        manage_params = {
-            "exercise_api_url": reverse('lab:api-exercises')+'?course_id='+course_id,
-            "group_list": er.getGroupList(),
-        }
-
-        self.requirejs_context.set_app_module('app/components/app/manage')
-        self.requirejs_context.set_module_params('app/components/app/manage', manage_params)
-        self.requirejs_context.add_to_view(context)
-        
-        return render(request, "manage.html", context)
-
 
 class ExerciseView(RequirejsView):
     def get(self, request, course_id=None, group_name=None, exercise_name=None):
         context = {}
-        
-        context['has_manage_perm'] = False
-        if hasattr(request, 'LTI'): 
-            context['has_manage_perm'] = has_lti_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
-
         er = ExerciseRepository.create(course_id=course_id)
+        
+        context['group_list'] = er.getGroupList()
+        context['has_manage_perm'] = False
+        if hasattr(self.request, 'LTI'): 
+            context['has_manage_perm'] = has_lti_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+        print context
         if exercise_name is None:
             group = er.findGroup(group_name)
             if group is None:
@@ -144,6 +128,28 @@ class ExerciseView(RequirejsView):
         self.requirejs_context.add_to_view(context)
         
         return render(request, "exercise.html", context)
+
+
+class ManageView(RequirejsView, LoginRequiredMixin):
+    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
+    def get(self, request):
+        course_id = request.LTI.get("context_id", None)
+        er = ExerciseRepository.create(course_id=course_id)
+        
+        context = {
+            "course_label": request.LTI.get("context_label", ""),
+        }
+        manage_params = {
+            "exercise_api_url": reverse('lab:api-exercises')+'?course_id='+course_id,
+            "group_list": er.getGroupList(),
+        }
+
+        self.requirejs_context.set_app_module('app/components/app/manage')
+        self.requirejs_context.set_module_params('app/components/app/manage', manage_params)
+        self.requirejs_context.add_to_view(context)
+        
+        return render(request, "manage.html", context)
+
 
 class APIView(View):
     api_version = 1

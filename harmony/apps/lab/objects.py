@@ -73,15 +73,11 @@ class ExerciseFileRepository(ExerciseRepository):
 
     def getGroupList(self):
         '''Returns a list of group names.'''
-        path_to_exercises = ExerciseFileRepository.getBasePath(self.course_id)
-        groups = []
-        for root, dirs, files in os.walk(path_to_exercises):
-            group_name = string.replace(root, path_to_exercises, '')
-            groups.append(ExerciseGroup(group_name, course_id=self.course_id))
         return sorted([{
             "name": g.name,
-            "url": g.url()} for g in groups if len(g.name) > 0
-        ], key=lambda g:g['name'].lower())
+            "url": g.url(),
+            "size": g.size(),
+        } for g in self.groups if len(g.name) > 0], key=lambda g:g['name'].lower())           
 
     def findGroup(self, group_name):
         '''Returns a single group (group names should be distinct).'''

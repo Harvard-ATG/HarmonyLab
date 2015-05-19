@@ -1,6 +1,17 @@
 {% extends "_menu.html" %}
 {% block menu_content %}
 <div class="accordion">
+    {% if group_list %}
+    <h3>Exercises</h3>
+    <div class="content-area-section" style="margin:0;padding:0">
+        <ul class="menu-group-list">
+            {% for group in group_list %}
+                <li><a href="{{group.url}}">{{group.name}} ({{group.size}})</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <h3>Notation</h3>
     <div class="content-area-section">
         <div class="content-area-row js-analyze-widget"></div>
