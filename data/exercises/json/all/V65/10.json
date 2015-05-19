@@ -1,0 +1,28 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Back in C major, match the resolution of V{z5} with a different configuration of the upper voices. The SAT parts in the right hand follow the same voice leading but the parts are rotated.",
+  "key": "jC_",
+  "chord": [
+    {"visible":[47,65,67,74],"hidden":[],},
+    {"visible":[48,64,67,72],"hidden":[],},
+
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

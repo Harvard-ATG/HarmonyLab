@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the descending major scale.",
+  "key": "jD_",
+  "chord": [
+    {"visible":[74],"hidden":[],},
+    {"visible":[],"hidden":[73],},
+    {"visible":[],"hidden":[71],},
+    {"visible":[],"hidden":[69],},
+    {"visible":[],"hidden":[67],},
+    {"visible":[],"hidden":[66],},
+    {"visible":[],"hidden":[64],},
+    {"visible":[],"hidden":[62],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

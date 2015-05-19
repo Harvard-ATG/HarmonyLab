@@ -1,0 +1,31 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Now repeat the progression in D major, transposing up a major second.",
+  "key": "jD_",
+  "chord": [
+
+    {"visible":[54,69,74],"hidden":[],},
+    {"visible":[],"hidden":[74,64,55],},
+    {"visible":[],"hidden":[73,64,57],},
+    {"visible":[],"hidden":[74,66,50],},
+
+  ],
+  "analysis": {
+    "enabled": false,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

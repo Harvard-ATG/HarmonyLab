@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the descending minor scale.",
+  "key": "iG_",
+  "chord": [
+    {"visible":[79],"hidden":[],},
+    {"visible":[],"hidden":[77],},
+    {"visible":[],"hidden":[75],},
+    {"visible":[],"hidden":[74],},
+    {"visible":[],"hidden":[72],},
+    {"visible":[],"hidden":[70],},
+    {"visible":[],"hidden":[69],},
+    {"visible":[],"hidden":[67],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

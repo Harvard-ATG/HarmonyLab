@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the descending minor scale.",
+  "key": "iAb",
+  "chord": [
+    {"visible":[80],"hidden":[],},
+    {"visible":[],"hidden":[78],},
+    {"visible":[],"hidden":[76],},
+    {"visible":[],"hidden":[75],},
+    {"visible":[],"hidden":[73],},
+    {"visible":[],"hidden":[71],},
+    {"visible":[],"hidden":[70],},
+    {"visible":[],"hidden":[68],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

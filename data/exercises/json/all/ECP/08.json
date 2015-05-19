@@ -1,0 +1,31 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Play the same four-part progression in F major from the given starting position.",
+  "key": "jF_",
+  "chord": [
+
+    {"visible":[45,69,72,77],"hidden":[],},
+    {"visible":[],"hidden":[77,74,67,46],},
+    {"visible":[],"hidden":[76,72,67,48],},
+    {"visible":[],"hidden":[77,72,69,41],},
+
+  ],
+  "analysis": {
+    "enabled": false,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

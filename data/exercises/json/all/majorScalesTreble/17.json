@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the ascending major scale.",
+  "key": "jAb",
+  "chord": [
+    {"visible":[68],"hidden":[],},
+    {"visible":[],"hidden":[70],},
+    {"visible":[],"hidden":[72],},
+    {"visible":[],"hidden":[73],},
+    {"visible":[],"hidden":[75],},
+    {"visible":[],"hidden":[77],},
+    {"visible":[],"hidden":[79],},
+    {"visible":[],"hidden":[80],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

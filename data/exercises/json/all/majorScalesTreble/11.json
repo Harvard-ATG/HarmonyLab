@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the ascending major scale.",
+  "key": "jF_",
+  "chord": [
+    {"visible":[65],"hidden":[],},
+    {"visible":[],"hidden":[67],},
+    {"visible":[],"hidden":[69],},
+    {"visible":[],"hidden":[70],},
+    {"visible":[],"hidden":[72],},
+    {"visible":[],"hidden":[74],},
+    {"visible":[],"hidden":[76],},
+    {"visible":[],"hidden":[77],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

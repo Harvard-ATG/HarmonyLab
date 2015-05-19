@@ -1,0 +1,28 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Repeat the entire progression from memory.",
+  "key": "jC_",
+  "chord": [
+    {"visible":[],"hidden":[77,74,67,47],},
+    {"visible":[],"hidden":[76,72,67,48],},
+
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

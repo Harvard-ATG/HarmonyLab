@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the ascending minor scale.",
+  "key": "iC#",
+  "chord": [
+    {"visible":[61],"hidden":[],},
+    {"visible":[],"hidden":[63],},
+    {"visible":[],"hidden":[64],},
+    {"visible":[],"hidden":[66],},
+    {"visible":[],"hidden":[68],},
+    {"visible":[],"hidden":[70],},
+    {"visible":[],"hidden":[72],},
+    {"visible":[],"hidden":[73],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

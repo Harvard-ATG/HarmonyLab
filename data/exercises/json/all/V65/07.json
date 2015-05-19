@@ -1,0 +1,28 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Preserving the same structure in each hand, complete the progression in the key shown.",
+  "key": "iA_",
+  "chord": [
+    {"visible":[56,64,71,74],"hidden":[],},
+    {"visible":[],"hidden":[72,69,64,57],},
+
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

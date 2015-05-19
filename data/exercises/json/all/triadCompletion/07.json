@@ -1,0 +1,7 @@
+{
+	"type": "matching",
+	"introText": "Complete the diatonic triad (in close position) above the given root.",
+	"reviewText": "Good job!",
+	"key": "jC_",
+	"chord": [{"visible":[71],"hidden":[74,77]}]
+}

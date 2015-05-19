@@ -1,0 +1,28 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the progression in the specified key. Match the given soprano and bass parts, and add alto and tenor parts with the right hand.",
+  "key": "jA_",
+  "chord": [
+    {"visible":[56,71],"hidden":[64,62],},
+    {"visible":[57,69],"hidden":[64,61],},
+
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": false,
+    "mode": {
+      "roothighlight": true,
+      "tritonehighlight": false,
+    },
+  },
+}

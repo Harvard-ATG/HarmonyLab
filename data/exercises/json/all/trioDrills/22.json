@@ -1,0 +1,30 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the same three-part drill once more, now in A minor, by adding to the visible bass and soprano parts an alto part which uses the keynote and leading-tone only.",
+  "key": "iA_",
+  "chord": [
+    {"visible":[50,77],"hidden":[69],},
+    {"visible":[48,76],"hidden":[69],},
+    {"visible":[47,74],"hidden":[68],},
+    {"visible":[45,72],"hidden":[69],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

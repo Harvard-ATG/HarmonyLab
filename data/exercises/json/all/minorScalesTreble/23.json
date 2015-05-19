@@ -1,0 +1,34 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Complete the ascending minor scale.",
+  "key": "iB_",
+  "chord": [
+    {"visible":[71],"hidden":[],},
+    {"visible":[],"hidden":[73],},
+    {"visible":[],"hidden":[74],},
+    {"visible":[],"hidden":[76],},
+    {"visible":[],"hidden":[78],},
+    {"visible":[],"hidden":[80],},
+    {"visible":[],"hidden":[82],},
+    {"visible":[],"hidden":[83],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": true,
+      "solfege": false,
+      "roman_numerals": false,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}

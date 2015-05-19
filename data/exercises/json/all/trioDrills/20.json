@@ -1,0 +1,30 @@
+{
+  "type": "matching",
+  "reviewText": "",
+  "introText": "Match this three-part device, a favorite of European composers throughout the eighteenth century. The bass makes a tetrachordal descent, and is harmonized by parallel tenths (or seventeenths, as here) in one of the upper parts.",
+  "key": "jG_",
+  "chord": [
+    {"visible":[48,67,76],"hidden":[],},
+    {"visible":[47,67,74],"hidden":[],},
+    {"visible":[45,66,72],"hidden":[],},
+    {"visible":[43,67,71],"hidden":[],},
+  ],
+  "analysis": {
+    "enabled": true,
+    "mode": {
+      "note_names": false,
+      "scientific_pitch": false,
+      "scale_degrees": false,
+      "solfege": false,
+      "roman_numerals": true,
+      "intervals": false,
+    },
+  },
+  "highlight": {
+    "enabled": true,
+    "mode": {
+      "roothighlight": false,
+      "tritonehighlight": false,
+    },
+  },
+}
