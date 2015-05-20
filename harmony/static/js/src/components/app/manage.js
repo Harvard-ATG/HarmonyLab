@@ -224,8 +224,9 @@ define([
 			"exercise_name": $el.data('exercise-name'),
 			"group_name": $el.data('group-name')
 		};
-		var delete_url = module.config().exercise_api_url + (delete_url.indexOf("?") === -1 ? "?" : "&");
+		var delete_url = module.config().exercise_api_url;
 
+		delete_url += (delete_url.indexOf("?") === -1 ? "?" : "&");
 		delete_url +="group_name="+data.group_name;
 		if (data.exercise_name) {
 			delete_url+="&exercise_name="+data.exercise_name
