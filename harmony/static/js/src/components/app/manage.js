@@ -145,7 +145,6 @@ define([
 		var $ul = $('<ul class="exercise-groups"></ul>');
 		var $el = this.$exerciseList;
 		var groups = data.groups;
-		console.log(groups);
 
 		if (groups.length == 0) {
 			$el.html("No exercises found.");
@@ -220,6 +219,7 @@ define([
 		if (!confirmed) {
 			return;
 		}
+		var that = this;
 		var data = {
 			"exercise_name": $el.data('exercise-name'),
 			"group_name": $el.data('group-name')
@@ -237,13 +237,13 @@ define([
 			method: "DELETE",
 			dataType: "json",
 		}).done(function(response, textStatus, jqXHR) {
-			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
 				title: response.description,
 				type: "success"
 			});
-			this.updateExerciseList();
+			that.updateExerciseList();
 		}).fail(function(jqXHR, textStatus) {
-			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
 				title: "Error deleting exercise item ("+textStatus+")",
 				type: "error"
 			});	
