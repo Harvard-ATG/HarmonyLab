@@ -4,7 +4,6 @@ from django_auth_lti import const
 
 
 def has_roles(request, roles):
-    print dir(const)
     if request.user.is_superuser:
         return True
     return has_lti_roles(request, roles)
