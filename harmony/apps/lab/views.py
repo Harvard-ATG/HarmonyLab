@@ -111,15 +111,22 @@ class ExerciseView(RequirejsView):
             else:
                 context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
 
-        if exercise_name is None:
-            group = er.findGroup(group_name)
-            if group is None:
-                raise Http404("Exercise group does not exist.")
-            exercise = group.first()
-        else:
+        if exercise_name is not None and group_name is not None:
             exercise = er.findExerciseByGroup(group_name, exercise_name)
             if exercise is None:
-                raise Http404("Exercise does not exist.")
+                raise Http404("Exercise %s of group %s does not exist." % (exercise_name, group_name))
+        elif exercise_name is None and group_name is not None:
+            group = er.findGroup(group_name)
+            if group is None:
+                raise Http404("Exercise group %s does not exist." % group_name)
+            exercise = group.first()
+        elif exercise_name is not None and group_name is None:
+            raise Http404("Group name required to get exercise %s." % exercise_name)
+        else:
+            group = er.getGroupAtIndex(0)
+            if group is None:
+                raise Http404("No exercises found.")
+            exercise = group.first()
 
         exercise.load()
         exercise.selected = True

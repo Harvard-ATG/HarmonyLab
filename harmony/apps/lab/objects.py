@@ -38,6 +38,11 @@ class ExerciseRepository(object):
 
     def deleteGroup(self, group_name):
         raise Exception("subclass responsibility")
+    
+    def getGroupAtIndex(self, index):
+        if index >= 0 and index < len(self.groups):
+            return self.groups[index]
+        return None
 
     def reset(self):
         self.exercises = []

@@ -118,7 +118,7 @@ define([
 			};
 			var confirmed = confirm("Are you sure you want to delete this exercise or group of exercises?");
 			if (!confirmed) {
-				return false;
+				return;
 			}
 			var delete_url = exercise_api_url;
 			delete_url += (delete_url.indexOf("?") == -1) ? "?" : "&"; 
