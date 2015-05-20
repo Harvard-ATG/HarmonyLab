@@ -18,16 +18,19 @@ class ExerciseRepository(object):
     def getGroupList(self):
         raise Exception("subclass responsibility")
 
-    def findGroup(self, group):
+    def findGroup(self, group_name):
         raise Exception("subclass responsibility")
 
-    def findExercise(self, exercise):
+    def findExercise(self, exercise_name):
         raise Exception("subclass responsibility")
 
-    def findExerciseByGroup(self, group, exercise):
+    def findExerciseByGroup(self, group_name, exercise_name):
         raise Exception("subclass responsibility")
 
     def createExercise(self, data):
+        raise Exception("subclass responsibility")
+
+    def updateExercise(self, group_name, exercise_name, data):
         raise Exception("subclass responsibility")
 
     def deleteExercise(self, group_name, exercise_name):
@@ -132,18 +135,21 @@ class ExerciseFileRepository(ExerciseRepository):
                 self.exercises.extend(exercise_files)
 
     def createExercise(self, data):
-        exercise = Exercise(data)
         group_name = data.pop('group_name', None)
+        exercise_definition = ExerciseDefinition(data)
         result = {}
-        if exercise.isValid():
-            ef = ExerciseFile.create(course_id=self.course_id, group_name=group_name, exercise=exercise)
+        if exercise_definition.isValid():
+            ef = ExerciseFile.create(
+                course_id=self.course_id,
+                group_name=group_name,
+                exercise_definition=exercise_definition)
             result['status'] = "success"
             result['message'] = "Exercise created successfully!"
-            result['data'] = {"exercise": exercise.getData(), "url": ef.url()}
+            result['data'] = {"exercise": exercise_definition.getData(), "url": ef.url()}
         else:
             result['status'] = "error"
             result['message'] = "Exercise failed to save."
-            result['errors'] = exercise.errors
+            result['errors'] = exercise_definition.getErrors()
         return result
     
     def deleteExercise(self, group_name, exercise_name):
@@ -164,14 +170,11 @@ class ExerciseFileRepository(ExerciseRepository):
                 return (False, str(e))
         return (True, "Deleted exercise group %s" % (group_name))
 
-class Exercise:
-    def __init__(self, data, meta=None):
-        self.data = {}
+class ExerciseDefinition:
+    def __init__(self, data):
         self.errors = []
         self.is_valid = True
-
-        self.data.update(data)
-        
+        self.data = data
         self.processData()
         
     def processData(self):
@@ -192,6 +195,9 @@ class Exercise:
 
     def getData(self):
         return self.data
+
+    def getErrors(self):
+        return self.errors
 
     def asJSON(self):
         return json.dumps(self.getData(), sort_keys=True, indent=4, separators=(',', ': '))
@@ -319,7 +325,7 @@ class ExerciseFile:
         self.group_path = group_path
         self.name = file_name.replace('.json', '')
         self.group = group
-        self.exercise = None
+        self.exerciseDefinition = None
         self.selected = False
         
     def getPathToFile(self, ):
@@ -329,23 +335,25 @@ class ExerciseFile:
         try:
             with open(self.getPathToFile()) as f:
                 data = f.read().strip()
-                self.exercise = Exercise.fromJSON(data) 
+                self.exerciseDefinition = ExerciseDefinition.fromJSON(data) 
         except IOError as e:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
         return True
 
-    def save(self):
-        if self.exercise is None:
-            raise ExerciseFileError("No exercise attached to file.")
+    def save(self, exercise_definition):
+        if exercise_definition is not None:
+            self.exerciseDefinition = exercise_definition
+        elif self.exerciseDefinition is None:
+            raise ExerciseFileError("No exercise definition to save.")
 
-        if not self.exercise.isValid():
+        if not self.exerciseDefinition.isValid():
             return False
 
         try:
             if not os.path.exists(self.group_path):
                 os.makedirs(self.group_path)
             with open(self.getPathToFile(), 'w') as f:
-                f.write(self.exercise.asJSON())
+                f.write(self.exerciseDefinition.asJSON())
         except IOError as e:
             raise ExerciseFileError("Error loading exercise file: {0} => {1}".format(e.errno, e.strerror))
 
@@ -389,17 +397,29 @@ class ExerciseFile:
                 "group_name": self.group.name, 
                 "exercise_name": self.name           
         })
+    
+    def getName(self):
+        return self.name
+    
+    def getGroupName(self):
+        return self.group.name
+    
+    def getID(self):
+        return os.path.join(self.group.name, self.name)
+    
+    def setExerciseDefinition(exercise_definition=None):
+        self.exerciseDefinition = exercise_definition
 
     def asJSON(self):
         return json.dumps(self.asDict())
 
     def asDict(self):
         d = {}
-        if self.exercise is not None:
-            d.update(self.exercise.getData())
+        if self.exerciseDefinition is not None:
+            d.update(self.exerciseDefinition.getData())
         d.update({
-            "id": os.path.join(self.group.name, self.name),
-            "name": self.name, 
+            "id": self.getID(),
+            "name": self.name,
             "url": self.url(),
             "group_name": self.group.name,
             "selected": self.selected,
@@ -407,7 +427,7 @@ class ExerciseFile:
         return d
 
     def __str__(self):
-        return self.group.name + '::' + self.name
+        return self.getID()
 
     def __repr__(self):
         return self.__str__()
@@ -431,7 +451,7 @@ class ExerciseFile:
         course_id = kwargs.get("course_id", None)
         group_name = kwargs.get('group_name', None)
         file_name = kwargs.get('file_name', None)
-        exercise = kwargs.get("exercise", None)
+        exercise_definition = kwargs.get("exercise_definition", None)
         
         er = ExerciseFileRepository(course_id=course_id)
         group = er.findGroup(group_name)
@@ -446,8 +466,7 @@ class ExerciseFile:
             file_name = ExerciseFile.getNextFileName(group_path, group_size)
         
         ef = ExerciseFile(file_name, group, group_path)
-        ef.exercise = exercise
-        ef.save()
+        ef.save(exercise_definition)
         log.info("Created exercise. Course: %s Group: %s File: %s Path: %s" % (course_id, group_path, file_name, ef.getPathToFile()))
 
         return ef
