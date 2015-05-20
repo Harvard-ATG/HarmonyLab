@@ -325,6 +325,10 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 	margin: .5em 0;
 	padding: .5em;
 }
+.exercise-collapse-all {
+	border-bottom: 1px solid #666;
+	padding: .5em 0;
+}
 ul.exercise-groups, ul.exercise-groups ul {
 	list-style-type: none;
 	margin: 0;

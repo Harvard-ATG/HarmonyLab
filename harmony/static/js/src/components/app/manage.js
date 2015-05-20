@@ -100,59 +100,22 @@ define([
 
 	AppManageComponent.prototype.initListeners = function() {
 		var that = this;
-		var config = module.config();
-		var exercise_api_url = config.exercise_api_url;
-
-		var handleToggle = function(evt, $el) {
-			toggleCls = $el.data('toggle-cls').split(' ');
-			$el.closest(".group").next('ul').slideToggle({duration:400,easing:"easeOutCubic"});
-			$el.removeClass(toggleCls[0]).addClass(toggleCls[1])
-			toggleCls.reverse();
-			$el.data('toggle-cls', toggleCls.join(' '));
-		};
-
-		var handleDelete = function(evt, $el) {
-			var data = {
-				exercise_name: $el.data('exercise-name'),
-				group_name: $el.data('group-name')
-			};
-			var confirmed = confirm("Are you sure you want to delete this exercise or group of exercises?");
-			if (!confirmed) {
-				return;
-			}
-			var delete_url = exercise_api_url;
-			delete_url += (delete_url.indexOf("?") == -1) ? "?" : "&"; 
-			delete_url +="group_name="+data.group_name;
-			if (data.exercise_name) {
-				delete_url+="&exercise_name="+data.exercise_name
-			}
-			
-			$.ajax({
-				url:delete_url,
-				method: "DELETE",
-				dataType: "json",
-			}).done(function(response, textStatus, jqXHR) {
-				that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
-					title: response.description,
-					type: "success"
-				});
-				that.updateExerciseList();
-			}).fail(function(jqXHR, textStatus) {
-				that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
-					title: "Error deleting exercise item ("+textStatus+")",
-					type: "error"
-				});	
-			});
-		};
-		
+		var state = true;
 		this.$exerciseList.on("mousedown", function(e) {
 			var $target = $(e.target);
-			if ($target.is("[data-toggle-cls]")) {
-				handleToggle(e, $target);
+			if ($target.is("[data-toggle-all]")) {
+				that.toggleArrowIcon($target);
+				$("[data-toggle-cls]").not($target).each(function(idx, el) {
+					that.toggleExerciseGroup($(el), state);
+				});
+				state = !state;
+				$target.html("&nbsp;" + (state ? "Collapse All" : "Expand All"));
+			} else if ($target.is("[data-toggle-cls]")) {
+				that.toggleExerciseGroup($target);
 			} else if ($target.is('.btn-toggle')) {
-				handleToggle(e, $target.find('[data-toggle-cls]'));
+				that.toggleExerciseGroup($target.find('[data-toggle-cls]'));
 			} else if ($target.is(".btn-delete")) {
-				handleDelete(e, $target);
+				that.deleteExerciseItem($target);
 			}
 		});
 		this.$exerciseList.on("mouseover mouseout", function(e) {
@@ -182,23 +145,27 @@ define([
 		var $ul = $('<ul class="exercise-groups"></ul>');
 		var $el = this.$exerciseList;
 		var groups = data.groups;
+		console.log(groups);
 
 		if (groups.length == 0) {
 			$el.html("No exercises found.");
 		} else {
+			$el.html("");
+			$el.append('<div class="exercise-collapse-all"><span class="btn btn-toggle"><i class="ion-arrow-down-b" data-toggle-cls="ion-arrow-down-b ion-arrow-right-b" data-toggle-all="yes"> Collapse All</i></span></div>')
 			$.each(groups, function(i, group) {
+				var num_exercises = group.data.exercises.length;
 				var $li = $([
 					'<li class="js-row">',
 						'<div class="group">',
-							'<span class="btn btn-toggle"><i class="ion-arrow-down-b" data-toggle-cls="ion-arrow-down-b ion-arrow-right-b">&nbsp;</i></span>',
-							'<a class="btn btn-group" href="'+group.url+'" target="_blank">Group: <b>'+group.name+'</b></a>',
+							'<span class="btn btn-toggle"><i class="ion-arrow-down-b" data-toggle-cls="ion-arrow-down-b ion-arrow-right-b" data-collapsed="no">&nbsp;</i></span>',
+							'<a class="btn btn-group" href="'+group.url+'" target="_blank">Group: <b>'+group.name+'</b> ('+num_exercises+')</a>',
 							'<div class="actions" style="display:none">',
 								'<i class="ion-close-circled btn btn-delete" data-group-name="'+group.name+'"></i>',
 							'</div>',
 						'</div>',
 					'</li>'
 				].join(''));
-				if (group.data.exercises.length > 0) {
+				if (num_exercises > 0) {
 					$li.append("<ul></ul>");
 					$.each(group.data.exercises, function(j, exercise) {
 						var $childLi = $([
@@ -214,9 +181,8 @@ define([
 					});
 				}
 				$ul.append($li);
-			});
-			
-			$el.html("").append($ul);				
+				$el.append($ul);		
+			});	
 		}
 	};
 	
@@ -224,7 +190,64 @@ define([
 		this.updateExerciseList();	
 	};
 	
+	AppManageComponent.prototype.toggleArrowIcon = function($el, state) {
+		var collapsed = $el.data('collapsed');
+		if (typeof state !== 'undefined') {
+			if ((collapsed == "yes" && state) || (collapsed == "no" && !state)) {
+				return;
+			}
+		}
+		var toggleCls = $el.data('toggle-cls').split(' ');
+		$el.removeClass(toggleCls[0]).addClass(toggleCls[1])
+		toggleCls.reverse();
+		$el.data('toggle-cls', toggleCls.join(' '));
+		$el.data('collapsed', (collapsed == "no" ? "yes" : "no"));
+	};
+	
+	AppManageComponent.prototype.toggleExerciseGroup = function($el, state) {
+		var action;
+		if (typeof state == "undefined") {
+			action = "slideToggle"
+		} else {
+			action = (state ? "slideUp" : "slideDown");
+		}
+		this.toggleArrowIcon($el, state);
+		$el.closest(".group").next('ul')[action]({duration:400,easing:"easeOutCubic"});
+	};
+	
+	AppManageComponent.prototype.deleteExerciseItem = function($el) {
+		var confirmed = confirm("Are you sure you want to delete this exercise or group of exercises?");
+		if (!confirmed) {
+			return;
+		}
+		var data = {
+			"exercise_name": $el.data('exercise-name'),
+			"group_name": $el.data('group-name')
+		};
+		var delete_url = module.config().exercise_api_url + (delete_url.indexOf("?") === -1 ? "?" : "&");
 
+		delete_url +="group_name="+data.group_name;
+		if (data.exercise_name) {
+			delete_url+="&exercise_name="+data.exercise_name
+		}
+
+		$.ajax({
+			url:delete_url,
+			method: "DELETE",
+			dataType: "json",
+		}).done(function(response, textStatus, jqXHR) {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+				title: response.description,
+				type: "success"
+			});
+			that.updateExerciseList();
+		}).fail(function(jqXHR, textStatus) {
+			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+				title: "Error deleting exercise item ("+textStatus+")",
+				type: "error"
+			});	
+		});		
+	};
 
 	return AppManageComponent;
 });
