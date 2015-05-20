@@ -1,13 +1,13 @@
-import unittest
-from mock import Mock
 from django.core.urlresolvers import reverse, resolve
-from django.test import RequestFactory
-
+from django.test import TestCase, RequestFactory
+from mock import Mock
 from ims_lti_py.tool_config import ToolConfig
 from ..views import LTIToolConfigView
+import django
 
-class ToolConfigViewTest(unittest.TestCase):
+class ToolConfigViewTest(TestCase):
     def setUp(self):
+        django.setup()
         self.view = LTIToolConfigView()
         self.view.request = RequestFactory().get('/lti-config')
         self.view.request.session = {}
