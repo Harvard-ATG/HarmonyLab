@@ -12,7 +12,8 @@ require(['app/main']);
 	{% include "_menu.html" %}
 	{% include "_notifications.html" %}
 	<div class="content-area" style="padding: 1em 1em 2em 1em">
-		<h1>Manage Exercises {% if course_label|length %}({{course_label}}) {% endif %}</h1>
+		<h1>Manage Exercises</h1>
+		{% if course_label|length %}<div style="color: #666">{{course_label}}</div>{% endif %}
 		<div id="managetabs">
 			<ul>
 				<li><a href="#tab-exercise-form">Create Exercise</a></li>

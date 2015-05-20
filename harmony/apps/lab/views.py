@@ -150,7 +150,7 @@ class ManageView(RequirejsView, LoginRequiredMixin):
             exercise_api_url = reverse('lab:api-exercises')
         else:
             exercise_api_url = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
-            course_label = "Course ID: %s" % course_id
+            course_label = "Course ID: %s" % (course_id)
 
         context = {
             "course_label": course_label
