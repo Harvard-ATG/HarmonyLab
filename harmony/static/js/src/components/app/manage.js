@@ -237,13 +237,13 @@ define([
 			method: "DELETE",
 			dataType: "json",
 		}).done(function(response, textStatus, jqXHR) {
-			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
 				title: response.description,
 				type: "success"
 			});
-			that.updateExerciseList();
+			this.updateExerciseList();
 		}).fail(function(jqXHR, textStatus) {
-			that.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
+			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
 				title: "Error deleting exercise item ("+textStatus+")",
 				type: "error"
 			});	
