@@ -1,21 +1,21 @@
-from django.shortcuts import render, redirect
 from django.conf import settings
-from django.http import HttpResponse, Http404
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
-from django.views.generic import View, TemplateView, RedirectView
-from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
+from django.utils.http import urlencode
+from django.views.generic import View, TemplateView, RedirectView
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
-from django_auth_lti.decorators import lti_role_required
-from django_auth_lti.verification import has_lti_roles
-from django_auth_lti import const
-from ims_lti_py.tool_config import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
+from ims_lti_py.tool_config import ToolConfig
+from django_auth_lti import const
 
 from .objects import ExerciseRepository
+from .decorators import role_required
+from .verification import has_roles, has_course_authorization
 
 import json
 import copy
@@ -89,7 +89,11 @@ class PlayView(RequirejsTemplateView):
             course_id = self.request.LTI.get("context_id", None)
             er = ExerciseRepository.create(course_id=course_id)
             context['group_list'] = er.getGroupList()
-            context['has_manage_perm'] = has_lti_roles(self.request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+            context['has_manage_perm'] = has_roles(self.request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+            if course_id is None:
+                context['manage_url'] = reverse('lab:manage')
+            else:
+                context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
 
         return context
 
@@ -101,8 +105,12 @@ class ExerciseView(RequirejsView):
         context['group_list'] = er.getGroupList()
         context['has_manage_perm'] = False
         if hasattr(self.request, 'LTI'): 
-            context['has_manage_perm'] = has_lti_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
-        print context
+            context['has_manage_perm'] = has_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+            if course_id is None:
+                context['manage_url'] = reverse('lab:manage')
+            else:
+                context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+
         if exercise_name is None:
             group = er.findGroup(group_name)
             if group is None:
@@ -131,16 +139,24 @@ class ExerciseView(RequirejsView):
 
 
 class ManageView(RequirejsView, LoginRequiredMixin):
-    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
-    def get(self, request):
-        course_id = request.LTI.get("context_id", None)
-        er = ExerciseRepository.create(course_id=course_id)
+    @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
+    def get(self, request, course_id=None):
+        has_course_authorization(request, course_id, raise_exception=True)
         
+        er = ExerciseRepository.create(course_id=course_id)
+
+        if course_id is None:
+            course_label = ""
+            exercise_api_url = reverse('lab:api-exercises')
+        else:
+            exercise_api_url = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
+            course_label = "Course ID: %s" % course_id
+
         context = {
-            "course_label": request.LTI.get("context_label", ""),
+            "course_label": course_label
         }
         manage_params = {
-            "exercise_api_url": reverse('lab:api-exercises')+'?course_id='+course_id,
+            "exercise_api_url": exercise_api_url,
             "group_list": er.getGroupList(),
         }
 
@@ -161,6 +177,7 @@ class APIView(View):
 
 class APIGroupView(CsrfExemptMixin, View):
     def get(self, request):
+        '''Public list of groups and exercises.'''
         course_id = request.GET.get('course_id', None)
         er = ExerciseRepository.create(course_id=course_id)
         data = er.getGroupList()
@@ -168,10 +185,14 @@ class APIGroupView(CsrfExemptMixin, View):
         return HttpResponse(json_data, content_type='application/json')
 
 class APIExerciseView(CsrfExemptMixin, View):
+    def has_course_authorization(self, request, course_id):
+        has_course_authorization(request, course_id, raise_exception=True)
+
     def get(self, request):
         course_id = request.GET.get('course_id', None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
+        self.has_course_authorization(request, course_id)
         
         er = ExerciseRepository.create(course_id=course_id)
         if exercise_name is not None and group_name is not None:
@@ -190,19 +211,22 @@ class APIExerciseView(CsrfExemptMixin, View):
 
         return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), content_type='application/json')
  
-    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
+    @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def post(self, request):
-        course_id= request.LTI.get("context_id")
+        course_id = request.GET.get("course_id", None)
+        self.has_course_authorization(request, course_id)
+        
         exercise_data = json.loads(request.POST.get('exercise', None))
         result = ExerciseRepository.create(course_id=course_id).createExercise(exercise_data)
 
         return HttpResponse(json.dumps(result), content_type='application/json')
     
-    @method_decorator(lti_role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
+    @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def delete(self, request):
-        course_id = request.LTI.get("context_id")
+        course_id = request.GET.get("course_id", None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
+        self.has_course_authorization(request, course_id)
 
         er = ExerciseRepository.create(course_id=course_id)
         deleted, description = (False, "No action taken")
@@ -341,3 +365,15 @@ def logged_out_view(request):
 
 def not_authorized(request):
     return HttpResponse('Unauthorized', status=401)
+
+def check_course_authorization(request, course_id, raise_exception=False):
+    authorized = has_course_authorization(request, course_id, raise_exception)
+    result = {
+        "user_id": request.user.id,
+        "course_id": course_id,
+        "is_authorized": authorized
+    }
+    status = 200
+    if not authorized:
+        status = 403 # forbidden
+    return HttpResponse(json.dumps(result), content_type='application/json', status=status)

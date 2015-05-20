@@ -3,7 +3,7 @@
 	<ul class="content-area-vertical-nav">
 		<li><a href="{% url 'lab:index' %}"><i class="ion-home"></i> Home</a></li>
 		{% if has_manage_perm %}
-			<li><a href="{% url 'lab:manage' %}"><i class="ion-edit"></i> Manage Exercises	</a></li>
+			<li><a href="{{ manage_url }}"><i class="ion-edit"></i> Manage Exercises</a></li>
 		{% endif %}
 	</ul>
 	

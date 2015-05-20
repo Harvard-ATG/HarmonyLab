@@ -120,7 +120,9 @@ define([
 			if (!confirmed) {
 				return false;
 			}
-			var delete_url = exercise_api_url + "&group_name="+data.group_name;
+			var delete_url = exercise_api_url;
+			delete_url += (delete_url.indexOf("?") == -1) ? "?" : "&"; 
+			delete_url +="group_name="+data.group_name;
 			if (data.exercise_name) {
 				delete_url+="&exercise_name="+data.exercise_name
 			}

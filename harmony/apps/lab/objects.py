@@ -184,11 +184,10 @@ class ExerciseDefinition:
         if "lilypond_chords" in self.data:
             self.lilypond = ExerciseLilyPond(self.data['lilypond_chords'])
             if self.lilypond.isValid():
-                    self.data['chord'] = self.lilypond.toMIDI()
+                self.data['chord'] = self.lilypond.toMIDI()
             else:
                 self.is_valid = False
                 self.errors.extend(list(self.lilypond.errors))
-        return self
 
     def isValid(self):
         return self.is_valid
