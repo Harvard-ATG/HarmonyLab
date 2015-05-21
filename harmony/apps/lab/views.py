@@ -151,22 +151,17 @@ class ManageView(RequirejsView, LoginRequiredMixin):
     @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def get(self, request, course_id=None):
         er = ExerciseRepository.create(course_id=course_id)
-
+        context = {"course_label": "", "has_manage_perm": True}
+        manage_params = {"group_list": er.getGroupList()}
+        
         if course_id is None:
-            course_label = ""
-            exercise_api_url = reverse('lab:api-exercises')
+            context['manage_url'] = reverse('lab:manage')
+            manage_params['exercise_api_url'] = reverse('lab:api-exercises')
         else:
-            exercise_api_url = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
             course_names = Course.getCourseNames(course_id)
-            course_label = "%s (ID: %s)" % (course_names.get('name'), course_id)
-
-        context = {
-            "course_label": course_label
-        }
-        manage_params = {
-            "exercise_api_url": exercise_api_url,
-            "group_list": er.getGroupList(),
-        }
+            context['course_label'] = "%s (ID: %s)" % (course_names.get('name'), course_id)
+            context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+            manage_params['exercise_api_url'] = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
 
         self.requirejs_context.set_app_module('app/components/app/manage')
         self.requirejs_context.set_module_params('app/components/app/manage', manage_params)
