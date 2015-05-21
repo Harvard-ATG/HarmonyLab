@@ -15,7 +15,7 @@ from django_auth_lti import const
 
 from .objects import ExerciseRepository
 from .decorators import role_required, course_authorization_required
-from .verification import has_instructor_role
+from .verification import has_instructor_role, has_course_authorization
 from .models import LTIConsumer, Course
 
 import json
@@ -106,11 +106,12 @@ class ExerciseView(RequirejsView):
         context['group_list'] = er.getGroupList()
         context['has_manage_perm'] = False
         if hasattr(self.request, 'LTI'): 
-            context['has_manage_perm'] = has_instructor_role(request)
-            if course_id is None:
-                context['manage_url'] = reverse('lab:manage')
-            else:
-                context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+            context['has_manage_perm'] = has_instructor_role(request) and has_course_authorization(request, course_id)
+            if context['has_manage_perm']:
+                if course_id is None:
+                    context['manage_url'] = reverse('lab:manage')
+                else:
+                    context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
 
         if exercise_name is not None and group_name is not None:
             exercise = er.findExerciseByGroup(group_name, exercise_name)
