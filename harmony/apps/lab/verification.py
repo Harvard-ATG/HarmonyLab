@@ -8,7 +8,9 @@ def has_instructor_role(request):
 def has_roles(request, roles):
     if request.user.is_superuser:
         return True
-    return has_lti_roles(request, roles)
+    if hasattr(request, 'LTI'):
+        return has_lti_roles(request, roles)
+    return False
 
 def has_course_authorization(request, course_id, raise_exception=False):
     authorized = True

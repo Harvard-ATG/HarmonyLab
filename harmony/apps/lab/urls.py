@@ -9,11 +9,12 @@ urlpatterns = patterns(
     url(r'^$', PlayView.as_view(), name='index'),
 
     # Course Exercises
-    url(r'^courses/(?P<course_id>\w+)/manage$', ManageView.as_view(), name="course-manage"),
-    url(r'^courses/(?P<course_id>\w+)/authcheck$', views.check_course_authorization, name="course-authorization-check"),
-    url(r'^courses/(?P<course_id>\w+)/exercises/(?P<group_name>[a-zA-Z0-9_\-.]+)/(?P<exercise_name>\d+)$', ExerciseView.as_view(), name="course-exercises"),
-    url(r'^courses/(?P<course_id>\w+)/exercises/(?P<group_name>[a-zA-Z0-9_\-.]+)$', ExerciseView.as_view(), name="course-exercise-groups"),
-    url(r'^courses/(?P<course_id>\w+)/exercises$', ExerciseView.as_view()),
+    url(r'^courses/(?P<course_id>\d+)/manage$', ManageView.as_view(), name="course-manage"),
+    url(r'^courses/(?P<course_id>\d+)/authcheck$', views.check_course_authorization, name="course-authorization-check"),
+    url(r'^courses/(?P<course_id>\d+)/exercises/(?P<group_name>[a-zA-Z0-9_\-.]+)/(?P<exercise_name>\d+)$', ExerciseView.as_view(), name="course-exercises"),
+    url(r'^courses/(?P<course_id>\d+)/exercises/(?P<group_name>[a-zA-Z0-9_\-.]+)$', ExerciseView.as_view(), name="course-exercise-groups"),
+    url(r'^courses/(?P<course_id>\d+)/exercises$', ExerciseView.as_view()),
+    url(r'^courses/(?P<course_id>\d+)$', PlayView.as_view(), name="course-index"),
 
     # Non-Course Exercises
     url(r'^manage$', ManageView.as_view(), name="manage"),

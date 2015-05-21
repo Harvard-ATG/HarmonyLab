@@ -81,20 +81,22 @@ class PlayView(RequirejsTemplateView):
     template_name = "play.html"
     requirejs_app = 'app/components/app/play'
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, course_id=None, **kwargs):
         context = super(PlayView, self).get_context_data(**kwargs)
+        er = ExerciseRepository.create(course_id=course_id)
 
-        context['has_manage_perm'] = False
-        context['group_list'] = []
-        if hasattr(self.request, 'LTI'):
-            course_id = self.request.session.get('course_id', None)
-            er = ExerciseRepository.create(course_id=course_id)
-            context['group_list'] = er.getGroupList()
-            context['has_manage_perm'] = has_instructor_role(self.request)
+        context['group_list'] = er.getGroupList()
+        context['has_manage_perm'] = has_instructor_role(self.request) and has_course_authorization(self.request, course_id)
+        if context['has_manage_perm']:
             if course_id is None:
                 context['manage_url'] = reverse('lab:manage')
             else:
                 context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+
+        if course_id is None:
+            context['home_url'] = reverse('lab:index')
+        else:
+            context['home_url'] = reverse("lab:course-index", kwargs={"course_id":course_id})
 
         return context
 
@@ -102,16 +104,19 @@ class ExerciseView(RequirejsView):
     def get(self, request, course_id=None, group_name=None, exercise_name=None):
         context = {}
         er = ExerciseRepository.create(course_id=course_id)
-        
+
         context['group_list'] = er.getGroupList()
-        context['has_manage_perm'] = False
-        if hasattr(self.request, 'LTI'): 
-            context['has_manage_perm'] = has_instructor_role(request) and has_course_authorization(request, course_id)
-            if context['has_manage_perm']:
-                if course_id is None:
-                    context['manage_url'] = reverse('lab:manage')
-                else:
-                    context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+        context['has_manage_perm'] = has_instructor_role(request) and has_course_authorization(request, course_id)
+        if context['has_manage_perm']:
+            if course_id is None:
+                context['manage_url'] = reverse('lab:manage')
+            else:
+                context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+        
+        if course_id is None:
+            context['home_url'] = reverse('lab:index')
+        else:
+            context['home_url'] = reverse("lab:course-index", kwargs={"course_id":course_id})
 
         if exercise_name is not None and group_name is not None:
             exercise = er.findExerciseByGroup(group_name, exercise_name)
@@ -271,10 +276,11 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
             lti_consumer = LTIConsumer.setupCourse(launch)
         
         # Save the course ID in the session
-        request.session['course_id'] = lti_consumer.course.id
+        course_id = lti_consumer.course.id
+        request.session['course_id'] = course_id
         
         # Redirect back to the index.
-        return redirect('lab:index')
+        return redirect(reverse('lab:course-index', kwargs={"course_id": course_id}))
 
     def get(self, request, *args, **kwargs):
         '''Shows an error message because LTI launch requests must be POSTed.'''
