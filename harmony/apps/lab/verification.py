@@ -2,6 +2,8 @@ from django.core.exceptions import PermissionDenied
 from django_auth_lti.verification import has_lti_roles
 from django_auth_lti import const
 
+def has_instructor_role(request):
+    return has_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
 
 def has_roles(request, roles):
     if request.user.is_superuser:

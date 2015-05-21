@@ -14,8 +14,8 @@ from ims_lti_py.tool_config import ToolConfig
 from django_auth_lti import const
 
 from .objects import ExerciseRepository
-from .decorators import role_required
-from .verification import has_roles, has_course_authorization
+from .decorators import role_required, course_authorization_required
+from .verification import has_instructor_role
 
 import json
 import copy
@@ -89,7 +89,7 @@ class PlayView(RequirejsTemplateView):
             course_id = self.request.LTI.get("context_id", None)
             er = ExerciseRepository.create(course_id=course_id)
             context['group_list'] = er.getGroupList()
-            context['has_manage_perm'] = has_roles(self.request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+            context['has_manage_perm'] = has_instructor_role(self.request)
             if course_id is None:
                 context['manage_url'] = reverse('lab:manage')
             else:
@@ -105,7 +105,7 @@ class ExerciseView(RequirejsView):
         context['group_list'] = er.getGroupList()
         context['has_manage_perm'] = False
         if hasattr(self.request, 'LTI'): 
-            context['has_manage_perm'] = has_roles(request, [const.ADMINISTRATOR,const.INSTRUCTOR])
+            context['has_manage_perm'] = has_instructor_role(request)
             if course_id is None:
                 context['manage_url'] = reverse('lab:manage')
             else:
@@ -146,10 +146,9 @@ class ExerciseView(RequirejsView):
 
 
 class ManageView(RequirejsView, LoginRequiredMixin):
+    @method_decorator(course_authorization_required(source="arguments"))
     @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def get(self, request, course_id=None):
-        has_course_authorization(request, course_id, raise_exception=True)
-        
         er = ExerciseRepository.create(course_id=course_id)
 
         if course_id is None:
@@ -192,14 +191,10 @@ class APIGroupView(CsrfExemptMixin, View):
         return HttpResponse(json_data, content_type='application/json')
 
 class APIExerciseView(CsrfExemptMixin, View):
-    def has_course_authorization(self, request, course_id):
-        has_course_authorization(request, course_id, raise_exception=True)
-
     def get(self, request):
         course_id = request.GET.get('course_id', None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
-        self.has_course_authorization(request, course_id)
         
         er = ExerciseRepository.create(course_id=course_id)
         if exercise_name is not None and group_name is not None:
@@ -218,22 +213,21 @@ class APIExerciseView(CsrfExemptMixin, View):
 
         return HttpResponse(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')), content_type='application/json')
  
+    @method_decorator(course_authorization_required(source='query'))
     @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def post(self, request):
         course_id = request.GET.get("course_id", None)
-        self.has_course_authorization(request, course_id)
-        
         exercise_data = json.loads(request.POST.get('exercise', None))
         result = ExerciseRepository.create(course_id=course_id).createExercise(exercise_data)
 
         return HttpResponse(json.dumps(result), content_type='application/json')
     
+    @method_decorator(course_authorization_required(source='query'))
     @method_decorator(role_required([const.ADMINISTRATOR,const.INSTRUCTOR], redirect_url='lab:not_authorized', raise_exception=True))
     def delete(self, request):
         course_id = request.GET.get("course_id", None)
         group_name = request.GET.get('group_name', None)
         exercise_name = request.GET.get('exercise_name', None)
-        self.has_course_authorization(request, course_id)
 
         er = ExerciseRepository.create(course_id=course_id)
         deleted, description = (False, "No action taken")
