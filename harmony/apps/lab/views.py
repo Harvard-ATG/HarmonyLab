@@ -88,7 +88,6 @@ class PlayView(RequirejsTemplateView):
         context['group_list'] = []
         if hasattr(self.request, 'LTI'):
             course_id = self.request.session.get('course_id', None)
-            print "course_id = %s" % course_id
             er = ExerciseRepository.create(course_id=course_id)
             context['group_list'] = er.getGroupList()
             context['has_manage_perm'] = has_instructor_role(self.request)
