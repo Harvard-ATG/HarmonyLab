@@ -88,7 +88,7 @@ class ExerciseFileRepository(ExerciseRepository):
     def getBasePath(course_id):
         if course_id is None:
             return os.path.join(ExerciseFileRepository.BASE_PATH, "all")
-        return os.path.join(ExerciseFileRepository.BASE_PATH, "course", course_id)
+        return os.path.join(ExerciseFileRepository.BASE_PATH, "courses", course_id)
 
     def getGroupList(self):
         '''Returns a list of group names.'''
