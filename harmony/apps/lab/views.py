@@ -16,6 +16,7 @@ from django_auth_lti import const
 from .objects import ExerciseRepository
 from .decorators import role_required, course_authorization_required
 from .verification import has_instructor_role
+from .models import LTIConsumer
 
 import json
 import copy
@@ -85,8 +86,9 @@ class PlayView(RequirejsTemplateView):
 
         context['has_manage_perm'] = False
         context['group_list'] = []
-        if hasattr(self.request, 'LTI'): 
-            course_id = self.request.LTI.get("context_id", None)
+        if hasattr(self.request, 'LTI'):
+            course_id = self.request.session.get('course_id', None)
+            print "course_id = %s" % course_id
             er = ExerciseRepository.create(course_id=course_id)
             context['group_list'] = er.getGroupList()
             context['has_manage_perm'] = has_instructor_role(self.request)
@@ -250,6 +252,32 @@ class APIExerciseView(CsrfExemptMixin, View):
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         '''Handles the LTI launch request and redirects to the main page. '''
+        
+        # Collect a subset of the LTI launch parameters for mapping the
+        # tool consumer instance to this app's internal course instance.
+        launch = {
+            "consumer_key": request.POST.get('oauth_consumer_key', None),
+            "resource_link_id": request.POST.get('resource_link_id', None),
+            "context_id": request.POST.get('context_id', None),
+            "course_name_short": request.POST.get("context_label"),
+            "course_name": request.POST.get("context_title"),
+            "canvas_course_id": request.POST.get('custom_canvas_course_id', None),
+        }
+        
+        # Lookup tool consumer instance, uniquely identified by the
+        # combination of: oauth consumer key and resource link ID, which
+        # are the only required attributes specified by LTI. If none is found,
+        # setup a new course instance associated with the tool consumer instance.
+        identifiers = [launch[x] for x in ('consumer_key', 'resource_link_id')]
+        if LTIConsumer.hasCourse(*identifiers):
+            lti_consumer = LTIConsumer.getConsumer(*identifiers)
+        else:
+            lti_consumer = LTIConsumer.setupCourse(launch)
+        
+        # Save the course ID in the session
+        request.session['course_id'] = lti_consumer.course.id
+        
+        # Redirect back to the index.
         return redirect('lab:index')
 
     def get(self, request, *args, **kwargs):

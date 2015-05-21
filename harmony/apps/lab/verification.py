@@ -19,8 +19,8 @@ def has_course_authorization(request, course_id, raise_exception=False):
             else:
                 authorized = False
         else:
-            LTI_course_id = request.LTI.get("context_id", None)
-            if course_id != LTI_course_id:
+            session_course_id = request.session.get("course_id", None)
+            if str(course_id) != str(session_course_id):
                 if raise_exception:
                     raise PermissionDenied
                 else:

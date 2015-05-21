@@ -12,6 +12,8 @@ log = logging.getLogger(__name__)
 class ExerciseRepository(object):
     def __init__(self, *args, **kwargs):
         self.course_id = kwargs.get('course_id', None)
+        if self.course_id is not None:
+            self.course_id = str(self.course_id)
         self.groups = []
         self.exercises = []
 

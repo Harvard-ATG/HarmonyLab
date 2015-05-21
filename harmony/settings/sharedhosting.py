@@ -33,5 +33,4 @@ with open(os.path.join(CONFIG_DIR, 'django_secret.txt')) as f:
 
 LTI_OAUTH_CREDENTIALS = {}
 with open(os.path.join(CONFIG_DIR, 'lti_oauth_credentials.txt')) as f:
-    oauth_key_and_secret = f.read().strip().split(':',2)
-    LTI_OAUTH_CREDENTIALS = dict([tuple(oauth_key_and_secret)])
+    LTI_OAUTH_CREDENTIALS = dict([tuple(x.strip().split(':', 2)) for x in f.readlines()])
