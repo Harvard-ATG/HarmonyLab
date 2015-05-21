@@ -16,7 +16,7 @@ from django_auth_lti import const
 from .objects import ExerciseRepository
 from .decorators import role_required, course_authorization_required
 from .verification import has_instructor_role
-from .models import LTIConsumer
+from .models import LTIConsumer, Course
 
 import json
 import copy
@@ -158,7 +158,8 @@ class ManageView(RequirejsView, LoginRequiredMixin):
             exercise_api_url = reverse('lab:api-exercises')
         else:
             exercise_api_url = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
-            course_label = "Course ID: %s" % (course_id)
+            course_names = Course.getCourseNames(course_id)
+            course_label = "%s (ID: %s)" % (course_names.get('name'), course_id)
 
         context = {
             "course_label": course_label

@@ -5,9 +5,13 @@ class Course(models.Model):
     course_name = models.CharField(max_length=2048)
     
     @classmethod
-    def getCourseName(self, ):
-        pass
-    
+    def getCourseNames(self, course_id):
+        result = {"name": "", "name_short": ""}
+        if Course.objects.filter(id=course_id).exists():
+            c = Course.objects.get(id=course_id)
+            result['name'] = c.course_name
+            result['name_short'] = c.course_name_short
+        return result
 
     class Meta:
         verbose_name = 'Course'
