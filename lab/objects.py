@@ -290,7 +290,7 @@ class ExerciseLilyPond:
     * Other octaves may be specified with a single quote (') or comma (,) character. Each ' raises the pitch by one octave; each , lowers the pitch by an octave.
     * A sharp pitch is made by adding "s" to the note name. A flat pitch is made by adding "f" to the note name.
     * A chord is a sequence of pitches enclosed in angle brackets (e.g. &lt;c e g&gt;). A minimum of one chord must be entered.
-    * Notes can be "hidden" by prefixing the pitch with an "x" or "\xNote <pitch>" (e.g. &lt;c xe xg&gt;).
+    * Notes can be "hidden" by prefixing the pitch with an "x" or (e.g. &lt;c xe xg&gt;).
 
     See also:
     http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
