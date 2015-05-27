@@ -10,6 +10,22 @@ import logging
 log = logging.getLogger(__name__)
 
 class ExerciseRepository(object):
+    '''
+    This is an abstract interface for accessing exercises. All interaction
+    with exercises should originate from this class, so that if the
+    storage mechanism is changed later, client code impact can be
+    minimized. 
+
+    To get an instance of the repository, use the create() factory
+    method. If the repositoryType keyword argument is not present,
+    the default will be returned, which is currently "file". It's
+    best not to pass a specific repository type and just use the
+    default, so that it's easy to move to a database backend later.
+
+    Usage: 
+        repo = ExerciseRepository.create()
+        exercise = repo.findExerciseByGroup("MyGroupName", "03")
+    '''
     def __init__(self, *args, **kwargs):
         self.course_id = kwargs.get('course_id', None)
         if self.course_id is not None:
@@ -78,14 +94,33 @@ class ExerciseRepository(object):
     
 
 class ExerciseFileRepository(ExerciseRepository):
+    '''
+    Implements the ExerciseRepository interface using
+    files and directories to store exercises.
+    '''
     BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises', 'json')
 
     def __init__(self, *args, **kwargs):
+        '''
+        Initializes the object by searching the directory tree for all
+        exercises and groups so that method calls already have the
+        data they need to operate.
+
+        Assumptions:
+        * Groups are directories.
+        * Exercises are files in those directories.
+        * Every exercise belongs to a group.
+        * Exercise file data is not loaded (client must do that). 
+        '''
         super(ExerciseFileRepository, self).__init__(*args, **kwargs)
         self.findFiles()
 
     @staticmethod
     def getBasePath(course_id):
+        '''
+        Returns the file path to exercises for a given course, 
+        or if no course, defaults to a catch-all directory.
+        '''
         if course_id is None:
             return os.path.join(ExerciseFileRepository.BASE_PATH, "all")
         return os.path.join(ExerciseFileRepository.BASE_PATH, "courses", course_id)
@@ -121,6 +156,10 @@ class ExerciseFileRepository(ExerciseRepository):
         return None
 
     def findFiles(self):
+        '''
+        Traverses the directory tree looking for all directories (groups)
+        and files (exercises) and instantiates objects for each.
+        '''
         self.reset()
 
         path_to_exercises = ExerciseFileRepository.getBasePath(self.course_id)
@@ -142,6 +181,10 @@ class ExerciseFileRepository(ExerciseRepository):
                 self.exercises.extend(exercise_files)
 
     def createExercise(self, data):
+        '''
+        Stores an exercise in a group folder with the given data,
+        assuming it is valid.
+        '''
         group_name = data.pop('group_name', None)
         exercise_definition = ExerciseDefinition(data)
         result = {}
@@ -160,6 +203,9 @@ class ExerciseFileRepository(ExerciseRepository):
         return result
     
     def deleteExercise(self, group_name, exercise_name):
+        '''
+        Deletes an exercise file in a group.
+        '''
         exercise = self.findExerciseByGroup(group_name, exercise_name)
         if exercise is not None:
             try:
@@ -169,6 +215,9 @@ class ExerciseFileRepository(ExerciseRepository):
         return (True, "Deleted exercise %s of group %s" % (exercise_name, group_name))
 
     def deleteGroup(self, group_name):
+        '''
+        Deletes a group folder, including all exercise files in the folder.
+        '''
         group = self.findGroup(group_name)
         if group is not None:
             try:
@@ -178,6 +227,19 @@ class ExerciseFileRepository(ExerciseRepository):
         return (True, "Deleted exercise group %s" % (group_name))
 
 class ExerciseDefinition:
+    '''
+    An ExerciseDefinition is a stateless object that describes 
+    an exercise problem such that it can be presented to a student
+    as intended by an instructor.
+
+    The object's main responsibility is to ensure that the definition
+    is valid and convert to/from different data formats.
+
+    Although the application primarily speaks MIDI, the definition
+    collaborates with ExerciseLilyPond so that a user can provide
+    a chord sequence using a subset of LilyPond's notation 
+    (http://lilypond.org).
+    '''
     def __init__(self, data):
         self.errors = []
         self.is_valid = True
@@ -216,6 +278,23 @@ class ExerciseLilyPondError(Exception):
     pass
 
 class ExerciseLilyPond:
+    '''
+    This object parses a string that is assumed to be a chord sequence
+    in LilyPond notation (http://www.lilypond.org/). The output is
+    a data structure with MIDI note numbers that is valid for ExerciseDefinition.
+
+    Here are the key points for subset of LilyPond that can be parsed:
+
+    * Absolute octave entry.
+    * A pitch name is specified using lowercase letters a through g. The note names c to b are engraved in the octave below middle C.
+    * Other octaves may be specified with a single quote (') or comma (,) character. Each ' raises the pitch by one octave; each , lowers the pitch by an octave.
+    * A sharp pitch is made by adding "s" to the note name. A flat pitch is made by adding "f" to the note name.
+    * A chord is a sequence of pitches enclosed in angle brackets (e.g. &lt;c e g&gt;). A minimum of one chord must be entered.
+    * Notes can be "hidden" by prefixing the pitch with an "x" or "\xNote <pitch>" (e.g. &lt;c xe xg&gt;).
+
+    See also:
+    http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
+    '''
     def __init__(self, lilypondString, *args, **kwargs):
         self.lpstring = lilypondString
         self.errors = []
