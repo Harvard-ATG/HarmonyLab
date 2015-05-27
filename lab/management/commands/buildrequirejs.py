@@ -21,7 +21,7 @@
 #
 # USAGE:
 #
-#   ./manage.py build_requirejs
+#   ./manage.py buildrequirejs
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
