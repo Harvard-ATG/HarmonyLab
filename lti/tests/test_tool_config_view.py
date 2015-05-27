@@ -9,7 +9,7 @@ class ToolConfigViewTest(TestCase):
     def setUp(self):
         django.setup()
         self.view = LTIToolConfigView()
-        self.view.request = RequestFactory().get('/lti-config')
+        self.view.request = RequestFactory().get('/lti/config')
         self.view.request.session = {}
 
     def test_launch_secure_launch_url(self):

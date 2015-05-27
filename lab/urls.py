@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 import views
 from views import PlayView, ExerciseView, ManageView
 from views import APIView, APIExerciseView, APIGroupView
-from views import LTIToolConfigView, LTILaunchView
+from lti.views import LTIToolConfigView, LTILaunchView
 
 urlpatterns = patterns(
     '',
@@ -27,11 +27,8 @@ urlpatterns = patterns(
     url(r'^api/v1/exercises$', APIExerciseView.as_view(), name="api-exercises"),
     url(r'^api/v1/groups$', APIGroupView.as_view(), name="api-groups"),
 
-    # LTI 
+    # LTI -- deprecated -- moved into separate app named "lti" 
+    # Mainting these URLs for backwards compatibility. Remove when possible.
     url(r'^lti-launch$', LTILaunchView.as_view(), name='lti-launch'),
     url(r'^lti-config$', LTIToolConfigView.as_view(), name='lti-config'),
-
-    # Logout
-    url(r'^logout$', views.logout_view, name="logout"),
-    url(r'^logged-out$', views.logged_out_view, name="logged-out"),
 )

@@ -1,29 +1,30 @@
 from django.db import models
 
-class Course(models.Model):
+class LTICourse(models.Model):
     course_name_short = models.CharField(max_length=1024)
     course_name = models.CharField(max_length=2048)
     
     @classmethod
-    def getCourseNames(self, course_id):
+    def getCourseNames(cls, course_id):
         result = {"name": "", "name_short": ""}
-        if Course.objects.filter(id=course_id).exists():
-            c = Course.objects.get(id=course_id)
+        if cls.objects.filter(id=course_id).exists():
+            c = cls.objects.get(id=course_id)
             result['name'] = c.course_name
             result['name_short'] = c.course_name_short
         return result
 
     class Meta:
-        verbose_name = 'Course'
-        verbose_name_plural = 'Courses '
+        verbose_name = 'LTI Course'
+        verbose_name_plural = 'LTI Courses '
         ordering = ['course_name_short','course_name']
+
 
 class LTIConsumer(models.Model):
     consumer_key = models.CharField(max_length=255, blank=False)
     resource_link_id = models.CharField(max_length=255, blank=False)
     context_id = models.CharField(max_length=255, blank=True, null=True)
     canvas_course_id = models.CharField(max_length=255, blank=True, null=True)
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(LTICourse)
     
     @classmethod
     def hasCourse(cls, consumer_key, resource_link_id):
@@ -43,7 +44,7 @@ class LTIConsumer(models.Model):
  
         course_name_short = launch.pop('course_name_short', 'untitled')
         course_name = launch.pop('course_name', 'Untitled Course')
-        course = Course.objects.create(course_name_short=course_name_short,course_name=course_name)
+        course = LTICourse.objects.create(course_name_short=course_name_short,course_name=course_name)
  
         return cls.objects.create(course=course, **launch)
     
