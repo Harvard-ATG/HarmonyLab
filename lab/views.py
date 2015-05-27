@@ -157,14 +157,16 @@ class ManageView(RequirejsView, LoginRequiredMixin):
         er = ExerciseRepository.create(course_id=course_id)
         context = {"course_label": "", "has_manage_perm": True}
         manage_params = {"group_list": er.getGroupList()}
-        
+
         if course_id is None:
             context['manage_url'] = reverse('lab:manage')
+            context['home_url'] = reverse('lab:index')
             manage_params['exercise_api_url'] = reverse('lab:api-exercises')
         else:
             course_names = LTICourse.getCourseNames(course_id)
             context['course_label'] = "%s (ID: %s)" % (course_names.get('name'), course_id)
             context['manage_url'] = reverse('lab:course-manage', kwargs={"course_id":course_id})
+            context['home_url'] = reverse("lab:course-index", kwargs={"course_id":course_id})
             manage_params['exercise_api_url'] = "%s?%s" % (reverse('lab:api-exercises'), urlencode({"course_id":course_id}))
 
         self.requirejs_context.set_app_module('app/components/app/manage')
