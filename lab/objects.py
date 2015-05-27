@@ -422,6 +422,10 @@ class ExerciseFileError(Exception):
     pass
 
 class ExerciseFile:
+    '''
+    ExerciseFile is responsible for knowing how to load() and save()
+    ExerciseDefinition objects to the file system. 
+    '''
     def __init__(self, file_name, group, group_path):
         self.file_name = file_name
         self.group_path = group_path
@@ -434,6 +438,7 @@ class ExerciseFile:
         return os.path.join(self.group_path, self.file_name)
     
     def load(self):
+        '''Loads an ExerciseDefinition from a file.'''
         try:
             with open(self.getPathToFile()) as f:
                 data = f.read().strip()
@@ -443,6 +448,7 @@ class ExerciseFile:
         return True
 
     def save(self, exercise_definition):
+        '''Saves an ExerciseDefinition to a file.'''
         if exercise_definition is not None:
             self.exerciseDefinition = exercise_definition
         elif self.exerciseDefinition is None:
@@ -462,6 +468,7 @@ class ExerciseFile:
         return True
     
     def delete(self):
+        '''Deletes an exercise file.'''
         if not os.path.exists(self.getPathToFile()):
             return False
         os.remove(self.getPathToFile())
@@ -473,22 +480,27 @@ class ExerciseFile:
         return True
 
     def next(self):
+        '''Returns the next exercise file in the group.'''
         return self.group.next(self)
 
     def nextUrl(self):
+        '''Returns the URL to the next exercise in the group.'''
         if self.next():
             return self.next().url()
         return None
 
     def previousUrl(self):
+        '''Returns the URL to the previous exercise in the group.'''
         if self.previous():
             return self.previous().url()
         return None
 
     def previous(self):
+        '''Returns the previous exercise file in the group.'''
         return self.group.previous(self)
 
     def url(self):
+        '''Returns the URL to the exercise.'''
         if self.group.course_id is None:
             return reverse('lab:exercises', kwargs={
                 "group_name": self.group.name, 
@@ -501,21 +513,28 @@ class ExerciseFile:
         })
     
     def getName(self):
+        '''Returns the name of the exercise file.'''
         return self.name
     
     def getGroupName(self):
+        '''Returns the group name.'''
         return self.group.name
     
     def getID(self):
+        '''Returns the ID of the exercise file, that is, the path to the
+        file.'''
         return os.path.join(self.group.name, self.name)
     
     def setExerciseDefinition(exercise_definition=None):
+        '''Sets the ExerciseDefinition (if there isn't one already.'''
         self.exerciseDefinition = exercise_definition
 
     def asJSON(self):
+        '''Returns the exercise as JSON.'''
         return json.dumps(self.asDict())
 
     def asDict(self):
+        '''Returns the exercise as Dict.'''
         d = {}
         if self.exerciseDefinition is not None:
             d.update(self.exerciseDefinition.getData())
@@ -536,6 +555,7 @@ class ExerciseFile:
 
     @staticmethod
     def getNextFileName(group_path, group_size):
+        '''Generates the next file name for the group (numbers 01,02...99).'''
         max_tries = 99
         n = group_size + 1
         file_name = "%s.json" % str(n).zfill(2)
@@ -550,6 +570,7 @@ class ExerciseFile:
     
     @staticmethod
     def create(**kwargs):
+        '''Creates an exercise file.'''
         course_id = kwargs.get("course_id", None)
         group_name = kwargs.get('group_name', None)
         file_name = kwargs.get('file_name', None)
@@ -574,6 +595,11 @@ class ExerciseFile:
         return ef
 
 class ExerciseGroup:
+    '''
+    Exercises belong to groups, so this object is a container
+    for exercises that knows how to manipulate and traverse
+    sets of exercises.
+    '''
     def __init__(self, group_name, *args, **kwargs):
         self.name = group_name
         self.course_id = kwargs.get("course_id", None)
