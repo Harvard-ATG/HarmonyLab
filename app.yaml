@@ -13,7 +13,7 @@ handlers:
 
 libraries:
 - name: django
-  version: "1.5"
+  version: "1.8"
 
 builtins:
 - django_wsgi: on

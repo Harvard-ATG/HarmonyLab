@@ -4,9 +4,9 @@
 /docs/jsdoc/out/*
 /harmony/static/js/build/*
 /data/*
+/static/*
 /*.log
 /.travis/generated_*.js
 /config/django_secret.txt
 /config/lti_oauth_credentials.txt
-/database/*.db
 /*.komodoproject

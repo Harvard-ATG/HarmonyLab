@@ -42,12 +42,6 @@ USE_TZ = True
 # Example: "/home/ubuntu/harmony"
 ROOT_DIR = reduce(lambda l,r: path.dirname(l), range(3), path.realpath(__file__))
 
-# Example: "/home/ubuntu/harmony/harmony"
-PROJECT_ROOT = path.join(ROOT_DIR, 'harmony')
-
-# Example: "/home/ubuntu/harmony/harmony/apps"
-APPS_ROOT = path.join(PROJECT_ROOT, 'apps')
-
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
@@ -72,12 +66,11 @@ STATICFILES_DIRS = [
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	path.join(PROJECT_ROOT, 'static'),
+	path.join(ROOT_DIR, 'lab', 'static'),
+	path.join(ROOT_DIR, 'jasmine', 'static'),
 ]
 
-STATICFILES_DIRS.extend([ 
-	f for f in glob(path.join(APPS_ROOT, '*', 'static')) if path.isdir(f)
-])
+#STATICFILES_DIRS.extend([f for f in glob(path.join(ROOT_DIR, '*', 'static')) if path.isdir(f)])
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -123,12 +116,11 @@ TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	path.join(PROJECT_ROOT, 'templates'),
+	path.join(ROOT_DIR, 'lab', 'templates'),
+	path.join(ROOT_DIR, 'jasmine', 'templates'),
 ]
 
-TEMPLATE_DIRS.extend([
-	f for f in glob(path.join(APPS_ROOT, '*', 'templates')) if path.isdir(f)
-])
+#TEMPLATE_DIRS.extend([f for f in glob(path.join(ROOT_DIR, '*', 'templates')) if path.isdir(f)])
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -142,14 +134,14 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'harmony.apps.lab',
-    'harmony.apps.jasmine',
+    'lab',
+    'jasmine',
 )
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': path.join(ROOT_DIR, 'database', 'harmony.db'),                      # Or path to database file if using sqlite3.
+        'NAME': path.join(ROOT_DIR, 'data', 'harmony.db'),                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
