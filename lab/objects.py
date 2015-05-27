@@ -11,16 +11,15 @@ log = logging.getLogger(__name__)
 
 class ExerciseRepository(object):
     '''
-    This is an abstract interface for accessing exercises. All interaction
-    with exercises should originate from this class, so that if the
-    storage mechanism is changed later, client code impact can be
-    minimized. 
+    This is an abstract interface for accessing exercises. All interaction with
+    exercises should originate from this class, so that if the storage mechanism
+    is changed later, client code impact can be minimized. 
 
-    To get an instance of the repository, use the create() factory
-    method. If the repositoryType keyword argument is not present,
-    the default will be returned, which is currently "file". It's
-    best not to pass a specific repository type and just use the
-    default, so that it's easy to move to a database backend later.
+    To get an instance of the repository, use the create() factory method. If
+    the repositoryType keyword argument is not present, the default will be
+    returned, which is currently "file". It's best not to pass a specific
+    repository type and just use the default, so that it's easy to move to a
+    database backend later.
 
     Usage: 
         repo = ExerciseRepository.create()
@@ -95,16 +94,16 @@ class ExerciseRepository(object):
 
 class ExerciseFileRepository(ExerciseRepository):
     '''
-    Implements the ExerciseRepository interface using
-    files and directories to store exercises.
+    Implements the ExerciseRepository interface using files and directories to
+    store exercises.
     '''
     BASE_PATH = os.path.join(settings.ROOT_DIR, 'data', 'exercises', 'json')
 
     def __init__(self, *args, **kwargs):
         '''
-        Initializes the object by searching the directory tree for all
-        exercises and groups so that method calls already have the
-        data they need to operate.
+        Initializes the object by searching the directory tree for all exercises
+        and groups so that method calls already have the data they need to
+        operate.
 
         Assumptions:
         * Groups are directories.
@@ -118,8 +117,8 @@ class ExerciseFileRepository(ExerciseRepository):
     @staticmethod
     def getBasePath(course_id):
         '''
-        Returns the file path to exercises for a given course, 
-        or if no course, defaults to a catch-all directory.
+        Returns the file path to exercises for a given course, or if no course,
+        defaults to a catch-all directory.
         '''
         if course_id is None:
             return os.path.join(ExerciseFileRepository.BASE_PATH, "all")
@@ -157,8 +156,8 @@ class ExerciseFileRepository(ExerciseRepository):
 
     def findFiles(self):
         '''
-        Traverses the directory tree looking for all directories (groups)
-        and files (exercises) and instantiates objects for each.
+        Traverses the directory tree looking for all directories (groups) and
+        files (exercises) and instantiates objects for each.
         '''
         self.reset()
 
@@ -182,8 +181,8 @@ class ExerciseFileRepository(ExerciseRepository):
 
     def createExercise(self, data):
         '''
-        Stores an exercise in a group folder with the given data,
-        assuming it is valid.
+        Stores an exercise in a group folder with the given data, assuming it is
+        valid.
         '''
         group_name = data.pop('group_name', None)
         exercise_definition = ExerciseDefinition(data)
@@ -228,17 +227,16 @@ class ExerciseFileRepository(ExerciseRepository):
 
 class ExerciseDefinition:
     '''
-    An ExerciseDefinition is a stateless object that describes 
-    an exercise problem such that it can be presented to a student
-    as intended by an instructor.
+    An ExerciseDefinition is a stateless object that describes an exercise
+    problem such that it can be presented to a student as intended by an
+    instructor.
 
-    The object's main responsibility is to ensure that the definition
-    is valid and convert to/from different data formats.
+    The object's main responsibility is to ensure that the definition is valid
+    and convert to/from different data formats.
 
-    Although the application primarily speaks MIDI, the definition
-    collaborates with ExerciseLilyPond so that a user can provide
-    a chord sequence using a subset of LilyPond's notation 
-    (http://lilypond.org).
+    Although the application primarily speaks MIDI, the definition collaborates
+    with ExerciseLilyPond so that a user can provide a chord sequence using a
+    subset of LilyPond's notation (http://lilypond.org).
     '''
     def __init__(self, data):
         self.errors = []
@@ -279,20 +277,25 @@ class ExerciseLilyPondError(Exception):
 
 class ExerciseLilyPond:
     '''
-    This object parses a string that is assumed to be a chord sequence
-    in LilyPond notation (http://www.lilypond.org/). The output is
-    a data structure with MIDI note numbers that is valid for ExerciseDefinition.
+    This object parses a string that is assumed to be a chord sequence in
+    LilyPond notation (http://www.lilypond.org/). The output is a data structure
+    with MIDI note numbers that is valid for ExerciseDefinition.
 
     Here are the key points for subset of LilyPond that can be parsed:
 
     * Absolute octave entry.
-    * A pitch name is specified using lowercase letters a through g. The note names c to b are engraved in the octave below middle C.
-    * Other octaves may be specified with a single quote (') or comma (,) character. Each ' raises the pitch by one octave; each , lowers the pitch by an octave.
-    * A sharp pitch is made by adding "s" to the note name. A flat pitch is made by adding "f" to the note name.
-    * A chord is a sequence of pitches enclosed in angle brackets (e.g. &lt;c e g&gt;). A minimum of one chord must be entered.
+    * A pitch name is specified using lowercase letters a through g. 
+      The note names c to b are engraved in the octave below middle C.
+    * Other octaves may be specified with a single quote (') or comma (,) character. 
+      Each ' raises the pitch by one octave; each , lowers the pitch by an octave.
+    * A sharp pitch is made by adding "s" to the note name. A flat pitch is made 
+      by adding "f" to the note name.
+    * A chord is a sequence of pitches enclosed in angle brackets (e.g. &lt;c e g&gt;). 
+      A minimum of one chord must be entered.
     * Notes can be "hidden" by prefixing the pitch with an "x" or (e.g. &lt;c xe xg&gt;).
 
     See also:
+
     http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
     '''
     def __init__(self, lilypondString, *args, **kwargs):
@@ -302,11 +305,15 @@ class ExerciseLilyPond:
         self.midi = self.parse()
 
     def parseChords(self, lpstring):
+        '''Parses the string into chords.'''
         chords = re.findall('<([^>]+)>', lpstring.strip())
         # re.findall('<([^>]+)>', "<e c' g' bf'>1\n<f \xNote c' \xNote f' a'>1")
         return chords
     
     def parseChord(self, chordstring, start_octave=4):
+        '''
+        Parses a single chord string into a set of MIDI "visible" and "hidden" notes.
+        '''
         # NOTE:
         # http://www.lilypond.org/doc/v2.18/Documentation/notation/writing-pitches
         # parsing notes in "absolute" octave mode - each note must be specified absolutely
@@ -385,6 +392,10 @@ class ExerciseLilyPond:
         return midi_chord
 
     def parse(self):
+        '''
+        Parse method that parses the LilyPond string into an array
+        of MIDI chords.
+        '''
         octave = 4
         midi_chords = []
         try:
@@ -396,9 +407,15 @@ class ExerciseLilyPond:
         return midi_chords
   
     def isValid(self):
+        '''
+        Returns true if it's valid notation that is understood by the parser.
+        '''
         return self.is_valid
     
     def toMIDI(self):
+        '''
+        Returns the parsed MIDi data.
+        '''
         return self.midi
 
 class ExerciseFileError(Exception):
