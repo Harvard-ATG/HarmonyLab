@@ -21,7 +21,7 @@ Demo: http://harmony-lab.appspot.com/
 $ git clone git@github.com:Harvard-ATG/HarmonyLab.git harmony
 $ cd harmony
 $ pip install -r requirements.txt
-$ ./manage.py syncdb
+$ ./manage.py migrate
 $ ./manage.py runserver
 ```
 You should now be able to run the application on your localhost at ```http://127.0.0.1:8000```. 
