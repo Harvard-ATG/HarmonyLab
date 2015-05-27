@@ -11,8 +11,8 @@ logger = logging.getLogger('jasmine')
 def run_tests(request):
     all_specs = []
     required_suffix = '_spec.js'
-    spec_dir = os.path.join(settings.PROJECT_ROOT, 'static', 'js', 'spec')
-    strip_prefix_len = len(os.path.join(settings.PROJECT_ROOT, 'static', 'js', '')) # with trailing slash
+    spec_dir = os.path.join(settings.ROOT_DIR, 'lab', 'static', 'js', 'spec')
+    strip_prefix_len = len(os.path.join(settings.ROOT_DIR, 'lab', 'static', 'js', '')) # with trailing slash
 
     # find all spec files
     for curpath, dirs, files in os.walk(spec_dir):
