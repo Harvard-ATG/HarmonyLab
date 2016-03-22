@@ -78,7 +78,6 @@ requirejs_config = get_requirejs_config()
 requirejs_config_content = get_requirejs_content(requirejs_config)
 
 write_js_file(spec_runner_file, spec_runner_content)
-write_js_file(requirejs_config_file, requirejs_config_content)
-
 print spec_runner_content
+write_js_file(requirejs_config_file, requirejs_config_content)
 print requirejs_config_content
