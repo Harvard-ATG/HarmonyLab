@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 import json
-import logging
 import os.path
 
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.dirname(cur_dir)
-lib_dir = os.path.join(root_dir, 'harmony', 'static', 'js', 'lib')
-src_dir = os.path.join(root_dir, 'harmony', 'static', 'js', 'src')
-spec_dir = os.path.join(root_dir, 'harmony', 'static', 'js', 'spec')
+lib_dir = os.path.join(root_dir, 'lab', 'static', 'js', 'lib')
+src_dir = os.path.join(root_dir, 'lab', 'static', 'js', 'src')
+spec_dir = os.path.join(root_dir, 'lab', 'static', 'js', 'spec')
 spec_runner_file = os.path.join(cur_dir, "generated_spec_runner.js")
 spec_runner_file_name = "generated_spec_runner"
 spec_runner_path = os.path.join(cur_dir, spec_runner_file_name)
@@ -78,7 +77,8 @@ spec_runner_content = get_spec_content(all_specs)
 requirejs_config = get_requirejs_config()
 requirejs_config_content = get_requirejs_content(requirejs_config)
 
-logging.debug(spec_runner_content)
 write_js_file(spec_runner_file, spec_runner_content)
-logging.debug(requirejs_config_content)
 write_js_file(requirejs_config_file, requirejs_config_content)
+
+print spec_runner_content
+print requirejs_config_content
