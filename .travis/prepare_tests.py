@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import json
+import logging
 import os.path
 
 cur_dir = os.path.dirname(os.path.realpath(__file__))
@@ -77,5 +78,7 @@ spec_runner_content = get_spec_content(all_specs)
 requirejs_config = get_requirejs_config()
 requirejs_config_content = get_requirejs_content(requirejs_config)
 
+logging.debug(spec_runner_content)
 write_js_file(spec_runner_file, spec_runner_content)
+logging.debug(requirejs_config_content)
 write_js_file(requirejs_config_file, requirejs_config_content)
