@@ -32,6 +32,6 @@ You should now be able to run the application on your localhost at ```http://127
 2. Safari 
 3. Chrome**
 
-** The Jazz Midi Plugin may not work (i.e. no sound output or MIDI keyboard input) if you are running Chrome v42 or later because Chrome [disabled NPAPI by default](https://threatpost.com/google-shuts-off-npapi-in-chrome/112295). You can temporarily re-enable support for NPAPI via flags: ```chrome://flags/#enable-npapi```
+** The Jazz Midi Plugin may not work if you are running Chrome v42 or later because Chrome [disabled NPAPI by default](https://threatpost.com/google-shuts-off-npapi-in-chrome/112295) and will completely remove the option at some point. You may be able to temporarily re-enable support for NPAPI via flags: ```chrome://flags/#enable-npapi```.  Alternatively, the plugin should work in [Firefox](http://www.getfirefox.com/).
 
 
