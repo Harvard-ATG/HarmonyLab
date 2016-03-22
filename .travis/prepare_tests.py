@@ -17,7 +17,7 @@ def get_all_specs():
     '''Returns a list of paths to all spec files with the extension stripped off.'''
     all_specs = []
     required_suffix = '_spec.js'
-    strip_prefix_len = len(os.path.join(root_dir, 'harmony', 'static', 'js', '')) # with trailing slash
+    strip_prefix_len = len(os.path.join(root_dir, 'lab', 'static', 'js', '')) # with trailing slash
 
     for curpath, dirs, files in os.walk(spec_dir):
         for name in files:
