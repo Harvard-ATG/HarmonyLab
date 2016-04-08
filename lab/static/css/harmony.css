@@ -1,5 +1,6 @@
 @charset "UTF-8";
 @import "pure.css";
+@import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700);
 @font-face {
     font-family: 'FiguredBassMHGPL';
     src: url('../fonts/FiguredBassMHGPL.otf');
@@ -23,7 +24,7 @@
 
 html {
     font-size: 100%;
-    font-family: LinLibertine, Helvetica, Verdana, Arial, sans-serif;
+    font-family: "Alegreya Sans", sans-serif;
 }
 
 html, body, h1, h2, h3, h4, div, p  {
@@ -37,14 +38,10 @@ b {font-family: LinLibertineBold;}
 i {font-family: LinLibertineItalic;}
 button, input, optgroup, select, textarea { color: #000; }
 a,a:visited, .btn { color: inherit; text-decoration: none; }
-a:hover, .btn:hover { cursor: pointer; color: #aa0000; }
+a:hover, .btn:hover { cursor: pointer; color: inherit; }
 body { text-align: center; }
-body.theme-plain { background-color: #333; }
-body.theme-texture { background: url('../img/footer_lodyas.png') repeat; }
-body.theme-downlights { background:#000 url('../img/Harmony-bkg.jpg') center no-repeat;}
-body.theme-concert {background:#000 url('../img/Harmony1-bkg.jpg') center no-repeat;}
-body.theme-smoothblue {background:#000 url('../img/bluelights.jpg') center no-repeat;}
-body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-repeat;}
+body.theme-plain { background-color: #445F69; }
+body.theme-texture { background-color: #445F69; }
 
 /*--------------------------------------------------*/
 /* Structural/Layout */
@@ -76,16 +73,18 @@ body.theme-speakerwave {background:#000 url('../img/speakerwave.jpg') center no-
     z-index: 1;
 }
 #staff {
-    width: 100%;
-    height: 500px;
+    width: 90%;
+    height: 450px;
     position: static;
     left: 0;
     z-index: 1;
+    padding-left: 2em;
+    padding-right: 2em;
 }
 #staff-status {
-    width: 100%;
+    width: 40em;
+    margin: -1em auto;
     height: 100%;
-    border-top: 1px solid #000;
     overflow: hidden;
     overflow-y:auto;
 }
@@ -134,8 +133,8 @@ ul.content-area-vertical-nav {
 /*--------------------------------------------------*/
 /* Header Styles */
 .header {
-    font-size: 18px;
-    background: #333;
+    font-size: 1em;
+    background: transparent;
     position: relative;
     color: #fff;
 }
@@ -254,32 +253,32 @@ fieldset.settings-notation {
 /*--------------------------------------------------*/
 /* Exercise Status Styles */
 .exercise-status-area {
-	padding: 5px 10px;
-    font-size: 18px;
+    margin: 0;
+	padding: 0.5em 0.75em;
     color: #333;
-}
-.exercise-status-area b {
-    font-size: 18px;
+    border: 1px solid black;
+    border-radius: 6px;
 }
 .exercise-status-col,
 .exercise-status-col {
 	display: inline-block;
 	vertical-align: top;
+    margin: 0;
 }
 .exercise-status-col1 {
-	width: 70%;
-}
-.exercise-status-col p {
-	padding: .2em 0;
+	width: 8em;
 }
 .exercise-status-col2 {
-	width: 30%;
+	width: 26em;
+    margin-left: 2em;
 }
 .exercise-status-state {
-	padding: 2px 4px;
-	margin: 0 5px;
+	padding: 4px 6px;
+	margin: 0px;
 	text-transform: uppercase;
-	font-size: .9em;
+    color: #fff;
+    border-radius: 6px;
+    background-color: black;
 }
 ul.exercise-status-exercise-list {
 	list-style-type: none;
@@ -297,6 +296,9 @@ ul.exercise-status-exercise-list li:not(.exercise-item) {
 	float: none;
 	clear: both;
 }
+ul.exercise-status-exercise-list li:exercise-item {
+    display: none;
+}
 ul.exercise-status-exercise-list li.exercise-item.active  {
 	color: #333;
 }
@@ -307,8 +309,8 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 	color: #aa0000;
 }
 .exercise-status-next-btn {
-	display:block;
-	font-size: 1.5em !important;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 /*--------------------------------------------------*/
 /* Exercise form */
@@ -399,7 +401,7 @@ ul.menu-group-list li {
 .icon-btn-camera { background-position: -410px -50px; width: 50px; }
 .icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 .icon-sig-lock {
-    background: url(../img/v-line.png) 1px 0 repeat-y; 
+    background: url(../img/v-line.png) 1px 0 repeat-y;
 }
 .sig-lock-block {
 	line-height: 3em;
@@ -415,9 +417,13 @@ ul.menu-group-list li {
 
 .ioncustom-siglocked {
 	color: #ffffff;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .ioncustom-sigunlocked {
-	color: #999900;
+	color: #ffffff;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .ioncustom-nextexercise {
 	margin: 0 5px;
@@ -430,30 +436,24 @@ ul.menu-group-list li {
 
 .keyboard-wrapper {
     width: 888px;
-    margin: 30px auto 0;
-    border: 1px solid #222;
-    -webkit-border-top-left-radius: 9px;
-    -webkit-border-top-right-radius: 9px;
-    -moz-border-radius-topleft: 9px;
-    -moz-border-radius-topright: 9px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
-    background:#222 url(../img/kb-controller-bkg2.png) repeat-x;	
-    position:relative;
-    z-index: 10;
-
+    margin: 20px auto;
+    margin-bottom: 0px;
+    border: 0px solid #ffffff;
+    padding: 4px;
+    border-radius: 6px;
+    position: relative;
+    background-color: rgba(255,255,255,0.2);
 }
 .keyboard-controls {
-    height: 25px;
+    height: 30px;
     margin: 0px;
-    padding:5px 0;
-    border-bottom: 1px solid #222;
-
+    padding: 5px 0;
+    border: 0px;
 }
 .transpose-control {
     width: 150px;
-    margin:2px auto;
-    color:white;
+    margin: 2px auto;
+    color: white;
 }
 .transpose-icon {
     background: transparent url(../img/transpose-arrows.png) no-repeat;
@@ -461,13 +461,15 @@ ul.menu-group-list li {
     height: 20px;
 }
 .metronome-control {
-    float:right;
-    color:#fff;
-    margin-right: 25px;
+    float: right;
+    color: #fff;
+    margin-right: 12px;
 }
 .metronome-control-input {
-    width: 30px; 
-    margin: 0 10px;
+    font-size: 0.7em;
+    text-align: center;
+    width: 2em;
+    margin: 0px 10px 0px 10px;
 }
 .metronome-icon {
     background: transparent url(../img/metronome_sprite.png) no-repeat;
@@ -499,52 +501,25 @@ ul.menu-group-list li {
     padding-bottom: 6px;
 }
 .keyboard-pedals {
-    margin: 0 auto;
-    width: 172px; 
+    margin: 0px auto;
+    width: 105px; 
 }
 .keyboard-pedals .pedal {
     float: left;
     display: block;
     /*background: url(../img/pedal-sprite.png) no-repeat;*/
-	background-color: #adadad;
-	border: 1px solid #000;
-    width: 40px; 
-	margin-right: 10px;
-    height: 50px;
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+	background-color: #b5a642;
+	border: 0px solid #fff;
+    width: 20px; 
+    margin-top: 0px;
+	margin-right: 15px;
+    height: 30px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
 	cursor: pointer;
 }
-.keyboard-pedals .pedal:hover,
 .keyboard-pedals .pedal-active {
-	background-color: hsl(0, 45%, 20%);
-}
-.keyboard-pedals .pedal-left { 
-	/*background-position: -21px -22px;*/
-}
-.keyboard-pedals .pedal-left:hover { 
-	/*background-position: -21px -121px;*/
-}
-.keyboard-pedals .pedal-left:active, .keyboard-pedals .pedal-left.pedal-active { 
-	/*background-position: -21px -221px;*/ 
-}
-.keyboard-pedals .pedal-center { 
-	/*background-position: -121px -22px; width: 50px; */
-}
-.keyboard-pedals .pedal-center:hover { 
-	/*background-position: -121px -121px; width: 50px; */
-}
-.keyboard-pedals .pedal-center:active, .keyboard-pedals .pedal-center.pedal-active { 
-	/*background-position: -121px -221px; width: 50px; */ 
-}
-.keyboard-pedals .pedal-right { 
-	/*background-position: -221px -22px; */
-}
-.keyboard-pedals .pedal-right:hover { 
-	/*background-position: -221px -121px; */
-}
-.keyboard-pedals .pedal-right:active, .keyboard-pedals .pedal-right.pedal-active {
-	/*background-position: -221px -221px; */
+	background-color: #665E25;
 }
 
 /*--------------------------------------------------*/
@@ -645,11 +620,12 @@ ul.menu-group-list li {
     height: 404px;
 }
 .widget-keysignature {
-	display: inline;
+    display: inline;
 }
 .widget-keysignature-header {
-	background-color: rgba(255,255,255,0.2);
-	padding: 5px 5px 8px 5px;
+    background-color: rgba(255,255,255,0.2);
+    padding: 5px 5px 8px 5px;
+    */border-radius: 6px;/*
 }
 .figuredbass {
 	font-family: Sebastian;
