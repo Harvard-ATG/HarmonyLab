@@ -82,7 +82,7 @@ body.theme-texture { background-color: #445F69; }
     padding-right: 2em;
 }
 #staff-status {
-    width: 40em;
+    width: 640px;
     margin: -1em auto;
     height: 100%;
     overflow: hidden;
@@ -133,6 +133,10 @@ ul.content-area-vertical-nav {
 /*--------------------------------------------------*/
 /* Header Styles */
 .header {
+    width: 640px;
+    margin: 0 auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
     font-size: 1em;
     background: transparent;
     position: relative;
@@ -141,15 +145,21 @@ ul.content-area-vertical-nav {
 .header ul {
     margin: 0;
     padding: 0;
-    padding: 15px 10px 15px 0;
     list-style-type: none;
 }
 .header ul li {
     display: inline;
-    margin-right: 10px;
 }
-.header ul li > .btn {
-    padding: .2em 1em;
+.header .js-btn-menu {
+    padding-right: 1em;
+}
+.header .js-btn-info {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+.header .js-keysignature-widget {
+    padding-left: 1em;
+    padding-right: 1em;
 }
 .header ul li.right {
     float: right;
@@ -199,55 +209,55 @@ fieldset.settings-notation {
 
 /*--------------------------------------------------*/
 /* Notifications Styles */
+.notificationAlerts {
+	color: yellow;
+    background-color: black;
+    padding: 3px 6px;
+    border-radius: 6px;
+    float: right;
+    min-width: 14px;
+    min-height: 19px;
+}
 .notifications {
-	color: #000;
+    width: 640px;
+    margin: 0 auto;
 }
 .notification {
-	padding: 10px;
-	border-bottom: 1px solid #333;
-	position: relative;
+    position: relative;
+    margin-bottom: 1em;
+    border: 0px solid #fff;
+	border-radius: 6px;
+    background-color: #ddd;
+    padding: 1em;
+	color: #000;
 }
-.notification.info {
-	background-color: #d9edf7;
+.notification .title b {
+    font-family: inherit;
 }
-.notification.error {
-	background-color: #f2dede;
+.notification.error .title {
+    color: red;
 }
-.notification.success {
-	background-color: #dff0d8;
+.notification.success .title {
+    color: green;
 }
-.notification:last-child {
-	border-bottom: none;
+.notification.info .title {
+    color: blue;
 }
-.notification .title {
-	font-weight: bold;
-	margin-right: .5em;
-}
-.notification .btn, .notification a {
-	cursor: pointer;
-	color: #0099cc;
-}
-.notification .btn:hover, .notification a:hover {
-	color: #aa0000;
+.notification a {
+	color: #3366BB;
 }
 .notification .btn {
-	border: 1px solid #666;
+	border: 1px solid #000;
 	padding: 2px 4px;
+    border-radius: 3px;
 }
-.notification .moredetails {
-	margin-right: 10px;
+.notification .moredetails, .delete {
+	float: right;
+    margin-left: 0.5em;
 }
 .notification .details {
 	display: none;
-	margin-top: 3px;
-}
-.notification .delete {
-	position: absolute;
-	top: 8px;
-	right: 25px;
-}
-.notificationAlerts {
-	 color: #f2dede;
+	margin-top: 0.5em;
 }
 
 /*--------------------------------------------------*/
@@ -624,8 +634,8 @@ ul.menu-group-list li {
 }
 .widget-keysignature-header {
     background-color: rgba(255,255,255,0.2);
-    padding: 5px 5px 8px 5px;
-    */border-radius: 6px;/*
+    padding: 6px;
+    border-radius: 3px;
 }
 .figuredbass {
 	font-family: Sebastian;
