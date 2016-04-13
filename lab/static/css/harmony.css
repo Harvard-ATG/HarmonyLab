@@ -163,7 +163,7 @@ ul.content-area-vertical-nav {
     padding-right: 1em;
 }
 .header ul li.right {
-    float: right;
+    /*float: right;*/
 }
 
 /*--------------------------------------------------*/
@@ -211,8 +211,8 @@ fieldset.settings-notation {
 /*--------------------------------------------------*/
 /* Notifications Styles */
 .notificationAlerts {
-    color: yellow;
-    background-color: black;
+    color: #fff;
+    background-color: #000;
     padding: 3px 6px;
     border-radius: 6px;
     float: right;
@@ -459,7 +459,7 @@ ul.menu-group-list li {
     padding: 6px;/*compare keyboard-pedals pedal margin-top*/
     border-radius: 6px;
     position: relative;
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255,255,255,0.3);
 }
 .keyboard-controls {
     height: 30px;
@@ -640,8 +640,8 @@ ul.menu-group-list li {
     display: inline;
 }
 .widget-keysignature-header {
-    background-color: rgba(255,255,255,0.2);
-    padding: 6px;
+    background-color: rgba(255,255,255,0.3);
+    padding: 8px 6px;
     border-radius: 3px;
 }
 .figuredbass {
