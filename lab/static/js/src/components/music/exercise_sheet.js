@@ -138,7 +138,7 @@ define([
                 '<div class="exercise-status-area">',
                     '<div class="exercise-status-col exercise-status-col1">',
                         '<% if (typeof(exercise_list) !== "undefined" && exercise_list.length > 0) { %>',
-                            '<p>Exercise X of <%= exercise_list.length %></p>',
+                            '<p>Exercise ? of <%= exercise_list.length %></p>',
                         '<% } %>',
                         '<p><span class="exercise-status-state" style="background-color:<%= status_color %>"><%= status_text %> <%= status_icon %></span>',
                         '<% if (typeof(time_to_complete) !== "undefined" && time_to_complete != "") { %>',
@@ -159,7 +159,7 @@ define([
             var parsed_prompt_html;
 
             status_map[exc.STATE.INCORRECT] = {text:"incorrect",color:"#990000",iconCls:"ion-close"};
-            status_map[exc.STATE.CORRECT] = {text:"correct",color:"#4C9900",iconCls:"ion-checkmark"};
+            status_map[exc.STATE.CORRECT] = {text:"complete",color:"#4C9900",iconCls:"ion-checkmark"};
             status_map[exc.STATE.WAITING] = {text:"waiting",color:"#999900",iconCls:""};
             status_map[exc.STATE.READY] = {text:"ready",color:"#000000",iconCls:""};
 
