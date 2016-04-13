@@ -39,9 +39,10 @@ i {font-family: LinLibertineItalic;}
 button, input, optgroup, select, textarea { color: #000; }
 a,a:visited, .btn { color: inherit; text-decoration: none; }
 a:hover, .btn:hover { cursor: pointer; color: inherit; }
-body { text-align: center; }
-body.theme-plain { background-color: #445F69; }
-body.theme-texture { background-color: #445F69; }
+body {
+    text-align: center;
+    background-color: #445F69;
+}
 
 /*--------------------------------------------------*/
 /* Structural/Layout */
