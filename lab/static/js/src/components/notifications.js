@@ -105,7 +105,7 @@ define([
         $n.html('<span class="title"><b>'+title+'</b></span> <span class="btn delete" alt="Dismiss Notification">Dismiss</span>');
         
         if ("description" in msg) {
-            $n.prepend('<span class="btn moredetails">View</span> ');
+            $n.prepend('<span class="btn moredetails">Expand or collapse</span> ');
             $n.append('<div class="details">' + msg.description+'</div>');
         }
 
