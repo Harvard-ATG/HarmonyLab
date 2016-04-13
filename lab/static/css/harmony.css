@@ -103,9 +103,9 @@ body.theme-texture { background-color: #445F69; }
     z-index: 100;
     text-align: left;
     height: 100%;
-	min-height: 700px;
+    min-height: 700px;
     padding: 10px 20px;
-	line-height: 1em;
+    line-height: 1em;
 }
 .content-area-section {
     padding: 0 0 10px 0;
@@ -174,43 +174,43 @@ ul.content-area-vertical-nav {
     margin: 0;
 }
 .settings-help {
-	color: #666;
-	font-size: .9em;
+    color: #666;
+    font-size: .9em;
 }
 fieldset.settings-notation {
-	border: none;
-	border-top: 1px solid #c0c0c0;
-	width: auto;
+    border: none;
+    border-top: 1px solid #c0c0c0;
+    width: auto;
 }
 .settings-notation div {
-	display: block;
-	padding: 4px 8px;
+    display: block;
+    padding: 4px 8px;
 }
 .settings-notation ol {
-	margin: 0;
+    margin: 0;
 }
 .settings-notation ul {
-	margin: 0;
-	list-style-type: none;
+    margin: 0;
+    list-style-type: none;
 }
 .settings-notation label {
-	margin: 0 10px 0 0;
-	display: block;
+    margin: 0 10px 0 0;
+    display: block;
 }
 .settings-notation legend {
-	padding: 2px 10px;
+    padding: 2px 10px;
 }
 .settings-notation li>span {
-	display: inline-block;
+    display: inline-block;
 }
 .settings-notation li:not(:last-child) {
-	/*border-bottom: 1px solid #c0c0c0;*/
+    /*border-bottom: 1px solid #c0c0c0;*/
 }
 
 /*--------------------------------------------------*/
 /* Notifications Styles */
 .notificationAlerts {
-	color: yellow;
+    color: yellow;
     background-color: black;
     padding: 3px 6px;
     border-radius: 6px;
@@ -226,10 +226,10 @@ fieldset.settings-notation {
     position: relative;
     margin-bottom: 1em;
     border: 0px solid #fff;
-	border-radius: 6px;
+    border-radius: 6px;
     background-color: #ddd;
     padding: 1em;
-	color: #000;
+    color: #000;
 }
 .notification .title b {
     font-family: inherit;
@@ -244,39 +244,39 @@ fieldset.settings-notation {
     color: blue;
 }
 .notification a {
-	color: #3366BB;
+    color: #3366BB;
 }
 .notification .btn {
-	border: 1px solid #000;
-	padding: 2px 4px;
+    border: 1px solid #000;
+    padding: 2px 4px;
     border-radius: 3px;
 }
 .notification .moredetails, .delete {
-	float: right;
+    float: right;
     margin-left: 0.5em;
 }
 .notification .details {
-	display: none;
-	margin-top: 0.5em;
+    display: none;
+    margin-top: 0.5em;
 }
 
 /*--------------------------------------------------*/
 /* Exercise Status Styles */
 .exercise-status-area {
     margin: 0;
-	padding: 0.5em 0.75em;
+    padding: 0.5em 0.75em;
     color: #333;
     border: 1px solid black;
     border-radius: 6px;
 }
 .exercise-status-col,
 .exercise-status-col {
-	display: inline-block;
-	vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
     margin: 0;
 }
 .exercise-status-col1 {
-	width: 12em;
+    width: 12em;
 }
 .exercise-status-col1 p {
     line-height: 1.5em;
@@ -284,44 +284,44 @@ fieldset.settings-notation {
     padding: 0;
 }
 .exercise-status-col2 {
-	width: 22em;
+    width: 22em;
     margin-left: 2em;
 }
 .exercise-status-state {
-	padding: 4px 6px 2px 6px;
-	margin: 0;
+    padding: 4px 6px 2px 6px;
+    margin: 0;
     text-transform: uppercase;
     color: #fff;
     border-radius: 6px;
     background-color: black;
 }
 /*ul.exercise-status-exercise-list {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 ul.exercise-status-exercise-list li {
-	float: left;
-	margin-right: 5px;
+    float: left;
+    margin-right: 5px;
 }
 ul.exercise-status-exercise-list li a {
-	font-size: 1em;
+    font-size: 1em;
 }
 ul.exercise-status-exercise-list li:not(.exercise-item) {
-	float: none;
-	clear: both;
+    float: none;
+    clear: both;
 }
 ul.exercise-status-exercise-list li:exercise-item {
     display: none;
 }
 ul.exercise-status-exercise-list li.exercise-item.active  {
-	color: #333;
+    color: #333;
 }
 ul.exercise-status-exercise-list li.exercise-item.inactive  {
-	color: #bdbdbd;
+    color: #bdbdbd;
 }
 ul.exercise-status-exercise-list li.exercise-item a:hover {
-	color: #aa0000;
+    color: #aa0000;
 }*/
 .exercise-status-next-btn {
     text-transform: uppercase;
@@ -330,70 +330,70 @@ ul.exercise-status-exercise-list li.exercise-item a:hover {
 /*--------------------------------------------------*/
 /* Exercise form */
 .exerciseform label {
-	display: block;
+    display: block;
 }
 .exerciseform div {
-	margin: 5px 0;
+    margin: 5px 0;
 }
 .exerciseform .help {
-	font-size: .95em;
-	color: #333;
-	background-color: rgba(153, 153, 153, 0.38);
-	margin: .5em 0;
-	padding: .5em;
+    font-size: .95em;
+    color: #333;
+    background-color: rgba(153, 153, 153, 0.38);
+    margin: .5em 0;
+    padding: .5em;
 }
 .exercise-collapse-all {
-	border-bottom: 1px solid #666;
-	padding: .5em 0;
+    border-bottom: 1px solid #666;
+    padding: .5em 0;
 }
 ul.exercise-groups, ul.exercise-groups ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 ul.exercise-groups {
 }
 ul.exercise-groups .btn {
-	padding: .5em;
+    padding: .5em;
 }
 ul.exercise-groups > li {
-	display: block;
+    display: block;
 }
 ul.exercise-groups > li li {
-	padding-left: 2em;
+    padding-left: 2em;
 }
 ul.exercise-groups .group {
-	display: block;
-	border-bottom: 1px solid #666;
-	font-size: 125%;
+    display: block;
+    border-bottom: 1px solid #666;
+    font-size: 125%;
 }
 ul.exercise-groups .btn.btn-group,
 ul.exercise-groups .btn.btn-exercise,
 ul.exercise-groups .actions{
-	display: inline-block;
+    display: inline-block;
 }
 ul.exercise-groups .actions {
-	
+    
 }
 ul.exercise-groups li.even {
-	background-color: inherit;
+    background-color: inherit;
 }
 ul.exercise-groups li.odd {
-	background-color: rgba(0,0,0,.1);
+    background-color: rgba(0,0,0,.1);
 }
 ul.menu-group-list {
-	list-style: disc;
-	margin: .5em 0;
-	max-height: 250px;
-	overflow: auto;
+    list-style: disc;
+    margin: .5em 0;
+    max-height: 250px;
+    overflow: auto;
 }
 ul.menu-group-list a {
-	display: block;
-	padding: .25em;
+    display: block;
+    padding: .25em;
 }
 ul.menu-group-list li {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 /*--------------------------------------------------*/
@@ -419,11 +419,11 @@ ul.menu-group-list li {
     background: url(../img/v-line.png) 1px 0 repeat-y;
 }
 .sig-lock-block {
-	line-height: 3em;
-	margin-left: 50px;
+    line-height: 3em;
+    margin-left: 50px;
 }
 .sig-lock-inline {
-	margin: 0 15px;
+    margin: 0 15px;
 }
 
 /*--------------------------------------------------*/
@@ -431,17 +431,17 @@ ul.menu-group-list li {
  * http://ionicons.com/ */
 
 .ioncustom-siglocked {
-	color: #ffffff;
+    color: #ffffff;
     margin-left: 10px;
     margin-right: 10px;
 }
 .ioncustom-sigunlocked {
-	color: #ffffff;
+    color: #ffffff;
     margin-left: 10px;
     margin-right: 10px;
 }
 .ioncustom-nextexercise {
-	margin: 0 5px;
+    margin: 0 5px;
 }
 
 
@@ -523,18 +523,18 @@ ul.menu-group-list li {
     float: left;
     display: block;
     /*background: url(../img/pedal-sprite.png) no-repeat;*/
-	background-color: #b5a642;
-	border: 0px solid #fff;
+    background-color: #b5a642;
+    border: 0px solid #fff;
     width: 20px; 
     margin-top: 0px;
-	margin-right: 15px;
+    margin-right: 15px;
     height: 30px;
-	border-bottom-left-radius: 6px;
-	border-bottom-right-radius: 6px;
-	cursor: pointer;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    cursor: pointer;
 }
 .keyboard-pedals .pedal-active {
-	background-color: #665E25;
+    background-color: #665E25;
 }
 
 /*--------------------------------------------------*/
@@ -643,9 +643,9 @@ ul.menu-group-list li {
     border-radius: 3px;
 }
 .figuredbass {
-	font-family: Sebastian;
-	font-size: 32px;
-	margin-left: -12px;
-	margin-right: 6px;
-	line-height: 18px;
+    font-family: Sebastian;
+    font-size: 32px;
+    margin-left: -12px;
+    margin-right: 6px;
+    line-height: 18px;
 }
