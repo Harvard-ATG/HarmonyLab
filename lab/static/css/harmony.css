@@ -278,7 +278,7 @@ fieldset.settings-notation {
     margin: 0;
 }
 .exercise-status-col1 {
-    width: 12em;
+    width: 11em;
 }
 .exercise-status-col1 p {
     line-height: 1.5em;
@@ -286,8 +286,8 @@ fieldset.settings-notation {
     padding: 0;
 }
 .exercise-status-col2 {
-    width: 22em;
-    margin-left: 2em;
+    width: 24em;
+    margin-left: 1em;
 }
 .exercise-status-state {
     padding: 4px 6px 2px 6px;
