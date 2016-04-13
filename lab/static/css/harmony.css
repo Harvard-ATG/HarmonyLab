@@ -454,7 +454,7 @@ ul.menu-group-list li {
     margin: 20px auto;
     margin-bottom: 0px;
     border: 0px solid #ffffff;
-    padding: 4px;
+    padding: 6px;/*compare keyboard-pedals pedal margin-top*/
     border-radius: 6px;
     position: relative;
     background-color: rgba(255,255,255,0.2);
@@ -517,7 +517,7 @@ ul.menu-group-list li {
 }
 .keyboard-pedals {
     margin: 0px auto;
-    width: 105px; 
+    width: 105px;
 }
 .keyboard-pedals .pedal {
     float: left;
@@ -526,7 +526,7 @@ ul.menu-group-list li {
     background-color: #b5a642;
     border: 0px solid #fff;
     width: 20px; 
-    margin-top: 0px;
+    margin-top: 6px;/*compare keyboard-wrapper padding*/
     margin-right: 15px;
     height: 30px;
     border-bottom-left-radius: 6px;
