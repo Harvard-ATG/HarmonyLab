@@ -217,6 +217,7 @@ fieldset.settings-notation {
     float: right;
     min-width: 14px;
     min-height: 19px;
+    cursor: pointer;
 }
 .notifications {
     width: 640px;
