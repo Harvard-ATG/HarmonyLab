@@ -276,21 +276,26 @@ fieldset.settings-notation {
     margin: 0;
 }
 .exercise-status-col1 {
-	width: 8em;
+	width: 12em;
+}
+.exercise-status-col1 p {
+    line-height: 1.5em;
+    margin: 0;
+    padding: 0;
 }
 .exercise-status-col2 {
-	width: 26em;
+	width: 22em;
     margin-left: 2em;
 }
 .exercise-status-state {
-	padding: 4px 6px;
-	margin: 0px;
-	text-transform: uppercase;
+	padding: 4px 6px 2px 6px;
+	margin: 0;
+    text-transform: uppercase;
     color: #fff;
     border-radius: 6px;
     background-color: black;
 }
-ul.exercise-status-exercise-list {
+/*ul.exercise-status-exercise-list {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
@@ -317,7 +322,7 @@ ul.exercise-status-exercise-list li.exercise-item.inactive  {
 }
 ul.exercise-status-exercise-list li.exercise-item a:hover {
 	color: #aa0000;
-}
+}*/
 .exercise-status-next-btn {
     text-transform: uppercase;
     font-weight: bold;
