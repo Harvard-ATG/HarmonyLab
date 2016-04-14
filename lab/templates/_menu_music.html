@@ -1,38 +1,39 @@
 {% extends "_menu.html" %}
 {% block menu_content %}
-<div class="accordion">
+<div id="display-settings">
+    <!--Instrument-->
+    <div class="mainmenu-section">
+        <div class="js-instrument settings-inline"></div>
+        <div class="js-keyboardsize settings-inline"></div>
+        <div class="js-keyboardshortcuts settings-inline"></div>
+    </div>
+
+    <!--Notation-->
+    <div class="mainmenu-section">
+        <div class="js-analyze-widget"></div>
+    </div>
+
+    <!--MIDI Source-->
+    <div class="mainmenu-section">
+        <div class="label settings-inline">MIDI in: </div>
+        <select class="js-select-midi-input settings-inline" name="select_midi_input"></select>
+        <div class="label settings-inline">&emsp;MIDI out: </div>
+        <select class="js-select-midi-output settings-inline" name="select_midi_output"></select>&emsp;
+        <button class="js-refresh-midi-devices settings-inline">Refresh MIDI options</button>
+    </div>
+
     {% if group_list %}
-    <h3>Exercises</h3>
-    <div class="content-area-section" style="margin:0;padding:0">
-        <ul class="menu-group-list">
-            {% for group in group_list %}
-                <li><a href="{{group.url}}">{{group.name}} ({{group.size}})</a></li>
-            {% endfor %}
-        </ul>
+    <div class="mainmenu-section">
+        <div id="mainmenu-exercise-area">
+            <b>CHOOSE AN EXERCISE</b>
+            <ul class="menu-group-list">
+                {% for group in group_list %}
+                    <li><a href="{{group.url}}">{{group.name}} ({{group.size}})</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
     {% endif %}
 
-    <h3>Notation</h3>
-    <div class="content-area-section">
-        <div class="content-area-row js-analyze-widget"></div>
-    </div>
-
-    <h3>Instrument</h3>
-    <div class="content-area-section">
-        <div class="content-area-row js-instrument"></div>
-        <div class="content-area-row js-keyboardsize"></div>
-        <div class="content-area-row js-keyboardshortcuts"></div>
-    </div>
-
-    <h3>MIDI Source</h3>
-    <div class="content-area-section">
-        <div class="content-area-row">
-            <div class="label">MIDI in:</div>
-            <select class="js-select-midi-input" name="select_midi_input"></select>
-            <div class="label">MIDI out:</div>
-            <select class="js-select-midi-output" name="select_midi_output"></select><br/>
-            <button class="js-refresh-midi-devices">Refresh</button>
-        </div>
-    </div>
 </div>
 {% endblock %}
