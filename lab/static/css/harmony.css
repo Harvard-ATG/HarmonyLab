@@ -45,6 +45,9 @@ body {
 body, #mainmenu {
     background-color: #445F69;
 }
+#mainmenu {
+    background-color: rgba(80,80,80,1);
+}
 
 /*--------------------------------------------------*/
 /* Structural/Layout */
@@ -101,7 +104,8 @@ body, #mainmenu {
     box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
 }
 #mainmenu {
-    /*border: 1px solid black;*/
+    border: 1px solid black;
+    border-radius: 6px;
 }
 #display-settings {
     color: #fff;
@@ -110,16 +114,18 @@ body, #mainmenu {
 .mainmenu-section {
     margin-bottom: 1em;
 }
-.content-area-slide-out {
+#mainmenu {
     display: none;
     position: absolute;
-    left: 0;
-    width: 40em;
+    right: 1em;
     z-index: 100;
-    text-align: left;
+    margin: 1em auto;
+    max-width: 50%;
+    text-align: center;
     /*height: 100%;*/
     /*min-height: 700px;*/
     padding: 1em;
+    padding-bottom: 0;
     line-height: 1.2em;
 }
 /*.content-area-section {
@@ -144,6 +150,7 @@ ul.content-area-vertical-nav {
     width: 100%;
 }*/
 .mainmenu-links {
+    display: none;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -241,8 +248,8 @@ fieldset.settings-notation {
 /*--------------------------------------------------*/
 /* Notifications Styles */
 .notificationAlerts {
-    color: #fff;
-    background-color: #000;
+    color: yellow;
+    background-color: none;
     padding: 3px 6px;
     border-radius: 6px;
     float: right;
@@ -250,7 +257,7 @@ fieldset.settings-notation {
     min-height: 19px;
     cursor: pointer;
 }
-.notifications {
+#notifications {
     width: 640px;
     margin: 0 auto;
 }
@@ -414,24 +421,30 @@ ul.exercise-groups li.odd {
     background-color: rgba(0,0,0,.1);
 }
 ul.menu-group-list {
-    list-style: disc;
+    list-style: none;
+    padding: 0.5em;
+    border-radius: 6px;
     margin: .5em 0;
     max-height: 100px;
     overflow: auto;
     line-height: 1em;
+    background-color: rgb(10,80,80);
 }
 #mainmenu-exercise-area {
-    background-color: #222;
-    padding: 1em;
-    border-radius: 6px;
+    /*max-width: 30em;*/
+    text-align: left;
+    padding-top: 1em;
+    /*border-radius: 6px;
+    border: 1px solid white;*/
 }
 ul.menu-group-list a {
-    display: block;
-    padding: .25em;
 }
 ul.menu-group-list li {
-    margin: 0;
-    padding: 0;
+    display: inline-block;
+    margin: 0.2em;
+    padding: 0.2em 0.4em;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 3px;
 }
 
 /*--------------------------------------------------*/
@@ -478,11 +491,9 @@ ul.menu-group-list li {
     margin-left: 10px;
     margin-right: 10px;
 }
-.ioncustom-nextexercise {
+/*.ioncustom-nextexercise {
     margin: 0 5px;
-}
-
-
+}*/
 
 /*--------------------------------------------------*/
 /* On-screen keyboard */
