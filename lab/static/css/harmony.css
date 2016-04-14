@@ -34,13 +34,15 @@ html, body, h1, h2, h3, h4, div, p  {
 }
 
 p {padding: .4em 0; }
-b {font-family: LinLibertineBold;}
-i {font-family: LinLibertineItalic;}
+/*b {font-family: LinLibertineBold;}
+i {font-family: LinLibertineItalic;}*/
 button, input, optgroup, select, textarea { color: #000; }
 a,a:visited, .btn { color: inherit; text-decoration: none; }
 a:hover, .btn:hover { cursor: pointer; color: inherit; }
 body {
     text-align: center;
+}
+body, #mainmenu {
     background-color: #445F69;
 }
 
@@ -90,25 +92,37 @@ body {
     overflow-y:auto;
 }
 .content-area {
-    -webkit-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-    -moz-box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
-    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.51);
     background-color: rgb(238, 238, 221);
     color: #000;
+}
+.content-area, #mainmenu {
+    -webkit-box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
+    -moz-box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
+    box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
+}
+#mainmenu {
+    /*border: 1px solid black;*/
+}
+#display-settings {
+    color: #fff;
+    font-size: 0.9em;
+}
+.mainmenu-section {
+    margin-bottom: 1em;
 }
 .content-area-slide-out {
     display: none;
     position: absolute;
     left: 0;
-    width: 350px;
+    width: 40em;
     z-index: 100;
     text-align: left;
-    height: 100%;
-    min-height: 700px;
-    padding: 10px 20px;
-    line-height: 1em;
+    /*height: 100%;*/
+    /*min-height: 700px;*/
+    padding: 1em;
+    line-height: 1.2em;
 }
-.content-area-section {
+/*.content-area-section {
     padding: 0 0 10px 0;
     margin: 0 0 10px 0;
 }
@@ -117,7 +131,6 @@ body {
 }
 ul.content-area-vertical-nav {
     list-style-type: none;
-    font-size: 1.5em;
     margin: 0 0 .5em 0;
     padding: 0;
 }
@@ -129,6 +142,13 @@ ul.content-area-vertical-nav {
 .content-area-vertical-nav a {
     display: block;
     width: 100%;
+}*/
+.mainmenu-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+    color: #fff;
 }
 
 /*--------------------------------------------------*/
@@ -179,9 +199,11 @@ ul.content-area-vertical-nav {
     font-size: .9em;
 }
 fieldset.settings-notation {
-    border: none;
-    border-top: 1px solid #c0c0c0;
+    border: 1px solid #fff;
+    border-radius: 6px;
     width: auto;
+    display: inline-block;
+    padding: 0.5em;
 }
 .settings-notation div {
     display: block;
@@ -189,23 +211,31 @@ fieldset.settings-notation {
 }
 .settings-notation ol {
     margin: 0;
+    padding: 0;
 }
-.settings-notation ul {
+.settings-notation > ul {
     margin: 0;
+    padding-left: 12px;
     list-style-type: none;
 }
-.settings-notation label {
-    margin: 0 10px 0 0;
-    display: block;
+.settings-notation span, .settings-notation label {
+    margin-right: 0.5em;
+    display: inline-block;
 }
 .settings-notation legend {
-    padding: 2px 10px;
+    padding: 2px 2px 2px 8px;
 }
 .settings-notation li>span {
     display: inline-block;
 }
 .settings-notation li:not(:last-child) {
     /*border-bottom: 1px solid #c0c0c0;*/
+}
+.settings-inline {
+    display: inline-block;
+}
+.settings-spacer {
+    width: 1em;
 }
 
 /*--------------------------------------------------*/
@@ -386,8 +416,14 @@ ul.exercise-groups li.odd {
 ul.menu-group-list {
     list-style: disc;
     margin: .5em 0;
-    max-height: 250px;
+    max-height: 100px;
     overflow: auto;
+    line-height: 1em;
+}
+#mainmenu-exercise-area {
+    background-color: #222;
+    padding: 1em;
+    border-radius: 6px;
 }
 ul.menu-group-list a {
     display: block;
@@ -486,7 +522,9 @@ ul.menu-group-list li {
     font-size: 0.7em;
     text-align: center;
     width: 2em;
+    height: 18px;
     margin: 0px 10px 0px 10px;
+    border: none;
 }
 .metronome-icon {
     background: transparent url(../img/metronome_sprite.png) no-repeat;
