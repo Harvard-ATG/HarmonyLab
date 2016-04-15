@@ -1,18 +1,20 @@
 @charset "UTF-8";
 @import "pure.css";
-@import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700);
-@font-face {
-    font-family: 'FiguredBassMHGPL';
-    src: url('../fonts/FiguredBassMHGPL.otf');
-}
+@import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700&subset=latin-ext,latin);
+@import url(https://fonts.googleapis.com/css?family=Alegreya:400,400italic&subset=latin-ext,latin);
+@import url(https://fonts.googleapis.com/css?family=Martel&subset=latin,latin-ext);
 @font-face {
     font-family: 'Sebastian';
     src: url('../fonts/Sebastian-FigBass-Harvard.otf');
 }
-@font-face {
+/*@font-face {
+    font-family: 'FiguredBassMHGPL';
+    src: url('../fonts/FiguredBassMHGPL.otf');
+}*/
+/*@font-face {
     font-family: 'LinLibertine';
     src: url('../fonts/LinLibertine.ttf');
-}
+} 
 @font-face {
     font-family: 'LinLibertineBold';
     src: url('../fonts/LinLibertine_RBah.ttf');
@@ -20,11 +22,11 @@
 @font-face {
     font-family: 'LinLibertineItalic';
     src: url('../fonts/LinLibertine_RIah.ttf');
-}
+}*/
 
 html {
     font-size: 100%;
-    font-family: "Alegreya Sans", sans-serif;
+    font-family: 'Alegreya Sans', sans-serif;
 }
 
 html, body, h1, h2, h3, h4, div, p  {
@@ -42,10 +44,10 @@ a:hover, .btn:hover { cursor: pointer; color: inherit; }
 body {
     text-align: center;
 }
-body, #mainmenu {
+body, #mainmenu, #helpmenu {
     background-color: #445F69;
 }
-#mainmenu {
+#mainmenu, #helpmenu {
     background-color: rgba(80,80,80,1);
 }
 
@@ -55,9 +57,12 @@ body, #mainmenu {
     width: 960px;
     margin: 0 auto;
     margin-bottom: 30px;
-    text-align:left;
+    text-align: center;
 }
-#staff-area {  
+#footer {
+    min-height: 1em;
+}
+#staff-area {
     width: 100%;
     margin: 0 auto;
     position:relative;
@@ -79,13 +84,13 @@ body, #mainmenu {
     z-index: 1;
 }
 #staff {
-    width: 90%;
-    height: 450px;
+    width: 50em;
+    height: 500px;
     position: static;
-    left: 0;
     z-index: 1;
-    padding-left: 2em;
-    padding-right: 2em;
+    margin: 0;
+    border: 0px solid black;
+    padding: 0;
 }
 #staff-status {
     width: 640px;
@@ -94,16 +99,16 @@ body, #mainmenu {
     overflow: hidden;
     overflow-y:auto;
 }
-.content-area {
+.content-area, button, input, optgroup, select, textarea {
     background-color: rgb(238, 238, 221);
     color: #000;
 }
-.content-area, #mainmenu {
+.content-area, #mainmenu, #helpmenu {
     -webkit-box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
     -moz-box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
     box-shadow: 0px 0px 6px 4px rgba(0,0,0,0.51);
 }
-#mainmenu {
+#mainmenu, #helpmenu {
     border: 1px solid black;
     border-radius: 6px;
 }
@@ -114,7 +119,7 @@ body, #mainmenu {
 .mainmenu-section {
     margin-bottom: 1em;
 }
-#mainmenu {
+#mainmenu, #helpmenu {
     display: none;
     position: absolute;
     right: 1em;
@@ -181,7 +186,7 @@ ul.content-area-vertical-nav {
 .header .js-btn-menu {
     padding-right: 1em;
 }
-.header .js-btn-info {
+.header .js-btn-help {
     padding-left: 1em;
     padding-right: 1em;
 }
@@ -307,6 +312,7 @@ fieldset.settings-notation {
     color: #333;
     border: 1px solid black;
     border-radius: 6px;
+    text-align: left;
 }
 .exercise-status-col,
 .exercise-status-col {
@@ -318,7 +324,7 @@ fieldset.settings-notation {
     width: 11em;
 }
 .exercise-status-col1 p {
-    line-height: 1.5em;
+    line-height: 1.6em;
     margin: 0;
     padding: 0;
 }
@@ -585,7 +591,7 @@ ul.menu-group-list li {
     cursor: pointer;
 }
 .keyboard-pedals .pedal-active {
-    background-color: #665E25;
+    background-color: #665e25;
 }
 
 /*--------------------------------------------------*/
@@ -659,7 +665,7 @@ ul.menu-group-list li {
 /* Utilities */
 
 .hide { display: none; }
-.ajax-loader {
+/*.ajax-loader {
     background: transparent url(../img/ajax-loader.gif) no-repeat;
     width: 126px;
     height: 22px;
@@ -671,7 +677,7 @@ ul.menu-group-list li {
     margin-top: -22px;
     margin-left: -63px;
     z-index: 100;
-}
+}*/
 .fade {
     transition: opacity .25s ease-in-out;
     -moz-transition: opacity .25s ease-in-out;
