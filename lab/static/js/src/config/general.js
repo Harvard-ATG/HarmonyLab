@@ -38,43 +38,43 @@ define({
 		"iAb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"],
 			pitchClass: 8,
-			name: "Ab minor",
-			shortName: "a",
+			name: "A♭ minor",
+			shortName: "a♭",
 			signature: "bbbbbbb",
 		},
 		"jCb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","Bbb","Bb","Cb"], 
 			pitchClass: 11,
-			name: "Cb major",
-			shortName: "Cb",
+			name: "C♭ major",
+			shortName: "C♭",
 			signature: "bbbbbbb",
 		},
 		"iEb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 3,
-			name: "Eb minor",
-			shortName: "Eb",
+			name: "E♭ minor",
+			shortName: "e♭",
 			signature: "bbbbbb",
 		},
 		"jGb": {
 			spelling: ["C","Db","D","Eb","Fb","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 6,
-			name: "Gb major",
-			shortName: "Gb",
+			name: "G♭ major",
+			shortName: "G♭",
 			signature: "bbbbbb",
 		},
 		"iBb": {
 			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 10,
-			name: "Bb minor",
-			shortName: "bb",
+			name: "B♭ minor",
+			shortName: "b♭",
 			signature: "bbbbb",
 		},
 		"jDb": {
 			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","Cb"],
 			pitchClass: 1,
-			name: "Db major",
-			shortName: "Db",
+			name: "D♭ major",
+			shortName: "D♭",
 			signature: "bbbbb", 
 		},
 		"iF_":  {
@@ -87,8 +87,8 @@ define({
 		"jAb": {
 			spelling: ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],
 			pitchClass: 8,
-			name: "Ab major",
-			shortName: "Ab",
+			name: "A♭ major",
+			shortName: "A♭",
 			signature: "bbbb",
 		},
 		"iC_": {
@@ -101,8 +101,8 @@ define({
 		"jEb": {
 			spelling: ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
 			pitchClass: 3,
-			name: "Eb major",
-			shortName: "Eb",
+			name: "E♭ major",
+			shortName: "E♭",
 			signature: "bbb",
 		},
 		"iG_":  {
@@ -115,8 +115,8 @@ define({
 		"jBb": {
 			spelling: ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"],
 			pitchClass: 10,
-			name: "Bb major",
-			shortName: "Bb",
+			name: "B♭ major",
+			shortName: "B♭",
 			signature: "bb",
 		},
 		"iD_":  {
@@ -178,8 +178,8 @@ define({
 		"iF#": {
 			spelling: ["B#","C#","D","D#","E","E#","F#","G","G#","A","A#","B"],
 			pitchClass: 6,
-			name: "F# minor",
-			shortName: "f#",
+			name: "F♯ minor",
+			shortName: "f♯",
 			signature: "###",
 		},
 		"jA_": {
@@ -192,8 +192,8 @@ define({
 		"iC#": {
 			spelling: ["B#","C#","D","D#","E","E#","F#","F##","G#","A","A#","B"],
 			pitchClass: 1,
-			name: "C# minor",
-			shortName: "c#",
+			name: "C♯ minor",
+			shortName: "c♯",
 			signature: "####",
 		},
 		"jE_": {
@@ -206,8 +206,8 @@ define({
 		"iG#": {
 			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","A","A#","B"],
 			pitchClass: 8,
-			name: "G# minor",
-			shortName: "g#",
+			name: "G♯ minor",
+			shortName: "g♯",
 			signature: "#####",
 		},
 		"jB_":  {
@@ -220,29 +220,29 @@ define({
 		"iD#": {
 			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
 			pitchClass: 3,
-			name: "D# minor",
-			shortName: "d#",
+			name: "D♯ minor",
+			shortName: "d♯",
 			signature: "######",
 		},
 		"jF#": {
 			spelling: ["B#","C#","C##","D#","E","E#","F#","F##","G#","G##","A#","B"],
 			pitchClass: 6,
-			name: "F# major",
-			shortName: "F#",
+			name: "F♯ major",
+			shortName: "F♯",
 			signature: "######",
 		},
 		"iA#": {
 			spelling: ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","B"],
 			pitchClass: 10,
-			name: "A# minor",
-			shortName: "a#",
+			name: "A♯ minor",
+			shortName: "a♯",
 			signature: "#######",
 		},
 		"jC#": {
 			spelling: ["B#","C#","C##","D#","D##","E#","F#","F##","G#","G##","A#","A##"],
 			pitchClass: 1,
-			name: "C# major",
-			shortName: "C#",
+			name: "C♯ major",
+			shortName: "C♯",
 			signature: "#######",
 		}
 	},
@@ -279,9 +279,12 @@ define({
 	// Grouping of keys as they are to be displayed on the UI.
 	keyDisplayGroups: [
 		// [label, key1, key2, key3, ..., keyN]
-		["basic", "h","jC_","iA_","jG_","jF_","iD_"],
-		["sharps", "iE_","jD_","iB_","jA_","iF#","jE_","iC#","jB_","iG#","jF#","iD#","jC#","iA#"],
-		["flats", "jBb","iG_","jEb","iC_","jAb","iF_","jDb","iBb","jGb","iEb","jCb","iAb"]
+		/*["basic", "h","jC_","iA_","jG_","jF_","iD_"],*/
+		/*["sharps", "iE_","jD_","iB_","jA_","iF#","jE_","iC#","jB_","iG#","jF#","iD#","jC#","iA#"],*/
+		/*["flats", "jBb","iG_","jEb","iC_","jAb","iF_","jDb","iBb","jGb","iEb","jCb","iAb"]*/
+		["basic", "h", "jC_", "iA_"],
+		["major", "jCb", "jGb", "jDb", "jAb", "jEb", "jBb", "jF_", "jC_", "jG_", "jD_", "jA_", "jE_", "jB_", "jF#", "jC#"],
+		["minor", "iAb", "iEb", "iBb", "iF_", "iC_", "iG_", "iD_", "iA_", "iE_", "iB_", "iF#", "iC#", "iG#", "iD#", "iA#"] 
 	],
 
 	// Wheel for rotating keys sharpward or flatward
@@ -302,7 +305,7 @@ define({
 		// on the sheet music at one time. It should be a positive
 		// integer in the range of 1-10. Chords are displayed
 		// in fixed-width areas spread across the sheet music.
-		displaySize: 10 
+		displaySize: 9
 	},
 
 	// Defines the default analysis settings 
