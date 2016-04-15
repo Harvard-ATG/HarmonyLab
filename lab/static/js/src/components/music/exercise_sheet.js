@@ -138,7 +138,7 @@ define([
                 '<div class="exercise-status-area">',
                     '<div class="exercise-status-col exercise-status-col1">',
                         '<% if (typeof(exercise_list) !== "undefined" && exercise_list.length > 0) { %>',
-                            '<p>Exercise ? of <%= exercise_list.length %></p>',
+                            '<p>Exercise <%= exercise_num %> of <%= exercise_list.length %></p>',
                         '<% } %>',
                         '<p><span class="exercise-status-state" style="background-color:<%= status_color %>"><%= status_text %> <%= status_icon %></span>',
                         '<% if (typeof(time_to_complete) !== "undefined" && time_to_complete != "") { %>',
@@ -164,6 +164,9 @@ define([
             status_map[exc.STATE.READY] = {text:"ready",color:"#000000",iconCls:""};
 
             tpl_data.exercise_list = exc.definition.getExerciseList();
+            tpl_data.exercise_num = tpl_data.exercise_list.reduce(function(selected, current, index) {
+               return (selected < 0 && current.selected) ? index + 1 : selected;
+            }, -1);
             tpl_data.status_text = status_map[exc.state].text;
             tpl_data.status_color = status_map[exc.state].color;
             tpl_data.status_icon = status_map[exc.state].iconCls;
