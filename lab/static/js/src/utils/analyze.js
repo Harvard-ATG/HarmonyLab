@@ -27,36 +27,36 @@ var SPELLING_TABLE = _.reduce(KEY_MAP, function(result, value, key) {
 
 var analyzing = {
 	keynotePC: {
-		"h": 0,
-		"jC_":  0,
-		"iC_":  0,
+		"h":   0,
+		"jC_": 0,
+		"iC_": 0,
 		"jC#": 1,
 		"iC#": 1,
 		"jDb": 1,
-		"jD_":  2,
+		"jD_": 2,
 		"iD_": 2,
 		"iD#": 3,
 		"jEb": 3,
 		"iEb": 3,
-		"jE_":  4,
-		"iE_":  4,
-		"jF_":  5,
-		"iF_":  5,
+		"jE_": 4,
+		"iE_": 4,
+		"jF_": 5,
+		"iF_": 5,
 		"jF#": 6,
 		"iF#": 6,
 		"jGb": 6,
-		"jG_":  7,
-		"iG_":  7,
+		"jG_": 7,
+		"iG_": 7,
 		"iG#": 8,
 		"jAb": 8,
 		"iAb": 8,
-		"jA_":  9,
-		"iA_":  9,
+		"jA_": 9,
+		"iA_": 9,
 		"iA#": 10,
 		"jBb": 10,
 		"iBb": 10,
-		"jB_":  11,
-		"iB_":  11,
+		"jB_": 11,
+		"iB_": 11,
 		"jCb": 11 
 },
 AtoGindices: {
@@ -940,7 +940,7 @@ var Analyze = function(keySignature, options) {
 			"octaveshighlight": false,
 			"doublinghighlight": false,
 			"tritonehighlight": false,
-			"octaveshighlight": false
+			"fifthshighlight": false
 		}
 	};
 

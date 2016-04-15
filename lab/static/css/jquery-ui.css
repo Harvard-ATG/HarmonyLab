@@ -4,6 +4,8 @@
 * To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=LinLibertine%2CHelvetica%2CVerdana%2CArial%2Csans-serif&fwDefault=normal&fsDefault=1em&cornerRadius=0&bgColorHeader=%23eeeedd&bgTextureHeader=highlight_hard&bgImgOpacityHeader=0&borderColorHeader=%23eeeedd&fcHeader=%23000&iconColorHeader=%23666&bgColorContent=%23eeeedd&bgTextureContent=gloss_wave&bgImgOpacityContent=0&borderColorContent=%23eeeedd&fcContent=%23000&iconColorContent=%23bbbbbb&bgColorDefault=%23adadad&bgTextureDefault=highlight_soft&bgImgOpacityDefault=35&borderColorDefault=%23cccccc&fcDefault=%23333333&iconColorDefault=%23666666&bgColorHover=%23dddddd&bgTextureHover=highlight_soft&bgImgOpacityHover=60&borderColorHover=%23dddddd&fcHover=%23aa0000&iconColorHover=%23aa0000&bgColorActive=%23333&bgTextureActive=inset_soft&bgImgOpacityActive=15&borderColorActive=%23000000&fcActive=%23ffffff&iconColorActive=%23999900&bgColorHighlight=%23555555&bgTextureHighlight=highlight_hard&bgImgOpacityHighlight=55&borderColorHighlight=%23404040&fcHighlight=%23cccccc&iconColorHighlight=%23aaaaaa&bgColorError=%23fef1ec&bgTextureError=glass&bgImgOpacityError=95&borderColorError=%23aa0000&fcError=%23aa0000&iconColorError=%23aa0000&bgColorOverlay=%23aaaaaa&bgTextureOverlay=flat&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=%23aaaaaa&bgTextureShadow=flat&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px&tr%26ffDefault=Helvetica%2CArial%2Csans-serif
 * Copyright 2015 jQuery Foundation and other contributors; Licensed MIT */
 
+@import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700);
+
 /* Layout helpers
 ----------------------------------*/
 .ui-helper-hidden {
@@ -830,7 +832,7 @@ body .ui-tooltip {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: LinLibertine,Helvetica,Verdana,Arial,sans-serif;
+	font-family: "Alegreya Sans", sans-serif;
 	font-size: 1em;
 }
 .ui-widget .ui-widget {
@@ -840,7 +842,7 @@ body .ui-tooltip {
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
-	font-family: LinLibertine,Helvetica,Verdana,Arial,sans-serif;
+	font-family: "Alegreya Sans", sans-serif;
 	font-size: 1em;
 }
 .ui-widget-content {

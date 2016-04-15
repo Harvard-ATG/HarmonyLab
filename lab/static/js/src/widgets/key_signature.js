@@ -67,7 +67,7 @@ define(['lodash', 'jquery', 'app/config'], function(_, $, Config) {
 			var lockEl = $('<span class="'+(lock?lockCls[0]:lockCls[1])+'" data-lock="'+(lock?'yes':'no')+'"/>');
 			var style='style="margin: 0 10px"';
 
-			lockContainerEl.append('<span '+style+'class="ion-arrow-left-c"/>').append(lockEl).append('<span '+style+'class="ion-arrow-right-c"/>');
+			lockContainerEl.append(lockEl);
 
 			this.lockCls = lockCls; 
 			this.lockEl = lockEl;

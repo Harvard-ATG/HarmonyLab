@@ -2,12 +2,16 @@
 
 # Overview
 
-Harmony Lab is an application for music theory students, faculty, and staff in higher ed or K-12 
-who are learning to read and write music or who are instructing students in reading and writing music. 
-The Harmony Lab suite is Open Source educational software that notates, teaches, tests, and corrects 
-your harmony; unlike Sibelius and Finale this application enhances a learner's understanding of
-harmony by providing instant feedback.
+HarmonyLab is an Open-Source application for students of music theory and 
+keyboard skills at college or in K-12. It works with input from a MIDI 
+keyboard in a web browser to provide simple practice aids and exercises for 
+learning tonal harmony. By bringing together tactile, visual, and aural 
+elements, this software helps students to build a robust and ready knowledge 
+of the fundamentals of melodic and harmonic grammar.
 
+Working with the input from a MIDI keyboard (subject to key and key 
+signature selections), the application notates pitch elements and provides 
+various analytical notations for melody and harmony.
 
 Demo: http://harmony-lab.appspot.com/
 

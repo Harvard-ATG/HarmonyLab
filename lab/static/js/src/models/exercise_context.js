@@ -177,9 +177,9 @@ define([
 				mins = Math.floor(this.timer.duration / 60);
 				seconds = (this.timer.duration - (mins * 60)).toFixed(1);
 				if(mins == 0) {
-					this.timer.durationString = seconds + " seconds";
+					this.timer.durationString = seconds + "&Prime;";
 				} else {
-					this.timer.durationString = mins + " minutes and " + seconds + " seconds";
+					this.timer.durationString = mins + "&prime; " + seconds + "&Prime;";
 				}
 			}
 			return this;

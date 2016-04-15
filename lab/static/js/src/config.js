@@ -9,7 +9,7 @@ define([
 	'app/config/highlight',
 	'app/config/instruments',
 	'app/config/keyboard_shortcuts',
-	'app/config/analysis/hChords',
+	'app/config/analysis/hChords.dartmouth',
 	'app/config/analysis/hIntervals',
 	'app/config/analysis/iChords',
 	'app/config/analysis/iDegrees',

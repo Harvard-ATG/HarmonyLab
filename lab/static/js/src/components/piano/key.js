@@ -57,7 +57,7 @@ define([
 	 * @type {string}
 	 * @const
 	 */
-	var COLOR_KEYSUSTAIN = '90-hsla(0, 30, 40)-hsl(0,45,20)';
+	var COLOR_KEYSUSTAIN = '#665e25';/*compare .pedal-active in harmony.css*/
 
 	/**
 	 * Piano Key Mixin.
@@ -424,6 +424,10 @@ define([
 		 */
 		calculateWidth: function() {
 			return this.keyWidth / 2;
+			/**
+			 * Black keys should be 3/5 of white width for CD and DE
+			 * or 4/7 of white width for FG GA AB, ideally.
+			 */
 		},
 		/**
 		 * Returns the height of the key.
@@ -432,7 +436,7 @@ define([
 		 * @return {number}
 		 */
 		calculateHeight: function(keyboardHeight) {
-			return 0.6 * keyboardHeight;
+			return 0.66 * keyboardHeight;
 		},
 		/**
 		 * Returns the horizontal offset of the key on the keyboard.
@@ -443,6 +447,9 @@ define([
 			var offset = (this.whiteKeyIndex * this.keyWidth); 
 			var width = this.calculateWidth();
 			return offset - (width / 2);
+			/**
+			 * Offsets should vary, ideally.
+			 */
 		},
 		/**
 		 * Renders the key. 

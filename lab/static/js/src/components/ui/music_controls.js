@@ -88,7 +88,7 @@ define([
 		 */
 		initComponent: function() {
 
-			$('.js-btn-info', this.headerEl).on('click', this.onClickInfo);
+			$('.js-btn-help', this.headerEl).on('click', this.onClickInfo);
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 
 			this.initControlsLayout();
@@ -260,7 +260,7 @@ define([
 				that.broadcast(EVENTS.BROADCAST.KEYBOARD_SIZE, size);
 			});
 
-			el.append(selectEl).wrapInner("<label>Keyboard size:</label>");
+			el.append(selectEl).wrapInner("<label>&emsp;Number of keys: </label>");
 		},
 		/**
 		 * Renders the keyboard shorcuts.
@@ -272,7 +272,7 @@ define([
 			var containerEl = this.containerEl;
 			var el = $('.js-keyboardshortcuts', containerEl);
 			var inputEl = $('<input type="checkbox" name="keyboard_shortcuts" value="on" />');
-			el.append("Keyboard Shortcuts").append(inputEl).wrap("<label/>");
+			el.append("&emsp;Enable QWERTY shortcuts? ").append(inputEl).wrap("<label/>");
 
 			// toggle shortcuts on/off via gui control
 			inputEl.attr('checked', KEYBOARD_SHORTCUTS_ENABLED);

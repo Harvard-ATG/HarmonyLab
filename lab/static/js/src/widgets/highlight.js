@@ -21,11 +21,11 @@ define([
 	_.extend(HighlightWidget.prototype, {
 		templateHTML: [
 			'<fieldset class="settings-notation">',
-				'<legend><label><input type="checkbox" name="highlight_enabled" value="1"> Highlights Enabled</label></legend>',
+				'<legend><label><input type="checkbox" name="highlight_enabled" value="1"> Turn on highlights</label></legend>',
 				'<ul>',
 				'<li>',
 					'<label>',
-						'<input type="checkbox" name="highlight_roots" value="roothighlight"> Roots',
+						'<input type="checkbox" name="highlight_roots" value="roothighlight"> Chord roots',
 						'<span style="margin-left: 5px; color: '+util.toHSLString(HIGHLIGHT_COLORS.root)+'">&#9834;</span>',
 					'</label>',						
 					'<label>',

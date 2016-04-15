@@ -1,12 +1,13 @@
-<div id="mainmenu" class="content-area content-area-slide-out settings">
+<div id="mainmenu" class="content-area-slide-out">
 
-	<ul class="content-area-vertical-nav">
-		<li><a href="{% if home_url %}{{ home_url }}{% else %}{% url 'lab:index' %}{% endif %}"><i class="ion-home"></i> Home</a></li>
-		{% if has_manage_perm %}
-			<li><a href="{{ manage_url }}"><i class="ion-edit"></i> Manage Exercises</a></li>
-		{% endif %}
-	</ul>
-	
     {% block menu_content %}
     {% endblock %}
+
+	<ul class="mainmenu-links">
+		{% if has_manage_perm %}
+			<li><a href="{{ manage_url }}">Click to manage exercises</a></li>
+		{% endif %}
+		<li><a href="{% if home_url %}{{ home_url }}{% else %}{% url 'lab:index' %}{% endif %}">Click to reload home page</a></li>
+	</ul>
+	
 </div>

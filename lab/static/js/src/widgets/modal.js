@@ -9,7 +9,7 @@ define(['lodash', 'jquery'], function(_, $) {
 	 */
 	var MODAL_TPL = _.template([
 		'<div class="modal-wrapper">',
-			'<a href="#" class="modal-close-btn js-modal-close-btn">X</a>',
+			'<a href="#" class="modal-close-btn js-modal-close-btn">x</a>',
 			'<h2 class="modal-title"><%= title %></h2>',
 			'<div class="modal-body"><%= msg %><div>',
 		'</div>'

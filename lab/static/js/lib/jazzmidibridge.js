@@ -246,7 +246,7 @@
 
             //embed for IE
             jazz1Obj.setAttribute("classid","CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90");
-            jazz1Obj.setAttribute("style","margin-left:-1000px;");
+            jazz1Obj.setAttribute("style","position:absolute;margin-left:-1000px;");
             
             //embed for all other browsers
             jazz2Obj.setAttribute("type","audio/x-jazz");
