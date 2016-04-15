@@ -178,7 +178,7 @@ define([
 			if(!size) {
 				size = this.defaultFontSize; 
 			}
-			return size + " LinLibertine, Helvetica, sans-serif";
+			return size + " 'Alegreya',serif";
 		},
 		/**
 		 * Returns the font for rendering icons.
@@ -349,7 +349,7 @@ define([
 				caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
 
 				ctx.fillText(numeral, x, y);
-				ctx.fillText("^", caret_x, y - 10);
+				ctx.fillText("^", caret_x, y - 15);
 			}
 		},
 		/**
