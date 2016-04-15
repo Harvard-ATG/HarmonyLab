@@ -12,9 +12,6 @@
 //    2, 3, 4, 5 --> figured bass characters 2, 3, 4, 5 on lower row
 //    C, K --> flat, sharp signs to precede Roman numerals
 
-// The diminished and half-diminished signs are used in the place of $ and %
-// in the main font LinLibertine-Harvard.woff.
-
 // The priority field contains an interpretation of learning priorities.
 // (1 = learn first, 99 = learn last)
 
@@ -56,26 +53,26 @@ define({
 
    // bII (a.k.a. N)
 
-   "1/58":  {"root": "1", "label": "{C}II"},
-   "5/18":  {"root": "1", "label": "{C}II{z}"},
-   "8/15":  {"root": "1", "label": "{C}II{z4}"},
+   "1/58":  {"root": "1", "label": "♭II"},
+   "5/18":  {"root": "1", "label": "♭II{z}"},
+   "8/15":  {"root": "1", "label": "♭II{z4}"},
 
-   "1/058": {"root": "1", "label": "{C}II{u}"},
-   "5/018": {"root": "1", "label": "{C}II{z5}"},
-   "8/015": {"root": "1", "label": "{C}II{r3}"},
-   "0/158": {"root": "1", "label": "{C}II{r2}"},
+   "1/058": {"root": "1", "label": "♭II{u}"},
+   "5/018": {"root": "1", "label": "♭II{z5}"},
+   "8/015": {"root": "1", "label": "♭II{r3}"},
+   "0/158": {"root": "1", "label": "♭II{r2}"},
 
    // iio
 
-   "2/58":  {"root": "2", "label": "ii$"},
-   "5/28":  {"root": "2", "label": "ii${z}"},
+   "2/58":  {"root": "2", "label": "ii°"},
+   "5/28":  {"root": "2", "label": "ii°{z}"},
    "8/25":  {"root": "2", "label": "ii{z4}"},
 
-   "2/058": {"root": "2", "label": "ii%{u}"},
-   "5/028": {"root": "2", "label": "ii%{z5}", "altLabel": "iv{dz}"},
-   "5/02":  {"root": "2", "label": "ii%{z5}"},
-   "8/025": {"root": "2", "label": "ii%{r3}"},
-   "0/258": {"root": "2", "label": "ii%{r2}"},
+   "2/058": {"root": "2", "label": "ii⌀{u}"},
+   "5/028": {"root": "2", "label": "ii⌀{z5}", "altLabel": "iv{dz}"},
+   "5/02":  {"root": "2", "label": "ii⌀{z5}"},
+   "8/025": {"root": "2", "label": "ii⌀{r3}"},
+   "0/258": {"root": "2", "label": "ii⌀{r2}"},
 
    // [!]ii
    
@@ -120,11 +117,11 @@ define({
 
    // viio/iv
 
-   "4/7y":  {"root": "4", "label": "vii$/iv"},
-   "7/4y":  {"root": "4", "label": "vii${z}/iv"},
+   "4/7y":  {"root": "4", "label": "vii°/iv"},
+   "7/4y":  {"root": "4", "label": "vii°{z}/iv"},
 
-   "4/17y": {"root": "4", "label": "vii${u}/iv"},
-   "7/14y": {"root": "4", "label": "vii${z5}/iv"},
+   "4/17y": {"root": "4", "label": "vii°{u}/iv"},
+   "7/14y": {"root": "4", "label": "vii°{z5}/iv"},
 
    // iv
 
@@ -151,14 +148,14 @@ define({
 
    // #ivo (a.k.a. viio/V)
 
-   "6/09":  {"root": "6", "label": "{K}iv$"},
-   "9/06":  {"root": "6", "label": "{K}iv${z}"},
-   "0/69":  {"root": "6", "label": "{K}iv${z4}"},
+   "6/09":  {"root": "6", "label": "♯iv°"},
+   "9/06":  {"root": "6", "label": "♯iv°{z}"},
+   "0/69":  {"root": "6", "label": "♯iv°{z4}"},
 
-   "6/039": {"root": "6", "label": "{K}iv${u}"},
-   "9/036": {"root": "6", "label": "{K}iv${z5}"},
-   "0/369": {"root": "6", "label": "{K}iv${r3}"},
-   "3/069": {"root": "6", "label": "{K}iv${r2}"},
+   "6/039": {"root": "6", "label": "♯iv°{u}"},
+   "9/036": {"root": "6", "label": "♯iv°{z5}"},
+   "0/369": {"root": "6", "label": "♯iv°{r3}"},
+   "3/069": {"root": "6", "label": "♯iv°{r2}"},
 
    // V
    
@@ -204,16 +201,16 @@ define({
 
    // viio
 
-   "z/25":  {"root": "z", "label": "vii$"},
-   "2/5z":  {"root": "z", "label": "vii${z}"},
-   "5/2z":  {"root": "z", "label": "vii${z4}"},
+   "z/25":  {"root": "z", "label": "vii°"},
+   "2/5z":  {"root": "z", "label": "vii°{z}"},
+   "5/2z":  {"root": "z", "label": "vii°{z4}"},
 
-   "z/258": {"root": "z", "label": "vii${u}"},
-   "z/28":  {"root": "z", "label": "vii${u3}"},
-   "z/58":  {"root": "z", "label": "vii${u5}"},
-   "2/58z": {"root": "z", "label": "vii${z5}"},
-   "5/28z": {"root": "z", "label": "vii${r3}"},
-   "8/25z": {"root": "z", "label": "vii${r2}"},
+   "z/258": {"root": "z", "label": "vii°{u}"},
+   "z/28":  {"root": "z", "label": "vii°{u3}"},
+   "z/58":  {"root": "z", "label": "vii°{u5}"},
+   "2/58z": {"root": "z", "label": "vii°{z5}"},
+   "5/28z": {"root": "z", "label": "vii°{r3}"},
+   "8/25z": {"root": "z", "label": "vii°{r2}"},
 
    // augmented-sixth chords
 
