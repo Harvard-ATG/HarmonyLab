@@ -88,7 +88,7 @@ define([
 		 */
 		initComponent: function() {
 
-			$('.js-btn-info', this.headerEl).on('click', this.onClickInfo);
+			$('.js-btn-help', this.headerEl).on('click', this.onClickInfo);
 			$('.js-btn-screenshot').on('mousedown', this.onClickScreenshot);
 
 			this.initControlsLayout();
