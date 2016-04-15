@@ -57,7 +57,7 @@ define([
 	 * @type {string}
 	 * @const
 	 */
-	var COLOR_KEYSUSTAIN = '90-hsla(0, 30, 40)-hsl(0,45,20)';
+	var COLOR_KEYSUSTAIN = '#665e25';/*compare .pedal-active in harmony.css*/
 
 	/**
 	 * Piano Key Mixin.
