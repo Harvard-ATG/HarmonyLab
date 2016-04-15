@@ -89,9 +89,10 @@ define([
 		defaultWidth: 120,
 		/**
 		 * The margins for the stave.
+		 * Change right margin to reveal or hide right barline.
 		 * @type {number}
 		 */
-		margin: {left: 30, right: 30},
+		margin: {left: 15, right: 0},
 		/**
 		 * Initializes the Stave.
 		 *
