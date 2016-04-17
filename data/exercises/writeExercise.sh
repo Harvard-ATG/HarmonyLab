@@ -1,23 +1,37 @@
 #!/bin/bash
 
-echo "Write a prompt."
+echo "Exercise creating tool. First write a PROMPT."
 read prompt
 
-echo "Specify the key. (Keynote in Lilypond English-language format, with \"m\" suffix for minor keys.)"
+echo ""
+echo "Specify the KEY. (Keynote in Lilypond English-language format, with \"m\" suffix for minor keys. Hit return for none.)"
 read key
 
-parsedKey=$(echo ${key} | sed --posix -E 's/^ *([a-g][f|s]*) *$/\1 \\major/;s/^ *([a-g][f|s]*) *m *$/\1 \\minor/')
+parsedKey=$(echo ${key} | sed -E 's/^$/none/;s/^ *([a-g][f|s]*) *$/\1 \\major/;s/^ *([a-g][f|s]*) *m *$/\1 \\minor/')
 
-echo "Enter chords. Use Lilypond English-language format, e.g. \"<a, a cs' e'>1\" except that to hide a note, prefix it with \"x\".)"
+echo ""
+echo "Specify the KEY SIGNATURE. (Enter \"=\" to match the key named above or, for a non-matching key signature, enter the desired number of \"#\" or \"b\".)"
+read keySignatureInput
+
+if [[ ${keySignatureInput} == "=" ]]; then
+	keySignature=$(echo ${key} | sed -E 's/ *af *m */bbbbbbb/;s/ *ef *m */bbbbbb/;s/ *bf *m */bbbbb/;s/ *f *m */bbbb/;s/ *c *m */bbb/;s/ *g *m */bb/;s/ *d *m */b/;s/ *a *m *//;s/ *e *m */#/;s/ *b *m */##/;s/ *fs *m */###/;s/ *cs *m */####/;s/ *gs *m */#####/;s/ *ds *m */######/;s/ *as *m */#######/;s/cf */bbbbbbb/;s/ *gf */bbbbbb/;s/ *df */bbbbb/;s/ *af */bbbb/;s/ *ef */bbb/;s/ *bf */bb/;s/ *f */b/;s/ *c *//;s/ *g */#/;s/ *d */##/;s/ *a */###/;s/ *e */####/;s/ *b */#####/;s/ *fs */######/;s/ *cs *m */#######/')
+else
+	keySignature=$(echo ${keySignatureInput})
+fi
+
+echo ""
+echo "Enter CHORDS. Use Lilypond English-language format, e.g. \"<a, a cs' e'>1\" except that to hide a note, prefix it with \"x\".)"
 read chords
 
 # following script adds whole note duration to Lilypond code which future versions of HarmonyLab may not want
-parsedChords=$(echo ${chords} | sed --posix -E 's/x/\\xNote /g;s/>([ <])/>1\1/g;s/>$/>1/g')
+parsedChords=$(echo ${chords} | sed -E 's/x/\\xNote /g;s/>([ <])/>1\1/g;s/>$/>1/g')
 
-echo "Specify the directory (exercise group)."
+echo ""
+echo "Specify the DIRECTORY (exercise group)."
 read directory
 
-echo "Specify the filename (exercise number)."
+echo ""
+echo "Specify the FILENAME (exercise number)."
 read filename
 
 txtPath="./txt/${directory}/${filename}.txt"
@@ -26,6 +40,7 @@ lyPath="./ly/${directory}/${filename}.ly"
 
 jsonPath="./json/${directory}/${filename}.json"
 
+echo ""
 echo "Choose what note names to display:"
 echo "  [1] note names"
 echo "  [2] scientific pitch notation"
@@ -33,6 +48,7 @@ echo "  [3] neither"
 
 read opt1
 
+echo ""
 echo "Choose what melodic analysis to display:"
 echo "  [1] scale degrees"
 echo "  [2] solfege"
@@ -40,6 +56,7 @@ echo "  [3] neither"
 
 read opt2
 
+echo ""
 echo "Choose what harmonic analysis to display:"
 echo "  [1] Roman numerals"
 echo "  [2] intervals"
@@ -48,6 +65,7 @@ echo "  [4] both"
 
 read opt3
 
+echo ""
 echo "Choose what highlights to display:"
 echo "  [1] roots"
 echo "  [2] tritones"
@@ -63,8 +81,11 @@ mkdir -p ./ly/"$directory"
 mkdir -p ./json/"$directory"
 
 cat >${txtPath} <<- _EOF_
+	${directory}
+	${filename}
 	${prompt}
 	${key}
+	${keySignatureInput}
 	${chords}
 	${opt1}
 	${opt2}
@@ -80,7 +101,7 @@ cat >${lyPath} <<- _EOF_
 	}
 
 	theKey = { \key
-	  ${parsedKey}
+	  ${parsedKey} % ${keySignature}
 	}
 
 	%{ add no line breaks %} lyCommands = { \clef "alto" \override Staff.StaffSymbol.line-count = #11 \override Staff.StaffSymbol.line-positions = #'(10 8 6 4 2 -2 -2 -4 -6 -8 -10) \override Staff.TimeSignature #'stencil = ##f }
@@ -135,69 +156,77 @@ else
 	echo "Failed to set melodic analysis options."
 fi
 
+# following code assumes "intervals" is last item in array (no comma)
 if [[ "$opt3" = "1" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roman_numerals": true,
-	      "intervals": false,
+	      "intervals": false
 	_EOF_
 elif [[ "$opt3" = "2" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roman_numerals": false,
-	      "intervals": true,
+	      "intervals": true
 	_EOF_
 elif [[ "$opt3" = "3" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roman_numerals": false,
-	      "intervals": false,
+	      "intervals": false
 	_EOF_
 elif [[ "$opt3" = "4" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roman_numerals": true,
-	      "intervals": true,
+	      "intervals": true
 	_EOF_
 else
 	echo "Failed to set harmonic analysis options."
 fi
 
 cat >>${lyPath} <<- _EOF_
-	    },
+	    }
 	  },
 	  "highlight": {
 	    "enabled": true,
 	    "mode": {
 	_EOF_
 
+# following code assumes "tritonehiglight" is last item in array (no comma)
 if [[ "$opt4" = "1" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roothighlight": true,
-	      "tritonehighlight": false,
+	      "tritonehighlight": false
 	_EOF_
 elif [[ "$opt4" = "2" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roothighlight": false,
-	      "tritonehighlight": true,
+	      "tritonehighlight": true
 	_EOF_
 elif [[ "$opt4" = "3" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roothighlight": false,
-	      "tritonehighlight": false,
+	      "tritonehighlight": false
 	_EOF_
 elif [[ "$opt4" = "4" ]]; then
 	cat >>${lyPath} <<- _EOF_
 	      "roothighlight": true,
-	      "tritonehighlight": true,
+	      "tritonehighlight": true
 	_EOF_
 else
 	echo "Failed to set highlight options."
 fi
 
 cat >>${lyPath} <<- _EOF_
-	    },
-	  },
+	    }
+	  }
 	%}
 	_EOF_
 
-parsedLy=$(cat ${lyPath} | sed --posix -E -f ./ly2json.sed )
+# includes guard against hanging commas in json
+parsedLy=$(cat ${lyPath} | sed -E -f ./ly2json.sed |\
+	tr '\n' '\r' |\
+	# removes hanging commas in json
+	sed -E 's/,( *\r* *[]}])/\1/g;' |\
+	tr '\r' '\n'\
+)
 
 cat >${jsonPath} <<- _EOF_
 	{
@@ -206,3 +235,8 @@ cat >${jsonPath} <<- _EOF_
 	${parsedLy}
 	}
 	_EOF_
+
+echo ""
+echo "This is the json exercise file you created:"
+
+cat ${jsonPath}
