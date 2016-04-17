@@ -5,6 +5,9 @@ s/[ \t]*$//
 # remove line containing version statement
 /\\version/d
 
+# remove line containing paper settings for Lilypond
+/\\paper/d
+
 # remove line with custom commands for Lilypond
 /lyCommands =/d
 
@@ -12,8 +15,7 @@ s/[ \t]*$//
 s/^\\absolute [^<]*/  "chord": [/
 s/} % end/  \],/
 
-/</ s/>([0-9]*) *</>\1,
-  </g
+/</ s/>([0-9]*) *</>\1,\n  </g
 
 # NB in future HarmonyLab may require duration information be preserved
 /</ s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[]}/g
@@ -142,6 +144,9 @@ s/} % end/  \],/
 /HarmonyLab options/d
 /^%\{$/d
 /^%}$/d
+
+# remove directory and filename statement
+/\\italic/d
 
 # translate exercise annotation
 /markup/{
