@@ -25,14 +25,14 @@ theKey = { \key
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
     "enabled": false,
     "mode": {
       "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "tritonehighlight": false
+    }
+  }
 %}
