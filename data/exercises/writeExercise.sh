@@ -94,9 +94,13 @@ cat >${txtPath} <<- _EOF_
 	_EOF_
 
 cat >${lyPath} <<- _EOF_
-	\version "2.18.2" \language "english" #(set-global-staff-size 24)
+	\version "2.18.2" \language "english" #(set-global-staff-size 18)
 
-	\markup \pad-around #2 \box \wordwrap {
+	\paper { paper-height = 4.25\in paper-width = 5.5\in indent = 0 system-count = 1 page-count = 1 oddFooterMarkup = \markup \tiny { Exercise preview in Lilypond for HarmonyLab json file. } }
+
+	\markup \italic { "Exercise: ${directory}/${filename}" }
+
+	\markup \pad-around #3 \box \pad-markup #1 \wordwrap {
 	  ${prompt}
 	}
 
@@ -104,7 +108,7 @@ cat >${lyPath} <<- _EOF_
 	  ${parsedKey} % ${keySignature}
 	}
 
-	%{ add no line breaks %} lyCommands = { \clef "alto" \override Staff.StaffSymbol.line-count = #11 \override Staff.StaffSymbol.line-positions = #'(10 8 6 4 2 -2 -2 -4 -6 -8 -10) \override Staff.TimeSignature #'stencil = ##f }
+	%{ add no line breaks %} lyCommands = { \clef "alto" \override Staff.StaffSymbol.line-count = #11 \override Staff.StaffSymbol.line-positions = #'(10 8 6 4 2 -2 -2 -4 -6 -8 -10) \override Staff.TimeSignature #'stencil = ##f \override Staff.BarLine #'stencil = ##f }
 
 	\absolute { \theKey \lyCommands
 
