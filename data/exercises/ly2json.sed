@@ -12,15 +12,16 @@ s/[ \t]*$//
 s/^\\absolute [^<]*/  "chord": [/
 s/} % end/  \],/
 
-/</s/>([0-9]*) *</>\1\n  </g
+/</ s/>([0-9]*) *</>\1,
+  </g
 
 # NB in future HarmonyLab may require duration information be preserved
-/</s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[],},/g
+/</ s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[]}/g
 
-# organize X-ed out notes into hidden category for HarmonyLab
+# organize Xed out notes into hidden category for HarmonyLab
 :loop;/xNote/{s/"visible":\[([ a-gs',]*)\\xNote  *([a-gs',]*)([ a-gs',\\xNote]*)\],"hidden":\[([ a-gs',\\xNote]*)\]/"visible":\[\1\3],"hidden":[\2 \4]/;b loop}
 
-# generate MIDI numbers, pass one (enharmonics) ...
+# generate MIDI numbers, pass one of two (enharmonics)
 /"visible"/ s/([[ ])cf'/\1b/g
 /"visible"/ s/([[ ])cf/\1b,/g
 /"visible"/ s/([[ ])df/\1cs/g
@@ -33,7 +34,7 @@ s/} % end/  \],/
 /"visible"/ s/([[ ])bs,/\1c/g
 /"visible"/ s/([[ ])bs/\1c'/g
 
-# generate MIDI numbers, pass two
+# generate MIDI numbers, pass two of two
 /"visible"/  s/([[ ])c'''''/\1108/g
 
 /"visible"/  s/([[ ])c''''/\196/g
@@ -153,37 +154,10 @@ s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "introText": "\1",/;
 /theKey/{
 N
 N
-s/theKey *= *\{ *\\key\n *([a-g][fs]*)  *\\major\n *}/  "key": "j\1",/;s/theKey *= *\{ *\\key\n *([a-g][fs]*)  *\\minor\n *}/  "key": "i\1",/;
+s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major\n *}/  "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor\n *}/  "key": "i\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([b|#]*) *\n *}/  "key": "j\1",\
+  "keySignature": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([b|#]*) *\n *}/  "key": "i\1",\
+  "keySignature": "\2",/;s/theKey *= *\{ *\n *% *([b|#]*) *\n *}/  "key": "h__",\
+  "keySignature": "\1",/;
 }
 
-s/"jcf"/"jCb"/
-s/"jgf"/"jGb"/
-s/"jdf"/"jDb"/
-s/"jaf"/"jAb"/
-s/"jef"/"jEb"/
-s/"jbf"/"jBb"/
-s/"jf"/"jF_"/
-s/"jc"/"jC_"/
-s/"jg"/"jG_"/
-s/"jd"/"jD_"/
-s/"ja"/"jA_"/
-s/"je"/"jE_"/
-s/"jb"/"jB_"/
-s/"jfs"/"jF#"/
-s/"jcs"/"jC#"/
-
-s/"iaf"/"iAb"/
-s/"ief"/"iEb"/
-s/"ibf"/"iBb"/
-s/"if"/"iF_"/
-s/"ic"/"iC_"/
-s/"ig"/"iG_"/
-s/"id"/"iD_"/
-s/"ia"/"iA_"/
-s/"ie"/"iE_"/
-s/"ib"/"iB_"/
-s/"ifs"/"iF#"/
-s/"ics"/"iC#"/
-s/"igs"/"iG#"/
-s/"ids"/"iD#"/
-s/"ias"/"iA#"/
+/"key"/ s/"jcf"/"jCb"/;s/"jgf"/"jGb"/;s/"jdf"/"jDb"/;s/"jaf"/"jAb"/;s/"jef"/"jEb"/;s/"jbf"/"jBb"/;s/"jf"/"jF_"/;s/"jc"/"jC_"/;s/"jg"/"jG_"/;s/"jd"/"jD_"/;s/"ja"/"jA_"/;s/"je"/"jE_"/;s/"jb"/"jB_"/;s/"jfs"/"jF#"/;s/"jcs"/"jC#"/;s/"iaf"/"iAb"/;s/"ief"/"iEb"/;s/"ibf"/"iBb"/;s/"if"/"iF_"/;s/"ic"/"iC_"/;s/"ig"/"iG_"/;s/"id"/"iD_"/;s/"ia"/"iA_"/;s/"ie"/"iE_"/;s/"ib"/"iB_"/;s/"ifs"/"iF#"/;s/"ics"/"iC#"/;s/"igs"/"iG#"/;s/"ids"/"iD#"/;s/"ias"/"iA#"/
