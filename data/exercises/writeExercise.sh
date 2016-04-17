@@ -14,7 +14,7 @@ echo "Specify the KEY SIGNATURE. (Enter \"=\" to match the key named above or, f
 read keySignatureInput
 
 if [[ ${keySignatureInput} == "=" ]]; then
-	keySignature=$(echo ${key} | sed -E 's/ *af *m */bbbbbbb/;s/ *ef *m */bbbbbb/;s/ *bf *m */bbbbb/;s/ *f *m */bbbb/;s/ *c *m */bbb/;s/ *g *m */bb/;s/ *d *m */b/;s/ *a *m *//;s/ *e *m */#/;s/ *b *m */##/;s/ *fs *m */###/;s/ *cs *m */####/;s/ *gs *m */#####/;s/ *ds *m */######/;s/ *as *m */#######/;s/cf */bbbbbbb/;s/ *gf */bbbbbb/;s/ *df */bbbbb/;s/ *af */bbbb/;s/ *ef */bbb/;s/ *bf */bb/;s/ *f */b/;s/ *c *//;s/ *g */#/;s/ *d */##/;s/ *a */###/;s/ *e */####/;s/ *b */#####/;s/ *fs */######/;s/ *cs *m */#######/')
+	keySignature=$(echo ${key} | sed -E 's/ *af *m */bbbbbbb/;s/ *ef *m */bbbbbb/;s/ *bf *m */bbbbb/;s/ *f *m */bbbb/;s/ *c *m */bbb/;s/ *g *m */bb/;s/ *d *m */b/;s/ *a *m *//;s/ *e *m */#/;s/ *b *m */##/;s/ *fs *m */###/;s/ *cs *m */####/;s/ *gs *m */#####/;s/ *ds *m */######/;s/ *as *m */#######/;s/cf */bbbbbbb/;s/ *gf */bbbbbb/;s/ *df */bbbbb/;s/ *af */bbbb/;s/ *ef */bbb/;s/ *bf */bb/;s/ *g */#/;s/ *d */##/;s/ *a */###/;s/ *e */####/;s/ *fs */######/;s/ *cs *m */#######/;s/ *f */b/;s/ *c *//')
 else
 	keySignature=$(echo ${keySignatureInput})
 fi
