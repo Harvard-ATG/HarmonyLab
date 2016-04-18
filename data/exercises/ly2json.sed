@@ -166,10 +166,13 @@ s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "introText": "\1",/;
 /theKey/{
 N
 N
-s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major\n *}/  "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor\n *}/  "key": "i\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([b|#]*) *\n *}/  "key": "j\1",\
-  "keySignature": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([b|#]*) *\n *}/  "key": "i\1",\
-  "keySignature": "\2",/;s/theKey *= *\{ *\n *% *([b|#]*) *\n *}/  "key": "h__",\
-  "keySignature": "\1",/;
+s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([ij][A-G][b_#]) *\n *}/  "keySignature": "j\1",\
+  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([ij][A-G][b_#]) *\n *}/  "keySignature": "i\1",\
+  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *\n *}/  "keySignature": "j\1",\
+  "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *\n *}/  "keySignature": "i\1",\
+  "key": "i\1",/
 }
+
+/"keySignature"/ s/"jcf"/"bbbbbbb"/;s/"jgf"/"bbbbbb"/;s/"jdf"/"bbbbb"/;s/"jaf"/"bbbb"/;s/"jef"/"bbb"/;s/"jbf"/"bb"/;s/"jf"/"b"/;s/"jc"/""/;s/"jg"/"#"/;s/"jd"/"##"/;s/"ja"/"###"/;s/"je"/"####"/;s/"jb"/"#####"/;s/"jfs"/"######"/;s/"jcs"/"#######"/;s/"iaf"/"bbbbbbb"/;s/"ief"/"bbbbbb"/;s/"ibf"/"bbbbb"/;s/"if"/"bbbb"/;s/"ic"/"bbb"/;s/"ig"/"bb"/;s/"id"/"b"/;s/"ia"/""/;s/"ie"/"#"/;s/"ib"/"##"/;s/"ifs"/"###"/;s/"ics"/"####"/;s/"igs"/"#####"/;s/"ids"/"######"/;s/"ias"/"#######"/
 
 /"key"/ s/"jcf"/"jCb"/;s/"jgf"/"jGb"/;s/"jdf"/"jDb"/;s/"jaf"/"jAb"/;s/"jef"/"jEb"/;s/"jbf"/"jBb"/;s/"jf"/"jF_"/;s/"jc"/"jC_"/;s/"jg"/"jG_"/;s/"jd"/"jD_"/;s/"ja"/"jA_"/;s/"je"/"jE_"/;s/"jb"/"jB_"/;s/"jfs"/"jF#"/;s/"jcs"/"jC#"/;s/"iaf"/"iAb"/;s/"ief"/"iEb"/;s/"ibf"/"iBb"/;s/"if"/"iF_"/;s/"ic"/"iC_"/;s/"ig"/"iG_"/;s/"id"/"iD_"/;s/"ia"/"iA_"/;s/"ie"/"iE_"/;s/"ib"/"iB_"/;s/"ifs"/"iF#"/;s/"ics"/"iC#"/;s/"igs"/"iG#"/;s/"ids"/"iD#"/;s/"ias"/"iA#"/
