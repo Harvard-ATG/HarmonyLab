@@ -111,7 +111,7 @@ cat >${lyPath} <<- _EOF_
 	}
 
 	theKey = { \key
-	  ${parsedKey} % ${keySignature} #NOT CORRECT: LILYPOND SHOWS WRONG KEY
+	  ${parsedKey} % ${keySignature}
 	}
 
 	%{ add no line breaks %} lyCommands = { \clef "alto" \override Staff.StaffSymbol.line-count = #11 \override Staff.StaffSymbol.line-positions = #'(10 8 6 4 2 -2 -2 -4 -6 -8 -10) \override Staff.TimeSignature #'stencil = ##f \override Staff.BarLine #'stencil = ##f }
