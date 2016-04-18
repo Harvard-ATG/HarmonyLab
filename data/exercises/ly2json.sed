@@ -152,14 +152,14 @@ s/} % end/  \],/
 /\\italic/{
 N
 N
-s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "review": "\1",/;
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "review": "\1",/;
 }
 
 # translate exercise prompt
 /markup/{
 N
 N
-s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "introText": "\1",/;
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "introText": "\1",/;
 }
 
 # translate key statement
