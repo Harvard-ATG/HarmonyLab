@@ -1,17 +1,21 @@
 {
   "type": "matching",
-  "reviewText": "",
-  "introText": "Complete the resolution of V{z5}.",
-  "key": "jF_",
-  "keySignature": "b",
+  "introText": "Complete the four-part progression with the simplest correct voice leading, according to the Roman-numeral analysis.",
+  "key": "jC_",
+  "keySignature": "",
   "chord": [
-    {"visible":[52,60,67,70],"hidden":[]},
-    {"visible":[53,69],"hidden":[65,60]}
+    {"visible":[48,67,72,76],"hidden":[]},
+    {"visible":[45],"hidden":[76,72,69]},
+    {"visible":[41],"hidden":[77,72,69]},
+    {"visible":[43],"hidden":[74,71,67]},
+    {"visible":[36,67,72,76],"hidden":[]}
   ],
+  "review": "Well done! Take a moment to memorize this.",
   "analysis": {
     "enabled": true,
     "mode": {
       "note_names": false,
+      "scientific_pitch": false,
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
@@ -19,7 +23,7 @@
     }
   },
   "highlight": {
-    "enabled": false,
+    "enabled": true,
     "mode": {
       "roothighlight": true,
       "tritonehighlight": false

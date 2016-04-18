@@ -1,0 +1,11 @@
+Complete the four-part progression with the simplest correct voice leading, according to the Roman-numeral analysis.
+c
+=
+<c g' c'' e''>1 <a, xa' xc'' xe''>1 <f, xa' xc'' xf''>1 <g, xg' xb' xd''>1 <c, g' c'' e''>1
+Well done! Take a moment to memorize this.
+SATB-progressions
+01
+3
+3
+1
+1

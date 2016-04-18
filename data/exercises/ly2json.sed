@@ -146,9 +146,16 @@ s/} % end/  \],/
 /^%}$/d
 
 # remove directory and filename statement
-/\\italic/d
+/\\small/d
 
-# translate exercise annotation
+# translate exercise review text
+/\\italic/{
+N
+N
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "review": "\1",/;
+}
+
+# translate exercise prompt
 /markup/{
 N
 N

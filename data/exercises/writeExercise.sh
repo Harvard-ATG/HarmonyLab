@@ -20,11 +20,15 @@ else
 fi
 
 echo ""
-echo "Enter CHORDS. Use Lilypond English-language format, e.g. \"<a, a cs' e'>1\" except that to hide a note, prefix it with \"x\".)"
+echo "Enter CHORDS. Use Lilypond English-language format, e.g. \"<a, a cs' e'>\" except that to hide a note, prefix it with \"x\".)"
 read chords
 
 # following script adds whole note duration to Lilypond code which future versions of HarmonyLab may not want
 parsedChords=$(echo ${chords} | sed -E 's/x/\\xNote /g;s/>([ <])/>1\1/g;s/>$/>1/g')
+
+echo ""
+echo "Write some REVIEW text to show after the exercise is completed."
+read review
 
 echo ""
 echo "Specify the DIRECTORY (exercise group)."
@@ -81,12 +85,13 @@ mkdir -p ./ly/"$directory"
 mkdir -p ./json/"$directory"
 
 cat >${txtPath} <<- _EOF_
-	${directory}
-	${filename}
 	${prompt}
 	${key}
 	${keySignatureInput}
 	${chords}
+	${review}
+	${directory}
+	${filename}
 	${opt1}
 	${opt2}
 	${opt3}
@@ -98,7 +103,7 @@ cat >${lyPath} <<- _EOF_
 
 	\paper { paper-height = 4.25\in paper-width = 5.5\in indent = 0 system-count = 1 page-count = 1 oddFooterMarkup = \markup \tiny { Exercise preview in Lilypond for HarmonyLab json file. } }
 
-	\markup \italic { "Exercise: ${directory}/${filename}" }
+	\markup \small \left-column { \line { ${directory} } \line { ${filename} } }
 
 	\markup \pad-around #3 \box \pad-markup #1 \wordwrap {
 	  ${prompt}
@@ -115,6 +120,10 @@ cat >${lyPath} <<- _EOF_
 	  ${parsedChords}
 
 	} % end
+
+	\markup \italic \pad-around #3 \box \pad-markup #1 \wordwrap {
+	  ${review}
+	}
 
 	%{ % HarmonyLab options
 	  "analysis": {
@@ -235,7 +244,6 @@ parsedLy=$(cat ${lyPath} | sed -E -f ./ly2json.sed |\
 cat >${jsonPath} <<- _EOF_
 	{
 	  "type": "matching",
-	  "reviewText": "",
 	${parsedLy}
 	}
 	_EOF_
