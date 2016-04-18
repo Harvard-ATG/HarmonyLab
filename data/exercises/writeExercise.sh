@@ -106,7 +106,7 @@ cat >${lyPath} <<- _EOF_
 	\markup \small \left-column { \line { ${directory} } \line { ${filename} } }
 
 	\markup \pad-around #3 \box \pad-markup #1 \wordwrap {
-	  ${prompt}
+	  ${prompt}\strut
 	}
 
 	theKey = { \key
@@ -122,7 +122,7 @@ cat >${lyPath} <<- _EOF_
 	} % end
 
 	\markup \italic \pad-around #3 \box \pad-markup #1 \wordwrap {
-	  ${review}
+	  ${review}\strut
 	}
 
 	%{ % HarmonyLab options
