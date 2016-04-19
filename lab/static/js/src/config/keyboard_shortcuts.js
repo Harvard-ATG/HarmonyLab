@@ -45,6 +45,7 @@ define({
 		"ESC":    {msg:"toggleMode"},
 		"ENTER":  {msg:"clearNotes"},
 		"SPACE":  {msg:"bankChord"},
+		"DOWN":   {msg:"bankChord"},
 		"RIGHT":  {msg:"nextExercise"} // not created yet 
 	},
 
@@ -55,7 +56,10 @@ define({
 		"13": "ENTER",
 		"27": "ESC",
 		"32": "SPACE",
+		"37": "LEFT",
+		"38": "UP",
 		"39": "RIGHT",
+		"40": "DOWN",
 		"48": "0",
 		"49": "1",
 		"50": "2",
