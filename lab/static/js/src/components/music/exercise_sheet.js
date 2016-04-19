@@ -142,7 +142,7 @@ define([
                         '<% } %>',
                         '<p><span class="exercise-status-state" style="background-color:<%= status_color %>"><%= status_text %> <%= status_icon %></span>',
                         '<% if (typeof(time_to_complete) !== "undefined" && time_to_complete != "") { %>',
-                            ' in <%= time_to_complete %></p>',
+                            '&nbsp;in&nbsp;<%= time_to_complete %></p>',
                         '<% } %>',
                         '<p><a class="exercise-status-next-btn" href="<%= next_exercise %>">Click for next</a></p>',
                     '</div>',
