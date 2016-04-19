@@ -44,7 +44,7 @@ txtPath="./txt/${directory}/${filename}.txt"
 
 lyPath="./ly/${directory}/${filename}.ly"
 
-jsonPath="./json/${directory}/${filename}.json"
+jsonPath="./json/all/${directory}/${filename}.json"
 
 echo ""
 echo "Choose what note names to display:"
@@ -84,7 +84,7 @@ mkdir -p ./txt/"$directory"
 
 mkdir -p ./ly/"$directory"
 
-mkdir -p ./json/"$directory"
+mkdir -p ./json/all/"$directory"
 
 cat >${txtPath} <<- _EOF_
 	${prompt}
