@@ -607,7 +607,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 
 
 // The scripts "ijNameDegree," "ijFindChord," and "hFindChord" return the analysis of scale degrees and chords.
-// They draw on the customizable listings of "jDegrees," (not "iDegrees" currently), "iChords," and "jChords."
+// They draw on the customizable listings of "jDegrees," "iDegrees," "iChords," and "jChords."
 // They also draw on many scripts here and in "\this.Piano."
 
 	ijNameDegree: function (notes) {
