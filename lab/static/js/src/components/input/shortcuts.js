@@ -216,7 +216,7 @@ define([
 		 * @return undefined
 		 */
 		setKeyToNone: function(state) {
-			this.keySignature.changeKey('jC_', true);	
+			this.keySignature.changeKey('h__', true);	
 		},
 		/**
 		 * Depresses the sustain pedal.
