@@ -77,6 +77,10 @@ define([
 		 */
 		defaultFontSize: "24px",
 		/**
+		 * Defines a horizontal offset for use with all analytical annotations.
+		 */
+		annotateOffsetX: 8,
+		/**
 		 * Initializes the notater.
 		 *
 		 * @param {object} config
@@ -198,7 +202,7 @@ define([
 		 */
 		getFiguredBassFont: function(size) {
 			if(!size) {
-				size = "36px";
+				size = "32px";
 			}
 			return size + " Sebastian";
 		},
@@ -268,9 +272,13 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNameOfNote(notes);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(note_name !== '') {
-				ctx.fillText(note_name, x, y);
+				ctx.fillText(note_name, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -285,9 +293,13 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
 			var helmholtz = this.getAnalyzer().toHelmholtzNotation(note_name);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(helmholtz !== '') {
-				ctx.fillText(helmholtz, x, y);
+				ctx.fillText(helmholtz, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -302,9 +314,13 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
 			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(scientific_pitch !== '') {
-				ctx.fillText(scientific_pitch, x, y);
+				ctx.fillText(scientific_pitch, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -318,6 +334,10 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var solfege = this.getAnalyzer().getSolfege(notes);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			solfege = this.convertSymbols(solfege);
 			if (solfege.indexOf("<br>") !== -1) {
@@ -325,7 +345,7 @@ define([
 			}
 
 			if(solfege !== '') {
-				ctx.fillText(solfege, x, y);
+				ctx.fillText(solfege, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -340,6 +360,10 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var width = 0, caret_offset = 0, caret_x = x;
 			var numeral = this.getAnalyzer().getScaleDegree(notes);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(numeral !== '') {
 				numeral = this.convertSymbols(numeral);
@@ -348,8 +372,8 @@ define([
 				caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
 				caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
 
-				ctx.fillText(numeral, x, y);
-				ctx.fillText("^", caret_x, y - 15);
+				ctx.fillText(numeral, x + StaveNotater.prototype.annotateOffsetX, y);
+				ctx.fillText("^", caret_x + StaveNotater.prototype.annotateOffsetX, y - 15);
 			}
 		},
 		/**
@@ -367,7 +391,7 @@ define([
 				this.parseAndDraw(chord_entry.label, x, y, function(text, x, y) {
 					text = this.convertSymbols(text);
 					var lines = this.wrapText(text);
-					this.drawTextLines(lines, x, y);
+					this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 					return this.getContext().measureText(lines[0]).width; // return the width of the first line
 				});
 			}
@@ -384,10 +408,14 @@ define([
 			var ctx = this.getContext();
 			var interval = this.getAnalyzer().ijNameDegree(notes);
 			var name = '', lines = [];
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '24px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 			
 			if(interval && interval.name !== '') {
 				lines = this.wrapText(interval.name);
-				this.drawTextLines(lines, x, y);
+				this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -401,19 +429,22 @@ define([
 			var ctx = this.getContext();
 			var tempo = this.getTempo();
 			var img = METRONOME_IMG;
-			
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '16px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(tempo) {
 				if(img && img.complete) {
-					ctx.drawImage(img, x, y - 17);
-					ctx.fillText(tempo, x + img.width, y);
+					/*ctx.drawImage(img, x, y - 17);*/
+					ctx.fillText('M.M. = ' + tempo, x - 25/* + img.width*/, y);
 				} else {
 					img.onload = _.partial(this.drawMetronomeMark, x, y);
 				}
 			}
 		},
 		/**
-		 * Draws the key signature name (i.e. C major, etc).
+		 * Draws the key name (i.e. C major, etc).
 		 *
 		 * @param {number} x
 		 * @param {number} y
@@ -422,8 +453,12 @@ define([
 		drawKeyName: function(x, y) {
 			var ctx = this.getContext();
 			var key = this.keySignature.getKeyShortName();
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 			if(key !== '') {
-				ctx.fillText(this.convertSymbols(key) + ':', x, y);
+				ctx.fillText(this.convertSymbols(key) + ' :', x - 8, y);
 			}
 		},
 		/**
@@ -460,18 +495,22 @@ define([
 			var that = this;
 			var figuredBassFont = this.getFiguredBassFont();
 			var ctx = this.getContext();
-			var padding = ctx.measureText("m").width; // get width of "m" to use for padding
+			var padding = ctx.measureText("n").width; // width to use for padding
 			
 			FontParser.parse(str, function(text, is_font_token) {
 				//console.log("parse font", text, is_font_token);
 				if (is_font_token) {
 					ctx.save();
 					ctx.font = figuredBassFont;
-					x += callback.call(that, text, x, y);
+					x += callback.call(that, text, x, y + 3); // tweak text
 					x += padding / 3;
 					ctx.restore();
 				} else {
-					x += callback.call(that, text, x, y);
+					var cFont = ctx.font;
+					var fontArgs = ctx.font.split(' ');
+					var newSize = '24px';
+					ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
+					x += callback.call(that, text, x, y); // tweak text position
 					x += padding / 2;					
 				}				
 			});
