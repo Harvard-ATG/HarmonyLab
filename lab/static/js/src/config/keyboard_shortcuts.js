@@ -44,7 +44,8 @@ define({
 		"/":      {msg:"toggleMetronome"},
 		"ESC":    {msg:"toggleMode"},
 		"ENTER":  {msg:"clearNotes"},
-		"SPACE":  {msg:"bankChord"}
+		"SPACE":  {msg:"bankChord"},
+		"RIGHT":  {msg:"nextExercise"} // not created yet 
 	},
 
 	// Defines key code -> key name mappings.
@@ -54,6 +55,7 @@ define({
 		"13": "ENTER",
 		"27": "ESC",
 		"32": "SPACE",
+		"39": "RIGHT",
 		"48": "0",
 		"49": "1",
 		"50": "2",
@@ -94,6 +96,7 @@ define({
 		"188": ",",
 		"190": ".",
 		"191": "/",
+		"192": "GRAVE",
 		"222": "'"
 	}
 });
