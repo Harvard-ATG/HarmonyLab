@@ -70,12 +70,12 @@ body, #mainmenu, #helpmenu {
     padding:0;
     overflow:hidden;
 }
-.staff-area-small {
+/*.staff-area-small {
     height: 302px;
 }
 .staff-area-medium {
     height: 402px;
-}
+}*/
 #staff-toolbar {
     position: absolute;
     height: 35px;
@@ -94,10 +94,12 @@ body, #mainmenu, #helpmenu {
 }
 #staff-status {
     width: 640px;
-    margin: -1em auto;
-    height: 100%;
+    margin: 0em auto;
+    margin-bottom: 1em;
+    min-height: 100px;
+    /*height: 100%;
     overflow: hidden;
-    overflow-y:auto;
+    overflow-y:auto;*/
 }
 .content-area, button, input, optgroup, select, textarea {
     background-color: rgb(238, 238, 221);
