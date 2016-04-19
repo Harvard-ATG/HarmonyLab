@@ -15,7 +15,7 @@ define({
 	"6/4": {"numeral": "b5", "solfege": "Me"},
 	"7/4": {"numeral": "5", "solfege": "Mi"},
 	"8/5": {"numeral": "6", "solfege": "Fa"},
-	"9/5": {"numeral": "6+", "solfege": "Fi"},
+	"9/5": {"numeral": "+6", "solfege": "Fi"},
 	"10/6": {"numeral": "7", "solfege": "So"},
-	"11/6": {"numeral": "7+", "solfege": "Si"}
+	"11/6": {"numeral": "+7", "solfege": "Si"}
 });
