@@ -7,14 +7,14 @@ echo ""
 echo "Specify the KEY. Give keynote in Lilypond English-language format and add \"m\" suffix for minor keys (e.g. \"bf\" for B-flat major and \"gsm\" for G-sharp minor. Hit return for none."
 read key
 
-parsedKey=$(echo ${key} | sed -E 's/^afm$/iAb/;s/^efm$/iEb/;s/^bfm$/iBb/;s/^fm$/iF_/;s/^cm$/iC_/;s/^gm$/iG_/;s/^dm$/iD_/;s/^am$/iA_/;s/^em$/iE_/;s/^bm$/iB_/;s/^fsm$/iF#/;s/^csm$/iC#/;s/^gsm$/iG#/;s/^dsm$/iD#/;s/^asm$/iA#/;s/^cf$/jCb/;s/^gf$/jGb/;s/^df$/jDb/;s/^af$/jAb/;s/^ef$/jEb/;s/^bf$/jBb/;s/^g$/jG_/;s/^d$/jD_/;s/^a$/jA_/;s/^e$/jE_/;s/^fs$/jF#/;s/^csm$/jC#/;s/^f$/jF_/;s/^c$/jC_/;s/^$/h__/;')
+parsedKey=$(echo ${key} | sed -E 's/^afm$/iAb/;s/^efm$/iEb/;s/^bfm$/iBb/;s/^fm$/iF_/;s/^cm$/iC_/;s/^gm$/iG_/;s/^dm$/iD_/;s/^am$/iA_/;s/^em$/iE_/;s/^bm$/iB_/;s/^fsm$/iF#/;s/^csm$/iC#/;s/^gsm$/iG#/;s/^dsm$/iD#/;s/^asm$/iA#/;s/^cf$/jCb/;s/^gf$/jGb/;s/^df$/jDb/;s/^af$/jAb/;s/^ef$/jEb/;s/^bf$/jBb/;s/^f$/jF_/;s/^c$/jC_/;s/^g$/jG_/;s/^d$/jD_/;s/^a$/jA_/;s/^e$/jE_/;s/^b$/jB_/;s/^fs$/jF#/;s/^csm$/jC#/;s/^$/h__/;')
 
 echo ""
 echo "Specify the KEY SIGNATURE. (Enter \"=\" to match the key named above or, for a non-matching key signature, enter the desired number of \"#\" or \"b\".)"
 read keySignatureInput
 
 if [[ ${keySignatureInput} == "=" ]]; then
-	keySignature=$(echo ${key} | sed -E 's/^afm$/bbbbbbb/;s/^efm$/bbbbbb/;s/^bfm$/bbbbb/;s/^fm$/bbbb/;s/^cm$/bbb/;s/^gm$/bb/;s/^dm$/b/;s/^am$//;s/^em$/#/;s/^bm$/##/;s/^fsm$/###/;s/^csm$/####/;s/^gsm$/#####/;s/^dsm$/######/;s/^asm$/#######/;s/^cf$/bbbbbbb/;s/^gf$/bbbbbb/;s/^df$/bbbbb/;s/^af$/bbbb/;s/^ef$/bbb/;s/^bf$/bb/;s/^g$/#/;s/^d$/##/;s/^a$/###/;s/^e$/####/;s/^fs$/######/;s/^csm$/#######/;s/^f$/b/;s/^c$//;')
+	keySignature=$(echo ${key} | sed -E 's/^afm$/bbbbbbb/;s/^efm$/bbbbbb/;s/^bfm$/bbbbb/;s/^fm$/bbbb/;s/^cm$/bbb/;s/^gm$/bb/;s/^dm$/b/;s/^am$//;s/^em$/#/;s/^bm$/##/;s/^fsm$/###/;s/^csm$/####/;s/^gsm$/#####/;s/^dsm$/######/;s/^asm$/#######/;s/^cf$/bbbbbbb/;s/^gf$/bbbbbb/;s/^df$/bbbbb/;s/^af$/bbbb/;s/^ef$/bbb/;s/^bf$/bb/;s/^f$/b/;s/^c$//;s/^g$/#/;s/^d$/##/;s/^a$/###/;s/^e$/####/;s/^b$/#####/;s/^fs$/######/;s/^csm$/#######/;')
 else
 	keySignature=$(echo ${keySignatureInput})
 fi
