@@ -14,7 +14,7 @@ echo "Specify the KEY SIGNATURE. (Enter \"=\" to match the key named above or, f
 read keySignatureInput
 
 if [[ ${keySignatureInput} == "=" ]]; then
-	keySignature=$(echo ${key} | sed -E 's/^afm$/bbbbbbb/;s/^efm$/bbbbbb/;s/^bfm$/bbbbb/;s/^fm$/bbbb/;s/^cm$/bbb/;s/^gm$/bb/;s/^dm$/b/;s/^am$//;s/^em$/#/;s/^bm$/##/;s/^fsm$/###/;s/^csm$/####/;s/^gsm$/#####/;s/^dsm$/######/;s/^asm$/#######/;s/^cf$/bbbbbbb/;s/^gf$/bbbbbb/;s/^df$/bbbbb/;s/^af$/bbbb/;s/^ef$/bbb/;s/^bf$/bb/;s/^f$/b/;s/^c$//;s/^g$/#/;s/^d$/##/;s/^a$/###/;s/^e$/####/;s/^b$/#####/;s/^fs$/######/;s/^csm$/#######/;')
+	keySignature=$(echo ${key} | sed -E 's/^afm$/bbbbbbb/;s/^efm$/bbbbbb/;s/^bfm$/bbbbb/;s/^fm$/bbbb/;s/^cm$/bbb/;s/^gm$/bb/;s/^am$//;s/^em$/#/;s/^bm$/##/;s/^fsm$/###/;s/^csm$/####/;s/^gsm$/#####/;s/^dsm$/######/;s/^asm$/#######/;s/^cf$/bbbbbbb/;s/^gf$/bbbbbb/;s/^df$/bbbbb/;s/^af$/bbbb/;s/^ef$/bbb/;s/^bf$/bb/;s/^c$//;s/^g$/#/;s/^d$/##/;s/^a$/###/;s/^e$/####/;s/^b$/#####/;s/^fs$/######/;s/^csm$/#######/;s/^dm$/b/;s/^f$/b/;')
 else
 	keySignature=$(echo ${keySignatureInput})
 fi
