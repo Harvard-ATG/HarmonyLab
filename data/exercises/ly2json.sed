@@ -166,8 +166,8 @@ s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "introText": "\1",/;
 /theKey/{
 N
 N
-s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([ij][A-G][b_#]) *\n *}/  "keySignature": "j\1",\
-  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([ij][A-G][b_#]) *\n *}/  "keySignature": "i\1",\
+s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([hij][A-G]*[b_#]*) *\n *}/  "keySignature": "j\1",\
+  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([hij][A-G]*[b_#]*) *\n *}/  "keySignature": "i\1",\
   "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *\n *}/  "keySignature": "j\1",\
   "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *\n *}/  "keySignature": "i\1",\
   "key": "i\1",/
