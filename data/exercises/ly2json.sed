@@ -152,7 +152,7 @@ s/} % end/  \],/
 /\\italic/{
 N
 N
-s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "review": "\1",/;
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "reviewText": "\1",/;
 }
 
 # translate exercise prompt
