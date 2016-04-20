@@ -271,7 +271,7 @@ define([
 		drawNoteName: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var note_name = this.getAnalyzer().getNameOfNote(notes);
+			var note_name = this.getAnalyzer().getNameOfNote(notes).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and natural signs (substitution okay since letter names are uppercase here)
 			var cFont = ctx.font;
 			var fontArgs = ctx.font.split(' ');
 			var newSize = '20px';
@@ -313,7 +313,7 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
-			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name);
+			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and natural signs (substitution okay since letter names are uppercase here)
 			var cFont = ctx.font;
 			var fontArgs = ctx.font.split(' ');
 			var newSize = '20px';
@@ -389,7 +389,7 @@ define([
 
 			if(chord_entry) {
 				this.parseAndDraw(chord_entry.label, x, y, function(text, x, y) {
-					text = this.convertSymbols(text);
+					text = this.convertSymbols(text).replace(/⌀/g,'⌀'); // replace: improve appearance of half-diminished sign
 					var lines = this.wrapText(text);
 					this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 					return this.getContext().measureText(lines[0]).width; // return the width of the first line
@@ -502,7 +502,7 @@ define([
 				if (is_font_token) {
 					ctx.save();
 					ctx.font = figuredBassFont;
-					x += callback.call(that, text, x, y + 3); // tweak text
+					x += callback.call(that, text, x, y + 3); // tweak figured bass vertical position
 					x += padding / 3;
 					ctx.restore();
 				} else {
@@ -510,7 +510,7 @@ define([
 					var fontArgs = ctx.font.split(' ');
 					var newSize = '24px';
 					ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
-					x += callback.call(that, text, x, y); // tweak text position
+					x += callback.call(that, text, x, y);
 					x += padding / 2;					
 				}				
 			});
