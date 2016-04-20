@@ -76,6 +76,7 @@ define([
 				'rotateKeyFlatward',
 				'rotateKeySharpward',
 				'setKeyToNone',
+				'setKeyToC',
 				'toggleMetronome',
 				'toggleMode',
 				'clearNotes',
@@ -217,6 +218,9 @@ define([
 		 */
 		setKeyToNone: function(state) {
 			this.keySignature.changeKey('h', true);	
+		},
+		setKeyToC: function(state) {
+			this.keySignature.changeKey('jC_', true);	
 		},
 		/**
 		 * Depresses the sustain pedal.
