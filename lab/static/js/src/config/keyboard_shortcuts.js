@@ -40,13 +40,14 @@ define({
 		".":      {msg:"releaseSustain"},
 		"k":      {msg:"rotateKeyFlatward"},
 		"l":      {msg:"rotateKeySharpward"},
-		",":      {msg:"setKeyToNone"},
+		",":      {msg:"setKeyToC"},
+		"o":      {msg:"setKeyToNone"},  
 		"/":      {msg:"toggleMetronome"},
 		"ESC":    {msg:"toggleMode"},
 		"ENTER":  {msg:"clearNotes"},
 		"SPACE":  {msg:"bankChord"},
 		"DOWN":   {msg:"bankChord"},
-		"RIGHT":  {msg:"nextExercise"} // not created yet 
+		"RIGHT":  {msg:"openNextExercise"} // not created yet 
 	},
 
 	// Defines key code -> key name mappings.
