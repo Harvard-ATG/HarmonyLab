@@ -1,8 +1,12 @@
 @charset "UTF-8";
 @import "pure.min.css";
 @import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700&subset=latin,latin-ext);
-@import url(https://fonts.googleapis.com/css?family=Alegreya:400&subset=latin,latin-ext);
+/*@import url(https://fonts.googleapis.com/css?family=Alegreya:400&subset=latin,latin-ext);*/
 /*@import url(https://fonts.googleapis.com/css?family=Martel&subset=latin,latin-ext);*/
+@font-face {
+    font-family: 'Alegreya';
+    src: url('../fonts/Alegreya-Regular-modified.otf');
+}
 @font-face {
     font-family: 'Sebastian';
     src: url('../fonts/Sebastian-FigBass-Harvard.otf');
