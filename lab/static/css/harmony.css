@@ -473,9 +473,6 @@ ul.menu-group-list li {
 .icon-btn-help:hover { background-position: -310px -150px; width: 25px; }*/
 .icon-btn-camera { background-position: -410px -50px; width: 50px; }
 .icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
-.icon-sig-lock {
-    background: url(../img/v-line.png) 1px 0 repeat-y;
-}
 .sig-lock-block {
     line-height: 3em;
     margin-left: 50px;
