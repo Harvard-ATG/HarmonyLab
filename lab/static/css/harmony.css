@@ -463,14 +463,14 @@ ul.menu-group-list li {
 }
 .icon-btn-left { float: left; }
 .icon-btn-right { float: right; }
-.icon-btn-open { background-position: -10px -50px; width: 50px; }
+/*.icon-btn-open { background-position: -10px -50px; width: 50px; }
 .icon-btn-open:hover { background-position: -10px -150px; width: 50px; }
 .icon-btn-close { background-position: -110px -50px; width: 50px; }
 .icon-btn-close:hover { background-position: -110px -150px; width: 50px; }
 .icon-btn-info { background-position: -210px -50px; width: 25px; }
 .icon-btn-info:hover { background-position: -210px -150px; width: 25px; }
 .icon-btn-help { background-position: -310px -50px; width: 25px; }
-.icon-btn-help:hover { background-position: -310px -150px; width: 25px; }
+.icon-btn-help:hover { background-position: -310px -150px; width: 25px; }*/
 .icon-btn-camera { background-position: -410px -50px; width: 50px; }
 .icon-btn-camera:hover { background-position: -410px -150px; width: 50px; }
 .icon-sig-lock {
