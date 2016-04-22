@@ -63,10 +63,10 @@ define({
   
   // half-diminished tetrad
   
-    "36y": {"label": "&Rm7b5", "description": "&R half-dim. &7;", "spellbass": "iE_", "stepwise": "246", "root": "0", "rootstepwise": "0"},
-    "379": {"label": "&Rm7b5/&X", "description": "&R half-dim. &65;", "spellbass": "iG_", "stepwise": "245", "root": "9", "rootstepwise": "5"},
-    "469": {"label": "&Rm7b5/&X", "description": "&R half-dim. &43;", "spellbass": "iBb", "stepwise": "235", "root": "6", "rootstepwise": "3"},
-    "258": {"label": "&Rm7b5/&X", "description": "&R half-dim. &42;", "spellbass": "iD_", "stepwise": "135", "root": "2", "rootstepwise": "1"},
+    "36y": {"label": "&Rm7♭5", "description": "&R half-dim. &7;", "spellbass": "iE_", "stepwise": "246", "root": "0", "rootstepwise": "0"},
+    "379": {"label": "&Rm7♭5/&X", "description": "&R half-dim. &65;", "spellbass": "iG_", "stepwise": "245", "root": "9", "rootstepwise": "5"},
+    "469": {"label": "&Rm7♭5/&X", "description": "&R half-dim. &43;", "spellbass": "iBb", "stepwise": "235", "root": "6", "rootstepwise": "3"},
+    "258": {"label": "&Rm7♭5/&X", "description": "&R half-dim. &42;", "spellbass": "iD_", "stepwise": "135", "root": "2", "rootstepwise": "1"},
 
   // diminished tetrad, assuming root position (given symmetrical division)
 
