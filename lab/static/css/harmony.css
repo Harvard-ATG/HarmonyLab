@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "pure-min.css";
+@import "pure.min.css";
 @import url(https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700&subset=latin,latin-ext);
 @import url(https://fonts.googleapis.com/css?family=Alegreya:400&subset=latin,latin-ext);
 /*@import url(https://fonts.googleapis.com/css?family=Martel&subset=latin,latin-ext);*/
@@ -524,7 +524,7 @@ ul.menu-group-list li {
     color: white;
 }
 .transpose-icon {
-    background: transparent url(../img/transpose-arrows.png) no-repeat;
+    background-color: red;
     width: 28px;
     height: 20px;
 }
@@ -577,7 +577,6 @@ ul.menu-group-list li {
 .keyboard-pedals .pedal {
     float: left;
     display: block;
-    /*background: url(../img/pedal-sprite.png) no-repeat;*/
     background-color: #b5a642;
     border: 0px solid #fff;
     width: 20px; 
