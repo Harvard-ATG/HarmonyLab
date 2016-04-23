@@ -70,7 +70,7 @@ define([
 		 * Defines the height of a line of text.
 		 * @type {number}
 		 */
-		textLineHeight: 15,
+		textLineHeight: 18,
 		/**
 		 * Defines the default font size.
 		 * @type {string}
@@ -271,7 +271,7 @@ define([
 		drawNoteName: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var note_name = this.getAnalyzer().getNameOfNote(notes).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and natural signs (substitution okay since letter names are uppercase here)
+			var note_name = this.getAnalyzer().getNameOfNote(notes).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
 			var cFont = ctx.font;
 			var fontArgs = ctx.font.split(' ');
 			var newSize = '20px';
@@ -313,7 +313,7 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
-			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and natural signs (substitution okay since letter names are uppercase here)
+			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
 			var cFont = ctx.font;
 			var fontArgs = ctx.font.split(' ');
 			var newSize = '20px';
@@ -372,7 +372,7 @@ define([
 				caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
 				caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
 
-				ctx.fillText(numeral, x + StaveNotater.prototype.annotateOffsetX, y);
+				ctx.fillText(numeral.replace(/b/g,'♭').replace(/#/g,'♯'), x + StaveNotater.prototype.annotateOffsetX, y); // replace: true flat and sharp signs
 				ctx.fillText("^", caret_x + StaveNotater.prototype.annotateOffsetX, y - 15);
 			}
 		},
@@ -389,7 +389,7 @@ define([
 
 			if(chord_entry) {
 				this.parseAndDraw(chord_entry.label, x, y, function(text, x, y) {
-					text = this.convertSymbols(text).replace(/⌀/g,'⌀'); // replace: improve appearance of half-diminished sign
+					text = this.convertSymbols(text).replace(/⌀/g,'⌀'); // replace: could improve appearance of half-diminished sign with standard fonts here, but using currently using custom font instead
 					var lines = this.wrapText(text);
 					this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 					return this.getContext().measureText(lines[0]).width; // return the width of the first line
@@ -496,6 +496,7 @@ define([
 			var figuredBassFont = this.getFiguredBassFont();
 			var ctx = this.getContext();
 			var padding = ctx.measureText("n").width; // width to use for padding
+			var key = this.keySignature.getKey();
 			
 			FontParser.parse(str, function(text, is_font_token) {
 				//console.log("parse font", text, is_font_token);
@@ -508,9 +509,28 @@ define([
 				} else {
 					var cFont = ctx.font;
 					var fontArgs = ctx.font.split(' ');
-					var newSize = '24px';
+					if ( key == 'h' ) {
+						if ( str.length <= 6 ) {
+							var newSize = '20px';
+						} else {
+							var newSize = '20px';
+						}
+					} else {
+						var newSize = '24px';
+					}
 					ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
-					x += callback.call(that, text, x, y);
+					if ( key == 'h' ) {
+						if ( str.length <= 6 ) {
+							var newSize = '20px'; // chord symbol fontsize
+							x += callback.call(that, text.replace(/b/g,'♭').replace(/#/g,'♯'), x, y); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
+						} else {
+							var newSize = '20px'; // long chord symbol fontsize
+							x += callback.call(that, text.replace(/b/g,'♭').replace(/#/g,'♯').replace(/\//g,'\n/'), x, y); // replace: as above plus line break at /
+						}
+					} else {
+						var newSize = '24px'; // Roman numeral fontsize
+						x += callback.call(that, text, x, y);
+					}
 					x += padding / 2;					
 				}				
 			});
