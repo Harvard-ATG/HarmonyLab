@@ -60,7 +60,7 @@ define([
 		 * Defines the margin for rendering things above and below the stave.
 		 * @type {object}
 		 */
-		margin: {'top': 25, 'bottom': 25},
+		margin: {'top': 50, 'bottom': 25},
 		/**
 		 * Defines the text limit used to wrap text.
 		 * @type {number}
