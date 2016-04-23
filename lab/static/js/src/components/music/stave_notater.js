@@ -21,11 +21,11 @@ define([
 	 * @type {Image}
 	 * @const
 	 */
-	var METRONOME_IMG = (function() {
+	/*var METRONOME_IMG = (function() {
 		var img = new Image();
-		img.src = util.staticUrl('img/metronome-black.png');
+		img.src = util.staticUrl('img/filename.png');
 		return img;
-	})();
+	})();*/
 	
 	var PRELOADED_FONT = {};
 
@@ -428,7 +428,7 @@ define([
 		drawMetronomeMark: function(x, y) {
 			var ctx = this.getContext();
 			var tempo = this.getTempo();
-			var img = METRONOME_IMG;
+			/*var img = METRONOME_IMG;*/
 			var cFont = ctx.font;
 			var fontArgs = ctx.font.split(' ');
 			var newSize = '16px';
