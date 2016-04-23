@@ -250,7 +250,7 @@ define([
 		 */
 		createStaveBar: function() {
 			var x = this.start_x;
-			var y = this.start_y; 
+			var y = this.start_y + 20; // tweak space above staff-system here 
 			var width = this.width;
 			var staveBar = new Vex.Flow.Stave(x, y, width);
 			staveBar.clef = this.clef;
