@@ -3,7 +3,7 @@
 /* global define: false */
 define({
 	// defines a list of instrument numbers that are enabled 
-	enabled: [0,6,16,52],
+	enabled: [0,6,16,26,47,52],
 
 	// defines the available MIDI instruments
 	// maps a MIDI instrument number to it's associated information
