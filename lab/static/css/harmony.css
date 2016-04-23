@@ -74,18 +74,17 @@ body, #mainmenu, #helpmenu {
     padding:0;
     overflow:hidden;
 }
-/*.staff-area-small {
-    height: 302px;
-}
-.staff-area-medium {
-    height: 402px;
-}*/
 #staff-toolbar {
     position: absolute;
     height: 35px;
     width: 100%;
     padding: 0px;
     z-index: 1;
+}
+#staffwrapper {
+    height: 320px;
+    overflow: hidden;
+    overflow-y: hidden;
 }
 #staff {
     width: 50em;
