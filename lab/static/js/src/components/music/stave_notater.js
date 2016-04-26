@@ -435,12 +435,7 @@ define([
 			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(tempo) {
-				if(img && img.complete) {
-					/*ctx.drawImage(img, x, y - 17);*/
-					ctx.fillText('M.M. = ' + tempo, x - 25/* + img.width*/, y);
-				} else {
-					img.onload = _.partial(this.drawMetronomeMark, x, y);
-				}
+				ctx.fillText('M.M. = ' + tempo, x - 25/* + img.width*/, y + 25);
 			}
 		},
 		/**
