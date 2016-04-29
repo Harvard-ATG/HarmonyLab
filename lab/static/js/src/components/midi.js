@@ -235,19 +235,43 @@ define([
 		triggerPedalChange: function(controlNum, controlVal) {
 			var pedal_name = MIDI_CONTROL_MAP.pedal[controlNum];
 			var pedal_state = 'off';
+			var pedal_change = false;
 
-			// NOTE: the Yamaha FC5 sustain pedal sends value 0 when 
-			// the pedal is depressed and 127 when it is released.
-			// This is the pedal students are using in class, so we're 
-			// going to treat control values 0-63=ON and 64-127=OFF.
+			/* Make true for Yamaha FC5 sustain */
+			/* Make false for Yamaha DGX-620 */
+			var interpret_low_as_on = false;
+
+			// Set control values 0-63=ON and 64-127=OFF or vice versa.
 		
-			if(controlVal >= 0 && controlVal <= 63) {
-				pedal_state = 'on';
-			} else if(controlVal > 63) {
-				pedal_state = 'off';
-			} 
+			if(interpret_low_as_on == true) {
+				if(controlVal >= 0 && controlVal <= 63
+					/* and if pedal is currently off */
+				) {
+					pedal_state = 'on';
+					pedal_change = true;
+				} else if(controlVal > 63
+					/* and if pedal is currently on */
+				) {
+					pedal_state = 'off';
+					pedal_change = true;
+				}
+			} else {
+				if(controlVal >= 0 && controlVal <= 63
+					/* and if pedal is currently on */
+				) {
+					pedal_state = 'off';
+					pedal_change = true;
+				} else if(controlVal > 63
+					/* and if pedal is currently off */
+				) {
+					pedal_state = 'on';
+					pedal_change = true;
+				}
+			}
 
-			this.broadcast(EVENTS.BROADCAST.PEDAL, pedal_name, pedal_state);
+			if(pedal_change == true) {
+				this.broadcast(EVENTS.BROADCAST.PEDAL, pedal_name, pedal_state);
+			}
 		},
 		/**
 		 * Broadcasts a note "on" event to the application.
