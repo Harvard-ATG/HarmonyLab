@@ -335,11 +335,17 @@ define([
 		_makeStaveNote: function(keys, modifiers) {
 			modifiers = modifiers || [];
 
-			var QUARTER_NOTE = "q";
-			var WHOLE_NOTE = "w";
+			var QUARTER_NOTE = "q"; // shorthand for '4' as VexFlow duration
+			var HALF_NOTE = "h"; // shorthand for '2' as VexFlow duration
+			var WHOLE_NOTE = "w"; // shorthand for '1' as VexFlow duration
 
 			var stave_note = new Vex.Flow.StaveNote({
 				keys: keys,
+				/**
+				 * Duration must equal a full bar as defined
+				 * in Vex.Flow.TIME4_4 (called in stave.js and
+				 * defined in vexflow.js)
+				 */
 				duration: WHOLE_NOTE,
 				clef: this.clef
 			});
