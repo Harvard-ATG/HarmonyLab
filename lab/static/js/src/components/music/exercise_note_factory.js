@@ -48,7 +48,8 @@ define([
 		noteColorMap: {
 			notplayed: 'rgb(179,179,179)',
 			correct: 'rgb(0,0,0)',
-			incorrect: 'rgb(255,191,0)'
+			incorrect: 'rgb(255,191,0)',
+			complete: 'rgb(100,100,100)'
 		},
 		/**
 		 * Initializes the object.
@@ -151,6 +152,9 @@ define([
 			} else {
 				return false;
 			}
+
+			/* To do: if all notes of the chord are correct, apply
+			 * colorStyle = this.noteColorMap.complete */
 
 			return {fillStyle: colorStyle, strokeStyle: colorStyle};
 		}
