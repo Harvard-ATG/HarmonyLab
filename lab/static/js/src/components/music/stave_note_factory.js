@@ -48,7 +48,7 @@ define([
 		 * @return
 		 */
 		init: function() {
-			this.defaultNoteColor = this.settings.defaultNoteColor || 'rgb(0,0,0)'; // black
+			this.defaultNoteColor = this.settings.defaultNoteColor || 'rgb(75,75,75)'; // dark gray
 			this.highlightMap = {};
 		},
 		/**
