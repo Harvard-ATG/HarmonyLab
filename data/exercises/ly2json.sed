@@ -5,6 +5,9 @@ s/[ \t]*$//
 # remove line containing version statement
 /\\version/d
 
+# remove line containing paper settings for Lilypond
+/\\paper/d
+
 # remove line with custom commands for Lilypond
 /lyCommands =/d
 
@@ -12,15 +15,15 @@ s/[ \t]*$//
 s/^\\absolute [^<]*/  "chord": [/
 s/} % end/  \],/
 
-/</s/>([0-9]*) *</>\1\n  </g
+/</ s/>([0-9]*) *</>\1,\n  </g
 
 # NB in future HarmonyLab may require duration information be preserved
-/</s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[],},/g
+/</ s/ *<([ a-gs',\\xNote]*)>[0-9]*/    \{"visible":[\1],"hidden":[]}/g
 
-# organize X-ed out notes into hidden category for HarmonyLab
+# organize Xed out notes into hidden category for HarmonyLab
 :loop;/xNote/{s/"visible":\[([ a-gs',]*)\\xNote  *([a-gs',]*)([ a-gs',\\xNote]*)\],"hidden":\[([ a-gs',\\xNote]*)\]/"visible":\[\1\3],"hidden":[\2 \4]/;b loop}
 
-# generate MIDI numbers, pass one (enharmonics) ...
+# generate MIDI numbers, pass one of two (enharmonics)
 /"visible"/ s/([[ ])cf'/\1b/g
 /"visible"/ s/([[ ])cf/\1b,/g
 /"visible"/ s/([[ ])df/\1cs/g
@@ -33,7 +36,7 @@ s/} % end/  \],/
 /"visible"/ s/([[ ])bs,/\1c/g
 /"visible"/ s/([[ ])bs/\1c'/g
 
-# generate MIDI numbers, pass two
+# generate MIDI numbers, pass two of two
 /"visible"/  s/([[ ])c'''''/\1108/g
 
 /"visible"/  s/([[ ])c''''/\196/g
@@ -142,48 +145,34 @@ s/} % end/  \],/
 /^%\{$/d
 /^%}$/d
 
-# translate exercise annotation
+# remove directory and filename statement
+/\\small/d
+
+# translate exercise review text
+/\\italic/{
+N
+N
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "reviewText": "\1",/;
+}
+
+# translate exercise prompt
 /markup/{
 N
 N
-s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\n *}/  "introText": "\1",/;
+s/"/\\"/g;s/\\markup[^{]*\{\n *(.*)\\strut\n *}/  "introText": "\1",/;
 }
 
 # translate key statement
 /theKey/{
 N
 N
-s/theKey *= *\{ *\\key\n *([a-g][fs]*)  *\\major\n *}/  "key": "j\1",/;s/theKey *= *\{ *\\key\n *([a-g][fs]*)  *\\minor\n *}/  "key": "i\1",/;
+s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *% *([hij][A-G]*[b_#]*) *\n *}/  "keySignature": "j\1",\
+  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *% *([hij][A-G]*[b_#]*) *\n *}/  "keySignature": "i\1",\
+  "key": "\2",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\major *\n *}/  "keySignature": "j\1",\
+  "key": "j\1",/;s/theKey *= *\{ *\\key *\n *([a-g][fs]*)  *\\minor *\n *}/  "keySignature": "i\1",\
+  "key": "i\1",/
 }
 
-s/"jcf"/"jCb"/
-s/"jgf"/"jGb"/
-s/"jdf"/"jDb"/
-s/"jaf"/"jAb"/
-s/"jef"/"jEb"/
-s/"jbf"/"jBb"/
-s/"jf"/"jF_"/
-s/"jc"/"jC_"/
-s/"jg"/"jG_"/
-s/"jd"/"jD_"/
-s/"ja"/"jA_"/
-s/"je"/"jE_"/
-s/"jb"/"jB_"/
-s/"jfs"/"jF#"/
-s/"jcs"/"jC#"/
+/"keySignature"/ s/"jcf"/"bbbbbbb"/;s/"jgf"/"bbbbbb"/;s/"jdf"/"bbbbb"/;s/"jaf"/"bbbb"/;s/"jef"/"bbb"/;s/"jbf"/"bb"/;s/"jf"/"b"/;s/"jc"/""/;s/"jg"/"#"/;s/"jd"/"##"/;s/"ja"/"###"/;s/"je"/"####"/;s/"jb"/"#####"/;s/"jfs"/"######"/;s/"jcs"/"#######"/;s/"iaf"/"bbbbbbb"/;s/"ief"/"bbbbbb"/;s/"ibf"/"bbbbb"/;s/"if"/"bbbb"/;s/"ic"/"bbb"/;s/"ig"/"bb"/;s/"id"/"b"/;s/"ia"/""/;s/"ie"/"#"/;s/"ib"/"##"/;s/"ifs"/"###"/;s/"ics"/"####"/;s/"igs"/"#####"/;s/"ids"/"######"/;s/"ias"/"#######"/
 
-s/"iaf"/"iAb"/
-s/"ief"/"iEb"/
-s/"ibf"/"iBb"/
-s/"if"/"iF_"/
-s/"ic"/"iC_"/
-s/"ig"/"iG_"/
-s/"id"/"iD_"/
-s/"ia"/"iA_"/
-s/"ie"/"iE_"/
-s/"ib"/"iB_"/
-s/"ifs"/"iF#"/
-s/"ics"/"iC#"/
-s/"igs"/"iG#"/
-s/"ids"/"iD#"/
-s/"ias"/"iA#"/
+/"key"/ s/"jcf"/"jCb"/;s/"jgf"/"jGb"/;s/"jdf"/"jDb"/;s/"jaf"/"jAb"/;s/"jef"/"jEb"/;s/"jbf"/"jBb"/;s/"jf"/"jF_"/;s/"jc"/"jC_"/;s/"jg"/"jG_"/;s/"jd"/"jD_"/;s/"ja"/"jA_"/;s/"je"/"jE_"/;s/"jb"/"jB_"/;s/"jfs"/"jF#"/;s/"jcs"/"jC#"/;s/"iaf"/"iAb"/;s/"ief"/"iEb"/;s/"ibf"/"iBb"/;s/"if"/"iF_"/;s/"ic"/"iC_"/;s/"ig"/"iG_"/;s/"id"/"iD_"/;s/"ia"/"iA_"/;s/"ie"/"iE_"/;s/"ib"/"iB_"/;s/"ifs"/"iF#"/;s/"ics"/"iC#"/;s/"igs"/"iG#"/;s/"ids"/"iD#"/;s/"ias"/"iA#"/

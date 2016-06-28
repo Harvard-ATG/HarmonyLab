@@ -1,27 +1,29 @@
 {
   "type": "matching",
-  "reviewText": "",
-  "introText": "Complete the resolution of V{z5}.",
-  "key": "jF_",
+  "introText": "Resolve the Italian sixth chord.",
+  "keySignature": "b",
+  "key": "iG#",
   "chord": [
-    {"visible":[52,60,67,70],"hidden":[],},
-    {"visible":[53,69],"hidden":[60,65],},
+    {"visible":[56,72,72,78],"hidden":[]},
+    {"visible":[],"hidden":[79,74,71,55]}
   ],
+  "review": "",
   "analysis": {
     "enabled": true,
     "mode": {
       "note_names": false,
+      "scientific_pitch": false,
       "scale_degrees": false,
       "solfege": false,
       "roman_numerals": true,
-      "intervals": false,
-    },
+      "intervals": false
+    }
   },
   "highlight": {
-    "enabled": false,
+    "enabled": true,
     "mode": {
-      "roothighlight": true,
-      "tritonehighlight": false,
-    },
-  },
+      "roothighlight": false,
+      "tritonehighlight": false
+    }
+  }
 }

@@ -5,7 +5,7 @@
 
 	<ul class="mainmenu-links">
 		{% if has_manage_perm %}
-			<li><a href="{{ manage_url }}">Click to manage exercises</a></li>
+			<li><a href="{% if manage_url %}{{ manage_url }}{% else %}{% url 'lab:index' %}{% endif %}">Click to manage exercises</a></li>
 		{% endif %}
 		<li><a href="{% if home_url %}{{ home_url }}{% else %}{% url 'lab:index' %}{% endif %}">Click to reload home page</a></li>
 	</ul>

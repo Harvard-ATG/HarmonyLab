@@ -13,7 +13,7 @@ define({
 	"6o": {"numeral": "b5", "solfege": "Me"},
 	"7o": {"numeral": "5", "solfege": "Mi"},
 	"8p": {"numeral": "6", "solfege": "Fa"},
-	"9p": {"numeral": "6+", "solfege": "Fi"},
+	"9p": {"numeral": "+6", "solfege": "Fi"},
 	"yq": {"numeral": "7", "solfege": "So"},
-	"zq": {"numeral": "7+", "solfege": "Si"}
+	"zq": {"numeral": "+7", "solfege": "Si"}
 });

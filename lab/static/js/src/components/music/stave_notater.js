@@ -21,11 +21,11 @@ define([
 	 * @type {Image}
 	 * @const
 	 */
-	var METRONOME_IMG = (function() {
+	/*var METRONOME_IMG = (function() {
 		var img = new Image();
-		img.src = util.staticUrl('img/metronome-black.png');
+		img.src = util.staticUrl('img/filename.png');
 		return img;
-	})();
+	})();*/
 	
 	var PRELOADED_FONT = {};
 
@@ -60,7 +60,7 @@ define([
 		 * Defines the margin for rendering things above and below the stave.
 		 * @type {object}
 		 */
-		margin: {'top': 25, 'bottom': 25},
+		margin: {'top': 50, 'bottom': 25},
 		/**
 		 * Defines the text limit used to wrap text.
 		 * @type {number}
@@ -70,12 +70,16 @@ define([
 		 * Defines the height of a line of text.
 		 * @type {number}
 		 */
-		textLineHeight: 15,
+		textLineHeight: 18,
 		/**
 		 * Defines the default font size.
 		 * @type {string}
 		 */
 		defaultFontSize: "24px",
+		/**
+		 * Defines a horizontal offset for use with all analytical annotations.
+		 */
+		annotateOffsetX: 8,
 		/**
 		 * Initializes the notater.
 		 *
@@ -198,7 +202,7 @@ define([
 		 */
 		getFiguredBassFont: function(size) {
 			if(!size) {
-				size = "36px";
+				size = "32px";
 			}
 			return size + " Sebastian";
 		},
@@ -267,10 +271,14 @@ define([
 		drawNoteName: function(x, y) {
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
-			var note_name = this.getAnalyzer().getNameOfNote(notes);
+			var note_name = this.getAnalyzer().getNameOfNote(notes).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(note_name !== '') {
-				ctx.fillText(note_name, x, y);
+				ctx.fillText(note_name, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -285,9 +293,13 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
 			var helmholtz = this.getAnalyzer().toHelmholtzNotation(note_name);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(helmholtz !== '') {
-				ctx.fillText(helmholtz, x, y);
+				ctx.fillText(helmholtz, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -301,10 +313,14 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var note_name = this.getAnalyzer().getNoteName(notes[0],notes);
-			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name);
+			var scientific_pitch = this.getAnalyzer().toScientificPitchNotation(note_name).replace(/b/g,'♭').replace(/#/g,'♯'); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(scientific_pitch !== '') {
-				ctx.fillText(scientific_pitch, x, y);
+				ctx.fillText(scientific_pitch, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -318,6 +334,10 @@ define([
 			var ctx = this.getContext();
 			var notes = this.chord.getNoteNumbers();
 			var solfege = this.getAnalyzer().getSolfege(notes);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			solfege = this.convertSymbols(solfege);
 			if (solfege.indexOf("<br>") !== -1) {
@@ -325,7 +345,7 @@ define([
 			}
 
 			if(solfege !== '') {
-				ctx.fillText(solfege, x, y);
+				ctx.fillText(solfege, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -340,6 +360,10 @@ define([
 			var notes = this.chord.getNoteNumbers();
 			var width = 0, caret_offset = 0, caret_x = x;
 			var numeral = this.getAnalyzer().getScaleDegree(notes);
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(numeral !== '') {
 				numeral = this.convertSymbols(numeral);
@@ -348,8 +372,8 @@ define([
 				caret_offset = ctx.measureText(numeral.slice(0,-1)).width;
 				caret_x = x - 1 + (numeral.length > 1 ? caret_offset : 0);
 
-				ctx.fillText(numeral, x, y);
-				ctx.fillText("^", caret_x, y - 15);
+				ctx.fillText(numeral.replace(/b/g,'♭').replace(/#/g,'♯'), x + StaveNotater.prototype.annotateOffsetX, y); // replace: true flat and sharp signs
+				ctx.fillText("^", caret_x + StaveNotater.prototype.annotateOffsetX, y - 15);
 			}
 		},
 		/**
@@ -365,9 +389,9 @@ define([
 
 			if(chord_entry) {
 				this.parseAndDraw(chord_entry.label, x, y, function(text, x, y) {
-					text = this.convertSymbols(text);
+					text = this.convertSymbols(text).replace(/⌀/g,'⌀'); // replace: could improve appearance of half-diminished sign with standard fonts here, but using currently using custom font instead
 					var lines = this.wrapText(text);
-					this.drawTextLines(lines, x, y);
+					this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 					return this.getContext().measureText(lines[0]).width; // return the width of the first line
 				});
 			}
@@ -384,10 +408,14 @@ define([
 			var ctx = this.getContext();
 			var interval = this.getAnalyzer().ijNameDegree(notes);
 			var name = '', lines = [];
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '24px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 			
 			if(interval && interval.name !== '') {
 				lines = this.wrapText(interval.name);
-				this.drawTextLines(lines, x, y);
+				this.drawTextLines(lines, x + StaveNotater.prototype.annotateOffsetX, y);
 			}
 		},
 		/**
@@ -400,20 +428,18 @@ define([
 		drawMetronomeMark: function(x, y) {
 			var ctx = this.getContext();
 			var tempo = this.getTempo();
-			var img = METRONOME_IMG;
-			
+			/*var img = METRONOME_IMG;*/
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '16px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 
 			if(tempo) {
-				if(img && img.complete) {
-					ctx.drawImage(img, x, y - 17);
-					ctx.fillText(tempo, x + img.width, y);
-				} else {
-					img.onload = _.partial(this.drawMetronomeMark, x, y);
-				}
+				ctx.fillText('M.M. = ' + tempo, x - 25/* + img.width*/, y + 25);
 			}
 		},
 		/**
-		 * Draws the key signature name (i.e. C major, etc).
+		 * Draws the key name (i.e. C major, etc).
 		 *
 		 * @param {number} x
 		 * @param {number} y
@@ -422,8 +448,12 @@ define([
 		drawKeyName: function(x, y) {
 			var ctx = this.getContext();
 			var key = this.keySignature.getKeyShortName();
+			var cFont = ctx.font;
+			var fontArgs = ctx.font.split(' ');
+			var newSize = '20px';
+			ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
 			if(key !== '') {
-				ctx.fillText(this.convertSymbols(key) + ':', x, y);
+				ctx.fillText(this.convertSymbols(key) + ' :', x - 8, y);
 			}
 		},
 		/**
@@ -460,18 +490,42 @@ define([
 			var that = this;
 			var figuredBassFont = this.getFiguredBassFont();
 			var ctx = this.getContext();
-			var padding = ctx.measureText("m").width; // get width of "m" to use for padding
+			var padding = ctx.measureText("n").width; // width to use for padding
+			var key = this.keySignature.getKey();
 			
 			FontParser.parse(str, function(text, is_font_token) {
 				//console.log("parse font", text, is_font_token);
 				if (is_font_token) {
 					ctx.save();
 					ctx.font = figuredBassFont;
-					x += callback.call(that, text, x, y);
+					x += callback.call(that, text, x, y + 3); // tweak figured bass vertical position
 					x += padding / 3;
 					ctx.restore();
 				} else {
-					x += callback.call(that, text, x, y);
+					var cFont = ctx.font;
+					var fontArgs = ctx.font.split(' ');
+					if ( key == 'h' ) {
+						if ( str.length <= 6 ) {
+							var newSize = '20px';
+						} else {
+							var newSize = '20px';
+						}
+					} else {
+						var newSize = '24px';
+					}
+					ctx.font = newSize + ' ' + fontArgs[fontArgs.length - 1];
+					if ( key == 'h' ) {
+						if ( str.length <= 6 ) {
+							var newSize = '20px'; // chord symbol fontsize
+							x += callback.call(that, text.replace(/b/g,'♭').replace(/#/g,'♯'), x, y); // replace: true flat and sharp signs (substitution okay since letter names are uppercase here)
+						} else {
+							var newSize = '20px'; // long chord symbol fontsize
+							x += callback.call(that, text.replace(/b/g,'♭').replace(/#/g,'♯').replace(/\//g,'\n/'), x, y); // replace: as above plus line break at /
+						}
+					} else {
+						var newSize = '24px'; // Roman numeral fontsize
+						x += callback.call(that, text, x, y);
+					}
 					x += padding / 2;					
 				}				
 			});

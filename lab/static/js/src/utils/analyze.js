@@ -175,9 +175,9 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		return relativeNoteName;
 
 	},
-// "ColorSpectacular" colors in selected pitches on the sheet music to highlight certain musical phenomena;
-// it depends on "knowStepwiseDistance" and "knowSemitonalDistance."
-
+	/**
+	 * Color in pitches on the sheet music to highlight musical phenomena.
+	 */
 	ColorSpectacular: function (note, notes) {
 		var color = "";
 		var interval = 0;
@@ -186,22 +186,21 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 		if (this.Piano.highlightMode["octaveshighlight"]) {
 		for (var j = 1; j < notes.length; j++) {
 			interval_up = this.knowSemitonalDistance(notes[i],notes[i + j]) % 12;
-			if (interval_up == 7) color = "green"; // perfect fifth
-			if (interval_up == 0 && i != (i+j)) { // octave
-				if (color == "green") color = "#099"
-				else color = "blue"; 
+			if (interval_up == 7) color = "green"; // P5
+			if (interval_up == 0 && i != (i+j)) {
+				if (color == "green") color = "#099" // P5 and P8
+				else color = "blue"; // P8
 			}
 		}
 		for (var j = i; j > 0; j--) {
 			interval_down = this.knowSemitonalDistance(notes[i],notes[i - j]) % 12;
 			if (interval_down == 5) {
-				if (color == "blue") color = "#099";
-				else color = "green"; // perfect fifth
+				if (color == "blue") color = "#099"; // P8 and P5
+				else color = "green"; // P5
 			}
-			if (interval_down == 0 && i != (i-j)) color = "blue";
+			if (interval_down == 0 && i != (i-j)) color = "blue"; // P8
 			}
 		}
-		
 		if (this.Piano.highlightMode["tritonehighlight"]) {
 		for (var j = 1, len = notes.length - i; j < len; j++) {
 			interval_up = this.knowSemitonalDistance(notes[i],notes[i + j]) % 12;
@@ -213,46 +212,27 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 			}
 		}
 		if (this.Piano.highlightMode["doublinghighlight"]) {
-			if (this.Piano.key.indexOf('i') != -1) { 		// sharp notes in minor
+			if (this.Piano.key.indexOf('i') != -1) {
 				if (_.contains([4,6,9,11],fromRoot)) {
 					for (var index in notes) {
-						if (index != i && (note % 12 == notes[index] % 12)) color = "orange";
+						if (index != i && (note % 12 == notes[index] % 12)) color = "orange"; // sharp notes in minor
 					}
 				}
 			}
 			else {
-				if (_.contains([1,3,6,8,11],fromRoot)) {		// sharp notes in major
+				if (_.contains([1,3,6,8,11],fromRoot)) {
 					for (var index in notes) {
-						if (index != i && (note % 12 == notes[index] % 12)) color = "orange";
+						if (index != i && (note % 12 == notes[index] % 12)) color = "orange"; // sharp notes in major
 					}
 				}
 			}
-			
-//			var root = this.findRoot(notes);		// THERE ARE MUSIC-THEORETICAL PROBLEMS WITH THESE FIVE LINES OF CODE
-//			var interval = this.knowSemitonalDistance(note,root) % 12;
-//			console.log(interval);
-//			if (interval == 1 || interval == 2 || interval == 10 || interval == 11) {
-//					for (var index in notes) {
-//						if (index != i && (note % 12 == notes[index] % 12)) color = "orange";
-//					}
-//			}
 		}
-
-
 		if (this.Piano.highlightMode["roothighlight"]) {
 			var roots = this.findRoots(notes);
 			if(_.contains(roots, note)) {
-				color = "red";
+				color = "red"; // root
 			}
 		}
-
-		
-//		if (this.Piano.getSheetMusicMode() == "thoroughbass" && note != notes[0]) {
-//			var colorTranslate = {"black": "rgba(0,0,0,0.4)", "orange": "rgba(255,165,0,0.4)", "#d29": "rgba(221,34,153,0.4)",
-//			"blue": "rgba(0,0,255,0.4)", "green": "rgba(0,255,0,0.4)", "#099": "rgba(0,153,153,0.4)"};
-//			color = colorTranslate[color];
-//		}
-
 		return color;
 	},
 	knowStepwiseDistance: function (chord, noteName1, noteName2) {
@@ -607,7 +587,7 @@ AtoGsemitoneIndices: [9, 11, 0, 2, 4, 5, 7],
 
 
 // The scripts "ijNameDegree," "ijFindChord," and "hFindChord" return the analysis of scale degrees and chords.
-// They draw on the customizable listings of "jDegrees," (not "iDegrees" currently), "iChords," and "jChords."
+// They draw on the customizable listings of "jDegrees," "iDegrees," "iChords," and "jChords."
 // They also draw on many scripts here and in "\this.Piano."
 
 	ijNameDegree: function (notes) {

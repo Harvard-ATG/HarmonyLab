@@ -36,24 +36,34 @@ define({
 		"j":      {msg:"toggleNote", data:27}, // DE
 		"m":      {msg:"toggleNote", data:28}, // E
 		"'":      {msg:"depressSustain"},
-		";":      {msg:"retakeSustain"},
+		";":      {msg:"retakeSustain"}, // not working?
+		"\\":     {msg:"retakeSustain"},
 		".":      {msg:"releaseSustain"},
 		"k":      {msg:"rotateKeyFlatward"},
 		"l":      {msg:"rotateKeySharpward"},
-		",":      {msg:"setKeyToNone"},
+		",":      {msg:"setKeyToC"},
+		"o":      {msg:"setKeyToNone"},  
 		"/":      {msg:"toggleMetronome"},
 		"ESC":    {msg:"toggleMode"},
 		"ENTER":  {msg:"clearNotes"},
-		"SPACE":  {msg:"bankChord"}
+		"SPACE":  {msg:"bankChord"},
+		"DOWN":   {msg:"bankChord"},
+		"[":      {msg:"toggleHighlights"}, // not created yet
+		"]":      {msg:"toggleAnalysis"}, // not created yet
+		"RIGHT":  {msg:"openNextExercise"} // not created yet 
 	},
 
-	// Defines key code -> key name mappings.
+	// Defines javascript key code -> key name mappings.
 	// This is not intended to be comprehensive. These key names
 	// should be used in the note and control shortcut mappings.
 	"keyCode": {
 		"13": "ENTER",
 		"27": "ESC",
 		"32": "SPACE",
+		"37": "LEFT",
+		"38": "UP",
+		"39": "RIGHT",
+		"40": "DOWN",
 		"48": "0",
 		"49": "1",
 		"50": "2",
@@ -94,6 +104,10 @@ define({
 		"188": ",",
 		"190": ".",
 		"191": "/",
+		"192": "GRAVE",
+		"219": "[",
+		"220": "\\",
+		"221": "]",
 		"222": "'"
 	}
 });

@@ -3,7 +3,7 @@
 /* global define: false */
 define({
 	// defines a list of instrument numbers that are enabled 
-	enabled: [0,6,16,52],
+	enabled: [0,6,16,25,46,52],
 
 	// defines the available MIDI instruments
 	// maps a MIDI instrument number to it's associated information
@@ -113,6 +113,7 @@ define({
 		},
 		"25": {
 			"name": "Acoustic Guitar (steel)",
+			"shortName": "Guitar",
 			"category": "Guitar"
 		},
 		"26": {
@@ -197,6 +198,7 @@ define({
 		},
 		"46": {
 			"name": "Orchestral Harp",
+			"shortname": "Harp",
 			"category": "Strings"
 		},
 		"47": {

@@ -14,7 +14,16 @@ cd ../ly/
 
 for FILE in ./*/*.ly; do
 	lyPath="./${FILE}"
-	parsedLy=$(cat ${lyPath} | sed --posix -E -f ../ly2json.sed )
+	parsedLy=$(cat ${lyPath} | sed -E -f ../ly2json.sed |\
+		tr '\n' '\r' |\
+		# removes hanging commas in json
+		sed -E 's/,( *\r* *[]}])/\1/g;' |\
+		# inserts missing commas in chord array if Lilypond input had linebreaks
+		sed -E 's/}(\r* *\{)/},\1/g' |\
+		# removes possible hanging comma from end of Lilypond input
+		sed -E 's/}, *\r* *$/}/' |\
+		tr '\r' '\n'\
+	)
 	jsonPath="../json/`dirname ./${FILE}`/`basename ${FILE} .ly`.json"
 	cat >${jsonPath} <<- _EOF_
 	{

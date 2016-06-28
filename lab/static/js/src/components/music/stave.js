@@ -92,7 +92,7 @@ define([
 		 * Change right margin to reveal or hide right barline.
 		 * @type {number}
 		 */
-		margin: {left: 15, right: 0},
+		margin: {left: 15, right: 1},
 		/**
 		 * Initializes the Stave.
 		 *
@@ -207,10 +207,10 @@ define([
 		drawBeginStaveConnector: function() {
 			var SINGLE = Vex.Flow.StaveConnector.type.SINGLE;
 			var BRACE = Vex.Flow.StaveConnector.type.BRACE;
-			var bar1 = this.getStaveBar();
-			var bar2 = this.connectedStave.getStaveBar();
-			this.drawStaveConnector(bar1, bar2, SINGLE); 
-			this.drawStaveConnector(bar1, bar2, BRACE); 
+			var staff1 = this.getStaveBar();
+			var staff2 = this.connectedStave.getStaveBar();
+			this.drawStaveConnector(staff1, staff2, SINGLE); 
+			this.drawStaveConnector(staff1, staff2, BRACE); 
 		},
 		/**
 		 * Draws a connector at the end of the stave.
@@ -222,25 +222,25 @@ define([
 			var ctx = this.getContext();
 			var next_x = this.start_x + this.width;
 			var width = 3; // width of stave connector
-			var bar1 = new Vex.Flow.Stave(next_x, this.getYForClef('treble'), width);
-			var bar2 = new Vex.Flow.Stave(next_x, this.getYForClef('bass'), width);
+			var staff1 = new Vex.Flow.Stave(next_x, this.getYForClef('treble'), width);
+			var staff2 = new Vex.Flow.Stave(next_x, this.getYForClef('bass'), width);
 
-			bar1.setContext(ctx);
-			bar2.setContext(ctx);
+			staff1.setContext(ctx);
+			staff2.setContext(ctx);
 
-			this.drawStaveConnector(bar1, bar2, SINGLE);
+			// this.drawStaveConnector(staff1, staff2, SINGLE);
 		},
 		/**
 		 * Draws a stave connector between two staves.
 		 *
-		 * @param {Stave} bar1
-		 * @param {Stave} bar2
+		 * @param {Stave} staff1
+		 * @param {Stave} staff2
 		 * @param connectorType
 		 * @return undefined
 		 */
-		drawStaveConnector: function(bar1, bar2, connectorType) {
+		drawStaveConnector: function(staff1, staff2, connectorType) {
 			var ctx = this.getContext();
-			var connector = new Vex.Flow.StaveConnector(bar1, bar2);
+			var connector = new Vex.Flow.StaveConnector(staff1, staff2);
 			connector.setContext(ctx).setType(connectorType).draw();
 		},
 		/**
@@ -250,7 +250,7 @@ define([
 		 */
 		createStaveBar: function() {
 			var x = this.start_x;
-			var y = this.start_y; 
+			var y = this.start_y;
 			var width = this.width;
 			var staveBar = new Vex.Flow.Stave(x, y, width);
 			staveBar.clef = this.clef;
@@ -599,7 +599,10 @@ define([
 		 * @return {number}
 		 */
 		getYForClef: function(clef) {
-			return (clef === 'treble' ? 0 : 75) + 35;
+			/**
+			 * Adjust vertical spacing here.
+			 */
+			return (clef === 'treble' ? 0 : 80) + 55;
 		},
 		/**
 		 * Returns true if this stave is the first bar in the sequence, false

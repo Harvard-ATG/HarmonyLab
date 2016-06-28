@@ -1,0 +1,12 @@
+Resolve the Italian sixth chord.
+gsm
+b
+<af c'' c'' fs''> <xg xb' xd'' xg''>
+
+chromatic-chords
+test
+3
+3
+1
+3
+

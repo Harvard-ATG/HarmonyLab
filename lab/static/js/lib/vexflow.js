@@ -2926,7 +2926,7 @@ Vex.Flow.ModifierContext.prototype.formatAccidentals = function() {
       acc_shift = shift
     }acc.setXShift(left_shift + acc_shift);
     acc_shift += acc.getWidth() + accidental_spacing;
-    x_width = acc_shift > x_width ? acc_shift : x_width
+    x_width = acc_shift > x_width ? acc_shift * 0 /*for HarmonyLab*/ : x_width
   }this.state.left_shift += x_width;
   return this
 };

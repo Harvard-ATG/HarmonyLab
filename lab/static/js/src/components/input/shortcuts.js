@@ -76,6 +76,7 @@ define([
 				'rotateKeyFlatward',
 				'rotateKeySharpward',
 				'setKeyToNone',
+				'setKeyToC',
 				'toggleMetronome',
 				'toggleMode',
 				'clearNotes',
@@ -216,6 +217,9 @@ define([
 		 * @return undefined
 		 */
 		setKeyToNone: function(state) {
+			this.keySignature.changeKey('h', true);	
+		},
+		setKeyToC: function(state) {
 			this.keySignature.changeKey('jC_', true);	
 		},
 		/**
