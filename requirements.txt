@@ -1,5 +1,5 @@
 # Common to all environments
-Django>=1.6
+Django==1.6
 django-cached-authentication-middleware>=0.2.0
 #git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v0.7#egg=django-auth-lti
 git+https://github.com/Harvard-ATG/django-auth-lti@master#egg=django-auth-lti
