@@ -132,7 +132,6 @@ define([
 					},
 					'output': {
 						'selector': $('.js-select-midi-output', containerEl),
-						'readonly': true,
 						'options': _.map(outputs, makeOptions) }
 				};
 
