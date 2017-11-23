@@ -89,9 +89,10 @@ define([
 		if(this.isValidSelection(this.inputs, index)) {
 			this._inputidx = index;
 			this._input = this.inputs[index];
+			this.clearInputListeners();
 			this.addInputListener();
 			return true;
-		} 
+		}
 		return false;
 	};
 
@@ -156,13 +157,24 @@ define([
 	};
 
 	/**
+	 * Clears input listeners for midi messages over all inputs.
+	 *
+	 * @return undefined
+	 */
+	MidiDevice.prototype.clearInputListeners = function() {
+		_.each(this.inputs, function(input) {
+			input.onmidimessage = null;
+		});
+	};
+
+	/**
 	 * Adds the input listener for midi messages.
 	 *
 	 * @return undefined
 	 */
 	MidiDevice.prototype.addInputListener = function() {
 		if(this._input) {
-			this._input.addEventListener('midimessage', this.handleMIDIMessage);
+			this._input.onmidimessage = this.handleMIDIMessage;
 		}
 	};
 
