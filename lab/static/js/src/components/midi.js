@@ -1,12 +1,10 @@
 define([
 	'lodash', 
-	'jazzmidibridge',
 	'app/config',
 	'app/components/events',
 	'app/components/component'
 ], function(
-	_, 
-	JMB,
+	_,
 	Config,
 	EVENTS,
 	Component
@@ -30,6 +28,16 @@ define([
 	 * @const
 	 */
 	var SOFT_NOTE_VELOCITY = 84;
+	/**
+	 * Maps MIDI message commands to their numerical codes
+	 */
+	var JMB = {
+		NOTE_OFF : 0x80, //128
+		NOTE_ON : 0x90, //144
+		POLY_PRESSURE : 0xA0, //160
+		CONTROL_CHANGE : 0xB0, //176
+		PROGRAM_CHANGE : 0xC0, //192
+	};
 	/**
 	 * Maps MIDI control numbers to names and vice versa for lookup
 	 * @type {object}
@@ -147,7 +155,7 @@ define([
 			this.chords = this.settings.chords;
 			this.midiDevice = this.settings.midiDevice;
 
-			JMB.init(this.onJMBInit, this.onJMBError);
+			navigator.requestMIDIAccess().then(this.onJMBInit, this.onJMBError);
 		},
 		/**
 		 * Called when the Jazz Midi Bridge (JMB) has been initialized
@@ -159,8 +167,8 @@ define([
 		onJMBInit: function(MIDIAccess) {
 			this.setMIDIAccess(MIDIAccess);
 			this.midiDevice.setUpdater(function() {
-				var inputs = MIDIAccess.enumerateInputs();
-				var outputs = MIDIAccess.enumerateOutputs();
+				var inputs = Array.from(MIDIAccess.inputs.values());
+				var outputs = Array.from(MIDIAccess.outputs.values());
 				this.clear();
 				this.setSources(inputs, outputs);
 				this.selectDefaults();
@@ -299,23 +307,23 @@ define([
 		 * @return undefined
 		 */
 		onMidiMessage: function(msg) {
-			var command = msg.command;
+			var command = msg.data[0];
 
 			// SPECIAL CASE: "note on" with 0 velocity implies "note off"
-			if(command === JMB.NOTE_ON && !msg.data2) {
+			if(command === JMB.NOTE_ON && !msg.data[2]) {
 				command = JMB.NOTE_OFF;
 			}
 
 			switch(command) {
 				case JMB.NOTE_ON:
-					this.triggerNoteOn(msg.data1, msg.data2);
+					this.triggerNoteOn(msg.data[1], msg.data[2]);
 					break;
 				case JMB.NOTE_OFF:
-					this.triggerNoteOff(msg.data1, msg.data2);
+					this.triggerNoteOff(msg.data[1], msg.data[2]);
 					break;
 				case JMB.CONTROL_CHANGE:
-					if(this.isPedalControlChange(msg.data1)) {
-						this.triggerPedalChange(msg.data1, msg.data2);
+					if(this.isPedalControlChange(msg.data[1])) {
+						this.triggerPedalChange(msg.data[1], msg.data[2]);
 					}
 					break;
 				default:
@@ -429,8 +437,7 @@ define([
 		sendMIDIMessage: function() {
 			var msg = null, midiAccess = this.midiAccess, midiDevice = this.midiDevice;
 			if(midiAccess) {
-				msg = midiAccess.createMIDIMessage.apply(midiAccess, arguments);
-				midiDevice.sendMIDIMessage(msg);
+				midiDevice.sendMIDIMessage(Object.values(arguments));
 			}
 		},
 		/**

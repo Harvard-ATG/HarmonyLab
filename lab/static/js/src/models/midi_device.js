@@ -183,7 +183,7 @@ define([
 	 */
 	MidiDevice.prototype.sendMIDIMessage = function(msg) {
 		if(this._output) {
-			this._output.sendMIDIMessage(msg);
+			this._output.send(msg);
 		}
 	};
 
