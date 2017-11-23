@@ -54,17 +54,17 @@ define([
 		}
 	};
 	/**
-	 * Defines the title of the jazz midi error.
+	 * Defines the title of the midi error.
 	 * @type {string} 
 	 * @const
 	 */
-	var JAZZ_MIDI_ERROR_TITLE = Config.get("errorText.jazzMidiPluginError.title");
+	var MIDI_ERROR_TITLE = Config.get("errorText.midiPluginError.title");
 	/**
-	 * Defines the content of the jazz midi error.
+	 * Defines the content of the midi error.
 	 * @type {string} 
 	 * @const
 	 */
-	var JAZZ_MIDI_ERROR_CONTENT = Config.get("errorText.jazzMidiPluginError.description");
+	var MIDI_ERROR_CONTENT = Config.get("errorText.midiPluginError.description");
 
 
 	/**
@@ -151,7 +151,10 @@ define([
 			this.chords = this.settings.chords;
 			this.midiDevice = this.settings.midiDevice;
 
-			navigator.requestMIDIAccess().then(this.onWebMIDIInit, this.onWebMIDIError);
+      if (navigator.requestMIDIAccess === undefined) {
+        this.onWebMIDIError();
+      }
+			else navigator.requestMIDIAccess().then(this.onWebMIDIInit, this.onWebMIDIError);
 		},
 		/**
 		 * Called when WebMIDI has been initialized and is ready for access.
@@ -179,8 +182,8 @@ define([
 		onWebMIDIError: function() {
 			this.broadcast(EVENTS.BROADCAST.NOTIFICATION, {
 				type: "error",
-				title: JAZZ_MIDI_ERROR_TITLE,
-				description: JAZZ_MIDI_ERROR_CONTENT
+				title: MIDI_ERROR_TITLE,
+				description: MIDI_ERROR_CONTENT
 			});
 			this.initListeners();
 		},
