@@ -40,7 +40,7 @@ USE_TZ = True
 
 ### SET PATH INFORMATION ###############################################
 # Example: "/home/ubuntu/harmony"
-ROOT_DIR = reduce(lambda l,r: path.dirname(l), range(3), path.realpath(__file__))
+ROOT_DIR = path.dirname(path.dirname(path.dirname(path.realpath(__file__))))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
