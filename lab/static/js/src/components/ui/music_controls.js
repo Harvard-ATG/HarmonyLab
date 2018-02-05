@@ -123,7 +123,7 @@ define([
 				var outputs = midiDevice.getOutputs();
 				var tpl = _.template('<option value="<%= id %>"><%= name %></option>');
 				var makeOptions = function(device, idx) {
-					return tpl({ id: idx, name: device.deviceName });
+					return tpl({ id: idx, name: device.name });
 				};
 				var devices = {
 					'input': {
@@ -132,7 +132,6 @@ define([
 					},
 					'output': {
 						'selector': $('.js-select-midi-output', containerEl),
-						'readonly': true,
 						'options': _.map(outputs, makeOptions) }
 				};
 
