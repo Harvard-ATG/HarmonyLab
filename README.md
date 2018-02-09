@@ -13,7 +13,7 @@ Working with the input from a MIDI keyboard (subject to key and key
 signature selections), the application notates pitch elements and provides 
 various analytical notations for melody and harmony.
 
-Demo: http://harmony-lab.appspot.com/
+Demo: https://harmonylab.herokuapp.com/
 
 # Quickstart
 
